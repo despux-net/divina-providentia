@@ -2,15 +2,15 @@
 const SUPABASE_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d3RhZmFjZHBkZ3VsemN3bnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MjkxNDksImV4cCI6MjA4MTQwNTE0OX0.6elrAvcsEAc0Jaj4P8-ZFLSWKi2cvzgoAYGlDxeR-8U';
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase client (renamed to avoid conflict with CDN global)
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // API Helper Functions
 const SupabaseAPI = {
   // Fetch all products
   async getProducts() {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('products')
         .select('*')
         .order('created_at', { ascending: false });
@@ -33,7 +33,7 @@ const SupabaseAPI = {
   // Fetch products by category
   async getProductsByCategory(category) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('products')
         .select('*')
         .eq('category', category)
@@ -64,7 +64,7 @@ const SupabaseAPI = {
         user_id: null // Guest checkout
       };
 
-      const { data: order, error: orderError } = await supabase
+      const { data: order, error: orderError } = await supabaseClient
         .from('orders')
         .insert([orderRecord])
         .select()
@@ -80,7 +80,7 @@ const SupabaseAPI = {
         price_at_purchase: item.price
       }));
 
-      const { error: itemsError } = await supabase
+      const { error: itemsError } = await supabaseClient
         .from('order_items')
         .insert(orderItems);
 
@@ -104,7 +104,7 @@ const SupabaseAPI = {
   // Get order by ID
   async getOrder(orderId) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('orders')
         .select(`
           *,
@@ -131,7 +131,7 @@ const SupabaseAPI = {
       const fileName = `${productId}-${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      const { data, error } = await supabase.storage
+      const { data, error } = await supabaseClient.storage
         .from('products')
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -141,7 +141,7 @@ const SupabaseAPI = {
       if (error) throw error;
 
       // Update product with image path
-      const { error: updateError } = await supabase
+      const { error: updateError } = await supabaseClient
         .from('products')
         .update({ image: fileName })
         .eq('id', productId);
@@ -164,4 +164,4 @@ const SupabaseAPI = {
 
 // Export for use in other scripts
 window.SupabaseAPI = SupabaseAPI;
-window.supabase = supabase;
+window.supabaseClient = supabaseClient;
