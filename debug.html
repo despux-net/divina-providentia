@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body style="background:#1a1a2e;color:#fff;font-family:Arial;padding:40px;">
+    <h1>🔍 Debug Productos</h1>
+    <div id="output"></div>
+    <script>
+        const output = document.getElementById('output');
+
+        output.innerHTML += '<p>1. Cargando Supabase...</p>';
+
+        const supabase = window.supabase.createClient(
+            'https://nzwtafacdpdgulzcwntx.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d3RhZmFjZHBkZ3VsemN3bnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MjkxNDksImV4cCI6MjA4MTQwNTE0OX0.6elrAvcsEAc0Jaj4P8-ZFLSWKi2cvzgoAYGlDxeR-8U'
+        );
+
+        output.innerHTML += '<p>2. Cliente creado</p>';
+
+        async function test() {
+            try {
+                output.innerHTML += '<p>3. Consultando productos...</p>';
+
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*');
+
+                if (error) {
+                    output.innerHTML += `<p style="color:red">❌ ERROR: ${error.message}</p>`;
+                    console.error(error);
+                    return;
+                }
+
+                output.innerHTML += `<p style="color:lime">✅ ${data.length} productos encontrados!</p>`;
+
+                data.forEach(p => {
+                    const img = p.image ? `https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/${p.image}` : 'No imagen';
+                    output.innerHTML += `
+                        <div style="border:1px solid #444;padding:10px;margin:10px 0;">
+                            <h3>${p.name}</h3>
+                            <p>ID: ${p.id} | Precio: $${p.price}</p>
+                            <p>Imagen: ${p.image || 'Sin imagen'}</p>
+                            ${p.image ? `<img src="${img}" style="max-width:200px;"><br><a href="${img}" target="_blank" style="color:#d4af37">Ver imagen</a>` : ''}
+                        </div>
+                    `;
+                });
+
+            } catch (err) {
+                output.innerHTML += `<p style="color:red">❌ EXCEPTION: ${err.message}</p>`;
+                console.error(err);
+            }
+        }
+
+        test();
+    </script>
+</body>
+
+</html>

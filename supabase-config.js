@@ -1,9 +1,9 @@
 // Supabase Configuration
 const SUPABASE_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_h6bZAJXVXgZpuLYXngprQg_xROEJhhf';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d3RhZmFjZHBkZ3VsemN3bnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MjkxNDksImV4cCI6MjA4MTQwNTE0OX0.6elrAvcsEAc0Jaj4P8-ZFLSWKi2cvzgoAYGlDxeR-8U';
 
 // Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // API Helper Functions
 const SupabaseAPI = {
