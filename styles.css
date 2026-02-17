@@ -1391,26 +1391,26 @@ p {
    =================================== */
 
 .product-card.sold-out .product-image-container img {
-  filter: grayscale(100%);
-  opacity: 0.7;
+  filter: none;
+  opacity: 1;
 }
 
 .product-status-badge {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-15deg);
-  background: rgba(0, 0, 0, 0.85);
-  color: #f0f0f0;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
+  top: 10px;
+  right: 10px;
+  transform: none;
+  background: #dc2626;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  border: 2px solid #d4af37;
+  border-radius: 4px;
   z-index: 15;
   pointer-events: none;
-  letter-spacing: 3px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
 }
 
 .add-to-cart-btn.disabled {
@@ -1525,4 +1525,88 @@ p {
 
 .fade-in {
   animation: fadeIn var(--transition-slow);
+}
+
+/* ===================================
+   LOOKBOOK CAROUSEL
+   =================================== */
+
+.lookbook-section {
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  position: relative;
+}
+
+.lookbook-section .section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--gold);
+  margin-bottom: 2rem;
+  font-family: 'Cinzel', serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.carousel-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-slide {
+  display: none;
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+}
+
+.carousel-slide.active {
+  display: block;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 2rem;
+  transition: all var(--transition-normal);
+  border-radius: 4px;
+}
+
+.carousel-nav:hover {
+  background: rgba(212, 175, 55, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav.prev {
+  left: 20px;
+}
+
+.carousel-nav.next {
+  right: 20px;
+}
+
+@media (max-width: 768px) {
+  .carousel-slide {
+    height: 400px;
+  }
+
+  .carousel-nav {
+    padding: 0.5rem 1rem;
+    font-size: 1.5rem;
+  }
+
+  .lookbook-section .section-title {
+    font-size: 2rem;
+  }
 }

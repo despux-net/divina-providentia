@@ -727,3 +727,79 @@ window.updateQuantity = updateQuantity;
 window.closeCheckoutAndReset = closeCheckoutAndReset;
 window.nextJungQuote = nextJungQuote;
 window.prevJungQuote = prevJungQuote;
+
+// ===================================
+// LOOKBOOK CAROUSEL
+// ===================================
+
+let currentSlide = 0;
+let lookbookImages = [];
+let carouselInterval = null;
+
+async function loadLookbookImages() {
+    const { data, error } = await SupabaseAPI.getLookbookImages();
+
+    if (error || !data || data.length === 0) {
+        document.getElementById('lookbookCarousel').innerHTML = '<p style="text-align:center;color:#888;">No hay imágenes disponibles</p>';
+        return;
+    }
+
+    lookbookImages = data;
+    renderCarousel();
+    startAutoPlay();
+}
+
+function renderCarousel() {
+    const container = document.getElementById('lookbookCarousel');
+    const slidesHTML = lookbookImages.map((img, index) => `
+    <img src="${img.image_url}" 
+         class="carousel-slide ${index === 0 ? 'active' : ''}" 
+         alt="Lookbook ${index + 1}"
+         loading="lazy">
+  `).join('');
+
+    container.innerHTML = `
+    ${slidesHTML}
+    <button class="carousel-nav prev" onclick="prevSlide()" aria-label="Anterior">‹</button>
+    <button class="carousel-nav next" onclick="nextSlide()" aria-label="Siguiente">›</button>
+  `;
+}
+
+function nextSlide() {
+    if (lookbookImages.length === 0) return;
+    currentSlide = (currentSlide + 1) % lookbookImages.length;
+    updateCarousel();
+    resetAutoPlay();
+}
+
+function prevSlide() {
+    if (lookbookImages.length === 0) return;
+    currentSlide = (currentSlide - 1 + lookbookImages.length) % lookbookImages.length;
+    updateCarousel();
+    resetAutoPlay();
+}
+
+function updateCarousel() {
+    document.querySelectorAll('.carousel-slide').forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentSlide);
+    });
+}
+
+function startAutoPlay() {
+    carouselInterval = setInterval(nextSlide, 5000); // 5 seconds
+}
+
+function resetAutoPlay() {
+    clearInterval(carouselInterval);
+    startAutoPlay();
+}
+
+// Make carousel functions globally available
+window.nextSlide = nextSlide;
+window.prevSlide = prevSlide;
+
+// Initialize carousel on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadLookbookImages();
+});
+

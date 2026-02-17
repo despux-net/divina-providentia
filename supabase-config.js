@@ -163,6 +163,22 @@ const SupabaseAPI = {
       console.error('Error uploading image:', error);
       return { data: null, error };
     }
+  },
+
+  // Get lookbook carousel images
+  async getLookbookImages() {
+    try {
+      const { data, error } = await supabaseClient
+        .from('lookbook_images')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error fetching lookbook:', error);
+      return { data: null, error };
+    }
   }
 };
 
