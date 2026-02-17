@@ -598,19 +598,65 @@ p {
   .book-container {
     flex-direction: column;
     height: auto;
+    /* Eliminar altura fija */
+    border-radius: 8px;
+    overflow: hidden;
+    /* Para que el fondo no se salga */
   }
 
   .book-spine {
     display: none;
   }
 
+  /* La página izquierda actúa como encabezado compacto */
   .left-page {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: var(--space-lg);
+    border-bottom: 2px solid var(--color-divine-gold-light);
+    border-right: none;
+    padding: 1.5rem;
+    flex: 0 0 auto;
+    /* No expandirse, solo ocupar lo necesario */
+    background: #fdfbf7;
+    /* Fondo plano para mejor lectura */
   }
 
+  .book-title {
+    font-size: 1.5rem;
+    /* Título más pequeño */
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .book-intro {
+    font-size: 0.9rem;
+    display: none;
+    /* Ocultar intro en móvil para ahorrar espacio */
+  }
+
+  .book-decoration {
+    display: none;
+    /* Ocultar decoración en móvil */
+  }
+
+  /* La página derecha es el contenido principal */
   .right-page {
-    padding: var(--space-lg);
+    border-left: none;
+    padding: 1.5rem;
+    background: #fff;
+    min-height: 300px;
+    /* Altura mínima para que no salte al cambiar citas cortas */
+  }
+
+  .quote-content blockquote {
+    font-size: 1rem;
+    /* Ajustar tamaño de letra */
+    line-height: 1.5;
+    padding: 0 0.5rem;
+    text-align: left;
+    /* Justificado a veces rompe en móvil, mejor left */
+  }
+
+  .book-controls {
+    margin-top: 2rem;
   }
 }
 
