@@ -1416,14 +1416,14 @@ p {
 }
 
 
-/* Auth Modals */
+/* Auth Modals - High Clarity Version */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 3000;
   display: none;
   /* Hidden by default */
@@ -1433,13 +1433,47 @@ p {
 }
 
 .auth-modal {
-  background: var(--color-bg-primary);
-  padding: var(--space-lg);
-  border: 1px solid var(--color-gold);
+  background: #ffffff;
+  /* Pure white for maximum clarity */
+  padding: var(--space-xl);
+  border: 1px solid var(--color-divine-gold);
   width: 90%;
-  max-width: 400px;
+  max-width: 450px;
   position: relative;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--color-stone-gray-dark);
+}
+
+.auth-modal h2 {
+  color: var(--color-sacred-purple);
+  margin-bottom: 0;
+  font-size: 1.5rem;
+  text-align: center;
+  border-bottom: none;
+}
+
+.auth-modal .checkout-header {
+  border-bottom: 2px solid var(--color-divine-gold-light);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  justify-content: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-modal .close-checkout-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-stone-gray);
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .auth-form .form-group {
@@ -1449,25 +1483,54 @@ p {
 .auth-form label {
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--color-text-primary);
+  color: var(--color-sacred-purple-dark);
+  font-weight: 600;
   font-family: var(--font-heading);
+  font-size: 0.9rem;
 }
 
 .auth-form input,
 .auth-form textarea {
   width: 100%;
-  padding: 0.8rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  color: var(--color-text-primary);
+  padding: 0.8rem 1rem;
+  background: #f8f9fa;
+  /* Very light gray */
+  border: 1px solid #e2e8f0;
+  color: #1a202c;
+  /* Almost black */
   font-family: var(--font-body);
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
 }
 
 .auth-form input:focus,
 .auth-form textarea:focus {
   outline: none;
-  border-color: var(--color-gold);
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+  border-color: var(--color-sacred-purple);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(45, 27, 78, 0.1);
+}
+
+.submit-order-btn {
+  width: 100%;
+  margin-top: var(--space-sm);
+  background: var(--color-sacred-purple);
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+}
+
+.submit-order-btn:hover {
+  background: var(--color-sacred-purple-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 
