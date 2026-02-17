@@ -11,9 +11,10 @@ const corsHeaders = {
 const BOOKS_CONFIG: Record<string, { driveUrl: string; maxPages: number }> = {
     // Example book - replace with real Google Drive URLs
     "sample-book-1": {
-        driveUrl: "https://drive.google.com/file/d/1ApP6joys40VO2hHZyZbvuvLKp_E64Azt/view?usp=drive_link",
+        // ID extracted from: https://drive.google.com/file/d/1ApP6joys40VO2hHZyZbvuvLKp_E64Azt/view?usp=drive_link
+        driveUrl: "https://drive.google.com/uc?export=download&id=1ApP6joys40VO2hHZyZbvuvLKp_E64Azt",
         maxPages: 15
-    }
+    },
     // Add more books here as needed
     // "book-id-2": { driveUrl: "...", maxPages: 15 }
 }
