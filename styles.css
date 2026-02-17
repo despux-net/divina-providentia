@@ -411,7 +411,8 @@ p {
 }
 
 .crest-image {
-  width: 120px;
+  width: 200px;
+  /* Aumentado de 120px para mayor impacto */
   height: auto;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)) sepia(20%) brightness(1.1);
   /* Efecto reliquia dorada */
