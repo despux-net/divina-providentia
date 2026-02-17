@@ -60,6 +60,10 @@ async function loadLibraryBooks() {
                 </button>
             ` : '';
 
+            const readBtnText = isValidated
+                ? "📖 Leer Libro Completo"
+                : `📖 Leer Primeras ${book.max_pages_preview || LIBRARY_CONFIG.maxPages} Páginas`;
+
             return `
             <div class="book-card" data-book-id="${book.id}">
               <div class="book-cover">
@@ -71,7 +75,7 @@ async function loadLibraryBooks() {
                 <p class="book-description">${book.description || ''}</p>
                 <div class="book-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
                     <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
-                      📖 Leer Primeras ${LIBRARY_CONFIG.maxPages} Páginas
+                      ${readBtnText}
                     </button>
                     ${downloadBtn}
                 </div>
