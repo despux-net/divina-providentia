@@ -350,16 +350,16 @@ function initializeEventListeners() {
 // ===================================
 
 function addToCart(productId) {
-    const product = state.products.find(p => p.id === productId);
+    const product = state.products.find(p => p.id == productId);
     if (!product) return;
 
-    const existingItem = state.cart.find(item => item.id === productId);
+    const existingItem = state.cart.find(item => item.id == productId);
 
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
         state.cart.push({
-            ...product,
+            ...product, // ID is already part of product
             quantity: 1
         });
     }
@@ -376,13 +376,13 @@ function addToCart(productId) {
 }
 
 function removeFromCart(productId) {
-    state.cart = state.cart.filter(item => item.id !== productId);
+    state.cart = state.cart.filter(item => item.id != productId);
     updateCart();
     saveCartToStorage();
 }
 
 function updateQuantity(productId, change) {
-    const item = state.cart.find(item => item.id === productId);
+    const item = state.cart.find(item => item.id == productId);
     if (!item) return;
 
     item.quantity += change;
