@@ -5,36 +5,36 @@
 // Stoic Quotes for Hero Section
 const stoicQuotes = [
     {
-        quote: "El impedimento para la acción impulsa la acción. Lo que se interpone en el camino se convierte en el camino.",
-        author: "Marco Aurelio"
+        quote: "No envidiéis a los hombres violentos, ni escojáis ninguno de sus caminos; porque el Señor abomina al perverso.",
+        author: "Proverbios 3:31-32"
     },
     {
-        quote: "Quien teme a la muerte nunca hará nada digno de un hombre que está vivo.",
-        author: "Séneca"
+        quote: "Toda verdad es una sombra de Dios; todo error, una usurpación del hombre.",
+        author: "Donoso Cortés"
     },
     {
-        quote: "La riqueza no consiste en tener grandes posesiones, sino en tener pocas necesidades.",
-        author: "Epicteto"
+        quote: "La libertad no es hacer lo que se quiere, sino tener el derecho de hacer lo que se debe.",
+        author: "Lord Acton"
     },
     {
-        quote: "Si no es correcto, no lo hagas. Si no es verdad, no lo digas.",
-        author: "Marco Aurelio"
+        quote: "En los tiempos de la anarquía universal, la única rebeldía posible es el Orden.",
+        author: "Gómez Dávila"
     },
     {
-        quote: "La felicidad de tu vida depende de la calidad de tus pensamientos.",
-        author: "Marco Aurelio"
+        quote: "Revístete de toda la armadura de Dios, para que podáis estar firmes contra las asechanzas del diablo.",
+        author: "Efesios 6:11"
     },
     {
-        quote: "No es que tengamos poco tiempo, sino que perdemos mucho.",
-        author: "Séneca"
+        quote: "El principio de la sabiduría es el temor de Dios; los insensatos desprecian la sabiduría y la enseñanza.",
+        author: "Proverbios 1:7"
     },
     {
-        quote: "La mejor venganza es no ser como tu enemigo.",
-        author: "Marco Aurelio"
+        quote: "La tradición no es la adoración de las cenizas, sino la preservación del fuego.",
+        author: "G.K. Chesterton"
     },
     {
-        quote: "No pidas que las cosas sucedan como deseas, sino desea que sucedan como suceden, y serás feliz.",
-        author: "Epicteto"
+        quote: "No hay civilización sin jerarquía, ni jerarquía sin sacrificio.",
+        author: "Joseph de Maistre"
     }
 ];
 
@@ -307,10 +307,10 @@ function displayProducts() {
 
 function getCategoryName(category) {
     const categoryNames = {
-        vestments: 'Vestimentas Sagradas',
-        headwear: 'Tocados Divinos',
-        accessories: 'Accesorios Místicos',
-        prints: 'Grabados Filosóficos'
+        vestments: 'Vestiduras Sagradas',
+        headwear: 'Yelmos de la Fe',
+        accessories: 'Reliquias Menores',
+        prints: 'Testimonios Gráficos'
     };
     return categoryNames[category] || category;
 }
@@ -410,8 +410,8 @@ function updateCart() {
     if (state.cart.length === 0) {
         cartItems.innerHTML = `
       <div class="empty-cart">
-        <div class="empty-cart-icon">🛒</div>
-        <p>Tu carrito está vacío</p>
+        <div class="empty-cart-icon">⚔️</div>
+        <p>Tu arsenal está desprovisto.</p>
       </div>
     `;
         checkoutBtn.disabled = true;
@@ -517,7 +517,7 @@ async function handleCheckout(e) {
 
     const submitBtn = e.target.querySelector('.submit-order-btn');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando...';
+    submitBtn.textContent = 'Consumando el Pacto...';
 
     const formData = new FormData(e.target);
     const totalPrice = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -562,9 +562,9 @@ async function handleCheckout(e) {
         saveCartToStorage();
     } catch (error) {
         console.error('Error sending order:', error);
-        alert('Hubo un error al enviar tu pedido. Por favor, intenta de nuevo o contáctanos directamente.');
+        alert('Hubo un error al enviar tu pedido. La Providencia prueba nuestra paciencia. Por favor, intenta de nuevo.');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Enviar Pedido';
+        submitBtn.textContent = 'Reintentar el Pacto';
     }
 }
 
