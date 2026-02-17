@@ -629,8 +629,104 @@ function closeCheckoutAndReset() {
     }, 300);
 }
 
+
+// ===================================
+// JUNG'S DIDACTIC BOOK LOGIC
+// ===================================
+
+const jungQuotes = [
+    {
+        text: "Quien mira hacia afuera, sueña; quien mira hacia adentro, despierta.",
+        source: "Cartas (1916)"
+    },
+    {
+        text: "Nadie se ilumina imaginando figuras de luz, sino haciendo consciente la oscuridad.",
+        source: "El Secreto de la Flor de Oro"
+    },
+    {
+        text: "Todo lo que nos irrita de los demás nos puede llevar a un entendimiento de nosotros mismos.",
+        source: "Memorias, Sueños, Reflexiones"
+    },
+    {
+        text: "El encuentro con uno mismo es una de las experiencias más desagradables a las que se enfrenta el ser humano.",
+        source: "Arquetipos e Inconsciente Colectivo"
+    },
+    {
+        text: "La vida no vivida es una enfermedad de la que se puede morir.",
+        source: "La Psicología de la Transferencia"
+    },
+    {
+        text: "Yo no soy lo que me sucedió, yo soy lo que elegí ser.",
+        source: "Obras Completas"
+    },
+    {
+        text: "Donde reina el amor, no hay voluntad de poder; y donde predomina el poder, el amor falta.",
+        source: "Sobre la Psicología del Inconsciente"
+    },
+    {
+        text: "Hasta que lo inconsciente no se haga consciente, el subconsciente seguirá dirigiendo tu vida y tú lo llamarás destino.",
+        source: "Aion"
+    },
+    {
+        text: "La soledad no proviene de no tener gente a tu alrededor, sino de no poder comunicar las cosas que parecen importantes para uno mismo.",
+        source: "Memorias, Sueños, Reflexiones"
+    },
+    {
+        text: "El privilegio de una vida es convertirse en quien realmente eres.",
+        source: "El Desarrollo de la Personalidad"
+    }
+];
+
+let currentJungQuoteIndex = 0;
+
+function updateJungBook() {
+    const quoteElement = document.querySelector('#jungQuotePage blockquote');
+    const citeElement = document.querySelector('#jungQuotePage cite');
+    const pageNumberElement = document.getElementById('jungPageNumber');
+
+    // Fade out
+    quoteElement.style.opacity = '0';
+    citeElement.style.opacity = '0';
+
+    setTimeout(() => {
+        const quote = jungQuotes[currentJungQuoteIndex];
+        quoteElement.textContent = `"${quote.text}"`;
+        citeElement.textContent = `— C.G. Jung, ${quote.source}`;
+        pageNumberElement.textContent = toRoman(currentJungQuoteIndex + 1);
+
+        // Fade in
+        quoteElement.style.opacity = '1';
+        citeElement.style.opacity = '1';
+    }, 300);
+}
+
+function nextJungQuote() {
+    currentJungQuoteIndex = (currentJungQuoteIndex + 1) % jungQuotes.length;
+    updateJungBook();
+}
+
+function prevJungQuote() {
+    currentJungQuoteIndex = (currentJungQuoteIndex - 1 + jungQuotes.length) % jungQuotes.length;
+    updateJungBook();
+}
+
+function toRoman(num) {
+    if (num < 1) return "";
+    const roman = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
+    let str = '';
+    for (let i of Object.keys(roman)) {
+        let q = Math.floor(num / roman[i]);
+        num -= q * roman[i];
+        str += i.repeat(q);
+    }
+    return str;
+}
+
+
 // Make functions globally available
 window.addToCart = addToCart;
 window.removeFromCart = removeFromCart;
 window.updateQuantity = updateQuantity;
 window.closeCheckoutAndReset = closeCheckoutAndReset;
+window.nextJungQuote = nextJungQuote;
+window.prevJungQuote = prevJungQuote;

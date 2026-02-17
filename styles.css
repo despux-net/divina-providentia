@@ -398,11 +398,33 @@ p {
 }
 
 /* ===================================
-   PHILOSOPHY SECTION
+   PHILOSOPHY SECTION & CREST
    =================================== */
+
+.section-crest {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease forwards;
+}
+
+.crest-image {
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)) sepia(20%) brightness(1.1);
+  /* Efecto reliquia dorada */
+  transition: transform var(--transition-slow);
+}
+
+.section-crest:hover .crest-image {
+  transform: scale(1.05);
+}
 
 .philosophy {
   background: white;
+  position: relative;
 }
 
 .philosophy-grid {
@@ -410,6 +432,180 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-lg);
   margin-top: var(--space-xl);
+  margin-bottom: var(--space-3xl);
+  /* Separation before Book */
+}
+
+/* ... philosophy cards styles kept same ... */
+
+/* ===================================
+   JUNG'S DIDACTIC BOOK
+   =================================== */
+
+.jung-book-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-xl) 0;
+  perspective: 1500px;
+}
+
+.book-container {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  height: 500px;
+  background-color: #fdfbf7;
+  /* Papel antiguo */
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4af37' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    inset 0 0 40px rgba(0, 0, 0, 0.1),
+    inset 10px 0 20px rgba(0, 0, 0, 0.1),
+    inset -10px 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  position: relative;
+  transform: rotateX(5deg);
+}
+
+.book-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.1));
+  z-index: 10;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.book-page {
+  flex: 1;
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.left-page {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  background: linear-gradient(to right, #fff, #f4f1ea 95%, #e0ddd5 100%);
+}
+
+.right-page {
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+  background: linear-gradient(to left, #fff, #f4f1ea 95%, #e0ddd5 100%);
+}
+
+.book-title {
+  font-family: var(--font-heading);
+  color: var(--color-sacred-purple);
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: var(--space-md);
+  border-bottom: 2px solid var(--color-divine-gold);
+  padding-bottom: 1rem;
+}
+
+.book-intro {
+  font-family: var(--font-quote);
+  font-style: italic;
+  text-align: center;
+  color: var(--color-stone-gray);
+  font-size: 1.1rem;
+}
+
+.book-decoration {
+  font-size: 3rem;
+  text-align: center;
+  color: var(--color-divine-gold);
+  margin-top: 2rem;
+}
+
+.quote-content blockquote {
+  font-family: var(--font-quote);
+  font-size: 1.5rem;
+  color: var(--color-ink-black);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.quote-content cite {
+  display: block;
+  text-align: right;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--color-sacred-purple);
+  font-weight: 700;
+}
+
+.book-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 1rem;
+}
+
+.book-nav-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--color-stone-gray);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.book-nav-btn:hover {
+  color: var(--color-sacred-purple);
+}
+
+.page-number {
+  font-family: var(--font-heading);
+  color: var(--color-divine-gold-dark);
+  font-size: 0.9rem;
+}
+
+/* Responsividad para el libro */
+@media (max-width: 768px) {
+  .book-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .book-spine {
+    display: none;
+  }
+
+  .left-page {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: var(--space-lg);
+  }
+
+  .right-page {
+    padding: var(--space-lg);
+  }
 }
 
 .philosophy-card {
