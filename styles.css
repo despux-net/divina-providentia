@@ -68,12 +68,40 @@ html {
 body {
   font-family: var(--font-body);
   color: var(--color-stone-gray);
-  background-color: var(--color-ethereal-white);
   line-height: 1.6;
+  background-color: var(--color-ethereal-white);
   overflow-x: hidden;
+  position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Decorative Watermark Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  /* Ajustar tamaño según preferencia */
+  height: 80%;
+  background-image: url('LOGOV4.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.15;
+  /* Muy sutil para no afectar lectura */
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Remove section backgrounds to let watermark show through, or make them very transparent */
+main,
+section {
+  background-color: transparent;
+}
+
 
 /* ===================================
    TYPOGRAPHY
