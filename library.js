@@ -322,3 +322,12 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
     });
 });
+
+// Expose globally for Auth update
+window.loadLibraryBooks = loadLibraryBooks;
+
+// Listen for Auth Validation
+window.addEventListener('auth:validated', (e) => {
+    console.log("Auth validated event received:", e.detail);
+    loadLibraryBooks();
+});
