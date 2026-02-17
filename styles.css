@@ -172,17 +172,19 @@ p {
 }
 
 .nav-logo {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  color: var(--color-sacred-purple);
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  font-weight: 700;
-  letter-spacing: 0.05em;
 }
 
-.nav-logo span {
-  color: var(--color-divine-gold);
+.logo-image {
+  height: 60px;
+  /* Ajustar altura según se necesite */
+  width: auto;
+  object-fit: contain;
 }
+
+
 
 .nav-links {
   display: flex;
