@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
 
     <!-- Styles -->
@@ -25,117 +25,97 @@
 </head>
 
 <body>
-    <!-- Navigation: Top Secret Header Style -->
+    <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#" class="nav-logo">
-                <span class="file-code">REF: DP-2026</span>
-                <img src="LOGOV3.png" alt="Sello Oficial" class="logo-image">
+                <img src="LOGOV3.png" alt="Divina Providentia Logo" class="logo-image">
             </a>
             <ul class="nav-links">
-                <li><a href="#inicio">[EXPEDIENTE_01]</a></li>
-                <li><a href="#filosofia">[DOGMA_Y_PSIQUE]</a></li>
-                <li><a href="#tienda">[INVENTARIO_FÍSICO]</a></li>
-                <li><a href="#contacto">[RED_DE_CONTACTO]</a></li>
+                <li><a href="#inicio">Génesis</a></li>
+                <li><a href="#filosofia">Dogma</a></li>
+                <li><a href="#tienda">Arsenal</a></li>
+                <li><a href="#contacto">Alianza</a></li>
             </ul>
-            <button class="cart-button" id="cartButton" aria-label="Consultar Inventario">
-                <span class="cart-label">REQ. ACTIVAS:</span>
+            <button class="cart-button" id="cartButton" aria-label="Carrito de compras">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
                 <span class="cart-count" id="cartCount">0</span>
             </button>
-            <button class="mobile-menu-button">
-                <span class="mono-text">[MENU]</span>
+            <button class="mobile-menu-button" aria-label="Menú móvil">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
             </button>
         </div>
     </nav>
 
-    <!-- Hero Section: The Manifesto (Text Only) -->
+    <!-- Hero Section -->
     <section class="hero" id="inicio">
-        <div class="hero-content document-layout">
-            <div class="classification-stamp">TOP SECRET // SOLO OJOS AUTORIZADOS</div>
-            <div class="date-stamp">FECHA: ETERNA // HORA: UNDÉCIMA</div>
-
-            <h1 class="hero-title">EXPEDIENTE N.º 1: LA CRISIS DE LA MODERNIDAD</h1>
-
-            <div class="manifesto-text">
-                <p><strong>SITUACIÓN ACTUAL:</strong> El mundo moderno ha colapsado bajo el peso de su propia vacuidad.
-                    Los arquetipos han sido disueltos en el ácido de la mediocridad igualitaria. El "Individuo" ha
-                    muerto; solo queda la masa informe.</p>
-
-                <p><strong>ANÁLISIS DE INTELIGENCIA:</strong> Identificamos una ruptura en la <em>Tradición
-                        Primordial</em>. El hombre contemporáneo vive en una "neurosis de desarraigo", desconectado
-                    tanto de la Sangre como del Espíritu. Como profetizó Jung, "quien mira hacia afuera, sueña; quien
-                    mira hacia adentro, despierta". La mayoría duerme el sueño profundo de la materia.</p>
-
-                <p><strong>NUESTRA MISIÓN:</strong> Establecer una <em>Élite del Espíritu</em>. Un "Estado dentro del
-                    Estado". No buscamos consumidores, sino iniciados capaces de integrar la Sombra bajo el imperio de
-                    la Gracia. Divina Providentia no es una marca; es la operación de rescate de los símbolos sagrados.
-                </p>
+        <div class="hero-content">
+            <div class="hero-quote" id="heroQuote">
+                <blockquote></blockquote>
+                <cite></cite>
             </div>
-
-            <div class="signature-block">
-                <p>FIRMADO:</p>
-                <p class="signature">La Dirección</p>
-            </div>
-
-            <a href="#tienda" class="cta-button">[PROCEDER AL ARSENAL]</a>
+            <h1 class="hero-title">Divina Providentia</h1>
+            <p class="hero-subtitle">Rechaza la Tiranía de lo Efímero. Revístete de la Inmarcesible Armadura de la
+                Trascendencia.</p>
+            <a href="#tienda" class="cta-button">Asumir el Compromiso</a>
         </div>
     </section>
 
-    <!-- Philosophy Section: Psycho-Theological Intersection -->
+    <!-- Philosophy Section -->
     <section class="philosophy section" id="filosofia">
-        <div class="container document-style">
-            <div class="section-header type-writer">
-                <h2>// INTERSECCIÓN PSICO-TEOLÓGICA //</h2>
-                <p class="classification-sub">NIVEL DE ACCESO: GAMMA</p>
+        <div class="container">
+            <div class="section-header">
+                <h2>Dogmas de Resistencia</h2>
+                <p>Contra la Disolución del Mundo Moderno</p>
             </div>
-
             <div class="philosophy-grid">
-                <div class="philosophy-card file-card">
-                    <div class="card-header">REF: JUNG-01</div>
-                    <h3>INDIVIDUACIÓN</h3>
-                    <p>"La confrontación con el Sí-mismo no es un paseo estético, sino una prueba de fuego. Solo aquel
-                        que acepta el peso de su propia cruz (el eje vertical del ser) puede aspirar a la Totalidad."
+                <div class="philosophy-card">
+                    <h3>Jerarquía</h3>
+                    <p>El orden natural exige la subordinación de la materia al espíritu. Cada hebra es una disciplina;
+                        cada prenda, un acto de obediencia a la Ley Eterna que gobierna los astros y las conciencias.
                     </p>
-                    <div class="reference">C.G. Jung, <em>Aion</em></div>
                 </div>
-                <div class="philosophy-card file-card">
-                    <div class="card-header">REF: BIBLIA-MAC</div>
-                    <h3>RESISTENCIA</h3>
-                    <p>"No está en la multitud del ejército la victoria de la batalla, sino que del Cielo viene la
-                        fuerza. Ellos vienen contra nosotros con insolencia e impiedad, pero nosotros luchamos por
-                        nuestras vidas y nuestras leyes."</p>
-                    <div class="reference">1 Macabeos 3:19-21</div>
+                <div class="philosophy-card">
+                    <h3>Austeridad</h3>
+                    <p>Despreciamos el adorno superfluo del siglo. La verdadera nobleza reside en la renuncia y en la
+                        severidad de la forma que refleja, como un espejo pulido, la Verdad inmutable.</p>
                 </div>
-                <div class="philosophy-card file-card">
-                    <div class="card-header">REF: TRAD-03</div>
-                    <h3>CONIUNCTIO</h3>
-                    <p>La unión de opuestos: La espada y la pluma. La contemplación monástica y la acción guerrera. El
-                        estoicismo romano bautizado en la pila de la Gracia. Esa es nuestra estirpe.</p>
-                    <div class="reference">Archivo Central</div>
+                <div class="philosophy-card">
+                    <h3>Tradición</h3>
+                    <p>No innovamos; restauramos. Portamos sobre nuestros hombros la herencia de los siglos, un baluarte
+                        inexpugnable contra la barbarie del progreso sin Dios.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Products Section: The Archive of Physical Manifestation -->
+    <!-- Products Section -->
     <section class="products section" id="tienda">
         <div class="container">
-            <div class="section-header type-writer">
-                <h2>// ARCHIVO DE MANIFESTACIÓN FÍSICA //</h2>
-                <p class="classification-sub">OBJETOS DE PODER / ARTEFACTOS SIMBÓLICOS</p>
+            <div class="section-header">
+                <h2>Arsenal del Espíritu</h2>
+                <p>Instrumentos para la Batalla Cultural y Metafísica</p>
             </div>
 
             <div class="category-filters" id="categoryFilters">
-                <button class="filter-button active" data-category="all">[TODO_EL_INVENTARIO]</button>
-                <button class="filter-button" data-category="vestments">[VESTIDURAS_SAGRADAS]</button>
-                <button class="filter-button" data-category="headwear">[YELMOS_DE_FE]</button>
-                <button class="filter-button" data-category="accessories">[RELIQUIAS]</button>
-                <button class="filter-button" data-category="prints">[DOCUMENTOS_GRÁFICOS]</button>
+                <button class="filter-button active" data-category="all">La Hueste Completa</button>
+                <button class="filter-button" data-category="vestments">Vestiduras Sagradas</button>
+                <button class="filter-button" data-category="headwear">Yelmos de la Fe</button>
+                <button class="filter-button" data-category="accessories">Reliquias Menores</button>
+                <button class="filter-button" data-category="prints">Testimonios Gráficos</button>
             </div>
 
-            <div class="products-list-view" id="productsGrid">
+            <div class="products-grid" id="productsGrid">
                 <div class="loading-spinner">
-                    <p class="blink">>> ACCEDIENDO A LA BASE DE DATOS SEGURA...</p>
+                    <p>Invocando los Artefactos...</p>
                 </div>
             </div>
         </div>

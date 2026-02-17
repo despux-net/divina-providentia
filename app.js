@@ -1,17 +1,8 @@
 // ===================================
-// DIVINA PROVIDENTIA - ARCHIVE SYSTEM
+// DIVINA PROVIDENTIA - MAIN APP
 // ===================================
 
-const archiveQuotes = [
-    "\"Quien mira hacia afuera, sueña; quien mira hacia adentro, despierta.\" — C.G. Jung",
-    "\"Revístete de la armadura de Dios para resistir el día malo.\" — Efesios 6:13",
-    "\"El hombre no es lo que le sucede, sino lo que decide ser.\" — C.G. Jung",
-    "\"La vanidad de vanidades, todo es vanidad.\" — Eclesiastés 1:2",
-    "\"Solo lo que arde ilumina.\" — J. de Maistre",
-    "\"La sombra es el 90% de la personalidad no vivida.\" — C.G. Jung"
-];
-
-// Stoic Quotes for Hero Section (Deprecated for Manifesto, kept for reference)
+// Stoic Quotes for Hero Section
 const stoicQuotes = [
     {
         quote: "No envidiéis a los hombres violentos, ni escojáis ninguno de sus caminos; porque el Señor abomina al perverso.",
@@ -274,46 +265,42 @@ function displayProducts() {
         ? state.products
         : state.products.filter(p => p.category === state.currentCategory);
 
-    // Filter out products without images
+    // IMPORTANT: Only show products that have images
     filteredProducts = filteredProducts.filter(p => p.image_url);
 
     if (filteredProducts.length === 0) {
-        productsGrid.innerHTML = '<div class="no-products"><p class="mono-text">>> ERROR DE RECUPERACIÓN: ARCHIVO VACÍO O CLASIFICADO.</p></div>';
+        productsGrid.innerHTML = '<div class="no-products"><p>No hay productos con imágenes en esta categoría.</p></div>';
         return;
     }
 
-    productsGrid.innerHTML = filteredProducts.map((product, index) => {
-        // Generate pseudo-random reference code
-        const refCode = `REF-${product.category.substring(0, 3).toUpperCase()}-${product.id.toString().padStart(4, '0')}`;
-        // Pick a random quote based on index
-        const quote = archiveQuotes[index % archiveQuotes.length];
-
-        return `
+    productsGrid.innerHTML = filteredProducts.map(product => `
     <div class="product-card">
       <div class="product-image-container">
         <img src="${product.image_url}" alt="${product.name}" loading="lazy" class="product-image-bg">
+        <div class="product-image-overlay"></div>
+        <div class="product-info-overlay">
+          <div class="product-category">${getCategoryName(product.category)}</div>
+          <h3 class="product-name">${product.name}</h3>
+        </div>
       </div>
-      <div class="product-info-block">
-        <span class="product-meta-ref">${refCode} // ESTADO: ACTIVO</span>
-        <h3 class="product-name">${product.name}</h3>
-        <p class="product-description" style="font-family: var(--font-serif); font-style: italic; font-size: 0.9rem; margin-bottom: 0.5rem;">
-            ${quote}
-        </p>
-        <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
-        <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">
-            [SOLICITAR ASIGNACIÓN]
-        </button>
+      <div class="product-info">
+        <p class="product-description">${product.description}</p>
+        <div class="product-footer">
+          <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
+          <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">
+            Agregar
+          </button>
+        </div>
       </div>
     </div>
-  `}).join('');
+  `).join('');
 
     // Animate product cards
     setTimeout(() => {
         document.querySelectorAll('.product-card').forEach((card, index) => {
             setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, index * 50);
+                card.classList.add('visible');
+            }, index * 100);
         });
     }, 100);
 }
