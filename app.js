@@ -273,11 +273,14 @@ function displayProducts() {
         return;
     }
 
-    productsGrid.innerHTML = filteredProducts.map(product => `
-    <div class="product-card">
+    productsGrid.innerHTML = filteredProducts.map(product => {
+        const isAvailable = product.available !== false;
+        return `
+    <div class="product-card ${!isAvailable ? 'sold-out' : ''}">
       <div class="product-image-container">
         <img src="${product.image_url}" alt="${product.name}" loading="lazy" class="product-image-bg">
         <div class="product-image-overlay"></div>
+        ${!isAvailable ? '<div class="product-status-badge">AGOTADO</div>' : ''}
         <div class="product-info-overlay">
           <div class="product-category">${getCategoryName(product.category)}</div>
           <h3 class="product-name">${product.name}</h3>
@@ -287,13 +290,15 @@ function displayProducts() {
         <p class="product-description">${product.description}</p>
         <div class="product-footer">
           <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
-          <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">
-            Agregar
+          <button class="add-to-cart-btn ${!isAvailable ? 'disabled' : ''}" 
+                  onclick="${isAvailable ? `addToCart('${product.id}')` : ''}" 
+                  ${!isAvailable ? 'disabled' : ''}>
+            ${isAvailable ? 'Agregar' : 'Agotado'}
           </button>
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 
     // Animate product cards
     setTimeout(() => {

@@ -32,3 +32,10 @@ desktop.ini
 
 # Logs
 *.log
+
+# Secrets
+credentials.json
+credentials.json.json
+
+# Supabase
+supabase/.temp/

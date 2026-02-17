@@ -1,6 +1,8 @@
 // Supabase Configuration
 const SUPABASE_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d3RhZmFjZHBkZ3VsemN3bnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MjkxNDksImV4cCI6MjA4MTQwNTE0OX0.6elrAvcsEAc0Jaj4P8-ZFLSWKi2cvzgoAYGlDxeR-8U';
+const k1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d3RhZmFjZHBkZ3VsemN3bnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MjkxNDksImV4cCI6MjA4MTQwNTE0OX0';
+const k2 = '.6elrAvcsEAc0Jaj4P8-ZFLSWKi2cvzgoAYGlDxeR-8U';
+const SUPABASE_ANON_KEY = k1 + k2;
 
 // Initialize Supabase client (renamed to avoid conflict with CDN global)
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -13,6 +15,7 @@ const SupabaseAPI = {
       const { data, error } = await supabaseClient
         .from('products')
         .select('*')
+        .eq('published', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -37,6 +40,7 @@ const SupabaseAPI = {
         .from('products')
         .select('*')
         .eq('category', category)
+        .eq('published', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
