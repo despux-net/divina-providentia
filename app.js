@@ -150,18 +150,34 @@ async function loadProducts() {
     const productsGrid = document.getElementById('productsGrid');
     productsGrid.innerHTML = '<div class="loading-spinner"><p>Cargando productos...</p></div>';
 
+    console.log('🔄 loadProducts() iniciado');
+    console.log('📦 window.SupabaseAPI:', window.SupabaseAPI);
+
     // Try to fetch from Supabase
-    const { data, error } = await window.SupabaseAPI.getProducts();
+    try {
+        console.log('🔌 Llamando a getProducts()...');
+        const { data, error } = await window.SupabaseAPI.getProducts();
 
-    if (error || !data || data.length === 0) {
-        // Use demo products if Supabase is not set up yet
+        console.log('📊 Respuesta recibida:');
+        console.log('   Data:', data);
+        console.log('   Error:', error);
+        console.log('   Data length:', data ? data.length : 'null');
+
+        if (error || !data || data.length === 0) {
+            // Use demo products if Supabase is not set up yet
+            console.warn('⚠️ Usando productos demo. Razón:', error ? error.message : 'No hay datos');
+            state.products = getDemoProducts();
+        } else {
+            console.log('✅ Usando productos de Supabase:', data.length, 'productos');
+            state.products = data;
+        }
+
+        displayProducts();
+    } catch (err) {
+        console.error('❌ Error en loadProducts():', err);
         state.products = getDemoProducts();
-        console.log('Using demo products. Set up Supabase database to use real products.');
-    } else {
-        state.products = data;
+        displayProducts();
     }
-
-    displayProducts();
 }
 
 function getDemoProducts() {
