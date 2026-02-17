@@ -147,11 +147,28 @@ function closeModal(modalId) {
 
 // Initialize Auth UI
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Auth UI Initializing...");
+
+    // Safety check for user-greeting
+    const userGreeting = document.getElementById('user-greeting'); // Expecting null is fine, but logging it helps
+
+    if (!window.supabaseClient) {
+        console.error("Supabase Client not found! Make sure supabase-config.js is loaded.");
+        return;
+    }
+
     // 1. Check current session
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+    if (error) {
+        console.error("Error getting session:", error);
+    } else {
+        console.log("Session found:", !!session);
+    }
 
     const authButtons = document.getElementById('auth-buttons');
-    const userGreeting = document.getElementById('user-greeting');
+    // userGreeting already declared above
+
 
     if (session) {
         // User is logged in
