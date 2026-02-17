@@ -351,8 +351,22 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="content-loader.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
+    <script>
+        // Global Error Handler to debug on mobile/production
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            const container = document.getElementById('auth-buttons');
+            if (container) {
+                container.style.borderColor = 'red';
+                container.style.color = 'red';
+                container.innerHTML += `<br><strong>JS Error:</strong> ${msg} at line ${lineNo}`;
+            }
+            return false;
+        };
+    </script>
+    <script src="auth.js?v=3"></script>
+    <script src="content-loader.js"></script>
     <script src="library.js"></script>
     <script src="app.js"></script>
 </body>
