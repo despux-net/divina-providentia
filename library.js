@@ -16,53 +16,87 @@ let pageNumPending = null;
 pdfjsLib.GlobalWorkerOptions.workerSrc = LIBRARY_CONFIG.pdfWorkerSrc;
 
 // Load books from content.json and render grid
+// Load books from Supabase Database
 async function loadLibraryBooks() {
     const booksGrid = document.getElementById('booksGrid');
-    if (!booksGrid || !CONTENT.library) return;
+    if (!booksGrid) return;
 
-    const books = CONTENT.library.books || [];
+    try {
+        booksGrid.innerHTML = '<div class="loading-spinner"><p>Cargando biblioteca...</p></div>';
 
-    if (books.length === 0) {
-        booksGrid.innerHTML = '<p class="no-books">No hay libros disponibles en este momento.</p>';
-        return;
+        // Fetch from Supabase "books" table
+        const { data: books, error } = await supabaseClient
+            .from('books')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!books || books.length === 0) {
+            booksGrid.innerHTML = '<p class="no-books">No hay libros disponibles en este momento.</p>';
+            return;
+        }
+
+        booksGrid.innerHTML = books.map(book => `
+            <div class="book-card" data-book-id="${book.id}">
+              <div class="book-cover">
+                <img src="${book.cover_url || 'LOGOV4.png'}" alt="${book.title}" onerror="this.src='LOGOV4.png'">
+              </div>
+              <div class="book-info">
+                <h3 class="book-title">${book.title}</h3>
+                <p class="book-author">${book.author}</p>
+                <p class="book-description">${book.description || ''}</p>
+                <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
+                  📖 Leer Primeras ${LIBRARY_CONFIG.maxPages} Páginas
+                </button>
+              </div>
+            </div>
+          `).join('');
+
+    } catch (err) {
+        console.error('Error loading library:', err);
+        booksGrid.innerHTML = '<p class="error-msg">Error al cargar la biblioteca. Por favor recarga la página.</p>';
     }
-
-    booksGrid.innerHTML = books.map(book => `
-    <div class="book-card" data-book-id="${book.id}">
-      <div class="book-cover">
-        <img src="${book.cover}" alt="${book.title}" onerror="this.src='LOGOV4.png'">
-      </div>
-      <div class="book-info">
-        <h3 class="book-title">${book.title}</h3>
-        <p class="book-author">${book.author}</p>
-        <p class="book-description">${book.description}</p>
-        <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
-          📖 Leer Primeras ${LIBRARY_CONFIG.maxPages} Páginas
-        </button>
-      </div>
-    </div>
-  `).join('');
 }
 
 // Open PDF viewer modal
+// Open PDF viewer modal
 async function openBookViewer(bookId) {
-    const book = CONTENT.library.books.find(b => b.id === bookId);
-    if (!book) return;
+    // We need to get the book details. 
+    // Since we just rendered them, we could grab from DOM or fetch again. 
+    // For simplicity/reliability, we can fetch single or find in previously fetched list if we stored it.
+    // But since `loadLibraryBooks` doesn't store globally, let's fetch single for robustness 
+    // OR just use the title from the DOM if we want to be fast.
+    // BETTER: Let's fetch the single metadata record to be sure.
 
-    currentBook = book;
-    currentPage = 1;
+    try {
+        const { data: book, error } = await supabaseClient
+            .from('books')
+            .select('*')
+            .eq('id', bookId)
+            .single();
 
-    // Show modal
-    const overlay = document.getElementById('pdfViewerOverlay');
-    const modal = document.getElementById('pdfViewerModal');
-    const bookTitle = document.getElementById('pdfBookTitle');
+        if (error || !book) throw new Error('Libro no encontrado');
 
-    bookTitle.textContent = `${book.title} - ${book.author}`;
-    overlay.classList.add('open');
-    modal.classList.add('open');
+        currentBook = book;
+        currentPage = 1;
 
-    // Load PDF securely via Edge Function
-    await loadPDF(bookId);
+        // Show modal
+        const overlay = document.getElementById('pdfViewerOverlay');
+        const modal = document.getElementById('pdfViewerModal');
+        const bookTitle = document.getElementById('pdfBookTitle');
+
+        bookTitle.textContent = `${book.title} - ${book.author}`;
+        overlay.classList.add('open');
+        modal.classList.add('open');
+
+        // Load PDF securely via Edge Function
+        await loadPDF(bookId);
+
+    } catch (err) {
+        console.error("Error opening book:", err);
+        alert("Error al abrir el libro.");
+    }
 }
 
 // Load PDF from Supabase Edge Function (secure proxy)
@@ -82,7 +116,16 @@ async function loadPDF(bookId) {
         );
 
         if (!response.ok) {
-            throw new Error(`Error al cargar el libro: ${response.status}`);
+            let errorMessage = `Error ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    errorMessage = errorData.error;
+                }
+            } catch (e) {
+                // Could not parse JSON, use default status
+            }
+            throw new Error(errorMessage);
         }
 
         // Get max pages from response header
@@ -103,7 +146,7 @@ async function loadPDF(bookId) {
     } catch (error) {
         console.error('Error loading PDF:', error);
         document.getElementById('pageInfo').textContent = '❌ Error al cargar el libro';
-        alert('No se pudo cargar el libro. Por favor intenta más tarde.');
+        alert(`No se pudo cargar el libro: ${error.message}`);
     }
 }
 
@@ -198,13 +241,8 @@ function closePDFViewer() {
 
 // Initialize library when content is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait for content to be loaded
-    const checkContentLoaded = setInterval(() => {
-        if (CONTENT && CONTENT.library) {
-            clearInterval(checkContentLoaded);
-            loadLibraryBooks();
-        }
-    }, 100);
+    // Load books directly (Supabase)
+    loadLibraryBooks();
 
     // Setup event listeners
     document.getElementById('closePdfBtn')?.addEventListener('click', closePDFViewer);

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Productos Supabase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        h1 {
+            color: #d4af37;
+        }
+
+        .product {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .product img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid red;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid green;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <h1>🧪 Test de Conexión a Supabase</h1>
+    <div id="status">Cargando...</div>
+    <div id="products"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d3RhZmFjZHBkZ3VsemN3bnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MjkxNDksImV4cCI6MjA4MTQwNTE0OX0.6elrAvcsEAc0Jaj4P8-ZFLSWKi2cvzgoAYGlDxeR-8U';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function testConnection() {
+            const statusDiv = document.getElementById('status');
+            const productsDiv = document.getElementById('products');
+
+            try {
+                console.log('Conectando a Supabase...');
+
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log('Productos recibidos:', data);
+
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        <h2>✅ Conexión Exitosa</h2>
+                        <p>Se encontraron <strong>${data.length}</strong> productos en la base de datos</p>
+                    </div>
+                `;
+
+                if (data.length === 0) {
+                    productsDiv.innerHTML = '<p>No hay productos en la base de datos</p>';
+                    return;
+                }
+
+                productsDiv.innerHTML = '<h2>Productos:</h2>';
+
+                data.forEach(product => {
+                    const imageUrl = product.image
+                        ? `${SUPABASE_URL}/storage/v1/object/public/products/${product.image}`
+                        : null;
+
+                    productsDiv.innerHTML += `
+                        <div class="product">
+                            ${imageUrl
+                            ? `<img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">`
+                            : '<div style="width:150px;height:150px;background:#333;border-radius:8px;display:flex;align-items:center;justify-content:center;">Sin imagen</div>'
+                        }
+                            <div class="product-info">
+                                <h3>${product.name}</h3>
+                                <p><strong>ID:</strong> ${product.id}</p>
+                                <p><strong>Precio:</strong> $${product.price}</p>
+                                <p><strong>Categoría:</strong> ${product.category}</p>
+                                <p><strong>Imagen:</strong> ${product.image || 'No tiene'}</p>
+                                ${imageUrl ? `<p><strong>URL:</strong> <a href="${imageUrl}" target="_blank" style="color:#d4af37">Ver imagen</a></p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        <h2>❌ Error de Conexión</h2>
+                        <p><strong>Mensaje:</strong> ${error.message}</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        testConnection();
+    </script>
+</body>
+
+</html>

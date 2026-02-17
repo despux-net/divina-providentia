@@ -1,23 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+// Direct fetch implementation for less dependency issues
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Configuration for books with Google Drive URLs
-// NOTE: Keep these Drive URLs PRIVATE - never expose to client
-const BOOKS_CONFIG: Record<string, { driveUrl: string; maxPages: number }> = {
-    // Example book - replace with real Google Drive URLs
-    "QUANTA CURA PIO IX": {
-        // ID extracted from: https://drive.google.com/file/d/1ApP6joys40VO2hHZyZbvuvLKp_E64Azt/view?usp=drive_link
-        driveUrl: "https://drive.google.com/file/d/1_Iw7CVF1Nftc0ebqsrzdMUOp_d2Bn5fl",
-        maxPages: 15
-    },
-    // Add more books here as needed
-    // "book-id-2": { driveUrl: "...", maxPages: 15 }
-}
 
 serve(async (req) => {
     // Handle CORS preflight requests
@@ -29,59 +17,84 @@ serve(async (req) => {
         const url = new URL(req.url)
         const bookId = url.searchParams.get('id')
 
-        // Validate book ID
-        if (!bookId || !BOOKS_CONFIG[bookId]) {
+        if (!bookId) {
             return new Response(
-                JSON.stringify({ error: 'Book not found' }),
-                {
-                    status: 404,
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-                }
+                JSON.stringify({ error: 'Book ID required' }),
+                { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             )
         }
 
-        const book = BOOKS_CONFIG[bookId]
+        // 1. Fetch book metadata from DB using REST API
+        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+        const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 
-        console.log(`📖 Serving book: ${bookId}`)
+        const queryUrl = `${supabaseUrl}/rest/v1/books?id=eq.${bookId}&select=drive_file_id,max_pages_preview`;
 
-        // Fetch PDF from Google Drive
-        const driveResponse = await fetch(book.driveUrl)
+        console.log(`Fetching from DB: ${queryUrl}`);
+
+        const dbResponse = await fetch(queryUrl, {
+            headers: {
+                'apikey': supabaseKey,
+                'Authorization': `Bearer ${supabaseKey}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!dbResponse.ok) {
+            const errorText = await dbResponse.text();
+            console.error('DB Error:', errorText);
+            return new Response(
+                JSON.stringify({ error: 'Database error', details: errorText }),
+                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
+
+        const dbData = await dbResponse.json();
+        const book = dbData && dbData.length > 0 ? dbData[0] : null;
+
+        if (!book) {
+            console.error('Book not found in DB');
+            return new Response(
+                JSON.stringify({ error: 'Book not found (REST)', bookId }),
+                { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
+
+        const driveId = book.drive_file_id
+        const maxPages = book.max_pages_preview || 15;
+
+        console.log(`📖 Serving book: ${bookId} (Drive ID: ${driveId})`)
+
+        // 2. Fetch PDF from Google Drive
+        const driveUrl = `https://drive.google.com/uc?export=download&id=${driveId}`
+        const driveResponse = await fetch(driveUrl)
 
         if (!driveResponse.ok) {
             console.error(`Failed to fetch from Drive: ${driveResponse.status}`)
             return new Response(
-                JSON.stringify({ error: 'Failed to load book from source' }),
-                {
-                    status: 500,
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-                }
+                JSON.stringify({ error: `Failed to load book from source (Drive: ${driveResponse.status})` }),
+                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             )
         }
 
-        // Get PDF data
+        // 3. Return PDF
         const pdfBuffer = await driveResponse.arrayBuffer()
 
-        // Return PDF with proper headers
-        // Note: The 15-page limit will be enforced in the frontend PDF.js viewer
-        // This keeps the Edge Function simple and fast
         return new Response(pdfBuffer, {
             headers: {
                 ...corsHeaders,
                 'Content-Type': 'application/pdf',
                 'Content-Disposition': 'inline',
-                'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
-                'X-Max-Pages': book.maxPages.toString() // Send limit to client
+                'Cache-Control': 'public, max-age=3600',
+                'X-Max-Pages': maxPages.toString()
             }
         })
 
     } catch (error) {
         console.error('Error in get-book-preview:', error)
         return new Response(
-            JSON.stringify({ error: 'Internal server error' }),
-            {
-                status: 500,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            }
+            JSON.stringify({ error: error instanceof Error ? error.message : 'Internal server error' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
     }
 })

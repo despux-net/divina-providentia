@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug DB</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <h1>Debug Supabase DB</h1>
+    <div id="output">Running...</div>
+    <script>
+        const SUPABASE_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co';
+        // Same anon key as in config
+        const k1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d3RhZmFjZHBkZ3VsemN3bnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MjkxNDksImV4cCI6MjA4MTQwNTE0OX0';
+        const k2 = '.6elrAvcsEAc0Jaj4P8-ZFLSWKi2cvzgoAYGlDxeR-8U';
+        const SUPABASE_ANON_KEY = k1 + k2;
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function test() {
+            const out = document.getElementById('output');
+
+            // 1. List all books
+            const { data: allBooks, error: listError } = await supabase.from('books').select('*');
+
+            if (listError) {
+                out.innerHTML += `<p style="color:red">List Error: ${JSON.stringify(listError)}</p>`;
+            } else {
+                out.innerHTML += `<p style="color:green">Found ${allBooks.length} books.</p>`;
+                allBooks.forEach(b => {
+                    out.innerHTML += `<li>${b.id} - ${b.title}</li>`;
+                });
+            }
+
+            // 2. Fetch specific book
+            const targetId = '93f26c9d-dd25-426a-a4d0-3db175026960';
+            const { data: book, error: singleError } = await supabase.from('books').select('*').eq('id', targetId).single();
+
+            if (singleError) {
+                out.innerHTML += `<p style="color:red">Reference ID fetch error: ${JSON.stringify(singleError)}</p>`;
+            } else {
+                out.innerHTML += `<p style="color:green">Found target book: ${book.title}</p>`;
+            }
+        }
+
+        test();
+    </script>
+</body>
+
+</html>
