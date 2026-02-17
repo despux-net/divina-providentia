@@ -636,44 +636,36 @@ function closeCheckoutAndReset() {
 
 const jungQuotes = [
     {
-        text: "Quien mira hacia afuera, sueña; quien mira hacia adentro, despierta.",
-        source: "Cartas (1916)"
+        text: "La gente hará cualquier cosa, por absurda que sea, para evitar enfrentarse a su propia alma. Uno no se ilumina imaginando figuras de luz, sino haciendo consciente la oscuridad. El procedimiento es desagradable, por lo tanto, no es popular.",
+        source: "Psicología y Alquimia (1944)"
     },
     {
-        text: "Nadie se ilumina imaginando figuras de luz, sino haciendo consciente la oscuridad.",
-        source: "El Secreto de la Flor de Oro"
+        text: "El hombre moderno no comprende cuánto su 'racionalismo' (que ha destruido su capacidad para responder a los símbolos e ideas luminosas) le ha puesto a merced del inframundo psíquico. Se ha librado de la 'superstición', pero en el proceso ha perdido sus valores espirituales hasta un grado positivamente peligroso.",
+        source: "El Hombre y sus Símbolos (1964)"
     },
     {
-        text: "Todo lo que nos irrita de los demás nos puede llevar a un entendimiento de nosotros mismos.",
+        text: "Si eres una persona dotada, no significa que hayas ganado algo. Significa que tienes algo que devolver. La individuación no encierra al hombre en sí mismo, sino que recoge al individuo para que pueda cumplir su función colectiva de manera más completa.",
+        source: "El Desarrollo de la Personalidad"
+    },
+    {
+        text: "Desafortunadamente, no hay duda de que el hombre es, en general, menos bueno de lo que se imagina o quiere ser. Todo el mundo lleva una sombra, y cuanto menos se encarna en la vida consciente del individuo, más negra y densa es... Si se reprime y aísla de la conciencia, nunca se corrige.",
+        source: "Psicología y Religión (1938)"
+    },
+    {
+        text: "La soledad no proviene de no tener gente a tu alrededor, sino de no poder comunicar las cosas que parecen importantes para uno mismo, o de mantener ciertos puntos de vista que otros encuentran inadmisibles. El sentimiento de un destino superior siempre implica una cierta soledad.",
         source: "Memorias, Sueños, Reflexiones"
     },
     {
-        text: "El encuentro con uno mismo es una de las experiencias más desagradables a las que se enfrenta el ser humano.",
+        text: "No soy lo que me ha sucedido, soy lo que elijo ser. El encuentro con uno mismo es, al principio, el encuentro con la propia sombra. Es un pasaje estrecho, una puerta angosta, cuya dolorosa constricción nadie se ahorra si desciende al pozo profundo.",
         source: "Arquetipos e Inconsciente Colectivo"
     },
     {
-        text: "La vida no vivida es una enfermedad de la que se puede morir.",
-        source: "La Psicología de la Transferencia"
-    },
-    {
-        text: "Yo no soy lo que me sucedió, yo soy lo que elegí ser.",
-        source: "Obras Completas"
-    },
-    {
-        text: "Donde reina el amor, no hay voluntad de poder; y donde predomina el poder, el amor falta.",
+        text: "Donde reina el amor, no hay voluntad de poder; y donde predomina el poder, el amor falta. El uno es la sombra del otro. El hombre que no ha pasado por el infierno de sus pasiones no las ha superado nunca.",
         source: "Sobre la Psicología del Inconsciente"
     },
     {
-        text: "Hasta que lo inconsciente no se haga consciente, el subconsciente seguirá dirigiendo tu vida y tú lo llamarás destino.",
-        source: "Aion"
-    },
-    {
-        text: "La soledad no proviene de no tener gente a tu alrededor, sino de no poder comunicar las cosas que parecen importantes para uno mismo.",
-        source: "Memorias, Sueños, Reflexiones"
-    },
-    {
-        text: "El privilegio de una vida es convertirse en quien realmente eres.",
-        source: "El Desarrollo de la Personalidad"
+        text: "La neurosis es siempre un sustituto del sufrimiento legítimo. El hombre se enferma porque no está dispuesto a aceptar su propio destino legítimo, y en su lugar trata de caminar por senderos falsos y evadir el conflicto esencial de su vida.",
+        source: "Obras Completas, Vol. 11"
     }
 ];
 
