@@ -405,9 +405,9 @@ p {
   display: flex;
   justify-content: center;
   margin-bottom: var(--space-md);
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUp 1s ease forwards;
+  /* Animación eliminada para asegurar visibilidad inmediata */
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .crest-image {
