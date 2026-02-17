@@ -517,43 +517,55 @@ async function handleCheckout(e) {
 
     const submitBtn = e.target.querySelector('.submit-order-btn');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Procesando...';
+    submitBtn.textContent = 'Enviando...';
 
     const formData = new FormData(e.target);
     const totalPrice = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     const orderData = {
-        customer_name: formData.get('customerName'),
-        customer_email: formData.get('customerEmail'),
-        customer_phone: formData.get('customerPhone') || '',
+        customerName: formData.get('customerName'),
+        customerPhone: formData.get('customerPhone'),
+        customerMessage: formData.get('customerMessage') || '',
         items: state.cart.map(item => ({
-            id: item.id,
             name: item.name,
             price: item.price,
             quantity: item.quantity
         })),
-        total: totalPrice,
-        status: 'pending'
+        total: totalPrice
     };
 
-    // Try to submit to Supabase
-    const { data, error } = await window.SupabaseAPI.createOrder(orderData);
+    try {
+        // Send to Telegram via Edge Function
+        const response = await fetch(
+            'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/send-telegram-order',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            }
+        );
 
-    if (error) {
-        console.error('Error creating order:', error);
-        alert('Hubo un error al procesar tu pedido. Por favor, intenta de nuevo.');
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Error al enviar el pedido');
+        }
+
+        // Success!
+        showSuccessMessage('TG-' + Date.now());
+
+        // Clear cart
+        state.cart = [];
+        updateCart();
+        saveCartToStorage();
+    } catch (error) {
+        console.error('Error sending order:', error);
+        alert('Hubo un error al enviar tu pedido. Por favor, intenta de nuevo o contáctanos directamente.');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Confirmar Pedido';
-        return;
+        submitBtn.textContent = 'Enviar Pedido';
     }
-
-    // Success!
-    showSuccessMessage(data ? data[0].id : 'DEMO-' + Date.now());
-
-    // Clear cart
-    state.cart = [];
-    updateCart();
-    saveCartToStorage();
 }
 
 function showSuccessMessage(orderId) {
