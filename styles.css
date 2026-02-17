@@ -1439,6 +1439,10 @@ p {
   border: 1px solid var(--color-divine-gold);
   width: 90%;
   max-width: 450px;
+  max-height: 90vh;
+  /* Prevent overflowing screen */
+  overflow-y: auto;
+  /* Enable scrolling */
   position: relative;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   border-radius: var(--radius-md);
