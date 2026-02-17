@@ -24,6 +24,22 @@ async function loadLibraryBooks() {
     try {
         booksGrid.innerHTML = '<div class="loading-spinner"><p>Cargando biblioteca...</p></div>';
 
+        // Check validation status from window or fetch it
+        let isValidated = window.isUserValidated || false;
+
+        // If auth isn't resolved yet, wait a bit or try to get session
+        if (!isValidated && window.supabaseClient) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                const { data: profile } = await supabaseClient
+                    .from('profiles')
+                    .select('is_validated')
+                    .eq('id', session.user.id)
+                    .single();
+                isValidated = profile?.is_validated || false;
+            }
+        }
+
         // Fetch from Supabase "books" table
         const { data: books, error } = await supabaseClient
             .from('books')
@@ -37,7 +53,14 @@ async function loadLibraryBooks() {
             return;
         }
 
-        booksGrid.innerHTML = books.map(book => `
+        booksGrid.innerHTML = books.map(book => {
+            const downloadBtn = isValidated ? `
+                <button class="download-book-btn" onclick="downloadBook('${book.id}', '${book.title.replace(/'/g, "\\'")}')">
+                    📥 Descargar Libro Completo
+                </button>
+            ` : '';
+
+            return `
             <div class="book-card" data-book-id="${book.id}">
               <div class="book-cover">
                 <img src="${book.cover_url || 'LOGOV4.png'}" alt="${book.title}" onerror="this.src='LOGOV4.png'">
@@ -46,12 +69,15 @@ async function loadLibraryBooks() {
                 <h3 class="book-title">${book.title}</h3>
                 <p class="book-author">${book.author}</p>
                 <p class="book-description">${book.description || ''}</p>
-                <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
-                  📖 Leer Primeras ${LIBRARY_CONFIG.maxPages} Páginas
-                </button>
+                <div class="book-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
+                      📖 Leer Primeras ${LIBRARY_CONFIG.maxPages} Páginas
+                    </button>
+                    ${downloadBtn}
+                </div>
               </div>
             </div>
-          `).join('');
+          `}).join('');
 
     } catch (err) {
         console.error('Error loading library:', err);
@@ -238,6 +264,47 @@ function closePDFViewer() {
     currentPage = 1;
     pdfDoc = null;
 }
+
+// Download full book (for validated users)
+async function downloadBook(bookId, title) {
+    try {
+        if (window.showNotification) {
+            showNotification(`Iniciando descarga de "${title}"...`, '📥');
+        } else {
+            console.log('Descargando...');
+        }
+
+        const response = await fetch(
+            `${SUPABASE_URL}/functions/v1/get-book-preview?id=${bookId}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            }
+        );
+
+        if (!response.ok) throw new Error('Error al descargar');
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `${title}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+        if (window.showNotification) {
+            showNotification('Descarga completada con éxito', '✅');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error al procesar la descarga. Por favor contacta a un moderador.');
+    }
+}
+
+window.downloadBook = downloadBook;
 
 // Initialize library when content is loaded
 document.addEventListener('DOMContentLoaded', () => {
