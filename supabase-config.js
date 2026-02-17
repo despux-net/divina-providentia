@@ -185,3 +185,5 @@ const SupabaseAPI = {
 // Export for use in other scripts
 window.SupabaseAPI = SupabaseAPI;
 window.supabaseClient = supabaseClient;
+window.SUPABASE_URL = SUPABASE_URL;
+window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;

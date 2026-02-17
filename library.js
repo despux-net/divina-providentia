@@ -73,10 +73,10 @@ async function loadPDF(bookId) {
 
         // Call secure Edge Function - client never sees Google Drive URL
         const response = await fetch(
-            `${supabaseUrl}/functions/v1/get-book-preview?id=${bookId}`,
+            `${SUPABASE_URL}/functions/v1/get-book-preview?id=${bookId}`,
             {
                 headers: {
-                    'Authorization': `Bearer ${supabaseAnonKey}`
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                 }
             }
         );
