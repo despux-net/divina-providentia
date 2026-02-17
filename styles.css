@@ -962,6 +962,10 @@ p {
   flex: 1;
   overflow-y: auto;
   padding: var(--space-md);
+  /* Ensure footer stays visible on mobile */
+  max-height: calc(100vh - 200px);
+  /* Account for header + footer */
+  min-height: 200px;
 }
 
 .cart-item {

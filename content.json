@@ -1,0 +1,98 @@
+{
+    "site": {
+        "title": "Divina Providentia | La Milicia del Espíritu",
+        "description": "Arsenal estético para la milicia del espíritu. La manifestación del Orden Eterno frente al caos de la modernidad.",
+        "lang": "es"
+    },
+    "navigation": {
+        "links": {
+            "genesis": "Génesis",
+            "dogma": "Dogma",
+            "arsenal": "Arsenal",
+            "alliance": "Alianza"
+        }
+    },
+    "hero": {
+        "title": "Divina Providentia",
+        "subtitle": "Rechaza la Tiranía de lo Efímero. Revístete de la Inmarcesible Armadura de la Trascendencia.",
+        "cta_button": "Asumir el Compromiso"
+    },
+    "philosophy": {
+        "section_title": "Dogmas de Resistencia",
+        "section_subtitle": "Contra la Disolución del Mundo Moderno",
+        "cards": {
+            "hierarchy": {
+                "title": "Jerarquía",
+                "description": "El orden natural exige la subordinación de la materia al espíritu. Cada hebra es una disciplina; cada prenda, un acto de obediencia a la Ley Eterna que gobierna los astros y las conciencias."
+            },
+            "austerity": {
+                "title": "Austeridad",
+                "description": "Despreciamos el adorno superfluo del siglo. La verdadera nobleza reside en la renuncia y en la severidad de la forma que refleja, como un espejo pulido, la Verdad inmutable."
+            },
+            "tradition": {
+                "title": "Tradición",
+                "description": "No innovamos; restauramos. Portamos sobre nuestros hombros la herencia de los siglos, un baluarte inexpugnable contra la barbarie del progreso sin Dios."
+            }
+        },
+        "jung_book": {
+            "title": "Códice de la Psique",
+            "intro": "Fragmentos recuperados del Libro Rojo y otras obras de C.G. Jung para la integración del Ser.",
+            "prev_button_label": "Página anterior",
+            "next_button_label": "Página siguiente"
+        }
+    },
+    "lookbook": {
+        "section_title": "Nuestros Modelos",
+        "loading_text": "Cargando galería...",
+        "prev_button": "Anterior",
+        "next_button": "Siguiente"
+    },
+    "products": {
+        "section_title": "Arsenal del Espíritu",
+        "section_subtitle": "Instrumentos para la Batalla Cultural y Metafísica",
+        "loading_text": "Invocando los Artefactos...",
+        "filters": {
+            "all": "La Hueste Completa",
+            "vestments": "Vestiduras Sagradas",
+            "headwear": "Yelmos de la Fe",
+            "accessories": "Reliquias Menores",
+            "prints": "Testimonios Gráficos"
+        }
+    },
+    "cart": {
+        "title": "Tu Arsenal",
+        "empty_message": "Tu arsenal está vacío",
+        "total_label": "Total:",
+        "checkout_button": "Reclamar la Herencia",
+        "close_button_label": "Cerrar carrito"
+    },
+    "checkout": {
+        "title": "Confirmar la Alianza",
+        "summary_title": "Inventario de Batalla",
+        "total_label": "Total:",
+        "form": {
+            "name_label": "Nombre Completo (Para los registros)",
+            "name_placeholder": "Tu nombre",
+            "phone_label": "Teléfono / WhatsApp",
+            "phone_placeholder": "+1 234 567 8900",
+            "message_label": "Mensaje (Opcional)",
+            "message_placeholder": "Déjanos un mensaje, instrucciones especiales, dirección de envío, etc.",
+            "submit_button": "Consumar el Pacto"
+        },
+        "close_button_label": "Cerrar checkout"
+    },
+    "footer": {
+        "brand": {
+            "title": "Divina Providentia",
+            "description": "No somos una marca, somos una trinchera. En un mundo en ruinas, la elegancia es la primera forma de resistencia contra la vulgaridad reinante."
+        },
+        "menu_title": "Orden de Batalla",
+        "contact": {
+            "title": "Comunicaciones",
+            "email": "info@divinaprovidentia.com",
+            "phone": "+1 (555) 123-4333",
+            "hours": "Horario: Lun-Vie 9:00-18:00"
+        },
+        "copyright": "© 2026 Divina Providentia. Ad Maiorem Dei Gloriam. Todos los derechos reservados."
+    }
+}

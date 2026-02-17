@@ -35,7 +35,9 @@ SYNC_INTERVAL = 30  # Seconds between sheet syncs
 # Paths
 SCRIPT_DIR = Path(__file__).parent
 IMAGES_FOLDER = SCRIPT_DIR / "product-images"
+PORTADA_FOLDER = SCRIPT_DIR / "PORTADA"
 PROCESSED_FILE = SCRIPT_DIR / ".processed-images.json"
+PROCESSED_LOOKBOOK_FILE = SCRIPT_DIR / ".processed-lookbook.json"
 
 # Supported image formats
 SUPPORTED_FORMATS = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
@@ -81,6 +83,26 @@ class ProcessedImages:
 processed = ProcessedImages()
 
 # --- Google Sheets Integration ---
+
+def parse_yes_no(value):
+    """Parse yes/no from various formats (multilingual, case-insensitive, accent-insensitive)"""
+    if not value:
+        return False
+    
+    # Convert to string and normalize
+    text = str(value).strip().lower()
+    
+    # Remove accents (á -> a, í -> i, etc.)
+    import unicodedata
+    text = unicodedata.normalize('NFD', text)
+    text = ''.join(char for char in text if unicodedata.category(char) != 'Mn')
+    
+    # YES patterns: s, si, sí, y, yes, true, 1, etc.
+    yes_patterns = {'s', 'si', 'y', 'yes', 'true', '1', 'ok', 'on'}
+    
+    # Check if starts with any yes pattern or is exactly a yes pattern
+    return text in yes_patterns or any(text.startswith(p) for p in yes_patterns)
+
 
 def get_sheet_client():
     if not GOOGLE_SHEETS_AVAILABLE:
@@ -151,12 +173,10 @@ def sync_from_sheet(client):
             # Disponible = SI -> available=True (Add to cart enabled)
             
             if 'Publicar' in row:
-                is_published = str(row['Publicar']).lower() in ['si', 'yes', 'true', '1']
-                updates['published'] = is_published
+                updates['published'] = parse_yes_no(row['Publicar'])
             
             if 'Disponible' in row:
-                is_available = str(row['Disponible']).lower() in ['si', 'yes', 'true', '1']
-                updates['available'] = is_available
+                updates['available'] = parse_yes_no(row['Disponible'])
 
             if updates:
                 update_product_in_db(product_id, updates)
@@ -197,6 +217,16 @@ def get_mime_type(extension):
     mime_types = {'.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.gif': 'image/gif', '.webp': 'image/webp'}
     return mime_types.get(extension.lower(), 'application/octet-stream')
 
+def check_storage_exists(bucket, storage_path):
+    """Check if a file exists in Supabase Storage"""
+    headers = {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': f'Bearer {SUPABASE_ANON_KEY}'
+    }
+    url = f"{SUPABASE_URL}/storage/v1/object/{bucket}/{storage_path}"
+    response = requests.head(url, headers=headers)
+    return response.status_code == 200
+
 def update_product_in_db(product_id, data):
     headers = {
         'apikey': SUPABASE_ANON_KEY,
@@ -225,6 +255,12 @@ def upload_to_storage(file_path):
     file_ext = file_path.suffix
     storage_path = f"{int(time.time() * 1000)}{file_ext}"
     
+    # Check if already exists (shouldn't happen with timestamp, but just in case)
+    if check_storage_exists('products', storage_path):
+        print(f"   ℹ️  File already exists in storage, skipping upload")
+        public_url = f"{SUPABASE_URL}/storage/v1/object/public/products/{storage_path}"
+        return storage_path, public_url
+    
     print(f"   ⬆️  Uploading to Supabase Storage...")
     with open(file_path, 'rb') as f:
         file_data = f.read()
@@ -240,6 +276,11 @@ def upload_to_storage(file_path):
     if response.status_code in [200, 201]:
         public_url = f"{SUPABASE_URL}/storage/v1/object/public/products/{storage_path}"
         print(f"   ✅ Uploaded: {public_url}")
+        return storage_path, public_url
+    elif response.status_code == 409:
+        # Duplicate error - file already exists
+        print(f"   ℹ️  File already exists (409), using existing URL")
+        public_url = f"{SUPABASE_URL}/storage/v1/object/public/products/{storage_path}"
         return storage_path, public_url
     else:
         raise Exception(f"Upload failed: {response.text}")
@@ -315,6 +356,117 @@ class ImageHandler(FileSystemEventHandler):
         if event.is_directory: return
         process_deletion(Path(event.src_path).name)
 
+# --- Lookbook Functions ---
+
+def upload_lookbook_image(file_path, file_name):
+    """Upload lookbook image to Supabase Storage and create DB entry"""
+    try:
+        # Check if file already exists in storage
+        if check_storage_exists('lookbook', file_name):
+            print(f"   ℹ️  Lookbook image '{file_name}' already exists in storage, skipping upload")
+            return True
+        
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+        
+        # Upload to Supabase Storage (lookbook bucket)
+        headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Content-Type': get_mime_type(file_path.suffix)
+        }
+        
+        storage_url = f"{SUPABASE_URL}/storage/v1/object/lookbook/{file_name}"
+        response = requests.post(storage_url, headers=headers, data=file_data)
+        
+        if response.status_code == 409:
+            # Duplicate - file already exists
+            print(f"   ℹ️  Lookbook image '{file_name}' already exists (409), continuing...")
+            # Continue to DB insert with existing file
+        elif response.status_code not in [200, 201]:
+            print(f"   ❌ Upload failed: {response.text}")
+            return False
+        
+        # Get public URL
+        image_url = f"{SUPABASE_URL}/storage/v1/object/public/lookbook/{file_name}"
+        
+        # Insert into lookbook_images table
+        db_url = f"{SUPABASE_URL}/rest/v1/lookbook_images"
+        data = {
+            'image_url': image_url,
+            'display_order': 0
+        }
+        
+        db_response = requests.post(db_url, headers=headers, json=data)
+        
+        if db_response.status_code in [200, 201]:
+            print(f"   ✅ Lookbook image uploaded: {file_name}")
+            return True
+        elif db_response.status_code == 409:
+            # Duplicate in database - image already exists
+            print(f"   ℹ️  Lookbook entry already exists in database (409), skipping...")
+            return True
+        else:
+            print(f"   ⚠️  DB insert warning: {db_response.text}")
+            # Still return True since storage upload succeeded
+            return True
+
+            
+    except Exception as e:
+        print(f"   ❌ Error uploading lookbook: {e}")
+        return False
+
+def sync_lookbook_folder():
+    """Sync PORTADA folder with Supabase lookbook (upload new, delete removed)"""
+    if not PORTADA_FOLDER.exists():
+        return
+    
+    # Load processed lookbook images
+    processed_lookbook = {}
+    if PROCESSED_LOOKBOOK_FILE.exists():
+        with open(PROCESSED_LOOKBOOK_FILE, 'r') as f:
+            processed_lookbook = json.load(f)
+    
+    # Get current files in PORTADA
+    current_files = {f.name for f in PORTADA_FOLDER.iterdir() if f.suffix.lower() in SUPPORTED_FORMATS}
+    
+    # Find deleted files (in processed but not in current folder)
+    deleted_files = set(processed_lookbook.keys()) - current_files
+    
+    # Delete removed files from Supabase
+    for file_name in deleted_files:
+        print(f"\n🗑️  Detected deletion: {file_name}")
+        try:
+            # Delete from storage
+            headers = {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': f'Bearer {SUPABASE_ANON_KEY}'
+            }
+            storage_url = f"{SUPABASE_URL}/storage/v1/object/lookbook/{file_name}"
+            requests.delete(storage_url, headers=headers)
+            
+            # Delete from database (by image_url)
+            image_url = f"{SUPABASE_URL}/storage/v1/object/public/lookbook/{file_name}"
+            db_url = f"{SUPABASE_URL}/rest/v1/lookbook_images?image_url=eq.{image_url}"
+            requests.delete(db_url, headers=headers)
+            
+            # Remove from processed tracking
+            del processed_lookbook[file_name]
+            print(f"   ✅ Deleted from Supabase: {file_name}")
+        except Exception as e:
+            print(f"   ⚠️  Error deleting {file_name}: {e}")
+    
+    # Upload new files
+    for file_name in current_files:
+        if file_name not in processed_lookbook:
+            file_path = PORTADA_FOLDER / file_name
+            if upload_lookbook_image(file_path, file_name):
+                processed_lookbook[file_name] = True
+    
+    # Save processed state
+    with open(PROCESSED_LOOKBOOK_FILE, 'w') as f:
+        json.dump(processed_lookbook, f, indent=2)
+
 def main():
     print("=" * 60)
     print("🏛️  DIVINA PROVIDENTIA - SENTINEL SYSTEM")
@@ -344,6 +496,10 @@ def main():
     print("✨ Sentinel is Active. Press Ctrl+C to stop.\n")
     
     last_sync = 0
+    last_lookbook_sync = 0
+    
+    # Initial lookbook sync
+    sync_lookbook_folder()
     
     try:
         while True:
@@ -352,6 +508,11 @@ def main():
             if sheet_client and (time.time() - last_sync > SYNC_INTERVAL):
                 sync_from_sheet(sheet_client)
                 last_sync = time.time()
+            
+            # Periodic Lookbook Sync (every 60 seconds)
+            if time.time() - last_lookbook_sync > 60:
+                sync_lookbook_folder()
+                last_lookbook_sync = time.time()
                 
     except KeyboardInterrupt:
         print("\n👋 Stopping Sentinel...")
