@@ -1,0 +1,219 @@
+
+// Auth logic for Divina Providentia Library
+
+// Helper to get form data
+function getFormData(formId) {
+    const form = document.getElementById(formId);
+    const formData = new FormData(form);
+    return Object.fromEntries(formData.entries());
+}
+
+// Sign Up
+async function handleSignUp(event) {
+    event.preventDefault();
+
+    const data = getFormData('registerForm');
+    const submitBtn = document.getElementById('registerSubmitBtn');
+    const originalText = submitBtn.textContent;
+
+    submitBtn.textContent = 'Procesando...';
+    submitBtn.disabled = true;
+
+    try {
+        // 1. Sign up user
+        const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+            email: data.email,
+            password: data.password,
+            options: {
+                data: {
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    country: data.country,
+                    age: parseInt(data.age),
+                    message: data.message // Stored in metadata initially as backup
+                }
+            }
+        });
+
+        if (authError) throw authError;
+
+        if (authData.user) {
+            // 2. Create/Update Profile with additional details
+            // Note: Users trigger might handle this, but we explicitly update to be sure
+            const { error: profileError } = await supabaseClient
+                .from('profiles')
+                .update({
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    country: data.country,
+                    age: parseInt(data.age),
+                    message_to_moderators: data.message,
+                    is_validated: false // Default to false
+                })
+                .eq('id', authData.user.id);
+
+            // If update fails (e.g. race condition with trigger), we might want to try insert, 
+            // but for now let's assume the auth trigger or upsert works. 
+            // Actually, best to use upsert just in case.
+            const { error: upsertError } = await supabaseClient
+                .from('profiles')
+                .upsert({
+                    id: authData.user.id,
+                    email: data.email,
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    country: data.country,
+                    age: parseInt(data.age),
+                    message_to_moderators: data.message,
+                    updated_at: new Date()
+                });
+
+            if (upsertError) {
+                console.error("Profile update error:", upsertError);
+                // Continue anyway, auth was successful
+            }
+
+            alert('Registro exitoso. Tus credenciales están siendo validadas por nuestros moderadores.');
+            closeModal('registerModal');
+            // Reload to update UI state
+            window.location.reload();
+        }
+
+    } catch (error) {
+        console.error('Registration error:', error);
+        alert(`Error al registrarse: ${error.message}`);
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Sign In
+async function handleSignIn(event) {
+    event.preventDefault();
+
+    const data = getFormData('loginForm');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+    const originalText = submitBtn.textContent;
+
+    submitBtn.textContent = 'Iniciando...';
+    submitBtn.disabled = true;
+
+    try {
+        const { data: authData, error } = await supabaseClient.auth.signInWithPassword({
+            email: data.email,
+            password: data.password
+        });
+
+        if (error) throw error;
+
+        // Check validation status
+        if (authData.user) {
+            console.log("Logged in user:", authData.user);
+            closeModal('loginModal');
+            window.location.reload(); // Refresh to update library view
+        }
+
+    } catch (error) {
+        console.error('Login error:', error);
+        alert(`Error al iniciar sesión: ${error.message}`);
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Sign Out
+async function handleSignOut() {
+    try {
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) throw error;
+        window.location.reload();
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error al cerrar sesión');
+    }
+}
+
+
+// UI Helpers
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Initialize Auth UI
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Check current session
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    const authButtons = document.getElementById('auth-buttons');
+    const userGreeting = document.getElementById('user-greeting');
+
+    if (session) {
+        // User is logged in
+        // Get profile to check validation
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+        const isValidated = profile?.is_validated;
+        const displayName = profile?.first_name || session.user.email;
+
+        authButtons.innerHTML = `
+            <button onclick="handleSignOut()" class="cta-button" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Cerrar Sesión</button>
+        `;
+
+        // Show validation status message if NOT validated
+        const libraryHeader = document.querySelector('#biblioteca .section-header');
+        if (!isValidated) {
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'auth-warning';
+            warningDiv.innerHTML = `
+                <p><strong>Estado: Pendiente de Validación</strong></p>
+                <p>Tus credenciales están siendo revisadas por nuestros moderadores. Tienes acceso limitado a la biblioteca.</p>
+             `;
+            libraryHeader.appendChild(warningDiv);
+        } else {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'auth-success';
+            successDiv.innerHTML = `
+               <p><strong>Bienvenido, ${displayName}</strong></p>
+               <p>Tienes acceso completo a la Biblioteca Sagrada.</p>
+            `;
+            libraryHeader.appendChild(successDiv);
+        }
+
+    } else {
+        // User is guest
+        authButtons.innerHTML = `
+            <button onclick="openModal('loginModal')" class="cta-button" style="background: transparent; border: 1px solid var(--color-sacred-purple); color: var(--color-sacred-purple); margin-right: 0.5rem;">Entrar</button>
+            <button onclick="openModal('registerModal')" class="cta-button">Registrarse</button>
+        `;
+
+        const libraryHeader = document.querySelector('#biblioteca .section-header');
+        const guestDiv = document.createElement('div');
+        guestDiv.className = 'auth-warning';
+        guestDiv.innerHTML = `
+            <p><strong>Acceso Restringido</strong></p>
+            <p>Se requiere registro y validación para acceder al contenido completo.</p>
+        `;
+        libraryHeader.appendChild(guestDiv);
+    }
+
+    // Attach Event Listeners to Forms
+    document.getElementById('registerForm')?.addEventListener('submit', handleSignUp);
+    document.getElementById('loginForm')?.addEventListener('submit', handleSignIn);
+
+    // Close modals on outside click
+    window.onclick = function (event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.style.display = "none";
+        }
+    }
+});
