@@ -34,17 +34,16 @@
             <ul class="nav-links">
                 <li><a href="#inicio">Génesis</a></li>
                 <li><a href="#filosofia">Dogma</a></li>
+                <li><a href="#biblioteca">Biblioteca</a></li>
                 <li><a href="#tienda">Arsenal</a></li>
                 <li><a href="#contacto">Alianza</a></li>
+                <li>
+                    <button class="cart-button" id="cartButton" aria-label="Carrito de compras">
+                        🛒
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </li>
             </ul>
-            <button class="cart-button" id="cartButton" aria-label="Carrito de compras">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-                <span class="cart-count" id="cartCount">0</span>
-            </button>
             <button class="mobile-menu-button" aria-label="Menú móvil">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -142,6 +141,22 @@
                 </div>
                 <button class="carousel-nav prev" onclick="prevSlide()" aria-label="Anterior">‹</button>
                 <button class="carousel-nav next" onclick="nextSlide()" aria-label="Siguiente">›</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Library Section -->
+    <section class="library section" id="biblioteca">
+        <div class="container">
+            <div class="section-header">
+                <h2>Biblioteca Sagrada</h2>
+                <p>Textos Fundamentales para la Formación del Espíritu</p>
+            </div>
+
+            <div class="books-grid" id="booksGrid">
+                <div class="loading-spinner">
+                    <p>Cargando biblioteca...</p>
+                </div>
             </div>
         </div>
     </section>
@@ -281,9 +296,31 @@
         </div>
     </div>
 
+    <!-- PDF Viewer Modal -->
+    <div class="pdf-viewer-overlay" id="pdfViewerOverlay"></div>
+    <div class="pdf-viewer-modal" id="pdfViewerModal">
+        <div class="pdf-viewer-header">
+            <h3 id="pdfBookTitle">Cargando...</h3>
+            <button class="close-pdf-btn" id="closePdfBtn" aria-label="Cerrar visor">&times;</button>
+        </div>
+        <div class="pdf-viewer-content">
+            <canvas id="pdfCanvas"></canvas>
+        </div>
+        <div class="pdf-viewer-controls">
+            <button id="prevPage">← Anterior</button>
+            <span id="pageInfo">Página 1 de 15</span>
+            <button id="nextPage">Siguiente →</button>
+        </div>
+        <div class="pdf-viewer-notice">
+            📖 Vista previa limitada a las primeras 15 páginas
+        </div>
+    </div>
+
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="content-loader.js"></script>
     <script src="supabase-config.js"></script>
+    <script src="library.js"></script>
     <script src="app.js"></script>
 </body>
 

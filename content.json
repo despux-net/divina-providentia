@@ -8,6 +8,7 @@
         "links": {
             "genesis": "Génesis",
             "dogma": "Dogma",
+            "biblioteca": "Biblioteca",
             "arsenal": "Arsenal",
             "alliance": "Alianza"
         }
@@ -46,6 +47,20 @@
         "loading_text": "Cargando galería...",
         "prev_button": "Anterior",
         "next_button": "Siguiente"
+    },
+    "library": {
+        "section_title": "Biblioteca Sagrada",
+        "section_subtitle": "Textos Fundamentales para la Formación del Espíritu",
+        "loading_text": "Cargando biblioteca...",
+        "books": [
+            {
+                "id": "sample-book-1",
+                "title": "Ejemplo de Libro",
+                "author": "Autor Ejemplo",
+                "description": "Descripción del libro de ejemplo. Este es un libro de muestra para demostrar el sistema de biblioteca. Reemplaza con tus libros reales.",
+                "cover": "LOGOV4.png"
+            }
+        ]
     },
     "products": {
         "section_title": "Arsenal del Espíritu",

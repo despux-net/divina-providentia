@@ -28,6 +28,7 @@ function applyContent() {
     // Navigation
     updateText('.nav-links a[href="#inicio"]', CONTENT.navigation.links.genesis);
     updateText('.nav-links a[href="#filosofia"]', CONTENT.navigation.links.dogma);
+    updateText('.nav-links a[href="#biblioteca"]', CONTENT.navigation.links.biblioteca);
     updateText('.nav-links a[href="#tienda"]', CONTENT.navigation.links.arsenal);
     updateText('.nav-links a[href="#contacto"]', CONTENT.navigation.links.alliance);
 
@@ -66,6 +67,13 @@ function applyContent() {
     updateText('.lookbook-section .loading-spinner p', CONTENT.lookbook.loading_text);
     updateAttr('.carousel-nav.prev', 'aria-label', CONTENT.lookbook.prev_button);
     updateAttr('.carousel-nav.next', 'aria-label', CONTENT.lookbook.next_button);
+
+    // Library
+    if (CONTENT.library) {
+        updateText('.library .section-header h2', CONTENT.library.section_title);
+        updateText('.library .section-header p', CONTENT.library.section_subtitle);
+        updateText('.library .loading-spinner p', CONTENT.library.loading_text);
+    }
 
     // Products
     updateText('.products .section-header h2', CONTENT.products.section_title);
