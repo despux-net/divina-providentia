@@ -752,7 +752,7 @@ function renderInfiniteCarousel() {
     // Duplicate images for infinite loop effect
     const duplicatedImages = [...lookbookImages, ...lookbookImages];
 
-    const slidesHTML = duplicated Images.map((img, index) => `
+    const slidesHTML = duplicatedImages.map((img, index) => `
         <div class="carousel-slide">
             <img src="${img.image_url}" 
                  alt="Lookbook ${(index % lookbookImages.length) + 1}"
