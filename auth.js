@@ -138,12 +138,25 @@ async function handleSignOut() {
 
 // UI Helpers
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+    } else {
+        console.error(`Modal with ID '${modalId}' not found.`);
+    }
 }
 
 function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
+
+// Ensure global access
+window.openModal = openModal;
+window.closeModal = closeModal;
+
 
 // Initialize Auth UI
 document.addEventListener('DOMContentLoaded', async () => {
