@@ -259,26 +259,31 @@ function getDemoProducts() {
 
 function displayProducts() {
     const productsGrid = document.getElementById('productsGrid');
-    const filteredProducts = state.currentCategory === 'all'
+
+    // Filter by category
+    let filteredProducts = state.currentCategory === 'all'
         ? state.products
         : state.products.filter(p => p.category === state.currentCategory);
 
+    // IMPORTANT: Only show products that have images
+    filteredProducts = filteredProducts.filter(p => p.image_url);
+
     if (filteredProducts.length === 0) {
-        productsGrid.innerHTML = '<div class="no-products"><p>No hay productos en esta categoría.</p></div>';
+        productsGrid.innerHTML = '<div class="no-products"><p>No hay productos con imágenes en esta categoría.</p></div>';
         return;
     }
 
     productsGrid.innerHTML = filteredProducts.map(product => `
     <div class="product-card">
-      <div class="product-image">
-        ${product.image_url
-            ? `<img src="${product.image_url}" alt="${product.name}" loading="lazy">`
-            : '🏛️'
-        }
+      <div class="product-image-container">
+        <img src="${product.image_url}" alt="${product.name}" loading="lazy" class="product-image-bg">
+        <div class="product-image-overlay"></div>
+        <div class="product-info-overlay">
+          <div class="product-category">${getCategoryName(product.category)}</div>
+          <h3 class="product-name">${product.name}</h3>
+        </div>
       </div>
       <div class="product-info">
-        <div class="product-category">${getCategoryName(product.category)}</div>
-        <h3 class="product-name">${product.name}</h3>
         <p class="product-description">${product.description}</p>
         <div class="product-footer">
           <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
