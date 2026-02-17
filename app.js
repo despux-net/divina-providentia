@@ -729,74 +729,61 @@ window.nextJungQuote = nextJungQuote;
 window.prevJungQuote = prevJungQuote;
 
 // ===================================
-// LOOKBOOK CAROUSEL
+// LOOKBOOK CAROUSEL - INFINITE SCROLL
 // ===================================
 
-let currentSlide = 0;
 let lookbookImages = [];
-let carouselInterval = null;
 
 async function loadLookbookImages() {
     const { data, error } = await SupabaseAPI.getLookbookImages();
 
     if (error || !data || data.length === 0) {
-        document.getElementById('lookbookCarousel').innerHTML = '<p style="text-align:center;color:#888;">No hay imágenes disponibles</p>';
+        document.getElementById('lookbookCarousel').innerHTML = '<p style="text-align:center;color:#fff;">No hay imágenes disponibles</p>';
         return;
     }
 
     lookbookImages = data;
-    renderCarousel();
-    startAutoPlay();
+    renderInfiniteCarousel();
 }
 
-function renderCarousel() {
+function renderInfiniteCarousel() {
     const container = document.getElementById('lookbookCarousel');
-    const slidesHTML = lookbookImages.map((img, index) => `
-    <img src="${img.image_url}" 
-         class="carousel-slide ${index === 0 ? 'active' : ''}" 
-         alt="Lookbook ${index + 1}"
-         loading="lazy">
-  `).join('');
+
+    // Duplicate images for infinite loop effect
+    const duplicatedImages = [...lookbookImages, ...lookbookImages];
+
+    const slidesHTML = duplicated Images.map((img, index) => `
+        <div class="carousel-slide">
+            <img src="${img.image_url}" 
+                 alt="Lookbook ${(index % lookbookImages.length) + 1}"
+                 loading="lazy">
+        </div>
+    `).join('');
 
     container.innerHTML = `
-    ${slidesHTML}
-    <button class="carousel-nav prev" onclick="prevSlide()" aria-label="Anterior">‹</button>
-    <button class="carousel-nav next" onclick="nextSlide()" aria-label="Siguiente">›</button>
-  `;
-}
+        <div class="carousel-track">
+            ${slidesHTML}
+        </div>
+    `;
 
-function nextSlide() {
-    if (lookbookImages.length === 0) return;
-    currentSlide = (currentSlide + 1) % lookbookImages.length;
-    updateCarousel();
-    resetAutoPlay();
-}
+    // Add parallax effect on mouse move
+    const track = container.querySelector('.carousel-track');
+    container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percentX = x / rect.width;
+        const moveX = (percentX - 0.5) * 50; // Move up to 50px in either direction
+        const currentTransform = getComputedStyle(track).transform;
+        const matrix = new DOMMatrix(currentTransform);
+        const currentX = matrix.m41;
+        track.style.transform = `translateX(${currentX + moveX}px)`;
+    });
 
-function prevSlide() {
-    if (lookbookImages.length === 0) return;
-    currentSlide = (currentSlide - 1 + lookbookImages.length) % lookbookImages.length;
-    updateCarousel();
-    resetAutoPlay();
-}
-
-function updateCarousel() {
-    document.querySelectorAll('.carousel-slide').forEach((slide, index) => {
-        slide.classList.toggle('active', index === currentSlide);
+    container.addEventListener('mouseleave', () => {
+        // Reset to animation position
+        track.style.transform = '';
     });
 }
-
-function startAutoPlay() {
-    carouselInterval = setInterval(nextSlide, 5000); // 5 seconds
-}
-
-function resetAutoPlay() {
-    clearInterval(carouselInterval);
-    startAutoPlay();
-}
-
-// Make carousel functions globally available
-window.nextSlide = nextSlide;
-window.prevSlide = prevSlide;
 
 // Initialize carousel on page load
 document.addEventListener('DOMContentLoaded', () => {
