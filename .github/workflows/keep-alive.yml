@@ -1,0 +1,26 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # Run every 3 days at 00:00 UTC
+    - cron: '0 0 */3 * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Database via Edge Function
+        run: |
+          # Change this URL to your actual Edge Function URL or Supabase API endpoint
+          # For now, we will use the existing 'send-telegram-order' endpoint just to generate traffic,
+          # but ideally we should create a lightweight 'ping' endpoint.
+          # Since we don't want to spam telegram, we will use a dummy request that might fail but still hits the server.
+          
+          # Better approach: Just request the project URL if it's public, or a simple table read.
+          # Since I don't have the Anon Key here secrets, I will use a simple curl to the project URL
+          # or the 'send-telegram-order' with a flag if possible, but let's stick to the simplest:
+          # Just waking up the project by hitting the API URL.
+          
+          echo "Pinging Supabase Project..."
+          curl -I https://nzwtafacdpdgulzcwntx.supabase.co
