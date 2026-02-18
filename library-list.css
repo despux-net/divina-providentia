@@ -1,0 +1,196 @@
+/* ===================================
+   LIBRARY LIST VIEW (Compact + Preview)
+   =================================== */
+
+.books-list-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: 'Courier New', Courier, monospace;
+    /* Reference to directory styling/hacker vibe */
+}
+
+/* The Row Item */
+.book-list-item {
+    position: relative;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px dashed rgba(45, 27, 78, 0.2);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background: transparent;
+}
+
+.book-list-item:hover {
+    background-color: rgba(212, 175, 55, 0.1);
+    /* Slight gold tint */
+}
+
+/* Minimalist Content */
+.book-item-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.book-item-icon {
+    font-size: 1rem;
+    color: var(--color-stone-gray);
+}
+
+.book-list-title {
+    font-family: var(--font-body);
+    /* Or Heading font if preferred, but user ref was simple */
+    font-weight: 600;
+    color: var(--color-sacred-purple);
+    text-decoration: none;
+    flex: 1;
+    /* Take available space */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-list-title:hover {
+    text-decoration: underline;
+    color: var(--color-divine-gold-dark);
+}
+
+.book-list-author {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: #666;
+    margin-left: auto;
+    /* Push to right */
+    white-space: nowrap;
+}
+
+/* ===================================
+   THE FLOATING PREVIEW CARD
+   =================================== */
+.book-hover-card {
+    display: none;
+    position: fixed;
+    /* Fixed to viewport */
+    top: 50%;
+    right: 15%;
+    /* Positioned on the right side */
+    transform: translateY(-50%);
+    width: 320px;
+    background: #fff;
+    border: 1px solid var(--color-divine-gold);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    padding: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    animation: fadeInCard 0.3s ease forwards;
+    pointer-events: auto;
+    /* Allow clicking buttons inside */
+}
+
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translate(10px, -50%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, -50%);
+    }
+}
+
+.book-list-item:hover .book-hover-card {
+    display: block;
+}
+
+/* Card Internals (Reused styling for consistency) */
+.book-hover-card .book-cover {
+    width: 100%;
+    height: 250px;
+    /* Prominent cover */
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.book-hover-card .book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Cover the area */
+}
+
+.book-hover-card .book-info {
+    padding: 1.5rem;
+    background: #fff;
+    text-align: center;
+}
+
+.book-hover-card .book-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-sacred-purple);
+    border-bottom: none;
+}
+
+.book-hover-card .book-author {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.book-hover-card .book-description {
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 1.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-align: left;
+}
+
+.book-hover-card .book-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+/* Responsive: On mobile, hide hover card, maybe just show list? */
+@media (max-width: 1024px) {
+    .book-hover-card {
+        right: 5%;
+        width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* On mobile, floating card is annoying. Use a different strategy?
+       Or simply hide it and rely on click. 
+       Issue: Download button is in card.
+       Fix: Make card appear relative or as a modal on click?
+       For now, let's keep it consistent with "Hover" request. 
+       Maybe separate click behavior for mobile. */
+    .book-hover-card {
+        display: none !important;
+        /* Disable hover preview on mobile */
+    }
+
+    .book-list-item {
+        padding: 1rem;
+    }
+
+    .book-list-author {
+        display: none;
+        /* Simplify for mobile */
+    }
+}
