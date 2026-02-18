@@ -73,6 +73,7 @@ async function loadLibraryBooks() {
                 </div>
                 
                 <div class="book-hover-card">
+                    <button class="mobile-close-btn" onclick="event.stopPropagation(); this.closest('.book-list-item').classList.remove('active');">&times;</button>
                     <div class="book-cover" style="height: 200px;">
                         <img src="${book.cover_url || 'LOGOV4.png'}" alt="${book.title}" onerror="this.src='LOGOV4.png'">
                     </div>
@@ -90,6 +91,26 @@ async function loadLibraryBooks() {
                 </div>
             </div>
           `}).join('');
+
+        // Add Click events for mobile interaction
+        document.querySelectorAll('.book-list-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                // If clicking a button inside, do nothing special (handled by button onclick)
+                if (e.target.tagName === 'BUTTON') return;
+
+                // Toggle active class on this item
+                const wasActive = this.classList.contains('active');
+
+                // Close all others
+                document.querySelectorAll('.book-list-item.active').forEach(activeItem => {
+                    activeItem.classList.remove('active');
+                });
+
+                if (!wasActive) {
+                    this.classList.add('active');
+                }
+            });
+        });
 
     } catch (err) {
         console.error('Error loading library:', err);
