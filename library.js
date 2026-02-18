@@ -56,30 +56,38 @@ async function loadLibraryBooks() {
         booksGrid.innerHTML = books.map(book => {
             const downloadBtn = isValidated ? `
                 <button class="download-book-btn" onclick="downloadBook('${book.id}', '${book.title.replace(/'/g, "\\'")}')">
-                    📥 Descargar Libro Completo
+                    📥 Descargar Completo
                 </button>
             ` : '';
 
             const readBtnText = isValidated
-                ? "📖 Leer Libro Completo"
+                ? "📖 Leer Completo"
                 : `📖 Leer Primeras ${book.max_pages_preview || LIBRARY_CONFIG.maxPages} Páginas`;
 
             return `
-            <div class="book-card" data-book-id="${book.id}">
-              <div class="book-cover">
-                <img src="${book.cover_url || 'LOGOV4.png'}" alt="${book.title}" onerror="this.src='LOGOV4.png'">
-              </div>
-              <div class="book-info">
-                <h3 class="book-title">${book.title}</h3>
-                <p class="book-author">${book.author}</p>
-                <p class="book-description">${book.description || ''}</p>
-                <div class="book-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
-                      ${readBtnText}
-                    </button>
-                    ${downloadBtn}
+            <div class="book-list-item" data-book-id="${book.id}">
+                <div class="book-item-content">
+                    <span class="book-item-icon">📜</span>
+                    <span class="book-list-title">${book.title}</span>
+                    <span class="book-list-author">- ${book.author}</span>
                 </div>
-              </div>
+                
+                <div class="book-hover-card">
+                    <div class="book-cover" style="height: 200px;">
+                        <img src="${book.cover_url || 'LOGOV4.png'}" alt="${book.title}" onerror="this.src='LOGOV4.png'">
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title" style="font-size: 1.2rem;">${book.title}</h3>
+                        <p class="book-author" style="margin-bottom: 0.5rem;">${book.author}</p>
+                        <p class="book-description" style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">${book.description || 'Sin descripción disponible.'}</p>
+                        <div class="book-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
+                              ${readBtnText}
+                            </button>
+                            ${downloadBtn}
+                        </div>
+                    </div>
+                </div>
             </div>
           `}).join('');
 
