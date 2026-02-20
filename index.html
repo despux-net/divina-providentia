@@ -31,6 +31,16 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
+            <div class="nav-left-controls">
+                <button class="auth-btn-icon" id="authBtnTrigger" aria-label="Iniciar Sesión"
+                    onclick="openModal('loginModal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span class="auth-text">Acceso</span>
+                </button>
+            </div>
             <a href="#" class="nav-logo">
                 <img src="LOGOV3.png" alt="Divina Providentia Logo" class="logo-image">
             </a>
@@ -154,13 +164,7 @@
                 <p>Instrumentos para la Batalla Cultural y Metafísica</p>
             </div>
 
-            <div class="category-filters" id="categoryFilters">
-                <button class="filter-button active" data-category="all">La Hueste Completa</button>
-                <button class="filter-button" data-category="vestments">Vestiduras Sagradas</button>
-                <button class="filter-button" data-category="headwear">Yelmos de la Fe</button>
-                <button class="filter-button" data-category="accessories">Reliquias Menores</button>
-                <button class="filter-button" data-category="prints">Testimonios Gráficos</button>
-            </div>
+            <!-- Filters removed by user request -->
 
             <div class="products-grid" id="productsGrid">
                 <div class="loading-spinner">

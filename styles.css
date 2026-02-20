@@ -207,9 +207,52 @@ p {
 
 .logo-image {
   height: 60px;
-  /* Ajustar altura según se necesite */
   width: auto;
   object-fit: contain;
+}
+
+.nav-left-controls {
+  display: flex;
+  align-items: center;
+  margin-right: var(--space-md);
+}
+
+.auth-btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-stone-gray);
+  /* Discreet color */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.auth-btn-icon:hover {
+  color: var(--color-sacred-purple);
+  background: rgba(45, 27, 78, 0.05);
+}
+
+.auth-btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-text {
+  display: none;
+  /* Icon only on mobile/default? Or show text? User said "como un boton para iniciar". text is good. */
+}
+
+@media (min-width: 768px) {
+  .auth-text {
+    display: inline;
+  }
 }
 
 
