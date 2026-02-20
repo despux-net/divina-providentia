@@ -31,16 +31,7 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="nav-left-controls">
-                <button class="auth-btn-icon" id="authBtnTrigger" aria-label="Iniciar Sesión"
-                    onclick="openModal('loginModal')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    <span class="auth-text">Acceso</span>
-                </button>
-            </div>
+            <!-- Removed nav-left-controls -->
             <a href="#" class="nav-logo">
                 <img src="LOGOV3.png" alt="Divina Providentia Logo" class="logo-image">
             </a>
@@ -50,6 +41,17 @@
                 <li><a href="#" onclick="toggleLibrarySidebar(); return false;">Biblioteca</a></li>
                 <li><a href="#tienda">Arsenal</a></li>
                 <li><a href="#contacto">Alianza</a></li>
+                <li>
+                    <button class="auth-btn-icon" id="authBtnTrigger" aria-label="Iniciar Sesión"
+                        onclick="openModal('loginModal')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="auth-text">Acceso</span>
+                    </button>
+                </li>
                 <li>
                     <button class="cart-button" id="cartButton" aria-label="Carrito de compras">
                         🛒
@@ -326,6 +328,12 @@
                     <input type="password" id="loginPassword" name="password" required>
                 </div>
                 <button type="submit" class="submit-order-btn" id="loginSubmitBtn">Entrar</button>
+                <div class="auth-footer" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;">
+                    <p>¿No tienes cuenta? <a href="#"
+                            onclick="closeModal('loginModal'); openModal('registerModal'); return false;"
+                            style="color: var(--color-sacred-purple); text-decoration: underline;">Regístrate aquí</a>
+                    </p>
+                </div>
             </form>
         </div>
     </div>
