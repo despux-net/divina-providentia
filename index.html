@@ -37,7 +37,7 @@
             <ul class="nav-links">
                 <li><a href="#inicio">Génesis</a></li>
                 <li><a href="#filosofia">Dogma</a></li>
-                <li><a href="#biblioteca">Biblioteca</a></li>
+                <li><a href="#" onclick="toggleLibrarySidebar(); return false;">Biblioteca</a></li>
                 <li><a href="#tienda">Arsenal</a></li>
                 <li><a href="#contacto">Alianza</a></li>
                 <li>
@@ -125,24 +125,8 @@
         </div>
     </section>
 
-    <!-- Library Section -->
-    <section class="library section" id="biblioteca">
-        <div class="container">
-            <div class="section-header">
-                <h2>Biblioteca Sagrada</h2>
-                <p>Textos Fundamentales para la Formación del Espíritu</p>
-            </div>
-
-            <div id="auth-buttons"
-                style="margin: 1rem 0; display: flex; justify-content: center; gap: 1rem; align-items: center;">
-            </div>
-
-            <div class="books-list-container" id="booksGrid">
-                <div class="loading-spinner">
-                    <p>Cargando biblioteca...</p>
-                </div>
-            </div>
-        </div>
+    <!-- Library Section (Moved to Sidebar) -->
+    <section class="section" id="biblioteca" style="padding: 0; min-height: 0;">
     </section>
 
 
@@ -380,6 +364,20 @@
                 </div>
                 <button type="submit" class="submit-order-btn" id="registerSubmitBtn">Solicitar Acceso</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Library Sidebar -->
+    <div id="librarySidebar" class="library-sidebar">
+        <div class="sidebar-header">
+            <h2>Biblioteca</h2>
+            <button class="close-sidebar-btn" onclick="toggleLibrarySidebar()"
+                aria-label="Cerrar biblioteca">&times;</button>
+        </div>
+        <div class="books-list-container" id="booksGrid">
+            <div class="loading-spinner">
+                <p>Cargando biblioteca...</p>
+            </div>
         </div>
     </div>
     <script src="auth.js?v=7"></script>

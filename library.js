@@ -359,6 +359,27 @@ document.addEventListener('DOMContentLoaded', () => {
 // Expose globally for Auth update
 window.loadLibraryBooks = loadLibraryBooks;
 
+// Toggle Library Sidebar
+function toggleLibrarySidebar() {
+    const sidebar = document.getElementById('librarySidebar');
+    sidebar.classList.toggle('open');
+}
+
+// Close sidebar when clicking outside
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('librarySidebar');
+    const toggleBtn = document.querySelector('a[onclick="toggleLibrarySidebar(); return false;"]'); // The nav link
+
+    // If sidebar is open, and click is NOT inside sidebar, and NOT on the toggle button
+    if (sidebar && sidebar.classList.contains('open') &&
+        !sidebar.contains(e.target) &&
+        e.target !== toggleBtn) {
+        sidebar.classList.remove('open');
+    }
+});
+
+window.toggleLibrarySidebar = toggleLibrarySidebar;
+
 // Listen for Auth Validation
 window.addEventListener('auth:validated', (e) => {
     console.log("Auth validated event received:", e.detail);
