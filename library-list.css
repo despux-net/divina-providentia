@@ -149,6 +149,7 @@
     z-index: -1;
 }
 
+.book-list-item.active .book-hover-card,
 .book-list-item:hover .book-hover-card,
 .book-hover-card:hover {
     visibility: visible;

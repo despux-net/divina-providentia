@@ -94,6 +94,7 @@ async function loadLibraryBooks() {
 
         // Add Click events for mobile interaction
         document.querySelectorAll('.book-list-item').forEach(item => {
+            // Click for mobile or explicit toggling
             item.addEventListener('click', function (e) {
                 // If clicking a button inside, do nothing special (handled by button onclick)
                 if (e.target.closest('button')) return;
@@ -109,6 +110,16 @@ async function loadLibraryBooks() {
                 if (!wasActive) {
                     this.classList.add('active');
                 }
+            });
+
+            // Hover for desktop (keeps card open until hovered on another or closed)
+            item.addEventListener('mouseenter', function () {
+                document.querySelectorAll('.book-list-item.active').forEach(activeItem => {
+                    if (activeItem !== this) {
+                        activeItem.classList.remove('active');
+                    }
+                });
+                this.classList.add('active');
             });
         });
 
@@ -363,6 +374,9 @@ window.loadLibraryBooks = loadLibraryBooks;
 function toggleLibrarySidebar() {
     const sidebar = document.getElementById('librarySidebar');
     sidebar.classList.toggle('open');
+    if (!sidebar.classList.contains('open')) {
+        document.querySelectorAll('.book-list-item.active').forEach(item => item.classList.remove('active'));
+    }
 }
 
 // Close sidebar when clicking outside
@@ -375,6 +389,7 @@ document.addEventListener('click', (e) => {
         !sidebar.contains(e.target) &&
         (!toggleBtn || !toggleBtn.contains(e.target))) {
         sidebar.classList.remove('open');
+        document.querySelectorAll('.book-list-item.active').forEach(item => item.classList.remove('active'));
     }
 });
 
