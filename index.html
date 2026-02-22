@@ -41,6 +41,16 @@
                 <li><a href="#" onclick="toggleLibrarySidebar(); return false;">Biblioteca</a></li>
                 <li><a href="#tienda">Arsenal</a></li>
                 <li><a href="#contacto">Alianza</a></li>
+                <li class="nav-lang-selector dropdown">
+                    <button class="lang-dropbtn" aria-label="Seleccionar idioma">
+                        🌐 <span class="lang-text">Idioma</span>
+                    </button>
+                    <div class="lang-dropdown-content">
+                        <a href="#" onclick="changeLanguage('en'); return false;">🇬🇧 English</a>
+                        <a href="#" onclick="changeLanguage('es'); return false;">🇪🇸 Español</a>
+                        <a href="#" onclick="changeLanguage('de'); return false;">🇩🇪 Deutsch</a>
+                    </div>
+                </li>
                 <li>
                     <button class="auth-btn-icon" id="authBtnTrigger" aria-label="Iniciar Sesión"
                         onclick="openModal('loginModal')">
@@ -408,6 +418,52 @@
     <script src="content-loader.js"></script>
     <script src="library.js?v=3"></script>
     <script src="app.js"></script>
+
+    <!-- Google Translate Script Oculto -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'es',
+                includedLanguages: 'es,en,de',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+        function changeLanguage(langCode) {
+            var selectField = document.querySelector(".goog-te-combo");
+            if (selectField) {
+                selectField.value = langCode;
+                selectField.dispatchEvent(new Event('change'));
+            }
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Ocultar barra superior de Google Translate -->
+    <style>
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+
+        body {
+            top: 0px !important;
+        }
+
+        .goog-tooltip {
+            display: none !important;
+        }
+
+        .goog-tooltip:hover {
+            display: none !important;
+        }
+
+        .goog-text-highlight {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    </style>
 </body>
 
 </html>
