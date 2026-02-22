@@ -39,3 +39,7 @@ credentials.json.json
 
 # Supabase
 supabase/.temp/
+
+# Original Images (Backup local, no subir)
+_imagenes_originales/
+.optimized-images-state.json
