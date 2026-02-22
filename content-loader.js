@@ -116,25 +116,31 @@ function applyContent() {
     updateText('.footer-section:nth-child(3) h3', CONTENT.footer.contact.title);
 
     const contactPs = document.querySelectorAll('.footer-section:nth-child(3) p');
-    if (contactPs[0]) contactPs[0].textContent = 'Email: ' + CONTENT.footer.contact.email;
-    if (contactPs[1]) contactPs[1].textContent = 'Teléfono: ' + CONTENT.footer.contact.phone;
-    if (contactPs[2]) contactPs[2].textContent = CONTENT.footer.contact.hours;
+    if (contactPs[0]) contactPs[0].innerHTML = formatText('Email: ' + CONTENT.footer.contact.email);
+    if (contactPs[1]) contactPs[1].innerHTML = formatText('Teléfono: ' + CONTENT.footer.contact.phone);
+    if (contactPs[2]) contactPs[2].innerHTML = formatText(CONTENT.footer.contact.hours);
 
     // Footer links (same as nav)
     const footerLinks = document.querySelectorAll('.footer-links a');
-    if (footerLinks[0]) footerLinks[0].textContent = CONTENT.navigation.links.genesis;
-    if (footerLinks[1]) footerLinks[1].textContent = CONTENT.navigation.links.dogma;
-    if (footerLinks[2]) footerLinks[2].textContent = CONTENT.navigation.links.arsenal;
-    if (footerLinks[3]) footerLinks[3].textContent = CONTENT.navigation.links.alliance;
+    if (footerLinks[0]) footerLinks[0].innerHTML = formatText(CONTENT.navigation.links.genesis);
+    if (footerLinks[1]) footerLinks[1].innerHTML = formatText(CONTENT.navigation.links.dogma);
+    if (footerLinks[2]) footerLinks[2].innerHTML = formatText(CONTENT.navigation.links.arsenal);
+    if (footerLinks[3]) footerLinks[3].innerHTML = formatText(CONTENT.navigation.links.alliance);
 
     updateText('.footer-bottom p', CONTENT.footer.copyright);
 }
 
 // Helper functions
+function formatText(text) {
+    if (typeof text !== 'string') return text;
+    // Evita la traducción de la marca "Divina Providentia"
+    return text.replace(/Divina Providentia/g, '<span translate="no" class="notranslate">Divina Providentia</span>');
+}
+
 function updateText(selector, text) {
     const element = typeof selector === 'string' ? document.querySelector(selector) : selector;
     if (element && text) {
-        element.textContent = text;
+        element.innerHTML = formatText(text);
     }
 }
 
