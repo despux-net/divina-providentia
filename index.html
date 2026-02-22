@@ -442,35 +442,37 @@
 
     <!-- Ocultar barra superior de Google Translate -->
     <style>
+        /* Forzar que el body no baje por la barra de Google */
+        body {
+            top: 0px !important;
+            position: static !important;
+            min-height: 100vh !important;
+        }
+
+        /* Ocultar la barra espantosa de arriba (banner frame y su contenedor) */
+        .goog-te-banner-frame,
+        .goog-te-banner-frame.skiptranslate,
         iframe.goog-te-banner-frame {
             display: none !important;
         }
 
-        .goog-te-banner-frame.skiptranslate {
+        body>.skiptranslate {
             display: none !important;
         }
 
-        body {
-            top: 0px !important;
-            position: static !important;
-        }
-
-        .goog-tooltip {
+        /* Ocultar los tooltips (burbujitas sobre el texto) y otros popups */
+        .goog-tooltip,
+        .goog-tooltip:hover,
+        #goog-gt-tt,
+        .goog-te-balloon-frame {
             display: none !important;
         }
 
-        .goog-tooltip:hover {
-            display: none !important;
-        }
-
+        /* Quitar el color de fondo resaltado al pasar el ratón por texto traducido */
         .goog-text-highlight {
             background-color: transparent !important;
             border: none !important;
             box-shadow: none !important;
-        }
-
-        #goog-gt-tt {
-            display: none !important;
         }
     </style>
 </body>
