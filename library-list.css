@@ -135,6 +135,18 @@
     pointer-events: auto;
 }
 
+/* Invisible bridge between sidebar item and floating card so mouse can travel without losing hover */
+.book-hover-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -30px;
+    /* Bridge the gap between the card and the sidebar */
+    width: 30px;
+    height: 100%;
+    z-index: -1;
+}
+
 @keyframes fadeInCard {
     from {
         opacity: 0;
