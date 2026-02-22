@@ -93,7 +93,7 @@ function displayQuote() {
             authorElement.textContent = `— ${currentQuote.author}`;
             quoteElement.style.opacity = '1';
             authorElement.style.opacity = '1';
-        }, 500);
+        }, 1200);
     }
 }
 
@@ -378,6 +378,27 @@ function initializeEventListeners() {
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', handleContact);
+    }
+
+    // Hero "CONOCE" Button
+    const conoceBtn = document.getElementById('conoceBtn');
+    const heroSummaryContainer = document.getElementById('heroSummaryContainer');
+    if (conoceBtn && heroSummaryContainer) {
+        conoceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpen = heroSummaryContainer.classList.contains('open');
+            if (isOpen) {
+                heroSummaryContainer.classList.remove('open');
+                conoceBtn.setAttribute('aria-expanded', 'false');
+            } else {
+                heroSummaryContainer.classList.add('open');
+                conoceBtn.setAttribute('aria-expanded', 'true');
+                // Optional: Scroll to it after a tiny delay so it can open first
+                setTimeout(() => {
+                    heroSummaryContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        });
     }
 }
 
