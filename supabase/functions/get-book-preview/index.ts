@@ -1,11 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-// Direct fetch implementation for less dependency issues
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
-
 
 serve(async (req) => {
     // Handle CORS preflight requests
@@ -24,48 +23,56 @@ serve(async (req) => {
             )
         }
 
-        // 1. Fetch book metadata from DB using REST API
+        // Initialize Supabase Client
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-        const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const queryUrl = `${supabaseUrl}/rest/v1/books?id=eq.${bookId}&select=drive_file_id,max_pages_preview`;
+        // 1. Check Authentication & Validation Status
+        let isValidated = false;
+        const authHeader = req.headers.get('Authorization');
 
-        console.log(`Fetching from DB: ${queryUrl}`);
+        if (authHeader) {
+            const token = authHeader.replace('Bearer ', '');
+            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
-        const dbResponse = await fetch(queryUrl, {
-            headers: {
-                'apikey': supabaseKey,
-                'Authorization': `Bearer ${supabaseKey}`,
-                'Content-Type': 'application/json'
+            if (user && !authError) {
+                // Check profile validation
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('is_validated')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profile && profile.is_validated) {
+                    isValidated = true;
+                }
+                console.log(`User ${user.id} access check: Validated = ${isValidated}`);
             }
-        });
-
-        if (!dbResponse.ok) {
-            const errorText = await dbResponse.text();
-            console.error('DB Error:', errorText);
-            return new Response(
-                JSON.stringify({ error: 'Database error', details: errorText }),
-                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
         }
 
-        const dbData = await dbResponse.json();
-        const book = dbData && dbData.length > 0 ? dbData[0] : null;
+        // 2. Fetch book metadata from DB
+        const { data: book, error: dbError } = await supabase
+            .from('books')
+            .select('drive_file_id, max_pages_preview')
+            .eq('id', bookId)
+            .single();
 
-        if (!book) {
-            console.error('Book not found in DB');
+        if (dbError || !book) {
+            console.error('Book not found or DB error:', dbError);
             return new Response(
-                JSON.stringify({ error: 'Book not found (REST)', bookId }),
+                JSON.stringify({ error: 'Book not found' }),
                 { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             );
         }
 
-        const driveId = book.drive_file_id
-        const maxPages = book.max_pages_preview || 15;
+        const driveId = book.drive_file_id;
+        // If validated, give full access (e.g. 1000 pages), else use preview limit
+        const maxPages = isValidated ? 1000 : (book.max_pages_preview || 15);
 
-        console.log(`📖 Serving book: ${bookId} (Drive ID: ${driveId})`)
+        console.log(`📖 Serving book: ${bookId} (Drive ID: ${driveId}). Access: ${isValidated ? 'FULL' : 'PREVIEW'} (${maxPages} pages)`);
 
-        // 2. Fetch PDF from Google Drive
+        // 3. Fetch PDF from Google Drive
         const driveUrl = `https://drive.google.com/uc?export=download&id=${driveId}`
         const driveResponse = await fetch(driveUrl)
 
@@ -77,7 +84,7 @@ serve(async (req) => {
             )
         }
 
-        // 3. Return PDF
+        // 4. Return PDF
         const pdfBuffer = await driveResponse.arrayBuffer()
 
         return new Response(pdfBuffer, {
@@ -86,7 +93,8 @@ serve(async (req) => {
                 'Content-Type': 'application/pdf',
                 'Content-Disposition': 'inline',
                 'Cache-Control': 'public, max-age=3600',
-                'X-Max-Pages': maxPages.toString()
+                'X-Max-Pages': maxPages.toString(),
+                'X-Access-Level': isValidated ? 'full' : 'preview'
             }
         })
 

@@ -2036,3 +2036,37 @@ p {
     font-size: 2rem;
   }
 }
+
+/* ===================================
+   GOOGLE TRANSLATE OVERRIDES
+   =================================== */
+
+html {
+  height: 100%;
+}
+
+body {
+  position: static !important;
+  top: 0px !important;
+  min-height: 100%;
+}
+
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0px !important;
+  width: 0px !important;
+}
+
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}

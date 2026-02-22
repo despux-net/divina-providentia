@@ -110,6 +110,8 @@ async function handleSignIn(event) {
         // Check validation status
         if (authData.user) {
             console.log("Logged in user:", authData.user);
+            // Store notification preference for after reload
+            sessionStorage.setItem('showLoginNotification', 'true');
             closeModal('loginModal');
             window.location.reload(); // Refresh to update library view
         }
@@ -153,9 +155,37 @@ function closeModal(modalId) {
     }
 }
 
-// Ensure global access
 window.openModal = openModal;
 window.closeModal = closeModal;
+
+// Toast Notifications
+function showNotification(message, icon = '🕊️') {
+    const container = document.getElementById('notification-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+        <span class="toast-icon">${icon}</span>
+        <span class="toast-message">${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 100);
+
+    // Remove after 5 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+window.showNotification = showNotification;
+
+// Global state for validation
+window.isUserValidated = false;
 
 
 // Initialize Auth UI
@@ -193,7 +223,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             .single();
 
         const isValidated = profile?.is_validated;
-        const displayName = profile?.first_name || session.user.email;
+        const displayName = profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : session.user.email;
+
+        window.isUserValidated = isValidated;
+
+        // Dispatch event for other scripts (like library.js)
+        const event = new CustomEvent('auth:validated', { detail: { isValidated, displayName } });
+        window.dispatchEvent(event);
+
+        // Check if we should show login notification
+        if (sessionStorage.getItem('showLoginNotification') === 'true') {
+            console.log("Showing login notification for:", displayName);
+            // Small delay to ensure UI is ready
+            setTimeout(() => {
+                showNotification(`${displayName} ya se encuentra en línea`);
+            }, 500);
+            sessionStorage.removeItem('showLoginNotification');
+        }
+
+        // Force library reload if user is validated
+        if (isValidated && typeof window.loadLibraryBooks === 'function') {
+            console.log("Reloading library for validated user...");
+            window.loadLibraryBooks();
+        }
 
         authButtons.innerHTML = `
             <button onclick="handleSignOut()" class="cta-button" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Cerrar Sesión</button>

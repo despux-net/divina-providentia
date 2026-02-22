@@ -24,6 +24,7 @@ git add content.json
 git add content-loader.js
 git add styles.css
 git add index.html
+git add library-list.css
 git add library.js
 git add app.js
 git add supabase-config.js
