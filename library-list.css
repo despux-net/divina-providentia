@@ -139,11 +139,11 @@
 .book-hover-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    right: -30px;
+    top: -60px;
+    right: -120px;
     /* Bridge the gap between the card and the sidebar */
-    width: 30px;
-    height: 100%;
+    width: 250px;
+    height: calc(100% + 120px);
     z-index: -1;
 }
 
