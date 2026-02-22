@@ -442,12 +442,17 @@
 
     <!-- Ocultar barra superior de Google Translate -->
     <style>
+        iframe.goog-te-banner-frame {
+            display: none !important;
+        }
+
         .goog-te-banner-frame.skiptranslate {
             display: none !important;
         }
 
         body {
             top: 0px !important;
+            position: static !important;
         }
 
         .goog-tooltip {
@@ -462,6 +467,10 @@
             background-color: transparent !important;
             border: none !important;
             box-shadow: none !important;
+        }
+
+        #goog-gt-tt {
+            display: none !important;
         }
     </style>
 </body>
