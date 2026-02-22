@@ -34,7 +34,7 @@ function applyContent() {
 
     // Hero
     updateText('.hero-title', CONTENT.hero.title);
-    updateText('.hero-subtitle', CONTENT.hero.subtitle);
+    updateText('.hero-summary-text', CONTENT.hero.summary);
     updateText('.cta-button', CONTENT.hero.cta_button);
 
     // Philosophy Section
