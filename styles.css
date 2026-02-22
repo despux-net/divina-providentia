@@ -566,12 +566,6 @@ p {
   }
 }
 
-@media (min-width: 1024px) {
-  .philosophy-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 /* ... philosophy cards styles kept same ... */
 
 

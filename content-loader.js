@@ -43,17 +43,21 @@ function applyContent() {
 
     // Philosophy Cards
     const cards = document.querySelectorAll('.philosophy-card');
-    if (cards[0]) {
-        updateText(cards[0].querySelector('h3'), CONTENT.philosophy.cards.hierarchy.title);
-        updateText(cards[0].querySelector('p'), CONTENT.philosophy.cards.hierarchy.description);
+    if (cards[0] && CONTENT.philosophy.cards.principle1) {
+        updateText(cards[0].querySelector('h3'), CONTENT.philosophy.cards.principle1.title);
+        updateText(cards[0].querySelector('p'), CONTENT.philosophy.cards.principle1.description);
     }
-    if (cards[1]) {
-        updateText(cards[1].querySelector('h3'), CONTENT.philosophy.cards.austerity.title);
-        updateText(cards[1].querySelector('p'), CONTENT.philosophy.cards.austerity.description);
+    if (cards[1] && CONTENT.philosophy.cards.principle2) {
+        updateText(cards[1].querySelector('h3'), CONTENT.philosophy.cards.principle2.title);
+        updateText(cards[1].querySelector('p'), CONTENT.philosophy.cards.principle2.description);
     }
-    if (cards[2]) {
-        updateText(cards[2].querySelector('h3'), CONTENT.philosophy.cards.tradition.title);
-        updateText(cards[2].querySelector('p'), CONTENT.philosophy.cards.tradition.description);
+    if (cards[2] && CONTENT.philosophy.cards.principle3) {
+        updateText(cards[2].querySelector('h3'), CONTENT.philosophy.cards.principle3.title);
+        updateText(cards[2].querySelector('p'), CONTENT.philosophy.cards.principle3.description);
+    }
+    if (cards[3] && CONTENT.philosophy.cards.principle4) {
+        updateText(cards[3].querySelector('h3'), CONTENT.philosophy.cards.principle4.title);
+        updateText(cards[3].querySelector('p'), CONTENT.philosophy.cards.principle4.description);
     }
 
     // Jung Book
