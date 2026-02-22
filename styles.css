@@ -1580,6 +1580,57 @@ p {
   color: var(--color-sacred-purple);
 }
 
+/* Contact Form Mini (Footer) */
+.contact-form-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 300px;
+}
+
+.form-group-mini input,
+.form-group-mini textarea {
+  width: 100%;
+  padding: 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: white;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.form-group-mini input:focus,
+.form-group-mini textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-divine-gold);
+}
+
+.form-group-mini input::placeholder,
+.form-group-mini textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer-submit-btn {
+  background: var(--color-divine-gold);
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 4px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.footer-submit-btn:hover {
+  background: var(--color-divine-gold-dark);
+  transform: translateY(-1px);
+}
+
 /* ===================================
    FOOTER
    =================================== */

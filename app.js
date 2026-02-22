@@ -366,6 +366,12 @@ function initializeEventListeners() {
 
     // Checkout form
     document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
+
+    // Contact form (Footer)
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', handleContact);
+    }
 }
 
 // ===================================
@@ -716,3 +722,47 @@ document.addEventListener('DOMContentLoaded', () => {
     loadLookbookImages();
 });
 
+
+// ===================================
+// CONTACT FORM MANAGEMENT
+// ===================================
+
+async function handleContact(e) {
+    e.preventDefault();
+
+    const submitBtn = e.target.querySelector('.footer-submit-btn');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    const nombre = document.getElementById('contactName').value;
+    const email = document.getElementById('contactEmail').value;
+    const mensaje = document.getElementById('contactMessage').value;
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('mensajes_contacto')
+            .insert([
+                { nombre, email, mensaje }
+            ]);
+
+        if (error) throw error;
+
+        // Success Feedback
+        submitBtn.textContent = '¡Enviado!';
+        submitBtn.style.backgroundColor = '#48bb78';
+        e.target.reset();
+
+        setTimeout(() => {
+            submitBtn.textContent = originalBtnText;
+            submitBtn.style.backgroundColor = '';
+            submitBtn.disabled = false;
+        }, 3000);
+
+    } catch (error) {
+        console.error('Error enviando mensaje:', error);
+        alert('No se pudo enviar el mensaje. Intente de nuevo más tarde.');
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+    }
+}
