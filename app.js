@@ -140,23 +140,32 @@ function initializeNavbar() {
 // SCROLL ANIMATIONS
 // ===================================
 
+// Create global observer for reuse (e.g. dynamically added products)
+const scrollObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        } else {
+            // Remove class so it animates again when scrolling up/down
+            entry.target.classList.remove('visible');
+        }
+    });
+}, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
 function initializeScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+    // Observe core static elements
+    const selectors = [
+        '.philosophy-card',
+        '.section-title',
+        '.about-text',
+        '.contact-container',
+        '.footer-section',
+        '.lookbook-section',
+        '.hero-content'
+    ];
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
-
-    // Observe philosophy cards
-    document.querySelectorAll('.philosophy-card').forEach(card => {
-        observer.observe(card);
+    document.querySelectorAll(selectors.join(', ')).forEach(el => {
+        scrollObserver.observe(el);
     });
 }
 
@@ -318,14 +327,12 @@ function displayProducts() {
     </div>
   `}).join('');
 
-    // Animate product cards
-    setTimeout(() => {
-        document.querySelectorAll('.product-card').forEach((card, index) => {
-            setTimeout(() => {
-                card.classList.add('visible');
-            }, index * 100);
-        });
-    }, 100);
+    // Observe product cards for scroll animation
+    document.querySelectorAll('.product-card').forEach((card, index) => {
+        // We can add a staggered transition delay based on index for the grid layout
+        card.style.transitionDelay = `${(index % 4) * 0.1}s`;
+        scrollObserver.observe(card);
+    });
 }
 
 function getCategoryName(category) {
