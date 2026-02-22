@@ -96,7 +96,7 @@ async function loadLibraryBooks() {
         document.querySelectorAll('.book-list-item').forEach(item => {
             item.addEventListener('click', function (e) {
                 // If clicking a button inside, do nothing special (handled by button onclick)
-                if (e.target.tagName === 'BUTTON') return;
+                if (e.target.closest('button')) return;
 
                 // Toggle active class on this item
                 const wasActive = this.classList.contains('active');
@@ -373,7 +373,7 @@ document.addEventListener('click', (e) => {
     // If sidebar is open, and click is NOT inside sidebar, and NOT on the toggle button
     if (sidebar && sidebar.classList.contains('open') &&
         !sidebar.contains(e.target) &&
-        e.target !== toggleBtn) {
+        (!toggleBtn || !toggleBtn.contains(e.target))) {
         sidebar.classList.remove('open');
     }
 });
