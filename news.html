@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Divina Providentia - El Pulso de la Civilización. Un espacio para observar el mundo moderno sin perder el ancla de la tradición.">
+    <title>El Pulso de la Civilización | Divina Providentia News</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="news.css?v=1">
+</head>
+
+<body class="news-body">
+    <!-- Ticker Broadcast -->
+    <div class="news-ticker">
+        <div class="ticker-content">
+            <span class="ticker-item"><span class="ticker-tag">ALERTA</span> El colapso demográfico europeo alcanza
+                nuevos mínimos históricos.</span>
+            <span class="ticker-sep">✦</span>
+            <span class="ticker-item"><span class="ticker-tag">CULTURA</span> La belleza clásica retorna a las academias
+                de arte en respuesta al posmodernismo.</span>
+            <span class="ticker-sep">✦</span>
+            <span class="ticker-item"><span class="ticker-tag">GEOPOLÍTICA</span> Tensión en oriente: El retorno de los
+                imperios y el fin del orden liberal.</span>
+            <span class="ticker-sep">✦</span>
+            <span class="ticker-item"><span class="ticker-tag">TRADICIÓN</span> Miles asisten a liturgias tradicionales
+                buscando sentido en la modernidad líquida.</span>
+            <!-- Duplicate for infinite scroll -->
+            <span class="ticker-sep">✦</span>
+            <span class="ticker-item"><span class="ticker-tag">ALERTA</span> El colapso demográfico europeo alcanza
+                nuevos mínimos históricos.</span>
+            <span class="ticker-sep">✦</span>
+            <span class="ticker-item"><span class="ticker-tag">CULTURA</span> La belleza clásica retorna a las academias
+                de arte en respuesta al posmodernismo.</span>
+            <span class="ticker-sep">✦</span>
+            <span class="ticker-item"><span class="ticker-tag">GEOPOLÍTICA</span> Tensión en oriente: El retorno de los
+                imperios y el fin del orden liberal.</span>
+            <span class="ticker-sep">✦</span>
+            <span class="ticker-item"><span class="ticker-tag">TRADICIÓN</span> Miles asisten a liturgias tradicionales
+                buscando sentido en la modernidad líquida.</span>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="news-header">
+        <div class="news-nav-top">
+            <a href="index.html#manifiesto" class="return-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Regresar al Manifiesto
+            </a>
+            <div class="logo-mini">
+                <img src="LOGOV3.png" alt="Divina Providentia">
+            </div>
+            <div class="date-display" id="currentDateDisplay"></div>
+        </div>
+
+        <div class="news-title-container">
+            <h1 class="news-main-title">EL PULSO DE LA CIVILIZACIÓN</h1>
+            <p class="news-subtitle">Un observatorio del mundo moderno anclado en la tradición occidental y el orden
+                eterno.</p>
+        </div>
+
+        <!-- Navigation / Filters -->
+        <div class="news-filters">
+            <span class="filter-label">Nivel de Impacto Cultural:</span>
+            <button class="filter-btn active" data-filter="all">Global</button>
+            <button class="filter-btn" data-filter="geopolitics">Geopolítica</button>
+            <button class="filter-btn" data-filter="culture">Cultura</button>
+            <button class="filter-btn" data-filter="tradition">Tradición</button>
+            <button class="filter-btn" data-filter="crisis">Crisis de la Modernidad</button>
+            <button class="filter-btn" data-filter="aesthetics">Estética</button>
+        </div>
+    </header>
+
+    <!-- Abstracts Feed -->
+    <main class="abstracts-feed container">
+        <div class="abstracts-grid" id="abstractsGrid">
+            <!-- Populated by JS -->
+        </div>
+    </main>
+
+    <script src="news.js"></script>
+</body>
+
+</html>
