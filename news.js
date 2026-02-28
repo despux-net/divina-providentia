@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     url: item.url
                 }));
                 renderFeed('all');
+                populateTicker();
             } else {
                 abstractsGrid.innerHTML = '<div class="no-books"><p>No hay comunicaciones recientes en el observatorio.</p></div>';
             }
@@ -68,6 +69,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error("Error fetching news:", err);
             abstractsGrid.innerHTML = '<div class="no-books"><p>Error al conectar con el servidor central.</p></div>';
         }
+    }
+
+    // Populate the scrolling ticker with the top headlines
+    function populateTicker() {
+        const tickerContainer = document.querySelector('.ticker-content');
+        if (!tickerContainer || newsData.length === 0) return;
+
+        // Take top 5 news for the ticker
+        const topNews = newsData.slice(0, 5);
+
+        let tickerHTML = '';
+        topNews.forEach(item => {
+            // Using uppercase for tag to match design
+            const tagUpper = item.tagName.toUpperCase();
+            tickerHTML += `<span class="ticker-item"><span class="ticker-tag">${tagUpper}</span> <a href="${item.url}" target="_blank" style="color: inherit; text-decoration: none;">${item.title}</a></span><span class="ticker-sep">✦</span>`;
+        });
+
+        // Duplicate the content to allow seamless infinite CSS scrolling
+        tickerContainer.innerHTML = tickerHTML + tickerHTML;
     }
 
     // Render feed
