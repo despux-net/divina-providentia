@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- Interactive Map Logic ---
-    const continentPaths = document.querySelectorAll('.continent-path');
+    const continentPaths = document.querySelectorAll('.continent-btn');
     const globalBtn = document.getElementById('resetMapFilter');
     const currentGeoLabel = document.getElementById('currentGeography');
 
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Patch the cultural filter buttons to respect the active continent
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const activeContinent = document.querySelector('.continent-path.active');
+            const activeContinent = document.querySelector('.continent-btn.active');
             const continentId = activeContinent ? activeContinent.id : 'world';
             renderMapFeed(continentId);
         });
