@@ -146,6 +146,97 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // --- Interactive Map Logic ---
+    const continentPaths = document.querySelectorAll('.continent-path');
+    const globalBtn = document.getElementById('resetMapFilter');
+    const currentGeoLabel = document.getElementById('currentGeography');
+
+    // Function to render feed filtered by continent
+    // Extends existing renderFeed to allow for a second argument
+    function renderMapFeed(continentId) {
+        abstractsGrid.style.opacity = '0';
+
+        setTimeout(() => {
+            abstractsGrid.innerHTML = '';
+
+            // Find active cultural filter too, so they can stack
+            const activeCulturalBtn = document.querySelector('.filter-btn.active');
+            const culturalFilter = activeCulturalBtn ? activeCulturalBtn.getAttribute('data-filter') : 'all';
+
+            let filteredData = newsData;
+
+            // Apply cultural filter if not 'all'
+            if (culturalFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.tag === culturalFilter);
+            }
+
+            // Apply continent filter if not 'world'
+            if (continentId !== 'world') {
+                filteredData = filteredData.filter(item => item.continent === continentId);
+            }
+
+            if (filteredData.length === 0) {
+                abstractsGrid.innerHTML = `<div class="no-books"><p>No hay reportes de esta región bajo la clasificación actual.</p></div>`;
+            } else {
+                filteredData.forEach(item => {
+                    const card = document.createElement('article');
+                    card.className = 'news-card';
+
+                    const excerptDisplay = item.excerpt.length > 280
+                        ? item.excerpt.substring(0, 277) + '...'
+                        : item.excerpt;
+
+                    card.innerHTML = `
+                        <div class="card-meta">
+                            <span class="card-tag">${item.tagName}</span>
+                            <span class="card-time">${item.time}</span>
+                        </div>
+                        <h2 class="card-title"><a href="${item.url}" target="_blank" style="color: inherit; text-decoration: none;">${item.title}</a></h2>
+                        <p class="card-excerpt">${excerptDisplay}</p>
+                        <div class="card-footer">
+                            <span class="card-source">FUENTE: ${item.source} ${item.continent && item.continent !== 'world' ? '(' + item.continent.toUpperCase() + ')' : ''}</span>
+                        </div>
+                    `;
+                    abstractsGrid.appendChild(card);
+                });
+            }
+            abstractsGrid.style.opacity = '1';
+        }, 200);
+    }
+
+    continentPaths.forEach(path => {
+        path.addEventListener('click', (e) => {
+            // Remove active from all paths
+            continentPaths.forEach(p => p.classList.remove('active'));
+            globalBtn.classList.remove('active');
+
+            // Add active to clicked path
+            e.target.classList.add('active');
+
+            const continentId = e.target.id;
+            const continentName = e.target.getAttribute('title');
+            currentGeoLabel.textContent = continentName;
+
+            renderMapFeed(continentId);
+        });
+    });
+
+    globalBtn.addEventListener('click', () => {
+        continentPaths.forEach(p => p.classList.remove('active'));
+        globalBtn.classList.add('active');
+        currentGeoLabel.textContent = 'Mundo Interconectado';
+        renderMapFeed('world');
+    });
+
+    // Patch the cultural filter buttons to respect the active continent
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const activeContinent = document.querySelector('.continent-path.active');
+            const continentId = activeContinent ? activeContinent.id : 'world';
+            renderMapFeed(continentId);
+        });
+    });
+
     // Add CSS transition for smooth filter fading
     abstractsGrid.style.transition = 'opacity 0.2s ease-in-out';
 

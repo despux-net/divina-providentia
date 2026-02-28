@@ -15,6 +15,37 @@ function categorizeNews(title: string, content: string): string {
   return 'crisis';
 }
 
+// Determine the continent based on country codes or keywords
+function determineContinent(countryArray: string[] | null, textContent: string): string {
+  if (countryArray && countryArray.length > 0) {
+    const country = countryArray[0].toLowerCase();
+
+    // Simple mapping for common NewsData.io country codes
+    const europe = ['gb', 'fr', 'de', 'it', 'es', 'ru', 'ua', 'pl', 'se', 'no', 'fi', 'nl', 'be', 'ch', 'at', 'gr', 'pt', 'ie', 'dk'];
+    const americas = ['us', 'ca', 'mx', 'ar', 'br', 'cl', 'co', 'pe', 've', 'cu'];
+    const asia = ['cn', 'jp', 'in', 'kr', 'id', 'pk', 'bd', 'ph', 'vn', 'tr', 'ir', 'th', 'mm', 'iq', 'af', 'sa', 'uz', 'my', 'ye', 'np', 'lk', 'kz', 'sy', 'kh', 'jo', 'az', 'ae', 'tj', 'il', 'lb', 'kg', 'tm', 'sg', 'om', 'kw', 'ge', 'mn', 'am', 'qa', 'bh', 'cy', 'bt', 'mv', 'bn'];
+    const africa = ['ng', 'et', 'eg', 'cd', 'tz', 'za', 'ke', 'ug', 'dz', 'sd', 'ma', 'ao', 'mz', 'gh', 'mg', 'cm', 'ci', 'ne', 'bf', 'ml', 'mw', 'zm', 'sn', 'td', 'so', 'zw', 'gn', 'rw', 'bj', 'bi', 'tn', 'ss', 'tg', 'sl', 'ly', 'cg', 'lr', 'cf', 'mr', 'er', 'na', 'gm', 'bw', 'ga', 'ls', 'gw', 'gq', 'mu', 'sz', 'dj', 'km', 'cv', 'st', 'sc'];
+    const oceania = ['au', 'pg', 'nz', 'fj', 'sb', 'vu', 'ws', 'ki', 'to', 'fm', 'pw', 'mh', 'tv', 'nr'];
+
+    if (europe.includes(country)) return 'europe';
+    if (americas.includes(country)) return 'america';
+    if (asia.includes(country)) return 'asia';
+    if (africa.includes(country)) return 'africa';
+    if (oceania.includes(country)) return 'oceania';
+  }
+
+  // Fallback to keyword matching if no country code or code not found
+  const text = textContent.toLowerCase();
+
+  if (text.match(/(eeuu|estados unidos|america|washington|biden|trump|new york|california|texas|mexico|colombia|argentina|brasil|chile|peru|venezuela|canada)/)) return 'america';
+  if (text.match(/(europa|europe|reinounido|uk|london|paris|france|germany|berlin|spain|madrid|italy|rome|russia|moscow|ukraine|kiev)/)) return 'europe';
+  if (text.match(/(asia|china|beijing|japan|tokyo|india|new delhi|pakistan|iran|israel|jerusalem|gaza|middle east|oriente medio|corea|seoul)/)) return 'asia';
+  if (text.match(/(africa|sudafrica|nigeria|egypt|cairo|kenya|congo)/)) return 'africa';
+  if (text.match(/(australia|sydney|oceania|new zealand)/)) return 'oceania';
+
+  return 'world'; // Default to global if undetermined
+}
+
 serve(async (req: Request) => {
   try {
     console.log("Starting fetch-live-news function");
@@ -66,6 +97,9 @@ serve(async (req: Request) => {
       // Determine our custom "Cultural Impact Level" tag
       const tag = categorizeNews(article.title, excerpt);
 
+      // Determine the continent
+      const continent = determineContinent(article.country, article.title + " " + excerpt);
+
       articlesToInsert.push({
         title: article.title,
         excerpt: excerpt,
@@ -73,6 +107,7 @@ serve(async (req: Request) => {
         url: article.link,
         image_url: article.image_url || null,
         category_tag: tag,
+        continent: continent,
         published_at: article.pubDate || new Date().toISOString()
       });
     }

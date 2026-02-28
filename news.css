@@ -173,6 +173,83 @@ body.news-body {
     margin-right: 12px;
 }
 
+/* --- Interactive Map Filter --- */
+.map-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    text-align: center;
+    position: relative;
+    padding: 20px;
+    background: var(--news-surface);
+    border: 1px solid var(--news-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.map-label {
+    margin-bottom: 20px;
+    font-family: var(--font-heading);
+    color: var(--news-accent);
+}
+
+#currentGeography {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--news-gold);
+    display: inline-block;
+    min-width: 150px;
+}
+
+#world-map {
+    width: 100%;
+    max-height: 400px;
+}
+
+.continent-path {
+    fill: #EAEAEA;
+    stroke: #FFFFFF;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.continent-path:hover {
+    fill: var(--news-gold);
+    transform: translateY(-2px);
+}
+
+.continent-path.active {
+    fill: var(--news-accent);
+    stroke: var(--news-gold);
+}
+
+.global-btn {
+    margin-top: 20px;
+    background: transparent;
+    border: 1px solid var(--news-border);
+    padding: 8px 24px;
+    border-radius: 20px;
+    color: var(--news-text-main);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.global-btn:hover {
+    border-color: var(--news-gold);
+    color: var(--news-gold);
+}
+
+.global-btn.active {
+    background: var(--news-gold);
+    color: var(--news-surface);
+    border-color: var(--news-gold);
+}
+
 .filter-btn {
     background: transparent;
     border: 1px solid var(--news-border);

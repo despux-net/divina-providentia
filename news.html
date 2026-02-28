@@ -83,6 +83,30 @@
             <button class="filter-btn" data-filter="crisis">Crisis de la Modernidad</button>
             <button class="filter-btn" data-filter="aesthetics">Estética</button>
         </div>
+
+        <!-- Interactive Map Filter -->
+        <div class="map-container">
+            <div class="map-label">
+                <span class="filter-label">Foco Geográfico:</span>
+                <span id="currentGeography">Mundo Interconectado</span>
+            </div>
+            <svg id="world-map" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- Simplified coordinates for stylized continents -->
+                <g id="map-continents">
+                    <path id="america" class="continent-path" title="América"
+                        d="M150 100 Q 250 50 300 200 Q 320 300 350 450 Q 250 350 200 250 Q 150 200 150 100 Z" />
+                    <path id="europe" class="continent-path" title="Europa"
+                        d="M450 80 Q 550 50 600 150 Q 550 180 480 200 Q 420 180 450 80 Z" />
+                    <path id="africa" class="continent-path" title="África"
+                        d="M480 220 Q 580 200 620 300 Q 580 420 520 400 Q 450 300 480 220 Z" />
+                    <path id="asia" class="continent-path" title="Asia"
+                        d="M600 80 Q 800 50 900 150 Q 850 300 700 320 Q 620 200 600 80 Z" />
+                    <path id="oceania" class="continent-path" title="Oceanía"
+                        d="M800 350 Q 900 320 950 400 Q 900 450 820 420 Q 780 380 800 350 Z" />
+                </g>
+            </svg>
+            <button class="global-btn active" id="resetMapFilter">Ver Todo el Mundo</button>
+        </div>
     </header>
 
     <!-- Abstracts Feed -->
