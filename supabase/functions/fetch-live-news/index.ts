@@ -55,59 +55,91 @@ serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // 2. Fetch from NewsAPI (NewsData.io)
-    // Using the user's provided API key and filtering by politics/world
-    const NEWS_API_KEY = Deno.env.get('NEWSDATA_API_KEY') ?? 'pub_fe32b0376cb54b20bcf4652ec6b44aa4'; // Fallback to user provided key
+    // 2. Fetch from NewsAPI.org AND NewsData.io concurrently
+    const NEWSDATA_API_KEY = Deno.env.get('NEWSDATA_API_KEY') ?? 'pub_fe32b0376cb54b20bcf4652ec6b44aa4';
+    const NEWSORG_API_KEY = Deno.env.get('NEWSAPI_ORG_KEY') ?? '39db7cb32cb44798b8f730747ab308f6';
 
-    // Let's get news from reputable English/Spanish sources about politics/world
-    const apiUrl = `https://newsdata.io/api/1/latest?apikey=${NEWS_API_KEY}&category=politics,world&language=es,en&size=10`;
+    const newsDataUrl = `https://newsdata.io/api/1/latest?apikey=${NEWSDATA_API_KEY}&category=politics,world&language=es,en&size=10`;
+    const newsApiOrgUrl = `https://newsapi.org/v2/top-headlines?category=general&language=en&apiKey=${NEWSORG_API_KEY}&pageSize=10`;
 
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch news: ${response.status} ${response.statusText}`);
+    // Fetch both simultaneously
+    const [newsDataRes, newsOrgRes] = await Promise.allSettled([
+      fetch(newsDataUrl),
+      fetch(newsApiOrgUrl)
+    ]);
+
+    const articlesToInsert = [];
+
+    // --- Process NewsData.io Results ---
+    if (newsDataRes.status === 'fulfilled' && newsDataRes.value.ok) {
+      const data1 = await newsDataRes.value.json();
+      if (data1.results) {
+        for (const article of data1.results) {
+          if (!article.title || !article.link) continue;
+
+          let excerpt = article.description || article.content || "Sin descripción disponible.";
+          if (excerpt.length > 280) excerpt = excerpt.substring(0, 277) + "...";
+
+          const tag = categorizeNews(article.title, excerpt);
+          const continent = determineContinent(article.country, article.title + " " + excerpt);
+
+          articlesToInsert.push({
+            title: article.title,
+            excerpt: excerpt,
+            source: article.source_name || article.source_id || "Agencia Global",
+            url: article.link,
+            image_url: article.image_url || null,
+            category_tag: tag,
+            continent: continent,
+            published_at: article.pubDate || new Date().toISOString()
+          });
+        }
+      }
+    } else {
+      console.warn("NewsData API failed:", newsDataRes);
     }
 
-    const data = await response.json();
+    // --- Process NewsAPI.org Results ---
+    if (newsOrgRes.status === 'fulfilled' && newsOrgRes.value.ok) {
+      const data2 = await newsOrgRes.value.json();
+      if (data2.articles) {
+        for (const article of data2.articles) {
+          // NewsAPI uses different property names (url instead of link, urlToImage instead of image_url)
+          if (!article.title || article.title === '[Removed]' || !article.url) continue;
 
-    if (!data.results || data.results.length === 0) {
-      return new Response(JSON.stringify({ message: "No news found", count: 0 }), {
+          let excerpt = article.description || article.content || "Sin descripción disponible.";
+          if (excerpt.length > 280) excerpt = excerpt.substring(0, 277) + "...";
+
+          const tag = categorizeNews(article.title, excerpt);
+
+          // NewsAPI.org doesn't provide an array of countries usually, only source.country (sometimes)
+          // We rely purely on text matching for the continent
+          const continent = determineContinent(null, article.title + " " + excerpt);
+
+          articlesToInsert.push({
+            title: article.title,
+            excerpt: excerpt,
+            source: (article.source && article.source.name) ? article.source.name : "Reportero Global",
+            url: article.url,
+            image_url: article.urlToImage || null,
+            category_tag: tag,
+            continent: continent,
+            published_at: article.publishedAt || new Date().toISOString()
+          });
+        }
+      }
+    } else {
+      console.warn("NewsAPI.org failed:", newsOrgRes);
+    }
+
+    // 4. Insert into Supabase (ignoring duplicates via unique URL constraint)
+    if (articlesToInsert.length === 0) {
+      return new Response(JSON.stringify({ message: "No news fetched from any source", count: 0 }), {
         headers: { "Content-Type": "application/json" },
         status: 200,
       });
     }
 
-    // 3. Process and format articles
-    const articlesToInsert = [];
-
-    for (const article of data.results) {
-      // Only process items that have essential data
-      if (!article.title || !article.link) continue;
-
-      // Format excerpt to be max 280 chars as per design guidelines
-      let excerpt = article.description || article.content || "Sin descripción disponible.";
-      if (excerpt.length > 280) {
-        excerpt = excerpt.substring(0, 277) + "...";
-      }
-
-      // Determine our custom "Cultural Impact Level" tag
-      const tag = categorizeNews(article.title, excerpt);
-
-      // Determine the continent
-      const continent = determineContinent(article.country, article.title + " " + excerpt);
-
-      articlesToInsert.push({
-        title: article.title,
-        excerpt: excerpt,
-        source: article.source_name || article.source_id || "Agencia Global",
-        url: article.link,
-        image_url: article.image_url || null,
-        category_tag: tag,
-        continent: continent,
-        published_at: article.pubDate || new Date().toISOString()
-      });
-    }
-
-    // 4. Insert into Supabase (ignoring duplicates via unique URL constraint)
     const { data: insertedData, error } = await supabase
       .from('live_news')
       .upsert(articlesToInsert, { onConflict: 'url', ignoreDuplicates: true })
@@ -119,7 +151,7 @@ serve(async (req: Request) => {
     }
 
     let insertedCount = insertedData ? insertedData.length : 0;
-    console.log(`Successfully fetched and potentially inserted ${articlesToInsert.length} articles. (${insertedCount} new)`);
+    console.log(`Successfully fetched ${articlesToInsert.length} total articles. (${insertedCount} new saved to DB)`);
 
     return new Response(
       JSON.stringify({
@@ -131,10 +163,10 @@ serve(async (req: Request) => {
       { headers: { "Content-Type": "application/json" } },
     );
 
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Function error:", err);
     return new Response(
-      JSON.stringify({ error: err.message }),
+      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
       { headers: { "Content-Type": "application/json" }, status: 500 },
     );
   }
