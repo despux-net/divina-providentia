@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cripta del Conocimiento | Divina Providentia</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="news.css">
+    <link rel="stylesheet" href="cripta.css">
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="news-page-body">
+    <!-- Navbar (reused) -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="LOGOV3.png" alt="Divina Providentia Logo" class="logo-image">
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#inicio">Génesis</a></li>
+                <li><a href="index.html#filosofia">Dogma</a></li>
+                <li><a href="news.html">Noticias</a></li>
+                <li><a href="cripta.html" class="active">La Cripta</a></li>
+                <li><a href="index.html#tienda">Arsenal</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="news-header" style="margin-top: 80px; text-align: center; padding: 4rem 1rem;">
+        <h1 class="news-main-title" style="font-size: 3rem; margin-bottom: 1rem;">La Cripta del Conocimiento</h1>
+        <p class="news-subtitle" style="max-width: 600px; margin: 0 auto; color: var(--color-silver);">Un santuario
+            digital donde resguardamos la sabiduría estoica, los tratados de geopolítica y la táctica militar heredada
+            de nuestros ancestros.</p>
+    </header>
+
+    <main class="cripta-main">
+        <!-- Optional Filter Bar -->
+        <div class="cripta-controls">
+            <button class="filter-btn active" data-filter="all">Todos los Tomos</button>
+            <button class="filter-btn" data-filter="geopolitics">Geopolítica</button>
+            <button class="filter-btn" data-filter="stoicism">Estoicismo</button>
+            <button class="filter-btn" data-filter="military strategy">Militar</button>
+            <button class="filter-btn" data-filter="theology">Teología</button>
+        </div>
+
+        <!-- 3D Bookshelf Grid -->
+        <div class="cripta-grid" id="criptaGrid">
+            <div class="loading-spinner">
+                <p>Desenterrando manuscritos clasificados...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Book Details Modal -->
+    <div class="cripta-modal-overlay" id="criptaModal">
+        <div class="cripta-modal-content">
+            <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+            <div class="modal-body">
+                <div class="modal-cover-container">
+                    <img src="" alt="Book Cover" id="modalCover" class="modal-cover">
+                </div>
+                <div class="modal-info">
+                    <span class="modal-tag" id="modalTag">Categoría</span>
+                    <h2 class="modal-title" id="modalTitle">Título del Libro</h2>
+                    <h3 class="modal-author" id="modalAuthor">Autor</h3>
+                    <div class="separator-line"></div>
+                    <p class="modal-desc" id="modalDesc">Descripción...</p>
+                    <a href="#" target="_blank" class="cta-button silver-btn" id="modalLink"
+                        style="margin-top: 2rem;">Adquirir / Leer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimal Scripts -->
+    <script src="supabase-config.js"></script>
+    <script src="cripta.js"></script>
+</body>
+
+</html>
