@@ -65,7 +65,41 @@
                 <li><a href="cripta.html">La Cripta</a></li>
                 <li><a href="index.html#tienda">Arsenal</a></li>
                 <li><a href="index.html#contacto">Alianza</a></li>
+                <li class="nav-lang-selector dropdown">
+                    <button class="lang-dropbtn" aria-label="Seleccionar idioma">
+                        🌐 <span class="lang-text">Idioma</span>
+                    </button>
+                    <div class="lang-dropdown-content">
+                        <a href="#" onclick="changeLanguage('en'); return false;">🇬🇧 English</a>
+                        <a href="#" onclick="changeLanguage('es'); return false;">🇪🇸 Español</a>
+                        <a href="#" onclick="changeLanguage('de'); return false;">🇩🇪 Deutsch</a>
+                    </div>
+                </li>
+                <li>
+                    <button class="auth-btn-icon" id="authBtnTrigger" aria-label="Iniciar Sesión"
+                        onclick="openModal('loginModal')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="auth-text">Acceso</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="cart-button" id="cartButton" aria-label="Carrito de compras">
+                        🛒
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </li>
             </ul>
+            <button class="mobile-menu-button" aria-label="Menú móvil">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
         </div>
     </nav>
 

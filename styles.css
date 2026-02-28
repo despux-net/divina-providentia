@@ -339,10 +339,31 @@ p {
 
 
 .nav-links {
-  display: flex;
-  gap: var(--space-lg);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  flex-direction: column;
+  padding: var(--space-lg) 0;
   list-style: none;
   align-items: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(45, 27, 78, 0.1);
+  display: flex;
+  gap: var(--space-md);
+  z-index: 1000;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.nav-links.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .nav-links a {
@@ -351,6 +372,7 @@ p {
   font-weight: 500;
   transition: color var(--transition-fast);
   position: relative;
+  font-size: 1.1rem;
 }
 
 .nav-links a::after {
@@ -403,7 +425,7 @@ p {
 }
 
 .mobile-menu-button {
-  display: none;
+  display: block;
   background: none;
   border: none;
   cursor: pointer;
@@ -1940,27 +1962,6 @@ p {
    =================================== */
 
 @media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: white;
-    flex-direction: column;
-    padding: 1rem 0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border-top: 1px solid #eee;
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-  .mobile-menu-button {
-    display: block;
-  }
-
   .hero {
     min-height: 80vh;
   }

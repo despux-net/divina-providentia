@@ -12,6 +12,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Reference global initialized Supabase client
     const supabaseClient = window.supabaseClient;
 
+    // Mobile menu toggle
+    const mobileMenuBtn = document.querySelector('.mobile-menu-button');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+    }
+
     let newsData = [];
 
     // Map tags back to user-friendly names
