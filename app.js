@@ -64,9 +64,6 @@ async function initializeApp() {
     displayQuote();
     setInterval(rotateQuote, 8000);
 
-    // Initialize scroll animations
-    initializeScrollAnimations();
-
     // Initialize navbar scroll effect
     initializeNavbar();
 
@@ -78,6 +75,11 @@ async function initializeApp() {
 
     // Load cart from localStorage
     loadCartFromStorage();
+
+    // Initialize scroll animations AFTER possible content injection
+    setTimeout(() => {
+        initializeScrollAnimations();
+    }, 500); // 500ms delay to ensure content.json is fetched and rendered
 }
 
 // ===================================
