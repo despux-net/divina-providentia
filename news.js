@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     tagName: getTagName(item.category_tag),
                     source: item.source,
                     time: timeAgo(item.published_at),
-                    url: item.url
+                    url: item.url,
+                    continent: item.continent
                 }));
                 renderFeed('all');
                 populateTicker();
