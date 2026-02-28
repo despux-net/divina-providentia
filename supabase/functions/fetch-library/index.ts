@@ -28,7 +28,7 @@ serve(async (req: Request) => {
     // 2. Select a random query to keep the library dynamic
     const randomQuery = QUERIES[Math.floor(Math.random() * QUERIES.length)];
     const randomPage = Math.floor(Math.random() * 5) + 1; // Get pages 1 to 5 randomly to vary results
-    const apiUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(randomQuery)}&limit=50&page=${randomPage}`;
+    const apiUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(randomQuery)}&limit=100&page=${randomPage}`;
 
     console.log(`Fetching books for query: ${randomQuery} (Page ${randomPage})`);
 
@@ -47,7 +47,7 @@ serve(async (req: Request) => {
     }
 
     // 3. Process the docs concurrently to fetch descriptions
-    const validDocs = data.docs.filter((doc: any) => doc.title && doc.author_name && doc.cover_i && doc.key).slice(0, 25);
+    const validDocs = data.docs.filter((doc: any) => doc.title && doc.author_name && doc.cover_i && doc.key).slice(0, 50);
 
     console.log(`Found ${validDocs.length} valid docs with covers. Fetching details...`);
 

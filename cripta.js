@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .from('library_books')
                 .select('*')
                 .order('created_at', { ascending: false })
-                .limit(100);
+                .limit(300);
 
             if (error) throw error;
 
