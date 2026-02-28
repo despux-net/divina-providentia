@@ -1,80 +1,5 @@
 // Mock data for the News Broadcast
-const newsData = [
-    {
-        id: 1,
-        title: "La Caída de los Relatos: El fracaso del progresismo institucional",
-        excerpt: "Las encuestas recientes en el corazón de Europa revelan un rechazo masivo de las nuevas generaciones hacia las doctrinas del deconstructivismo social. Buscan certezas donde el estado posmoderno solo ofrece relatividad.",
-        tag: "crisis",
-        tagName: "Crisis de la Modernidad",
-        source: "Observatorio Geopolítico Central",
-        time: "Hace 2 horas"
-    },
-    {
-        id: 2,
-        title: "El Renacimiento de la Arquitectura Clásica en Metrópolis Modernas",
-        excerpt: "Varios ayuntamientos han comenzado a rechazar proyectos de arquitectura brutalista en favor de estilos neo-clásicos, argumentando que el entorno urbano moldea la salud espiritual de sus ciudadanos.",
-        tag: "aesthetics",
-        tagName: "Estética",
-        source: "Instituto de Belleza Objetiva",
-        time: "Hace 5 horas"
-    },
-    {
-        id: 3,
-        title: "Nueva Configuración de Poder: Eurasia busca hegemonía económica",
-        excerpt: "El eje oriental consolida su sistema financiero paralelo, marcando lo que muchos historiadores ya catalogan como el fin definitivo de la hegemonía atlantista unipolar y el inicio de un nuevo orden global.",
-        tag: "geopolitics",
-        tagName: "Geopolítica",
-        source: "Strategic Defense Journal",
-        time: "Hace 8 horas"
-    },
-    {
-        id: 4,
-        title: "Retorno a lo Sagrado: Liturgias antiguas atraen a la juventud",
-        excerpt: "Ajenos al rito moderno, miles de jóvenes acuden cada domingo a misas en latín y ritos ancestrales buscando el sentido de misterio, verticalidad y trascendencia que el mundo hiperconectado les ha negado.",
-        tag: "tradition",
-        tagName: "Tradición",
-        source: "Chronica Sacra",
-        time: "Hace 11 horas"
-    },
-    {
-        id: 5,
-        title: "El fin de la familia extendida: Consecuencias del individualismo",
-        excerpt: "Un nuevo ensayo sociológico demuestra cómo la disolución de las estructuras familiares tradicionales ha generado una epidemia de soledad y dependencia estatal sin precedentes en la historia de occidente.",
-        tag: "culture",
-        tagName: "Cultura",
-        source: "Social Order Review",
-        time: "Hace 14 horas"
-    },
-    {
-        id: 6,
-        title: "Defensa Tecnológica: Soberanía digital como nuevo frente militar",
-        excerpt: "Las naciones conservadoras están invirtiendo cifras récord en infraestructuras de servidores locales e inteligencias artificiales alineadas, reconociendo que el control de los datos es la verdadera frontera defensiva del siglo XXI.",
-        tag: "geopolitics",
-        tagName: "Geopolítica",
-        source: "Tech-Sovereignty Council",
-        time: "Hace 18 horas"
-    },
-    {
-        id: 7,
-        title: "El Redescubrimiento de los Clásicos en la Educación Privada",
-        excerpt: "Nuevos modelos educativos (Classical Education) están reemplazando los paradigmas constructivistas. Se vuelve a la enseñanza de retórica, lógica, latín y la lectura de los Grandes Libros de Occidente.",
-        tag: "culture",
-        tagName: "Cultura",
-        source: "Academia Perennis",
-        time: "Hace 22 horas"
-    },
-    {
-        id: 8,
-        title: "Filosofía Perenne vs. Transhumanismo",
-        excerpt: "El debate bioético de la década se centra en la naturaleza humana. Mientras Silicon Valley promueve la superación biológica, los focos de resistencia intelectual abogan por la sacralidad inviolable de la condición humana natural.",
-        tag: "crisis",
-        tagName: "Crisis de la Modernidad",
-        source: "Bioethics Vanguard",
-        time: "Ayer"
-    }
-];
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
     // Set current date
     const dateDisplay = document.getElementById('currentDateDisplay');
@@ -84,6 +9,67 @@ document.addEventListener('DOMContentLoaded', () => {
     const abstractsGrid = document.getElementById('abstractsGrid');
     const filterBtns = document.querySelectorAll('.filter-btn');
 
+    // Reference global initialized Supabase client
+    const supabaseClient = window.supabaseClient;
+
+    let newsData = [];
+
+    // Map tags back to user-friendly names
+    const getTagName = (tag) => {
+        const categories = {
+            'geopolitics': 'Geopolítica',
+            'tradition': 'Tradición',
+            'culture': 'Cultura',
+            'aesthetics': 'Estética',
+            'crisis': 'Crisis de la Modernidad'
+        };
+        return categories[tag] || 'Actualidad';
+    }
+
+    // Format timestamp
+    const timeAgo = (dateStr) => {
+        const diff = Math.floor((new Date() - new Date(dateStr)) / 1000 / 60);
+        if (diff < 60) return `Hace ${diff} minutos`;
+        const hours = Math.floor(diff / 60);
+        if (hours < 24) return `Hace ${hours} horas`;
+        return `Hace ${Math.floor(hours / 24)} días`;
+    }
+
+    // Load data from Supabase
+    async function fetchLiveNews() {
+        try {
+            abstractsGrid.innerHTML = '<div class="loading-spinner"><p>Sintonizando frecuencias de información...</p></div>';
+
+            const { data, error } = await supabaseClient
+                .from('live_news')
+                .select('*')
+                .order('published_at', { ascending: false })
+                .limit(50);
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+                // Map the DB data to match the UI format
+                newsData = data.map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    excerpt: item.excerpt,
+                    tag: item.category_tag,
+                    tagName: getTagName(item.category_tag),
+                    source: item.source,
+                    time: timeAgo(item.published_at),
+                    url: item.url
+                }));
+                renderFeed('all');
+            } else {
+                abstractsGrid.innerHTML = '<div class="no-books"><p>No hay comunicaciones recientes en el observatorio.</p></div>';
+            }
+        } catch (err) {
+            console.error("Error fetching news:", err);
+            abstractsGrid.innerHTML = '<div class="no-books"><p>Error al conectar con el servidor central.</p></div>';
+        }
+    }
+
     // Render feed
     function renderFeed(filter = 'all') {
         abstractsGrid.innerHTML = '';
@@ -91,6 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const filteredData = filter === 'all'
             ? newsData
             : newsData.filter(item => item.tag === filter);
+
+        if (filteredData.length === 0) {
+            abstractsGrid.innerHTML = `<div class="no-books"><p>No hay reportes bajo esta clasificación cultural actualmente.</p></div>`;
+            return;
+        }
 
         filteredData.forEach(item => {
             const card = document.createElement('article');
@@ -106,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="card-tag">${item.tagName}</span>
                     <span class="card-time">${item.time}</span>
                 </div>
-                <h2 class="card-title">${item.title}</h2>
+                <h2 class="card-title"><a href="${item.url}" target="_blank" style="color: inherit; text-decoration: none;">${item.title}</a></h2>
                 <p class="card-excerpt">${excerptDisplay}</p>
                 <div class="card-footer">
                     <span class="card-source">FUENTE: ${item.source}</span>
@@ -139,5 +130,5 @@ document.addEventListener('DOMContentLoaded', () => {
     abstractsGrid.style.transition = 'opacity 0.2s ease-in-out';
 
     // Initial render
-    renderFeed();
+    fetchLiveNews();
 });
