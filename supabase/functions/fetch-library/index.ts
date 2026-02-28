@@ -27,7 +27,7 @@ serve(async (req: Request) => {
 
     // 2. Select a random query to keep the library dynamic
     const randomQuery = QUERIES[Math.floor(Math.random() * QUERIES.length)];
-    const apiUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(randomQuery)}&limit=20`;
+    const apiUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(randomQuery)}&limit=50`;
 
     console.log(`Fetching books for query: ${randomQuery}`);
 
@@ -45,33 +45,47 @@ serve(async (req: Request) => {
       });
     }
 
-    // 3. Process the docs
-    const booksToInsert = [];
+    // 3. Process the docs concurrently to fetch descriptions
+    const validDocs = data.docs.filter((doc: any) => doc.title && doc.author_name && doc.cover_i && doc.key).slice(0, 25); // Limit processing secondary requests to 25 to avoid timeout
 
-    for (const doc of data.docs) {
-      // We only want books that have a cover image, an author, and a title
-      if (!doc.title || !doc.author_name || !doc.cover_i || !doc.key) {
-        continue;
-      }
+    console.log(`Found ${validDocs.length} valid docs with covers. Fetching details...`);
 
-      const coverUrl = `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
-      const author = Array.isArray(doc.author_name) ? doc.author_name[0] : doc.author_name;
+    const booksToInsert = await Promise.all(
+      validDocs.map(async (doc: any) => {
+        const coverUrl = `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
+        const author = Array.isArray(doc.author_name) ? doc.author_name[0] : doc.author_name;
+        let description = "Un tomo esencial rescatado de los anales de la historia.";
 
-      // Ensure we have a reasonable description (often missing in search.json, so we might store a generic one or extract subject)
-      let description = "Un tomo esencial rescatado de los anales de la historia.";
-      if (doc.subject && Array.isArray(doc.subject) && doc.subject.length > 0) {
-        description = `Áreas de estudio: ${doc.subject.slice(0, 3).join(', ')}.`;
-      }
+        try {
+          // Fetch the actual work description
+          const workRes = await fetch(`https://openlibrary.org${doc.key}.json`);
+          if (workRes.ok) {
+            const workData = await workRes.json();
+            if (workData.description) {
+              description = typeof workData.description === 'string'
+                ? workData.description
+                : workData.description.value || description;
+            } else if (doc.subject && Array.isArray(doc.subject) && doc.subject.length > 0) {
+              description = `Áreas de estudio: ${doc.subject.slice(0, 5).join(', ')}.`;
+            }
+          }
+        } catch (err) {
+          console.error(`Error fetching description for ${doc.key}:`, err);
+          if (doc.subject && Array.isArray(doc.subject) && doc.subject.length > 0) {
+            description = `Áreas de estudio: ${doc.subject.slice(0, 3).join(', ')}.`;
+          }
+        }
 
-      booksToInsert.push({
-        key: doc.key, // unique identifier from Open Library (e.g., "/works/OL123W")
-        title: doc.title,
-        author: author,
-        cover_url: coverUrl,
-        description: description,
-        category_tag: randomQuery
-      });
-    }
+        return {
+          key: doc.key, // unique identifier from Open Library (e.g., "/works/OL123W")
+          title: doc.title,
+          author: author,
+          cover_url: coverUrl,
+          description: description,
+          category_tag: randomQuery
+        };
+      })
+    );
 
     // 4. Insert into Supabase
     if (booksToInsert.length === 0) {
