@@ -33,8 +33,8 @@ serve(async (req: Request) => {
     // Using the user's provided API key and filtering by politics/world
     const NEWS_API_KEY = Deno.env.get('NEWSDATA_API_KEY') ?? 'pub_fe32b0376cb54b20bcf4652ec6b44aa4'; // Fallback to user provided key
 
-    // Let's get news from reputable English/Spanish sources about politics/world
-    const apiUrl = `https://newsdata.io/api/1/latest?apikey=${NEWS_API_KEY}&category=politics,world&language=es,en`;
+    // Let's get news from reputable English/Spanish sources about politics, world, and business
+    const apiUrl = `https://newsdata.io/api/1/latest?apikey=${NEWS_API_KEY}&category=politics,world,business&language=es,en`;
 
     const response = await fetch(apiUrl);
     if (!response.ok) {
