@@ -2,6 +2,10 @@
 // DIVINA PROVIDENTIA - MAIN APP
 // ===================================
 
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
 // Stoic Quotes for Hero Section
 const stoicQuotes = [
     {
@@ -51,6 +55,7 @@ const state = {
 // ===================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    window.scrollTo(0, 0);
     initializeApp();
 });
 
