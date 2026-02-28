@@ -2188,3 +2188,235 @@ iframe.goog-te-banner-frame {
   border: none !important;
   box-shadow: none !important;
 }
+
+/* ===================================
+   MANIFIESTO SECTION
+   =================================== */
+
+.manifesto-section {
+  background: var(--color-sacred-purple-dark);
+  color: var(--color-ethereal-white);
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-3xl) 0;
+}
+
+.manifesto-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 85% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.manifesto-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.manifesto-ornament {
+  font-size: 1.2rem;
+  color: var(--color-divine-gold);
+  letter-spacing: 0.6em;
+  opacity: 0.7;
+  margin: var(--space-lg) 0;
+  display: block;
+}
+
+.manifesto-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  color: var(--color-divine-gold-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-xl);
+  font-weight: 400;
+}
+
+.manifesto-body {
+  text-align: left;
+}
+
+.manifesto-body p {
+  font-family: var(--font-quote);
+  font-size: clamp(1.05rem, 1.6vw, 1.22rem);
+  line-height: 1.9;
+  color: rgba(250, 250, 250, 0.85);
+  margin-bottom: var(--space-lg);
+  padding-left: var(--space-md);
+  border-left: 2px solid rgba(212, 175, 55, 0.2);
+  transition: border-color var(--transition-base);
+}
+
+.manifesto-body p:hover {
+  border-left-color: var(--color-divine-gold);
+}
+
+.manifesto-body p:first-child {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-style: italic;
+  color: rgba(250, 250, 250, 0.95);
+  border-left: none;
+  padding-left: 0;
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.manifesto-closing {
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  letter-spacing: 0.15em;
+  color: var(--color-divine-gold);
+  text-transform: uppercase;
+  margin-top: var(--space-xl);
+  margin-bottom: 0;
+  text-align: center;
+}
+
+/* ===================================
+   LIFESTYLE SECTION
+   =================================== */
+
+.lifestyle-section {
+  background: var(--color-ethereal-white);
+  position: relative;
+}
+
+.lifestyle-section .section-header h2 {
+  color: var(--color-sacred-purple);
+}
+
+.lifestyle-section .section-header p {
+  color: var(--color-stone-gray-light);
+  font-style: italic;
+  font-family: var(--font-quote);
+  font-size: 1.15rem;
+}
+
+.lifestyle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
+}
+
+@media (max-width: 860px) {
+  .lifestyle-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.lifestyle-card {
+  background: white;
+  border: 1px solid rgba(45, 27, 78, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl) var(--space-xl) var(--space-xl);
+  text-align: center;
+  position: relative;
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.lifestyle-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.lifestyle-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--color-divine-gold);
+  transition: width 0.4s ease;
+  border-radius: 2px;
+}
+
+.lifestyle-card:hover {
+  box-shadow: 0 16px 40px rgba(45, 27, 78, 0.1);
+  transform: translateY(-6px);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.lifestyle-card:hover::after {
+  width: 60%;
+}
+
+.lifestyle-icon {
+  font-size: 1.4rem;
+  color: var(--color-divine-gold);
+  letter-spacing: 0.4em;
+  margin-bottom: var(--space-xs);
+  opacity: 0.8;
+}
+
+.lifestyle-name {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+  color: var(--color-sacred-purple);
+  margin-bottom: 0;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.lifestyle-latin {
+  display: block;
+  font-family: var(--font-quote);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--color-divine-gold-dark);
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-sm);
+}
+
+.lifestyle-desc {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--color-stone-gray);
+  text-align: left;
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.lifestyle-tagline {
+  font-family: var(--font-quote);
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--color-stone-gray-light);
+  border-top: 1px solid rgba(45, 27, 78, 0.08);
+  padding-top: var(--space-sm);
+  margin-top: var(--space-sm);
+  margin-bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* Staggered entrance for lifestyle cards */
+.lifestyle-card:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.lifestyle-card:nth-child(2) {
+  transition-delay: 0.22s;
+}
+
+.lifestyle-card:nth-child(3) {
+  transition-delay: 0.34s;
+}

@@ -119,6 +119,47 @@ function applyContent() {
     updateText('.footer-section:nth-child(2) h3', CONTENT.footer.menu_title);
     updateText('.footer-section:nth-child(3) h3', CONTENT.footer.contact.title);
 
+    // --- MANIFESTO ---
+    if (CONTENT.manifesto) {
+        updateText('#manifestoTitle', CONTENT.manifesto.section_title);
+        const bodyEl = document.getElementById('manifestoBody');
+        if (bodyEl && CONTENT.manifesto.paragraphs) {
+            bodyEl.innerHTML = CONTENT.manifesto.paragraphs
+                .map(p => `<p>${formatText(p)}</p>`)
+                .join('');
+        }
+        updateText('#manifestoClosing', CONTENT.manifesto.closing);
+    }
+
+    // --- LIFESTYLE PILLARS ---
+    if (CONTENT.lifestyle) {
+        updateText('#lifestyleTitle', CONTENT.lifestyle.section_title);
+        updateText('#lifestyleSubtitle', CONTENT.lifestyle.section_subtitle);
+
+        const { officium, fraternitas, ars_et_ratio } = CONTENT.lifestyle.pillars;
+        if (officium) {
+            updateText('#officiumIcon', officium.icon);
+            updateText('#officiumName', officium.name);
+            updateText('#officiumLatin', officium.latin);
+            updateText('#officiumDesc', officium.description);
+            updateText('#officiumTagline', officium.tagline);
+        }
+        if (fraternitas) {
+            updateText('#fraternitasIcon', fraternitas.icon);
+            updateText('#fraternitasName', fraternitas.name);
+            updateText('#fraternitasLatin', fraternitas.latin);
+            updateText('#fraternitasDesc', fraternitas.description);
+            updateText('#fraternitasTagline', fraternitas.tagline);
+        }
+        if (ars_et_ratio) {
+            updateText('#arsEtRatioIcon', ars_et_ratio.icon);
+            updateText('#arsEtRatioName', ars_et_ratio.name);
+            updateText('#arsEtRatioLatin', ars_et_ratio.latin);
+            updateText('#arsEtRatioDesc', ars_et_ratio.description);
+            updateText('#arsEtRatioTagline', ars_et_ratio.tagline);
+        }
+    }
+
     const contactPs = document.querySelectorAll('.footer-section:nth-child(3) p');
     if (contactPs[0]) contactPs[0].innerHTML = formatText('Email: ' + CONTENT.footer.contact.email);
     if (contactPs[1]) contactPs[1].innerHTML = formatText('Teléfono: ' + CONTENT.footer.contact.phone);

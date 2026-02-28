@@ -16,7 +16,19 @@
     "hero": {
         "title": "Divina Providentia",
         "cta_button": "CONOCE",
-        "summary": "Divina Providentia no es solo una marca, es un llamado a la resistencia espiritual a través de la belleza y el orden. Inspirados por la Tradición y la austeridad, diseñamos instrumentos estéticos para quienes rechazan la decadencia del mundo moderno y buscan revestirse de trascendencia."
+        "summary": "Divina Providentia no es solo una marca, es un llamado a la resistencia espiritual a través de la belleza y el orden. Diseñamos instrumentos estéticos para quienes rechazan la decadencia del mundo moderno y buscan revestirse de trascendencia."
+    },
+    "manifesto": {
+        "section_title": "Vivir con Propósito",
+        "paragraphs": [
+            "Existe una manera de estar en el mundo que no negocia con el ruido.",
+            "Divina Providentia nació de una certeza: que la forma en que te vistes, piensas y te mueves es también una declaración espiritual. Que la elegancia no es vanidad, sino disciplina. Que cada material escogido con intención, cada hilo hilado con precisión, lleva inscrita una filosofía de vida.",
+            "No ofrecemos productos. Proponemos un modo de ser.",
+            "Creemos en la tradición como ancla, no como nostalgia. En la fe como arquitectura interior, no como ornamento. En el diseño como lenguaje del orden frente al caos.",
+            "La respuesta no es una prenda. Es una postura ante el tiempo.",
+            "Divina Providentia es para quienes han optado por la resistencia serena: aquellos que entienden que cultivarse es un acto político, que la excelencia personal es una forma de oración, y que vivir con propósito requiere ritmo, belleza y silencio."
+        ],
+        "closing": "Bienvenido a la milicia del espíritu."
     },
     "philosophy": {
         "section_title": "Dogmas de Resistencia",
@@ -44,6 +56,48 @@
             "intro": "Fragmentos recuperados del Libro Rojo y otras obras de C.G. Jung para la integración del Ser.",
             "prev_button_label": "Página anterior",
             "next_button_label": "Página siguiente"
+        }
+    },
+    "lifestyle": {
+        "section_title": "Una Forma de Vivir",
+        "section_subtitle": "Más allá de la prenda",
+        "pillars": {
+            "officium": {
+                "name": "Officium",
+                "latin": "Deber Sagrado",
+                "description": "Una reflexión diaria, escrita con el peso que merece. No es un blog. Es un breviario laico: textos de tres minutos que duran todo el día. Cada palabra fue pesada antes de ser publicada.",
+                "tagline": "No para informar. Para orientar.",
+                "icon": "✦"
+            },
+            "fraternitas": {
+                "name": "Fraternitas",
+                "latin": "Hermandad",
+                "description": "El espacio donde los portadores de Divina Providentia se reconocen entre sí. Retratos de personas reales que encarnan los valores de la marca. Entrevistas en formato epistolar: preguntas que importan, respuestas sin filtro de imagen.",
+                "tagline": "La comunidad no se construye con hashtags. Se teje con propósito compartido.",
+                "icon": "✦"
+            },
+            "ars_et_ratio": {
+                "name": "Ars et Ratio",
+                "latin": "Arte y Razón",
+                "description": "El taller visible. Cada decisión de diseño documentada: por qué se eligió un material sobre otro, qué referente histórico o espiritual inspira cada pieza. Transparencia radical al servicio de la belleza.",
+                "tagline": "El diseño consciente no es una tendencia. Es la consecuencia natural de vivir con propósito.",
+                "icon": "✦"
+            }
+        }
+    },
+    "symbol_stories": {
+        "intro": "Cada pieza tiene una historia que habla del portador, no del objeto.",
+        "items": {
+            "gorra_hilo_oro": {
+                "name": "Gorra de Hilo de Oro",
+                "symbol_title": "El Peso de lo que Eliges Portar",
+                "story": "Hay cosas que se tocan antes de comprender por qué importan. El hilo de oro no es decoración. Es memoria. Es el mismo lenguaje que bordaron los artesanos que vistieron altares, el mismo que distinguía al que caminaba con propósito entre quienes simplemente caminaban. Portar esta pieza en tu frente —el lugar donde la mente decide— es recordarte a ti mismo que eres alguien que ha elegido no volverse ordinario. El oro no envejece. Y esa es la promesa que llevas contigo."
+            },
+            "camiseta_algodon_organico": {
+                "name": "Camiseta de Algodón Orgánico",
+                "symbol_title": "La Pureza como Primera Capa",
+                "story": "Antes de cualquier mensaje, está la piel. El algodón orgánico fue elegido por verdad: porque lo que toca tu cuerpo desde el amanecer debería ser tan limpio como la intención con la que empiezas el día. Sin químicos que perturben. Sin artificios que distraigan. Hay una levedad particular en este tejido. Una honestidad que se siente, no se explica. Quienes buscan la trascendencia saben que el camino comienza en las decisiones más pequeñas: lo que comes, lo que lees, lo que tocas. Esta pieza es una de esas decisiones. Silenciosa, coherente, entera."
+            }
         }
     },
     "lookbook": {

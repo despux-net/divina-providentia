@@ -156,6 +156,7 @@ function initializeScrollAnimations() {
     // Observe core static elements
     const selectors = [
         '.philosophy-card',
+        '.lifestyle-card',
         '.section-title',
         '.about-text',
         '.contact-container',
