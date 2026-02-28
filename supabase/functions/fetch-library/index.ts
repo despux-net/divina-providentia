@@ -27,9 +27,10 @@ serve(async (req: Request) => {
 
     // 2. Select a random query to keep the library dynamic
     const randomQuery = QUERIES[Math.floor(Math.random() * QUERIES.length)];
-    const apiUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(randomQuery)}&limit=50`;
+    const randomPage = Math.floor(Math.random() * 5) + 1; // Get pages 1 to 5 randomly to vary results
+    const apiUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(randomQuery)}&limit=50&page=${randomPage}`;
 
-    console.log(`Fetching books for query: ${randomQuery}`);
+    console.log(`Fetching books for query: ${randomQuery} (Page ${randomPage})`);
 
     const response = await fetch(apiUrl);
     if (!response.ok) {
@@ -46,7 +47,7 @@ serve(async (req: Request) => {
     }
 
     // 3. Process the docs concurrently to fetch descriptions
-    const validDocs = data.docs.filter((doc: any) => doc.title && doc.author_name && doc.cover_i && doc.key).slice(0, 25); // Limit processing secondary requests to 25 to avoid timeout
+    const validDocs = data.docs.filter((doc: any) => doc.title && doc.author_name && doc.cover_i && doc.key).slice(0, 25);
 
     console.log(`Found ${validDocs.length} valid docs with covers. Fetching details...`);
 
@@ -54,7 +55,8 @@ serve(async (req: Request) => {
       validDocs.map(async (doc: any) => {
         const coverUrl = `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
         const author = Array.isArray(doc.author_name) ? doc.author_name[0] : doc.author_name;
-        let description = "Un tomo esencial rescatado de los anales de la historia.";
+
+        let description = "";
 
         try {
           // Fetch the actual work description
@@ -64,16 +66,24 @@ serve(async (req: Request) => {
             if (workData.description) {
               description = typeof workData.description === 'string'
                 ? workData.description
-                : workData.description.value || description;
-            } else if (doc.subject && Array.isArray(doc.subject) && doc.subject.length > 0) {
-              description = `Áreas de estudio: ${doc.subject.slice(0, 5).join(', ')}.`;
+                : workData.description.value || "";
+            }
+
+            // If still no description after fetching workData, try to build it from subjects
+            if (!description && doc.subject && Array.isArray(doc.subject) && doc.subject.length > 0) {
+              description = `Este archivo trata sobre: ${doc.subject.slice(0, 8).join(', ')}.`;
             }
           }
         } catch (err) {
           console.error(`Error fetching description for ${doc.key}:`, err);
           if (doc.subject && Array.isArray(doc.subject) && doc.subject.length > 0) {
-            description = `Áreas de estudio: ${doc.subject.slice(0, 3).join(', ')}.`;
+            description = `Tópicos: ${doc.subject.slice(0, 5).join(', ')}.`;
           }
+        }
+
+        // If Open Library has NO text details at all, we reject the book from entering the Cripta
+        if (!description || description.trim() === "") {
+          return null;
         }
 
         return {
@@ -87,8 +97,10 @@ serve(async (req: Request) => {
       })
     );
 
+    const validBooksToInsert = booksToInsert.filter(Boolean);
+
     // 4. Insert into Supabase
-    if (booksToInsert.length === 0) {
+    if (validBooksToInsert.length === 0) {
       return new Response(JSON.stringify({ message: "No suitable books with covers found", query: randomQuery }), {
         headers: { "Content-Type": "application/json" },
         status: 200,
@@ -97,7 +109,7 @@ serve(async (req: Request) => {
 
     const { data: insertedData, error } = await supabase
       .from('library_books')
-      .upsert(booksToInsert, { onConflict: 'key', ignoreDuplicates: true })
+      .upsert(validBooksToInsert, { onConflict: 'key', ignoreDuplicates: true })
       .select();
 
     if (error) {
@@ -106,14 +118,14 @@ serve(async (req: Request) => {
     }
 
     const insertedCount = insertedData ? insertedData.length : 0;
-    console.log(`Successfully fetched ${booksToInsert.length} books. (${insertedCount} new saved to DB)`);
+    console.log(`Successfully fetched ${validBooksToInsert.length} books. (${insertedCount} new saved to DB)`);
 
     return new Response(
       JSON.stringify({
         success: true,
         message: "Books fetched and synced successfully",
         query: randomQuery,
-        totalFetched: booksToInsert.length,
+        totalFetched: validBooksToInsert.length,
         newlyInserted: insertedCount
       }),
       { headers: { "Content-Type": "application/json" } },

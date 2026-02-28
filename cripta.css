@@ -234,6 +234,17 @@
     opacity: 0.9;
 }
 
+#modalLink {
+    background: #1a1a1a;
+    color: var(--color-divine-gold);
+    border: 1px solid var(--color-divine-gold);
+}
+
+#modalLink:hover {
+    background: var(--color-divine-gold);
+    color: #1a1a1a;
+}
+
 @media (max-width: 768px) {
     .modal-body {
         grid-template-columns: 1fr;
