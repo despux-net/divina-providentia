@@ -228,11 +228,6 @@
     font-size: 0.85rem;
     color: #555;
     margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
     line-height: 1.5;
     transition: all 0.3s ease;
 }
@@ -329,6 +324,12 @@
         box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
         border: 2px solid var(--color-divine-gold);
         animation: fadeInMobile 0.3s ease forwards;
+        transition: max-width 0.3s ease, width 0.3s ease;
+    }
+
+    .book-hover-card.expanded {
+        max-width: 450px;
+        width: 95%;
     }
 
     .mobile-close-btn {
