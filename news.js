@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set current date
     const dateDisplay = document.getElementById('currentDateDisplay');
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateDisplay.textContent = new Date().toLocaleDateString('es-ES', options);
+    if (dateDisplay) {
+        dateDisplay.textContent = new Date().toLocaleDateString('es-ES', options);
+    }
 
     const abstractsGrid = document.getElementById('abstractsGrid');
     const filterBtns = document.querySelectorAll('.filter-btn');
