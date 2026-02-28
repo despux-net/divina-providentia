@@ -81,6 +81,9 @@ async function loadLibraryBooks() {
                         <h3 class="book-title" style="font-size: 1.2rem;">${book.title}</h3>
                         <p class="book-author" style="margin-bottom: 0.5rem;">${book.author}</p>
                         <p class="book-description" style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">${book.description || 'Sin descripción disponible.'}</p>
+                        <div class="theological-disclaimer" style="font-size: 0.75rem; color: #8a6d3b; background: rgba(212, 175, 55, 0.05); border-left: 2px solid var(--color-divine-gold); padding: 8px 10px; margin-bottom: 1rem; font-style: italic; line-height: 1.4;">
+                            <strong>Aviso:</strong> Algunos textos resguardados en este arsenal fueron condenados o prohibidos temporalmente por la Iglesia. Creemos imperativo estudiar las tácticas y la retórica del enemigo; no para abrazarlas, sino para desmantelarlas intelectualmente y defender la fe con filo y puntería.
+                        </div>
                         <div class="book-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
                             <button class="read-book-btn" onclick="openBookViewer('${book.id}')">
                               ${readBtnText}
