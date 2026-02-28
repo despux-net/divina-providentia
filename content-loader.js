@@ -131,32 +131,20 @@ function applyContent() {
         updateText('#manifestoClosing', CONTENT.manifesto.closing);
     }
 
-    // --- LIFESTYLE PILLARS ---
-    if (CONTENT.lifestyle) {
-        updateText('#lifestyleTitle', CONTENT.lifestyle.section_title);
-        updateText('#lifestyleSubtitle', CONTENT.lifestyle.section_subtitle);
+    // --- SYLLABUS MODERNO ---
+    if (CONTENT.syllabus) {
+        updateText('#syllabusTitle', CONTENT.syllabus.section_title);
+        updateText('#syllabusSubtitle', CONTENT.syllabus.section_subtitle);
 
-        const { officium, fraternitas, ars_et_ratio } = CONTENT.lifestyle.pillars;
-        if (officium) {
-            updateText('#officiumIcon', officium.icon);
-            updateText('#officiumName', officium.name);
-            updateText('#officiumLatin', officium.latin);
-            updateText('#officiumDesc', officium.description);
-            updateText('#officiumTagline', officium.tagline);
-        }
-        if (fraternitas) {
-            updateText('#fraternitasIcon', fraternitas.icon);
-            updateText('#fraternitasName', fraternitas.name);
-            updateText('#fraternitasLatin', fraternitas.latin);
-            updateText('#fraternitasDesc', fraternitas.description);
-            updateText('#fraternitasTagline', fraternitas.tagline);
-        }
-        if (ars_et_ratio) {
-            updateText('#arsEtRatioIcon', ars_et_ratio.icon);
-            updateText('#arsEtRatioName', ars_et_ratio.name);
-            updateText('#arsEtRatioLatin', ars_et_ratio.latin);
-            updateText('#arsEtRatioDesc', ars_et_ratio.description);
-            updateText('#arsEtRatioTagline', ars_et_ratio.tagline);
+        const gridEl = document.getElementById('syllabusGrid');
+        if (gridEl && CONTENT.syllabus.articles) {
+            gridEl.innerHTML = CONTENT.syllabus.articles.map(article => `
+                <div class="syllabus-card">
+                    <h3 class="syllabus-name">${formatText(article.title)}</h3>
+                    <span class="syllabus-subtitle">${formatText(article.subtitle)}</span>
+                    <p class="syllabus-desc">${formatText(article.summary)}</p>
+                </div>
+            `).join('');
         }
     }
 

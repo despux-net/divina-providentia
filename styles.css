@@ -2280,42 +2280,34 @@ iframe.goog-te-banner-frame {
 }
 
 /* ===================================
-   LIFESTYLE SECTION
+/* ===================================
+   SYLLABUS SECTION (Cronos y Logos)
    =================================== */
 
-.lifestyle-section {
+.syllabus-section {
   background: var(--color-ethereal-white);
   position: relative;
 }
 
-.lifestyle-section .section-header h2 {
+.syllabus-section .section-header h2 {
   color: var(--color-sacred-purple);
 }
 
-.lifestyle-section .section-header p {
+.syllabus-section .section-header p {
   color: var(--color-stone-gray-light);
   font-style: italic;
   font-family: var(--font-quote);
   font-size: 1.15rem;
 }
 
-.lifestyle-grid {
+.syllabus-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: var(--space-lg);
   margin-top: var(--space-2xl);
 }
 
-@media (max-width: 860px) {
-  .lifestyle-grid {
-    grid-template-columns: 1fr;
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-.lifestyle-card {
+.syllabus-card {
   background: white;
   border: 1px solid rgba(45, 27, 78, 0.08);
   border-radius: var(--radius-lg);
@@ -2331,12 +2323,12 @@ iframe.goog-te-banner-frame {
   transform: translateY(24px);
 }
 
-.lifestyle-card.visible {
+.syllabus-card.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.lifestyle-card::after {
+.syllabus-card::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -2349,44 +2341,36 @@ iframe.goog-te-banner-frame {
   border-radius: 2px;
 }
 
-.lifestyle-card:hover {
+.syllabus-card:hover {
   box-shadow: 0 16px 40px rgba(45, 27, 78, 0.1);
   transform: translateY(-6px);
   border-color: rgba(212, 175, 55, 0.3);
 }
 
-.lifestyle-card:hover::after {
+.syllabus-card:hover::after {
   width: 60%;
 }
 
-.lifestyle-icon {
-  font-size: 1.4rem;
-  color: var(--color-divine-gold);
-  letter-spacing: 0.4em;
-  margin-bottom: var(--space-xs);
-  opacity: 0.8;
-}
-
-.lifestyle-name {
+.syllabus-name {
   font-family: var(--font-heading);
-  font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+  font-size: clamp(1.4rem, 2vw, 1.6rem);
   color: var(--color-sacred-purple);
   margin-bottom: 0;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   font-weight: 600;
 }
 
-.lifestyle-latin {
+.syllabus-subtitle {
   display: block;
   font-family: var(--font-quote);
   font-style: italic;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--color-divine-gold-dark);
-  letter-spacing: 0.08em;
   margin-bottom: var(--space-sm);
+  line-height: 1.4;
 }
 
-.lifestyle-desc {
+.syllabus-desc {
   font-size: 0.95rem;
   line-height: 1.8;
   color: var(--color-stone-gray);
@@ -2395,28 +2379,23 @@ iframe.goog-te-banner-frame {
   flex: 1;
 }
 
-.lifestyle-tagline {
-  font-family: var(--font-quote);
-  font-style: italic;
-  font-size: 0.88rem;
-  color: var(--color-stone-gray-light);
-  border-top: 1px solid rgba(45, 27, 78, 0.08);
-  padding-top: var(--space-sm);
-  margin-top: var(--space-sm);
-  margin-bottom: 0;
-  width: 100%;
-  text-align: center;
-}
-
-/* Staggered entrance for lifestyle cards */
-.lifestyle-card:nth-child(1) {
+/* Staggered entrance for syllabus cards */
+.syllabus-card:nth-child(1) {
   transition-delay: 0.1s;
 }
 
-.lifestyle-card:nth-child(2) {
-  transition-delay: 0.22s;
+.syllabus-card:nth-child(2) {
+  transition-delay: 0.2s;
 }
 
-.lifestyle-card:nth-child(3) {
-  transition-delay: 0.34s;
+.syllabus-card:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.syllabus-card:nth-child(4) {
+  transition-delay: 0.4s;
+}
+
+.syllabus-card:nth-child(5) {
+  transition-delay: 0.5s;
 }

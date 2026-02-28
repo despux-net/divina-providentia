@@ -19,14 +19,11 @@
         "summary": "Divina Providentia no es solo una marca, es un llamado a la resistencia espiritual a través de la belleza y el orden. Diseñamos instrumentos estéticos para quienes rechazan la decadencia del mundo moderno y buscan revestirse de trascendencia."
     },
     "manifesto": {
-        "section_title": "Vivir con Propósito",
+        "section_title": "Contra la Disolución: La Restauración del Logos",
         "paragraphs": [
-            "Existe una manera de estar en el mundo que no negocia con el ruido de la modernidad.",
-            "Divina Providentia nació de una certeza: nuestra existencia es una declaración espiritual. Caminar con rectitud no es una postura, es una disciplina forjada en la fe en Jesucristo y en la firme defensa de nuestras raíces.",
-            "Proponemos un modo de ser íntegro y vertical.",
-            "Creemos en la tradición occidental cristiana como ancla inamovible, no como simple nostalgia. En la fe como arquitectura interior inquebrantable, y en el orden natural como única respuesta frente al caos materialista.",
-            "La respuesta es mantener vivas las tradiciones que construyeron nuestra civilización. Defender la Verdad sin concesiones.",
-            "Divina Providentia es para quienes han optado por la resistencia firme: aquellos que entienden que defender nuestros principios es el acto de mayor rebeldía. Vivir con propósito es abrazar a Cristo como Rey, preservar nuestro legado y caminar sin pedir perdón."
+            "Vivimos la era de la liquidez absoluta, donde la brújula moral ha sido destrozada por el relativismo, condenando al hombre a una deriva perpetua. El mundo moderno nos ofrece una falsa emancipación, desarraigándonos de la verdad objetiva para sumirnos en el ruido ensordecedor de lo efímero. Es el imperio de la duda, donde lo sagrado es profanado y la identidad diluida en un mar de subjetividades.",
+            "Frente a este naufragio, se hace vital y urgente la restauración del Orden y la Belleza. No como refugios estéticos, sino como baluartes de resistencia. La verdadera libertad no radica en la negación de nuestras raíces, sino en el anclaje firme a la Tradición que construyó a Occidente. La belleza no es adorno, es la manifestación visible de un Logos ordenador que desafía la fealdad del caos nihilista.",
+            "El combate, por tanto, exige que la convicción se haga materia. Asumir la tradición en lo cotidiano no es un acto nostálgico, es una declaración de guerra. El hábito hace al monje: lo que portamos y cómo vivimos debe ser el escudo y la espada de nuestro compromiso interno. No claudicamos. Vestimos nuestra identidad como un estandarte de permanencia ante un mundo que ha decidido olvidar."
         ],
         "closing": "Bienvenido a la milicia del espíritu."
     },
@@ -58,32 +55,36 @@
             "next_button_label": "Página siguiente"
         }
     },
-    "lifestyle": {
-        "section_title": "Una Forma de Vivir",
-        "section_subtitle": "Más allá de la prenda",
-        "pillars": {
-            "officium": {
-                "name": "Officium",
-                "latin": "Deber Sagrado",
-                "description": "Una reflexión diaria, escrita con el peso que merece. No es un blog. Es un breviario laico: textos de tres minutos que duran todo el día. Cada palabra fue pesada antes de ser publicada.",
-                "tagline": "No para informar. Para orientar.",
-                "icon": "✦"
+    "syllabus": {
+        "section_title": "Cronos y Logos",
+        "section_subtitle": "Syllabus Moderno: Curaduría Cultural y Pensamiento Profundo",
+        "articles": [
+            {
+                "title": "Mármol y Espíritu",
+                "subtitle": "La arquitectura como reflejo del alma",
+                "summary": "La verticalidad de las catedrales góticas y la solidez clásica no son meras técnicas, son encarnaciones de una sociedad que miraba hacia arriba. Observamos cómo la arquitectura moderna refleja el desamparo espiritual y la urgencia de reconstruir espacios que eleven el alma, restaurando la conexión entre la piedra y lo sacro."
             },
-            "fraternitas": {
-                "name": "Fraternitas",
-                "latin": "Hermandad",
-                "description": "El espacio donde los portadores de Divina Providentia se reconocen entre sí. Retratos de personas reales que encarnan los valores de la marca. Entrevistas en formato epistolar: preguntas que importan, respuestas sin filtro de imagen.",
-                "tagline": "La comunidad no se construye con hashtags. Se teje con propósito compartido.",
-                "icon": "✦"
+            {
+                "title": "La Defensa del Verbo",
+                "subtitle": "El lenguaje y la importancia de las palabras precisas",
+                "summary": "Quien controla el diccionario, controla el pensamiento. Exploramos la degradación deliberada del léxico en la modernidad y cómo recuperar la precisión insobornable del lenguaje es el primer y más crítico paso para defender la inteligencia, la memoria cultural y la verdad objetiva frente al eufemismo destructor."
             },
-            "ars_et_ratio": {
-                "name": "Ars et Ratio",
-                "latin": "Arte y Razón",
-                "description": "El taller visible. Cada decisión de diseño documentada: por qué se eligió un material sobre otro, qué referente histórico o espiritual inspira cada pieza. Transparencia radical al servicio de la belleza.",
-                "tagline": "El diseño consciente no es una tendencia. Es la consecuencia natural de vivir con propósito.",
-                "icon": "✦"
+            {
+                "title": "Ontología Intransigente",
+                "subtitle": "El concepto de 'Verdad' frente al 'Sentimiento'",
+                "summary": "En la tiranía de la empatía moderna, la emoción ha usurpado arrogantemente el trono de la Razón y la Verdad revelada. Un análisis incisivo sobre la necesidad inaplazable de anclarnos en lo inmutable, recordando que los principios fundamentales no se negocian ni se moldean según el volátil estado de ánimo de la época."
+            },
+            {
+                "title": "Estética Redentora",
+                "subtitle": "Por qué la belleza es una necesidad biológica y espiritual",
+                "summary": "Lejos de ser un ornamento prescindible o un mero capricho subjetivo, la belleza nos ancla al instinto de lo trascendente. Una exploración frontal de cómo el rechazo contemporáneo a la armonía visual y sonora es, en el fondo, un desprecio ontológico por la Creación misma y por nuestra propia naturaleza profundamente ordenada."
+            },
+            {
+                "title": "Cimientos en el Éter",
+                "subtitle": "La herencia de los clásicos en un mundo hiperdigital",
+                "summary": "¿Cómo se habitan los intrincados laberintos algorítmicos sin perder la brújula milenaria? Reflexionamos sobre la integración de la sabiduría patrística, el rigor escolástico y el pensamiento estoico clásico como asedios inexpugnables para preservar la sobriedad mental, la atención sostenida y el alma misma."
             }
-        }
+        ]
     },
     "symbol_stories": {
         "intro": "Cada pieza tiene una historia que habla del portador, no del objeto.",

@@ -161,7 +161,7 @@ function initializeScrollAnimations() {
     // Observe core static elements
     const selectors = [
         '.philosophy-card',
-        '.lifestyle-card',
+        '.syllabus-card',
         '.section-title',
         '.about-text',
         '.contact-container',
@@ -217,17 +217,17 @@ function getDemoProducts() {
     return [
         {
             id: '1',
-            name: 'Camiseta Virtus',
-            description: 'Diseño minimalista con el símbolo de la virtud estoica.',
+            name: 'Gorra Hilo de Oro',
+            description: 'El peso de lo que eliges portar. La cruz dorada en la frente es un recordatorio físico de tu adhesión a la Verdad invariable; una declaración frontal contra el relativismo de la modernidad líquida. Forjada con algodón de alta densidad y costuras reforzadas, estructurada para resistir el paso de los años con inquebrantable firmeza.',
             price: 29.99,
-            category: 'vestments',
+            category: 'headwear',
             image: null,
             stock: 10
         },
         {
             id: '2',
-            name: 'Sudadera Sapientia',
-            description: 'Comodidad y sabiduría en cada fibra.',
+            name: 'Polo Negro con Símbolo',
+            description: 'La coraza del Logos. Llevar esta insignia sobre el pecho es alinear el latido con un Orden Superior. Este estandarte te compromete a ser un bastión de integridad en un mundo disuelto. Tejida en hilado natural orgánico pesado, su caída refleja gravedad y pureza, evitando concesiones sintéticas.',
             price: 49.99,
             category: 'vestments',
             image: null,
@@ -235,57 +235,30 @@ function getDemoProducts() {
         },
         {
             id: '3',
-            name: 'Gorra Fortitudo',
-            description: 'Protege tu mente con fortaleza.',
-            price: 24.99,
+            name: 'Gorra San Miguel',
+            description: 'El yelmo del Arcángel. La lucha contra las sombras de la modernidad exige protección no solo física, sino espiritual. El yelmo simboliza la coraza de la virtud, aislando la mente de las frivolidades para enfocarse en la defensa de la civilización. Detalle bordado en hilo de resistencia superior sobre lona de estructura profunda.',
+            price: 34.99,
             category: 'headwear',
             image: null,
             stock: 15
         },
         {
             id: '4',
-            name: 'Bolsa Temperantia',
-            description: 'Lleva lo esencial con moderación.',
-            price: 34.99,
+            name: 'Medalla Tradición',
+            description: 'Reivindicación de la memoria. Una reliquia forjada en recordatorio de los pilares que fundaron Occidente. Penderla del cuello no es un adorno, es asumir la herencia innegociable de la Fe y la Razón frente al olvido. Creada en aleación sólida, envejecida a mano para perdurar inalterable ante el paso de los siglos.',
+            price: 45.00,
             category: 'accessories',
             image: null,
             stock: 12
         },
         {
             id: '5',
-            name: 'Pin Marco Aurelio',
-            description: 'Pequeño recordatorio de grandes enseñanzas.',
-            price: 9.99,
-            category: 'accessories',
-            image: null,
-            stock: 50
-        },
-        {
-            id: '6',
-            name: 'Lámina Memento Mori',
-            description: 'Arte filosófico para tu espacio.',
-            price: 19.99,
-            category: 'prints',
-            image: null,
-            stock: 20
-        },
-        {
-            id: '7',
-            name: 'Camiseta Amor Fati',
-            description: 'Ama tu destino, vístelo con orgullo.',
-            price: 29.99,
+            name: 'Camisa Blanca Rectitud',
+            description: 'La túnica del guerrero cotidiano. La sencillez radiante como repudio a los artificios del engaño posmoderno. Una primera capa que representa la pureza de intenciones al empezar el día de combate cultural. Confeccionada con algodón de 300g, corte arquitectónico y precisión monástica en sus detalles.',
+            price: 42.00,
             category: 'vestments',
             image: null,
-            stock: 10
-        },
-        {
-            id: '8',
-            name: 'Gorra Stoic',
-            description: 'Estilo atemporal para mentes filosóficas.',
-            price: 24.99,
-            category: 'headwear',
-            image: null,
-            stock: 18
+            stock: 50
         }
     ];
 }
