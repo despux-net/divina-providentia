@@ -219,6 +219,11 @@
     /* Force show inside card */
 }
 
+.book-hover-card.expanded {
+    width: 450px;
+    /* Wider to accommodate text */
+}
+
 .book-hover-card .book-description {
     font-size: 0.85rem;
     color: #555;
@@ -229,6 +234,19 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.5;
+    transition: all 0.3s ease;
+}
+
+.book-hover-card.expanded .book-description {
+    display: block;
+    overflow-y: auto;
+    max-height: 250px;
+    /* Prevent it from growing taller than the screen */
+}
+
+.read-more-trigger:hover,
+.read-less-trigger:hover {
+    text-decoration: underline;
 }
 
 .book-hover-card .book-actions {

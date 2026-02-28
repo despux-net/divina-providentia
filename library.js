@@ -126,6 +126,59 @@ async function loadLibraryBooks() {
             });
         });
 
+        // Add 'Leer más' logic for long descriptions
+        document.querySelectorAll('.book-description').forEach(descEl => {
+            // Check if text might overflow (heuristic: > 150 chars or actually overflowing)
+            if (descEl.scrollHeight > descEl.clientHeight || descEl.textContent.length > 150) {
+                const fullText = descEl.textContent;
+                const truncatedText = fullText.substring(0, 140) + '...';
+
+                descEl.textContent = truncatedText;
+
+                const readMoreBtn = document.createElement('span');
+                readMoreBtn.textContent = ' Leer más';
+                readMoreBtn.className = 'read-more-trigger';
+                readMoreBtn.style.color = 'var(--color-divine-gold)';
+                readMoreBtn.style.cursor = 'pointer';
+                readMoreBtn.style.fontWeight = 'bold';
+
+                descEl.appendChild(readMoreBtn);
+
+                readMoreBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const card = this.closest('.book-hover-card');
+
+                    if (card.classList.contains('expanded')) {
+                        descEl.textContent = truncatedText;
+                        descEl.appendChild(readMoreBtn);
+                        readMoreBtn.textContent = ' Leer más';
+                        card.classList.remove('expanded');
+                    } else {
+                        descEl.textContent = fullText;
+                        const readLessBtn = document.createElement('span');
+                        readLessBtn.textContent = ' Leer menos';
+                        readLessBtn.className = 'read-less-trigger';
+                        readLessBtn.style.color = 'var(--color-divine-gold)';
+                        readLessBtn.style.cursor = 'pointer';
+                        readLessBtn.style.fontWeight = 'bold';
+                        readLessBtn.style.display = 'block';
+                        readLessBtn.style.marginTop = '0.5rem';
+                        descEl.appendChild(readLessBtn);
+
+                        readLessBtn.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                            descEl.textContent = truncatedText;
+                            descEl.appendChild(readMoreBtn);
+                            readMoreBtn.textContent = ' Leer más';
+                            card.classList.remove('expanded');
+                        });
+
+                        card.classList.add('expanded');
+                    }
+                });
+            }
+        });
+
     } catch (err) {
         console.error('Error loading library:', err);
         booksGrid.innerHTML = '<p class="error-msg">Error al cargar la biblioteca. Por favor recarga la página.</p>';
