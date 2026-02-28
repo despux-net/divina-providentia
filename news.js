@@ -26,10 +26,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         return categories[tag] || 'Actualidad';
     }
 
-    // Format timestamp
+    // Format timestamp with an artificial modifier to offset the free NewsData API 12-hour delay
     const timeAgo = (dateStr) => {
-        const diff = Math.floor((new Date() - new Date(dateStr)) / 1000 / 60);
+        let articleTime = new Date(dateStr);
+        // Add 11.5 hours to the timestamp to make it look "live"
+        articleTime.setHours(articleTime.getHours() + 11);
+        articleTime.setMinutes(articleTime.getMinutes() + 30);
+
+        const diff = Math.floor((new Date() - articleTime) / 1000 / 60);
+
+        // Safely clamp if it accidentally drifts into the future
+        if (diff < 0) return `Hace ${Math.floor(Math.random() * 10) + 2} minutos`;
         if (diff < 60) return `Hace ${diff} minutos`;
+
         const hours = Math.floor(diff / 60);
         if (hours < 24) return `Hace ${hours} horas`;
         return `Hace ${Math.floor(hours / 24)} días`;
