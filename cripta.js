@@ -66,13 +66,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     el.style.animationDelay = `${index * 0.05}s`;
 
                     el.innerHTML = `
-                        <div class="cripta-book-cover" style="background-image: url('${book.cover_url}');">
-                            <!-- Fallback if image fails or takes long -->
-                            <div class="cripta-book-fallback" style="z-index:-1">
-                                <h4>${book.title}</h4>
-                                <p>${book.author}</p>
-                            </div>
+                        <div class="cripta-book-fallback">
+                            <h4>${book.title}</h4>
+                            <p>${book.author}</p>
                         </div>
+                        <div class="cripta-book-cover" style="background-image: url('${book.cover_url}');"></div>
                     `;
 
                     el.addEventListener('click', () => openModal(book));

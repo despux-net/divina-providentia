@@ -138,11 +138,12 @@
 }
 
 .cripta-modal-content {
-    background: var(--color-bg);
+    background: #fdfaf6;
+    /* Light parchment theme */
     width: 90%;
     max-width: 900px;
     max-height: 90vh;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border: 1px solid rgba(212, 175, 55, 0.5);
     border-radius: 8px;
     overflow-y: auto;
     position: relative;
@@ -160,7 +161,7 @@
     right: 20px;
     background: none;
     border: none;
-    color: var(--color-silver);
+    color: #333333;
     font-size: 2rem;
     cursor: pointer;
     z-index: 10;
@@ -179,7 +180,7 @@
 }
 
 .modal-cover-container {
-    box-shadow: 10px 20px 30px rgba(0, 0, 0, 0.8);
+    box-shadow: 10px 20px 30px rgba(0, 0, 0, 0.3);
     border-radius: 4px;
     overflow: hidden;
     height: max-content;
@@ -206,13 +207,13 @@
 .modal-title {
     font-family: var(--font-headings);
     font-size: 2.2rem;
-    color: var(--color-text);
+    color: #1a1a1a;
     margin-bottom: 0.5rem;
     line-height: 1.2;
 }
 
 .modal-author {
-    color: var(--color-silver);
+    color: #4a4a4a;
     font-family: var(--font-primary);
     font-size: 1.2rem;
     font-style: italic;
@@ -223,11 +224,11 @@
     height: 1px;
     background: linear-gradient(90deg, var(--color-divine-gold) 0%, transparent 100%);
     margin-bottom: 1.5rem;
-    opacity: 0.3;
+    opacity: 0.6;
 }
 
 .modal-desc {
-    color: var(--color-text);
+    color: #333333;
     line-height: 1.8;
     font-size: 1rem;
     opacity: 0.9;
