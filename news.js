@@ -146,6 +146,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // --- Refresh News Logic ---
+    const refreshBtn = document.getElementById('refreshNewsBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', async () => {
+            refreshBtn.classList.add('spin');
+            refreshBtn.disabled = true;
+
+            try {
+                // Change UI state
+                abstractsGrid.style.opacity = '0';
+                setTimeout(() => {
+                    abstractsGrid.innerHTML = '<div class="loading-spinner"><p>Solicitando nuevas intercepciones a la agencia global...</p></div>';
+                    abstractsGrid.style.opacity = '1';
+                }, 200);
+
+                // Call the edge function to fetch new data
+                const { data, error } = await supabaseClient.functions.invoke('fetch-live-news');
+
+                if (error) {
+                    console.error("Function invoke error:", error);
+                    throw error;
+                }
+
+                console.log("Refresh response:", data);
+
+                // Wait a tiny bit just to ensure DB is fully updated 
+                await new Promise(resolve => setTimeout(resolve, 800));
+
+                // Fetch the new data from DB
+                await fetchLiveNews();
+
+            } catch (err) {
+                console.error("Failed to refresh news:", err);
+                alert("Error al intentar actualizar las noticias. Verifica tu conexión o intenta más tarde.");
+            } finally {
+                refreshBtn.classList.remove('spin');
+                refreshBtn.disabled = false;
+            }
+        });
+    }
+
     // --- Interactive Map Logic ---
     const continentPaths = document.querySelectorAll('.continent-path');
     const globalBtn = document.getElementById('resetMapFilter');
