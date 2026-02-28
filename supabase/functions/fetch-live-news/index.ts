@@ -32,11 +32,11 @@ function determineContinent(countryArray: string[] | null, textContent: string):
   // Fallback to keyword matching if no country code or code not found
   const text = textContent.toLowerCase();
 
-  if (text.match(/(eeuu|estados unidos|america|washington|biden|trump|new york|california|texas|mexico|colombia|argentina|brasil|chile|peru|venezuela|canada|latinoamerica|sudamerica|norteamerica)/)) return 'america';
-  if (text.match(/(europa|europe|reinounido|uk|london|paris|france|germany|berlin|spain|madrid|italy|rome|russia|moscow|ukraine|kiev|putin|zelensky|otan|nato|union europea)/)) return 'europe';
-  if (text.match(/(asia|china|beijing|japan|tokyo|india|new delhi|pakistan|iran|israel|jerusalem|gaza|middle east|oriente medio|corea|seoul|taiwan|xi jinping|netanyahu|hamas|hezbollah|arabia|emiratos)/)) return 'asia';
-  if (text.match(/(africa|sudafrica|nigeria|egypt|cairo|kenya|congo|sahel|mali|burkina|sudan)/)) return 'africa';
-  if (text.match(/(australia|sydney|oceania|new zealand)/)) return 'oceania';
+  if (text.match(/(eeuu|estados unidos|america|washington|biden|trump|new york|california|texas|mexico|colombia|argentina|brasil|chile|peru|venezuela|canada|latinoamerica|sudamerica|norteamerica|florida|chicago|caracas|bogota|buenos aires|lima|santiago|havana|cuba)/)) return 'america';
+  if (text.match(/(europa|europe|reinounido|uk|london|londres|paris|france|francia|germany|alemania|berlin|spain|españa|madrid|italy|italia|rome|roma|russia|rusia|moscow|moscu|ukraine|ucrania|kiev|kyiv|putin|zelensky|otan|nato|union europea|eu|brussels|bruselas|vatican|pope|papa francisco)/)) return 'europe';
+  if (text.match(/(asia|china|beijing|pekin|japan|japon|tokyo|india|new delhi|pakistan|iran|israel|jerusalem|jerusalen|gaza|middle east|oriente medio|corea|korea|seoul|seul|taiwan|xi jinping|netanyahu|hamas|hezbollah|arabia|emiratos|dubai|palestina|tehran|tel aviv|lebanon|libano)/)) return 'asia';
+  if (text.match(/(africa|sudafrica|nigeria|egypt|egipto|cairo|kenya|congo|sahel|mali|burkina|sudan|marruecos|rabat|argelia|somalia|etiopia|ethiopia)/)) return 'africa';
+  if (text.match(/(australia|sydney|oceania|new zealand|nueva zelanda|melbourne)/)) return 'oceania';
 
   return 'world'; // Default to global if undetermined
 }
@@ -60,7 +60,7 @@ serve(async (req: Request) => {
     const NEWS_API_KEY = Deno.env.get('NEWSDATA_API_KEY') ?? 'pub_fe32b0376cb54b20bcf4652ec6b44aa4'; // Fallback to user provided key
 
     // Let's get news from reputable English/Spanish sources about politics/world
-    const apiUrl = `https://newsdata.io/api/1/latest?apikey=${NEWS_API_KEY}&category=politics,world&language=es,en&size=50`;
+    const apiUrl = `https://newsdata.io/api/1/latest?apikey=${NEWS_API_KEY}&category=politics,world&language=es,en&size=10`;
 
     const response = await fetch(apiUrl);
     if (!response.ok) {
