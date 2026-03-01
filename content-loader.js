@@ -30,6 +30,7 @@ function applyContent() {
     updateText('.nav-links a[href="#filosofia"]', CONTENT.navigation.links.dogma);
     updateText('.nav-links a[href="news.html"]', CONTENT.navigation.links.biblioteca);
     updateText('.nav-links a[href="cripta.html"]', CONTENT.navigation.links.arsenal);
+    updateText('.nav-links a[href="manuscrito.html"]', CONTENT.navigation.links.manuscrito);
     updateText('.nav-links a[href="#tienda"]', CONTENT.navigation.links.alliance);
     updateText('.nav-links a[href="#contacto"]', CONTENT.navigation.links.contact);
 
@@ -160,8 +161,9 @@ function applyContent() {
     if (footerLinks[1]) footerLinks[1].innerHTML = formatText(CONTENT.navigation.links.dogma);
     if (footerLinks[2]) footerLinks[2].innerHTML = formatText(CONTENT.navigation.links.biblioteca);
     if (footerLinks[3]) footerLinks[3].innerHTML = formatText(CONTENT.navigation.links.arsenal);
-    if (footerLinks[4]) footerLinks[4].innerHTML = formatText(CONTENT.navigation.links.alliance);
-    if (footerLinks[5]) footerLinks[5].innerHTML = formatText(CONTENT.navigation.links.contact);
+    if (footerLinks[4]) footerLinks[4].innerHTML = formatText(CONTENT.navigation.links.manuscrito);
+    if (footerLinks[5]) footerLinks[5].innerHTML = formatText(CONTENT.navigation.links.alliance);
+    if (footerLinks[6]) footerLinks[6].innerHTML = formatText(CONTENT.navigation.links.contact);
 
     updateText('.footer-bottom p', CONTENT.footer.copyright);
 }
