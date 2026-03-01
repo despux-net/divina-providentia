@@ -236,12 +236,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateBroadcastClock();
     setInterval(updateBroadcastClock, 1000);
 
-    // Dismiss overlay once iframe signals it's ready
+    // Dismiss overlay after a delay (iframe.load doesn't fire reliably cross-origin)
     if (broadcastIframe && broadcastOverlay) {
         broadcastIframe.classList.add('active');
-        broadcastIframe.addEventListener('load', () => {
-            setTimeout(() => broadcastOverlay.classList.add('hidden'), 800);
-        });
+        setTimeout(() => broadcastOverlay.classList.add('hidden'), 2500);
     }
 
     // --- Side Tickers: populate left & right feeds ---

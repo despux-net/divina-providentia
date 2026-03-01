@@ -221,17 +221,17 @@ body.news-body {
 /* --- 3-Column Broadcast Zone --- */
 .broadcast-zone {
     display: grid;
-    grid-template-columns: 1fr 2.8fr 1fr;
-    gap: 16px;
-    max-width: 1300px;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 20px;
+    max-width: 1600px;
     margin: 1.5rem auto 0;
-    padding: 0 1rem;
+    padding: 0 2rem;
     align-items: start;
 }
 
 /* --- Side Feed (Vertical Carousel) --- */
 .side-feed {
-    height: 420px;
+    height: 560px;
     overflow: hidden;
     position: relative;
     border: 1px solid var(--news-border);
@@ -283,11 +283,12 @@ body.news-body {
 
 /* Individual side card */
 .side-card {
-    padding: 12px 14px;
+    padding: 16px 18px;
     border-bottom: 1px solid var(--news-border);
     cursor: pointer;
     transition: background 0.2s;
     flex-shrink: 0;
+    display: block;
 }
 
 .side-card:hover {
@@ -296,21 +297,21 @@ body.news-body {
 
 .side-card-tag {
     font-family: var(--font-meta);
-    font-size: 0.62rem;
+    font-size: 0.65rem;
     color: var(--news-gold);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .side-card-title {
     font-family: var(--font-heading);
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     color: var(--news-accent);
-    line-height: 1.35;
+    line-height: 1.4;
     font-weight: 700;
-    margin: 0 0 4px;
+    margin: 0 0 8px;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -320,16 +321,17 @@ body.news-body {
 
 .side-card-source {
     font-family: var(--font-meta);
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     color: var(--news-text-muted);
     text-transform: uppercase;
+    display: block;
 }
 
 /* --- Cinematic Broadcast Player --- */
 .broadcast-container {
     max-width: 100%;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
+    margin: 0;
+    padding: 0;
 }
 
 .broadcast-label {
