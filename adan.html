@@ -63,7 +63,6 @@
             transform-origin: 0 0;
             transition: transform 0.1s ease-out;
             /* Smooth snapping */
-            will-change: transform;
             /* Prevents image from being selected/dragged natively */
             user-select: none;
             -webkit-user-drag: none;
@@ -227,9 +226,6 @@
                 const scaleX = containerRect.width / img.naturalWidth;
                 const scaleY = containerRect.height / img.naturalHeight;
                 scale = Math.min(scaleX, scaleY, 1); // Don't scale up past 1 initially
-
-                // Si la imagen es extremadamente grande, le damos un scale amigable para empezar
-                if (scale < 0.1) scale = 0.5;
 
                 // Center the image
                 currentX = (containerRect.width - (img.naturalWidth * scale)) / 2;
