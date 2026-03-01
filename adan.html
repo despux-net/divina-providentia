@@ -214,34 +214,75 @@
             let startX, startY;
             let initialX, initialY;
 
-            // Initialize image position based on its size and container size
+            // Canvas Rendering Logic for extreme-size memory safety
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.touchAction = 'none'; // Prevent browser native zoom/pan
+            container.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d', { alpha: false }); // Optimize for non-transparent map
+            img.style.display = 'none'; // Hide the raw dom image completely to free VRAM
+
+            // Resize canvas to physical pixels for sharpness
+            function resizeCanvas() {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                render();
+            }
+
+            // Draw only the visible portion of the 8K map
+            function render() {
+                // Clear the black void
+                ctx.fillStyle = '#050505';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                if (!img.complete || img.naturalHeight === 0) return;
+
+                // Calculate source coordinates (what part of the 8192px image to look at)
+                // currentX/currentY is the visual offset in DOM coordinates
+                // We must reverse-map this to the source image pixels
+
+                ctx.save();
+
+                // Set the transformation matrix for zoom and pan
+                ctx.translate(currentX, currentY);
+                ctx.scale(scale, scale);
+
+                // Only draw the image. Browsers will auto-cull out-of-bounds pixels in canvas rendering much better than DOM images
+                ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+
+                ctx.restore();
+            }
+
+            // Initialize position safely
             function initPosition() {
                 controls.classList.remove('loading');
                 loadingText.style.display = 'none';
-                img.style.opacity = '1';
 
-                const containerRect = container.getBoundingClientRect();
+                resizeCanvas();
 
-                // Set explicitly size so bounds math doesn't rely on random natural metrics
                 const imgWidth = img.naturalWidth || 8192;
                 const imgHeight = img.naturalHeight || 8192;
 
-                // Fit entire image into view safely
-                const scaleX = containerRect.width / imgWidth;
-                const scaleY = containerRect.height / imgHeight;
-                // Minimum limit to fit it all inside screen
+                const scaleX = canvas.width / imgWidth;
+                const scaleY = canvas.height / imgHeight;
                 scale = Math.min(scaleX, scaleY);
 
-                // Exact center formula mathematically regardless of huge resolutions
-                currentX = (containerRect.width - (imgWidth * scale)) / 2;
-                currentY = (containerRect.height - (imgHeight * scale)) / 2;
+                currentX = (canvas.width - (imgWidth * scale)) / 2;
+                currentY = (canvas.height - (imgHeight * scale)) / 2;
 
-                updateTransform();
+                render();
             }
 
-            function updateTransform() {
-                // Ensure browser doesn't do sub-pixel rendering jitter
-                img.style.transform = `translate(${Math.round(currentX)}px, ${Math.round(currentY)}px) scale(${scale})`;
+            // RequestAnimationFrame loop for butter smooth 60fps panning
+            let animationFrameId;
+            function requestRender() {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                animationFrameId = requestAnimationFrame(render);
             }
 
             // Mouse Drag (Panning)
@@ -257,10 +298,9 @@
 
             window.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
-                // Move directly one to one without scale compensation for direct kinetic feel
                 currentX = initialX + (e.clientX - startX);
                 currentY = initialY + (e.clientY - startY);
-                updateTransform();
+                requestRender();
             });
 
             window.addEventListener('mouseup', () => {
@@ -269,10 +309,14 @@
                     container.style.cursor = 'grab';
                 }
             });
+            container.addEventListener('mouseleave', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
 
             // Touch Drag (Panning for mobile)
             container.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1 && !controls.classList.contains('loading')) { // Single touch for pan
+                if (e.touches.length === 1 && !controls.classList.contains('loading')) {
                     isDragging = true;
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
@@ -285,30 +329,29 @@
                 if (!isDragging || e.touches.length !== 1) return;
                 currentX = initialX + (e.touches[0].clientX - startX);
                 currentY = initialY + (e.touches[0].clientY - startY);
-                updateTransform();
+                requestRender();
             }, { passive: true });
 
             window.addEventListener('touchend', () => {
                 isDragging = false;
             });
 
-            // Zooming logic (Centered around view center/mouse)
+            // Zoom logic
             function zoom(delta, mouseX = null, mouseY = null) {
                 if (controls.classList.contains('loading')) return;
                 const oldScale = scale;
                 scale *= delta;
 
-                // Allow extreme zoom on 8K map (0.01x fit to screen min, max 10.0x for pixel details)
-                scale = Math.max(0.01, Math.min(scale, 10));
+                // Allow extreme zoom on 8K map (0.01x to 15x zoom index)
+                scale = Math.max(0.01, Math.min(scale, 15));
 
-                const containerRect = container.getBoundingClientRect();
-                const x = mouseX !== null ? mouseX : (containerRect.width / 2);
-                const y = mouseY !== null ? mouseY : (containerRect.height / 2);
+                const x = mouseX !== null ? mouseX : (canvas.width / 2);
+                const y = mouseY !== null ? mouseY : (canvas.height / 2);
 
                 currentX = x - (x - currentX) * (scale / oldScale);
                 currentY = y - (y - currentY) * (scale / oldScale);
 
-                updateTransform();
+                requestRender();
             }
 
             // Zoom Buttons
