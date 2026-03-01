@@ -132,27 +132,41 @@
         <button class="filter-btn" data-filter="aesthetics">Estética</button>
     </div>
 
-    <!-- Interactive Map Filter -->
-    <div class="map-container custom-map">
-        <div class="map-label">
-            <span class="filter-label">Foco Geográfico:</span>
-            <span id="currentGeography">Mundo Interconectado</span>
+    <!-- Broadcast Video Transmission -->
+    <div class="broadcast-container">
+        <div class="broadcast-label">
+            <span class="broadcast-signal"></span>
+            <span class="broadcast-title">CANAL DE TRANSMISIÓN</span>
+            <span class="broadcast-live-badge">EN VIVO</span>
         </div>
-
-        <div class="map-image-wrapper">
-            <img src="MAPAMUNDI.jpg" alt="Mapa del mundo" class="world-map-img">
-
-            <!-- Continent Overlay Buttons -->
-            <button id="america" class="continent-btn" title="América" style="top: 45%; left: 22%;">AMÉRICA</button>
-            <button id="europe" class="continent-btn" title="Europa" style="top: 25%; left: 50%;">EUROPA</button>
-            <button id="africa" class="continent-btn" title="África" style="top: 50%; left: 52%;">ÁFRICA</button>
-            <button id="asia" class="continent-btn" title="Asia" style="top: 32%; left: 72%;">ASIA</button>
-            <button id="oceania" class="continent-btn" title="Oceanía" style="top: 70%; left: 85%;">OCEANÍA</button>
+        <div class="broadcast-player" id="broadcastPlayer">
+            <!-- Overlay / pre-reveal screen -->
+            <div class="broadcast-overlay" id="broadcastOverlay">
+                <div class="broadcast-scanlines"></div>
+                <div class="broadcast-noise"></div>
+                <div class="broadcast-center-content">
+                    <div class="broadcast-logo-mark">DP</div>
+                    <p class="broadcast-channel-name">DIVINA PROVIDENTIA</p>
+                    <p class="broadcast-channel-sub">Observatorio de la Civilización</p>
+                    <button class="broadcast-play-btn" id="broadcastPlayBtn" aria-label="Iniciar transmisión">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                            <polygon points="5,3 19,12 5,21" />
+                        </svg>
+                        <span>INICIAR TRANSMISIÓN</span>
+                    </button>
+                </div>
+                <div class="broadcast-corner top-left">◈ SEÑAL ACTIVA</div>
+                <div class="broadcast-corner top-right" id="broadcastTime"></div>
+                <div class="broadcast-corner bottom-left">CANAL 01 · HD</div>
+                <div class="broadcast-corner bottom-right">24:00:00:00</div>
+            </div>
+            <!-- YouTube iframe (loaded on click) -->
+            <iframe id="broadcastIframe" src="" title="Divina Providentia — Canal de Transmisión" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
         </div>
-
-        <button class="global-btn active" id="resetMapFilter">Ver Todo el Mundo</button>
     </div>
-    </header>
 
     <!-- Abstracts Feed -->
     <main class="abstracts-feed container">
