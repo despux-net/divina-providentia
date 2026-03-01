@@ -176,11 +176,10 @@
     <!-- Map Viewer -->
     <div class="viewer-container" id="viewerContainer">
         <div class="loading-overlay" id="loadingText">
-            <div>Cargando pergamino (esto puede demorar por la extrema calidad del mapa)...</div>
+            <div>Desplegando el Pergamino de Adán (160 millones de pixeles)...</div>
         </div>
-        <!-- Load the 90MB image directly from Google Drive using view export mode which bypasses warning -->
-        <img src="https://drive.google.com/uc?export=view&id=1tQiiSx-XvFTsUOeO0Dc5rbdSx5NobJr4" alt="Mapa de Adán"
-            id="mapImage" style="opacity: 0;">
+        <!-- Load the ultra-compressed 8MB WebP image locally -->
+        <img src="MAPADAN.webp" alt="Mapa de Adán" id="mapImage" style="opacity: 0;">
     </div>
 
     <!-- Controls -->
@@ -348,7 +347,7 @@
             } else {
                 img.addEventListener('load', initPosition);
                 img.addEventListener('error', () => {
-                    loadingText.innerHTML = "Error al descargar el mapa gigantesco desde Google Drive.<br>Asegúrate de que el enlace siga público.";
+                    loadingText.innerHTML = "Error crítico al cargar el mapa gigantesco.<br>Verifique su conexión o recargue la página.";
                 });
             }
 
