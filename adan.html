@@ -19,6 +19,9 @@
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css?v=2">
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <style>
         /* Viewer Layout */
         body,
@@ -47,79 +50,12 @@
             /* Offset for navbar */
             box-sizing: border-box;
             background-color: #050505;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: grab;
         }
 
-        .viewer-container:active {
-            cursor: grabbing;
-        }
-
-        #mapImage {
-            position: absolute;
-            transform-origin: 0 0;
-            transition: transform 0.1s ease-out;
-            /* Smooth snapping */
-            will-change: transform;
-            /* Prevents image from being selected/dragged natively */
-            user-select: none;
-            -webkit-user-drag: none;
-            max-width: none;
-            max-height: none;
-        }
-
-        /* Controls UI */
-        .viewer-controls {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 1rem;
-            z-index: 900;
-            background: rgba(10, 10, 10, 0.8);
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: opacity 0.3s;
-        }
-
-        .viewer-controls.loading {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .viewer-btn {
-            background: transparent;
-            color: var(--color-silver, #b0b0b0);
-            border: none;
-            font-family: var(--font-primary, 'Cinzel', serif);
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .viewer-btn:hover {
-            color: var(--color-divine-gold, #d4af37);
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        .viewer-btn.reset-btn {
-            font-size: 0.9rem;
-            width: auto;
-            padding: 0 1rem;
-            border-radius: 20px;
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
         }
 
         .loading-overlay {
@@ -133,6 +69,18 @@
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            z-index: 999;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid var(--color-divine-gold);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Ocultar botones de Leaflet defaul, usaremos scroll o doble tap */
+        .leaflet-control-zoom {
+            display: none;
         }
     </style>
 </head>
@@ -174,36 +122,80 @@
 
     <!-- Map Viewer -->
     <div class="viewer-container" id="viewerContainer">
-        <!-- El visor interactivo propio de Google Drive, maneja tamaños monstruosos dividiendo en tiles y evade el límite de antivirus -->
-        <iframe src="https://drive.google.com/file/d/1tQiiSx-XvFTsUOeO0Dc5rbdSx5NobJr4/preview?usp=sharing" width="100%"
-            height="100%" style="border:none;" allow="fullscreen"></iframe>
+        <div class="loading-overlay" id="loadingText">
+            <h3>Descargando Pergamino Maestro...</h3>
+            <p>90 Megabytes. Por favor, espera mientras se decodifican los 180 millones de píxeles...</p>
+        </div>
+        <div id="map"></div>
     </div>
 
-    <!-- Controls -->
-    <div class="viewer-controls loading" id="controls">
-        <button class="viewer-btn" id="zoomOutBtn" title="Alejar">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        </button>
-        <button class="viewer-btn reset-btn" id="resetBtn" title="Centrar">Restaurar</button>
-        <button class="viewer-btn" id="zoomInBtn" title="Acercar">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        </button>
+    <!-- Controles Flotantes Personalizados -->
+    <div class="viewer-controls"
+        style="position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); display:flex; gap:1rem; z-index:900; background:rgba(10,10,10,0.8); padding:0.8rem 1.5rem; border-radius:50px; border:1px solid rgba(212,175,55,0.3);">
+        <button class="viewer-btn" id="zoomOutBtn"
+            style="background:transparent; color:#b0b0b0; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.5rem;">-</button>
+        <button class="viewer-btn" id="resetBtn"
+            style="background:transparent; color:#b0b0b0; border:none; padding: 0 1rem; border-radius:20px; cursor:pointer; font-family:'Cinzel', serif;">Centrar</button>
+        <button class="viewer-btn" id="zoomInBtn"
+            style="background:transparent; color:#b0b0b0; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.5rem;">+</button>
     </div>
 
+    <!-- Leaflet JS y Scripts del Proyecto -->
     <script src="content-loader.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <script>
-        // La interactividad (pan & zoom) ahora la maneja el visualizador de Google Drive dentro del Iframe
         document.addEventListener('DOMContentLoaded', () => {
-            const controls = document.getElementById('controls');
-            if (controls) {
-                // Borramos los controles manuales porque Drive ya trae los suyos (mejores controlados por tiles)
-                controls.style.display = 'none';
+            const loadingText = document.getElementById('loadingText');
+
+            // Array de proxies CORS para evadir las restricciones de Google Drive
+            // api.allorigins.win devuelve el binario crudo perfecto para imágenes gigantes.
+            const rawDriveUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://drive.google.com/uc?export=download&id=1tQiiSx-XvFTsUOeO0Dc5rbdSx5NobJr4`);
+
+            // Leaflet map setup using flat coordinate system (CRS.Simple)
+            const map = L.map('map', {
+                crs: L.CRS.Simple,
+                minZoom: -4,  // Permite alejar muchisimo
+                maxZoom: 5,   // Permite un zoom extremadamente profundo
+                zoomControl: false, // Usaremos nuestros botones personalizados
+                zoomSnap: 0.1, // Zoom más fluido
+                wheelPxPerZoomLevel: 120 // Rueda de ratón normal
+            });
+
+            // Dimensiones base (puede ser ajustado al cargar la imagen real)
+            let w = 15000;
+            let h = 15000;
+
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+
+            img.onload = function () {
+                loadingText.style.display = 'none';
+                w = this.naturalWidth;
+                h = this.naturalHeight;
+
+                // Añadir la inmensa imagen al framework vectorial Cartográfico (Leaflet)
+                const overlay = L.imageOverlay(img.src, [[0, 0], [h, w]]).addTo(map);
+
+                // Centrar y adaptar primera vista
+                map.fitBounds([[0, 0], [h, w]]);
+                map.setZoom(-1.5); // Nivel de zoom de inicio
             }
+
+            img.onerror = function () {
+                loadingText.innerHTML = "Error crítico al enlazar el pergamino.<br>Google Drive podría estar bloqueando el proxy.";
+            }
+
+            // Iniciar carga
+            img.src = rawDriveUrl;
+
+            // Vincular botones UI a Leaflet
+            document.getElementById('zoomInBtn').addEventListener('click', () => map.zoomIn(1)); // 1 nivel zoom in
+            document.getElementById('zoomOutBtn').addEventListener('click', () => map.zoomOut(1)); // 1 nivel zoom out
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                map.fitBounds([[0, 0], [h, w]]);
+            });
         });
     </script>
 </body>
