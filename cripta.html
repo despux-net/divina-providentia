@@ -146,6 +146,26 @@
     </div>
     <div id="librarySidebarOverlay" class="library-sidebar-overlay" onclick="toggleLibrarySidebar()"></div>
 
+    <!-- PDF Viewer Modal -->
+    <div class="pdf-viewer-overlay" id="pdfViewerOverlay"></div>
+    <div class="pdf-viewer-modal" id="pdfViewerModal">
+        <div class="pdf-viewer-header">
+            <h3 id="pdfBookTitle">Cargando...</h3>
+            <button class="close-pdf-btn" id="closePdfBtn" aria-label="Cerrar visor">&times;</button>
+        </div>
+        <div class="pdf-viewer-content">
+            <canvas id="pdfCanvas"></canvas>
+        </div>
+        <div class="pdf-viewer-controls">
+            <button id="prevPage">← Anterior</button>
+            <span id="pageInfo">Página 1 de 15</span>
+            <button id="nextPage">Siguiente →</button>
+        </div>
+        <div class="pdf-viewer-notice">
+            📖 Vista previa limitada a las primeras 15 páginas
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
