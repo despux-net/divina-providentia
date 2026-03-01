@@ -3,210 +3,209 @@
 
 <head>
     <meta charset="UTF-8">
-    <<<< <title>Terra de Urbano Monte | Divina Providentia</title>
-        ====
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
-            rel="stylesheet">
+    <title>Terra de Urbano Monte | Divina Providentia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
 
-        <!-- Favicon -->
-        <link rel="icon" type="image/png" href="favicon.png">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
 
-        <!-- Styles -->
-        <link rel="stylesheet" href="styles.css?v=2">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=2">
 
-        <style>
-            /* Viewer Layout */
-            body,
-            html {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-                background-color: #000;
-                font-family: var(--font-primary, 'Cinzel', serif);
-                color: var(--color-silver, #b0b0b0);
-            }
+    <style>
+        /* Viewer Layout */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: var(--font-primary, 'Cinzel', serif);
+            color: var(--color-silver, #b0b0b0);
+        }
 
-            /* Hide the global navbar internally so we have full screen height */
-            .navbar {
-                display: none !important;
-            }
+        /* Hide the global navbar internally so we have full screen height */
+        .navbar {
+            display: none !important;
+        }
 
-            .viewer-container {
-                position: relative;
-                width: 100%;
-                height: 100vh;
-                margin: 0;
-                padding: 0;
-                background-color: #050505;
-            }
+        .viewer-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+        }
 
-            #openseadragon-viewer {
-                width: 100%;
-                height: 100%;
-                background-color: #030303;
-                /* Almost pure black for extreme contrast with the map */
-            }
+        #openseadragon-viewer {
+            width: 100%;
+            height: 100%;
+            background-color: #030303;
+            /* Almost pure black for extreme contrast with the map */
+        }
 
-            /* Map Header Overlay */
-            .map-header {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                padding: 1rem 2rem;
-                background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
-                z-index: 900;
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                pointer-events: none;
-            }
+        /* Map Header Overlay */
+        .map-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+            z-index: 900;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+        }
 
-            .map-title-box {
-                pointer-events: auto;
-            }
+        .map-title-box {
+            pointer-events: auto;
+        }
 
-            .map-title {
-                margin: 0;
-                font-size: 1.5rem;
-                color: var(--color-divine-gold, #d4af37);
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-            }
+        .map-title {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--color-divine-gold, #d4af37);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
 
-            .map-subtitle {
-                margin: 5px 0 0 0;
-                font-size: 0.9rem;
-                font-family: var(--font-secondary, 'Inter', sans-serif);
-                opacity: 0.7;
-                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-            }
+        .map-subtitle {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            font-family: var(--font-secondary, 'Inter', sans-serif);
+            opacity: 0.7;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
 
-            .back-btn {
-                pointer-events: auto;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #fff;
-                text-decoration: none;
-                font-family: var(--font-secondary, 'Inter', sans-serif);
-                font-size: 0.85rem;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                padding: 8px 16px;
-                background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 4px;
-                backdrop-filter: blur(4px);
-                transition: all 0.3s;
-            }
+        .back-btn {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-family: var(--font-secondary, 'Inter', sans-serif);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s;
+        }
 
-            .back-btn:hover {
-                background: rgba(255, 255, 255, 0.2);
-                border-color: var(--color-divine-gold, #d4af37);
-                color: var(--color-divine-gold, #d4af37);
-            }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--color-divine-gold, #d4af37);
+            color: var(--color-divine-gold, #d4af37);
+        }
 
-            /* Loading overlay initial */
-            .loading-overlay {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                color: var(--color-divine-gold, #d4af37);
-                font-family: var(--font-primary, 'Cinzel', serif);
-                text-align: center;
-                z-index: 999;
-                pointer-events: none;
-                transition: opacity 0.5s;
-                background: rgba(0, 0, 0, 0.8);
-                padding: 2rem 3rem;
-                border: 1px solid rgba(212, 175, 55, 0.3);
-                border-radius: 8px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-            }
+        /* Loading overlay initial */
+        .loading-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--color-divine-gold, #d4af37);
+            font-family: var(--font-primary, 'Cinzel', serif);
+            text-align: center;
+            z-index: 999;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem 3rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+        }
 
-            .loading-overlay h3 {
-                margin: 0 0 10px 0;
-                font-size: 1.5rem;
-                letter-spacing: 2px;
-            }
+        .loading-overlay h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
 
-            /* Custom OS Controls (Vertical Side Panel like David Rumsey) */
-            .viewer-controls {
-                position: fixed;
-                top: 50%;
-                right: 2rem;
-                transform: translateY(-50%);
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-                z-index: 900;
-                background: rgba(15, 15, 15, 0.85);
-                padding: 1rem 0.5rem;
-                border-radius: 8px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(8px);
-                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
-            }
+        /* Custom OS Controls (Vertical Side Panel like David Rumsey) */
+        .viewer-controls {
+            position: fixed;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 900;
+            background: rgba(15, 15, 15, 0.85);
+            padding: 1rem 0.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+        }
 
-            .viewer-btn {
-                background: transparent;
-                color: #888;
-                border: none;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 40px;
-                height: 40px;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
+        .viewer-btn {
+            background: transparent;
+            color: #888;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-            .viewer-btn:hover {
-                color: #fff;
-                background: rgba(255, 255, 255, 0.1);
-            }
+        .viewer-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-            .viewer-btn svg {
-                width: 20px;
-                height: 20px;
-            }
+        .viewer-btn svg {
+            width: 20px;
+            height: 20px;
+        }
 
-            .viewer-btn.reset-btn {
-                margin: 0.5rem 0;
-                position: relative;
-            }
+        .viewer-btn.reset-btn {
+            margin: 0.5rem 0;
+            position: relative;
+        }
 
-            .viewer-btn.reset-btn::before,
-            .viewer-btn.reset-btn::after {
-                content: '';
-                position: absolute;
-                left: 10px;
-                right: 10px;
-                height: 1px;
-                background: rgba(255, 255, 255, 0.1);
-            }
+        .viewer-btn.reset-btn::before,
+        .viewer-btn.reset-btn::after {
+            content: '';
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-            .viewer-btn.reset-btn::before {
-                top: -6px;
-            }
+        .viewer-btn.reset-btn::before {
+            top: -6px;
+        }
 
-            .viewer-btn.reset-btn::after {
-                bottom: -6px;
-            }
+        .viewer-btn.reset-btn::after {
+            bottom: -6px;
+        }
 
-            .openseadragon-canvas {
-                outline: none !important;
-            }
-        </style>
+        .openseadragon-canvas {
+            outline: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -246,23 +245,24 @@
 
     <!-- Deep Zoom Viewer -->
     <div class="viewer-container">
-        <<<< <div class="map-title-box">
-            <h1 class="map-title">Terra (Urbano Monte, 1587)</h1>
-            <p class="map-subtitle">Planisferio Monumental | Divina Providentia Cartoteca</p>
-    </div>
-    ====
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-    Volver a la Colección
-    </a>
-    </div>
-
-    <<<< <div class="loading-overlay" id="loadingText">
-        <h3>Preparando el Planisferio Terra</h3>
-        <p style="color:#b0b0b0;">Iniciando motor inmersivo de cartografía fractal...</p>
+        <!-- New Document Header -->
+        <div class="map-header">
+            <div class="map-title-box">
+                <h1 class="map-title">Terra (Urbano Monte, 1587)</h1>
+                <p class="map-subtitle">Planisferio Monumental | Divina Providentia Cartoteca</p>
+            </div>
+            <a href="index.html#coleccion" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Volver a la Colección
+            </a>
         </div>
-        ====
+
+        <div class="loading-overlay" id="loadingText">
+            <h3>Preparando el Planisferio Terra</h3>
+            <p style="color:#b0b0b0;">Iniciando motor inmersivo de cartografía fractal...</p>
+        </div>
 
         <div id="openseadragon-viewer"></div>
 
@@ -288,64 +288,64 @@
             <!-- Hidden Fullscreen button we can use if needed later via API -->
             <button id="full-page-btn" style="display:none;"></button>
         </div>
-        </div>
+    </div>
 
-        <!-- Scripts -->
-        <script src="content-loader.js"></script>
-        <!-- Incluir motor nativo para gigantescas imágenes (Google Maps style) -->
-        <script src="openseadragon.min.js"></script>
+    <!-- Scripts -->
+    <script src="content-loader.js"></script>
+    <!-- Incluir motor nativo para gigantescas imágenes (Google Maps style) -->
+    <script src="openseadragon.min.js"></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const loadingText = document.getElementById('loadingText');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingText = document.getElementById('loadingText');
 
-                // This reads the XML (.dzi) and fetches small 512px JPGs on-the-fly from Github Pages perfectly
-                const viewer = OpenSeadragon({
-                    id: "openseadragon-viewer",
-                    prefixUrl: "images/", // UI icons internal
-                    tileSources: "terra.dzi", // El XML generado con las piramides DZI
-                    // Bind our custom styled HTML buttons
-                    zoomInButton: "zoom-in-btn",
-                    zoomOutButton: "zoom-out-btn",
-                    homeButton: "home-btn",
-                    fullPageButton: "full-page-btn",
+            // This reads the XML (.dzi) and fetches small 512px JPGs on-the-fly from Github Pages perfectly
+            const viewer = OpenSeadragon({
+                id: "openseadragon-viewer",
+                prefixUrl: "images/", // UI icons internal
+                tileSources: "terra.dzi", // El XML generado con las piramides DZI
+                // Bind our custom styled HTML buttons
+                zoomInButton: "zoom-in-btn",
+                zoomOutButton: "zoom-out-btn",
+                homeButton: "home-btn",
+                fullPageButton: "full-page-btn",
 
-                    // Fluid kinematics (Mobile friendly)
-                    animationTime: 1.2,
-                    blendTime: 0.1,
-                    alwaysBlend: false,
+                // Fluid kinematics (Mobile friendly)
+                animationTime: 1.2,
+                blendTime: 0.1,
+                alwaysBlend: false,
 
-                    // Restrict zoom limits
-                    minZoomImageRatio: 0.8, // Fit entirely in screen
-                    maxZoomPixelRatio: 3, // Let them zoom 3x closer than native crystal clear pixels (Ultra Deep Dive)
+                // Restrict zoom limits
+                minZoomImageRatio: 0.8, // Fit entirely in screen
+                maxZoomPixelRatio: 3, // Let them zoom 3x closer than native crystal clear pixels (Ultra Deep Dive)
 
-                    // Gestures
-                    gestureSettingsMouse: {
-                        clickToZoom: false, // Let them use scroll wheel instead to avoid misclicks
-                        scrollToZoom: true
-                    },
-                    gestureSettingsTouch: {
-                        pinchToZoom: true,
-                        scrollToZoom: false
-                    },
+                // Gestures
+                gestureSettingsMouse: {
+                    clickToZoom: false, // Let them use scroll wheel instead to avoid misclicks
+                    scrollToZoom: true
+                },
+                gestureSettingsTouch: {
+                    pinchToZoom: true,
+                    scrollToZoom: false
+                },
 
-                    // Visibility
-                    visibilityRatio: 1.0, // Image won't be easily panned completely off screen
-                    constrainDuringPan: true
-                });
-
-                // Smoothly remove loading text once the first map tile opens
-                viewer.addHandler('open', () => {
-                    loadingText.style.opacity = '0';
-                    setTimeout(() => { loadingText.style.display = 'none'; }, 500);
-                });
-
-                // Handle loading error just in case Github has a lag spike
-                viewer.addHandler('open-failed', () => {
-                    loadingText.innerHTML = "<h3>El tiempo fluye extraño hoy</h3><p>No se pudo conectar con el repositorio visual. Refresca la página.</p>";
-                });
+                // Visibility
+                visibilityRatio: 1.0, // Image won't be easily panned completely off screen
+                constrainDuringPan: true
             });
-        </script>
+
+            // Smoothly remove loading text once the first map tile opens
+            viewer.addHandler('open', () => {
+                loadingText.style.opacity = '0';
+                setTimeout(() => { loadingText.style.display = 'none'; }, 500);
+            });
+
+            // Handle loading error just in case Github has a lag spike
+            viewer.addHandler('open-failed', () => {
+                loadingText.innerHTML = "<h3>El tiempo fluye extraño hoy</h3><p>No se pudo conectar con el repositorio visual. Refresca la página.</p>";
+            });
+        });
+    </script>
 </body>
 
 </html>
