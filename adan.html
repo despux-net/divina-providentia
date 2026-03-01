@@ -28,11 +28,9 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            /* Prevent page scroll */
             background-color: var(--color-bg, #0a0a0a);
         }
 
-        /* Adjust navbar to stay on top without breaking layout */
         .navbar {
             z-index: 1000;
         }
@@ -41,16 +39,80 @@
             position: relative;
             width: 100%;
             height: 100vh;
-            /* Full height */
             margin-top: 0;
             padding-top: 80px;
-            /* Offset for navbar */
             box-sizing: border-box;
             background-color: #050505;
-            overflow: hidden;
+        }
+
+        #openseadragon-viewer {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
+        /* Loading overlay initial */
+        .loading-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--color-divine-gold);
+            font-family: var(--font-primary);
+            text-align: center;
+            z-index: 999;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .loading-overlay h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        /* Custom OS Controls */
+        .viewer-controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            justify-content: center;
+            gap: 1rem;
+            z-index: 900;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .viewer-btn {
+            background: transparent;
+            color: var(--color-silver, #b0b0b0);
+            border: none;
+            font-family: var(--font-primary, 'Cinzel', serif);
+            display: flex;
             align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .viewer-btn:hover {
+            color: var(--color-divine-gold, #d4af37);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .viewer-btn.reset-btn {
+            font-size: 0.9rem;
+            width: auto;
+            padding: 0 1rem;
+            border-radius: 20px;
         }
     </style>
 </head>
@@ -90,14 +152,92 @@
         </div>
     </nav>
 
-    <!-- Map Viewer (Mega.nz Embed) -->
-    <div class="viewer-container" id="viewerContainer">
-        <iframe width="100%" height="100%" frameborder="0"
-            src="https://mega.nz/embed/3vQlWRAZ#shiG0q82X9bI0fFlbIgl2_Tjpm_BiSl513JVD6w6e2c" allowfullscreen
-            allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media"></iframe>
+    <!-- Deep Zoom Viewer -->
+    <div class="viewer-container">
+        <div class="loading-overlay" id="loadingText">
+            <h3>Preparando el Pergamino de Adán</h3>
+            <p style="color:#b0b0b0;">Iniciando motor inmersivo de cartografía fractal...</p>
+        </div>
+
+        <div id="openseadragon-viewer"></div>
+
+        <!-- Custom Controls tied to OpenSeadragon automatically by ID -->
+        <div class="viewer-controls" id="osd-ui">
+            <button class="viewer-btn" id="zoom-out-btn" title="Alejar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+            <button class="viewer-btn reset-btn" id="home-btn" title="Centrar">Restaurar</button>
+            <button class="viewer-btn" id="zoom-in-btn" title="Acercar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+            <!-- Hidden Fullscreen button we can use if needed later via API -->
+            <button id="full-page-btn" style="display:none;"></button>
+        </div>
     </div>
 
+    <!-- Scripts -->
     <script src="content-loader.js"></script>
+    <!-- Incluir motor nativo para gigantescas imágenes (Google Maps style) -->
+    <script src="openseadragon.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingText = document.getElementById('loadingText');
+
+            // Initialize OpenSeadragon Viewer
+            // This reads the XML (.dzi) and fetches small 512px JPGs on-the-fly from Github Pages perfectly
+            const viewer = OpenSeadragon({
+                id: "openseadragon-viewer",
+                prefixUrl: "images/", // UI icons internal
+                tileSources: "mapadan.dzi", // El XML generado con las piramides DZI
+
+                // Bind our custom styled HTML buttons
+                zoomInButton: "zoom-in-btn",
+                zoomOutButton: "zoom-out-btn",
+                homeButton: "home-btn",
+                fullPageButton: "full-page-btn",
+
+                // Fluid kinematics (Mobile friendly)
+                animationTime: 1.2,
+                blendTime: 0.1,
+                alwaysBlend: false,
+
+                // Restrict zoom limits
+                minZoomImageRatio: 0.8, // Fit entirely in screen
+                maxZoomPixelRatio: 3, // Let them zoom 3x closer than native crystal clear pixels (Ultra Deep Dive)
+
+                // Gestures
+                gestureSettingsMouse: {
+                    clickToZoom: false, // Let them use scroll wheel instead to avoid misclicks
+                    scrollToZoom: true
+                },
+                gestureSettingsTouch: {
+                    pinchToZoom: true,
+                    scrollToZoom: false
+                },
+
+                // Visibility
+                visibilityRatio: 1.0, // Image won't be easily panned completely off screen
+                constrainDuringPan: true
+            });
+
+            // Smoothly remove loading text once the first map tile opens
+            viewer.addHandler('open', () => {
+                loadingText.style.opacity = '0';
+                setTimeout(() => { loadingText.style.display = 'none'; }, 500);
+            });
+
+            // Handle loading error just in case Github has a lag spike
+            viewer.addHandler('open-failed', () => {
+                loadingText.innerHTML = "<h3>El tiempo fluye extraño hoy</h3><p>No se pudo conectar con el repositorio visual. Refresca la página.</p>";
+            });
+        });
+    </script>
 </body>
 
 </html>
