@@ -86,6 +86,12 @@
             border: 1px solid rgba(212, 175, 55, 0.3);
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s;
+        }
+
+        .viewer-controls.loading {
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         .viewer-btn {
@@ -114,6 +120,19 @@
             width: auto;
             padding: 0 1rem;
             border-radius: 20px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--color-divine-gold);
+            font-family: var(--font-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
         }
     </style>
 </head>
@@ -155,11 +174,16 @@
 
     <!-- Map Viewer -->
     <div class="viewer-container" id="viewerContainer">
-        <img src="MAPADAN.jpg" alt="Mapa de Adán" id="mapImage">
+        <div class="loading-overlay" id="loadingText">
+            <div>Cargando pergamino (esto puede demorar por la extrema calidad del mapa)...</div>
+        </div>
+        <!-- Load the 100MB+ image directly from Supabase Storage instead of Git -->
+        <img src="https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/assets/MAPADAN.png"
+            alt="Mapa de Adán" id="mapImage" style="opacity: 0;">
     </div>
 
     <!-- Controls -->
-    <div class="viewer-controls">
+    <div class="viewer-controls loading" id="controls">
         <button class="viewer-btn" id="zoomOutBtn" title="Alejar">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -182,6 +206,8 @@
             const zoomInBtn = document.getElementById('zoomInBtn');
             const zoomOutBtn = document.getElementById('zoomOutBtn');
             const resetBtn = document.getElementById('resetBtn');
+            const controls = document.getElementById('controls');
+            const loadingText = document.getElementById('loadingText');
 
             let scale = 1;
             let currentX = 0;
@@ -194,11 +220,9 @@
 
             // Initialize image position based on its size and container size
             function initPosition() {
-                // Ensure image is loaded before calculating
-                if (!img.complete) {
-                    img.onload = initPosition;
-                    return;
-                }
+                controls.classList.remove('loading');
+                loadingText.style.display = 'none';
+                img.style.opacity = '1';
 
                 const containerRect = container.getBoundingClientRect();
                 const imgRect = img.getBoundingClientRect();
@@ -209,7 +233,7 @@
                 scale = Math.min(scaleX, scaleY, 1); // Don't scale up past 1 initially
 
                 // If it's a very small image compared to screen, just use 1
-                if (scale < 0.1) scale = 1;
+                if (scale < 0.1) scale = 0.5;
 
                 // Center the image
                 currentX = (containerRect.width - (img.naturalWidth * scale)) / 2;
@@ -224,6 +248,7 @@
 
             // Mouse Drag (Panning)
             container.addEventListener('mousedown', (e) => {
+                if (controls.classList.contains('loading')) return;
                 isDragging = true;
                 startX = e.clientX;
                 startY = e.clientY;
@@ -253,7 +278,7 @@
 
             // Touch Drag (Panning for mobile)
             container.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1) { // Single touch for pan
+                if (e.touches.length === 1 && !controls.classList.contains('loading')) { // Single touch for pan
                     isDragging = true;
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
@@ -280,11 +305,12 @@
 
             // Zooming logic (Centered around view center/mouse)
             function zoom(delta, mouseX = null, mouseY = null) {
+                if (controls.classList.contains('loading')) return;
                 const oldScale = scale;
                 scale *= delta;
 
                 // Limits
-                scale = Math.max(0.1, Math.min(scale, 10)); // Min 0.1x, Max 10x
+                scale = Math.max(0.05, Math.min(scale, 10)); // Min 0.05x, Max 10x
 
                 // Adjust position so we zoom towards the center of view or mouse
                 const containerRect = container.getBoundingClientRect();
@@ -306,6 +332,7 @@
 
             // Mouse Wheel Zoom
             container.addEventListener('wheel', (e) => {
+                if (controls.classList.contains('loading')) return;
                 e.preventDefault();
                 const delta = e.deltaY < 0 ? 1.1 : (1 / 1.1);
 
@@ -318,14 +345,22 @@
             }, { passive: false });
 
             // Initialize on load
-            if (img.complete) {
+            if (img.complete && img.naturalHeight !== 0) {
                 initPosition();
             } else {
                 img.addEventListener('load', initPosition);
+                // Subir a supabase demora si la conexion falla
+                img.addEventListener('error', () => {
+                    loadingText.innerHTML = "Error al descargar el mapa gigantesco.<br>Asegúrate de haberlo subido al bucket 'assets' en Supabase como 'MAPADAN.png'.";
+                });
             }
 
             // Handle window resize
-            window.addEventListener('resize', initPosition);
+            window.addEventListener('resize', () => {
+                if (!controls.classList.contains('loading')) {
+                    // Solo recalcular los límites generales o dejar la posición como estaba pero ajustar responsividad si se necesita
+                }
+            });
         });
     </script>
 </body>
