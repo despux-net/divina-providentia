@@ -284,7 +284,7 @@ function displayProducts() {
     productsGrid.innerHTML = filteredProducts.map(product => {
         const isAvailable = product.available !== false;
         return `
-    <div class="product-card ${!isAvailable ? 'sold-out' : ''}">
+    <div class="product-card ${!isAvailable ? 'sold-out' : ''}" data-product-id="${product.id}" role="button" tabindex="0" aria-label="Ver detalles de ${product.name}">
       <div class="product-image-container">
         <img src="${product.image_url}" alt="${product.name}" loading="lazy" class="product-image-bg">
         <div class="product-image-overlay"></div>
@@ -293,13 +293,17 @@ function displayProducts() {
           <div class="product-category">${getCategoryName(product.category)}</div>
           <h3 class="product-name">${product.name}</h3>
         </div>
+        <div class="product-expand-hint">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          Ver detalles
+        </div>
       </div>
       <div class="product-info">
-        <p class="product-description">${product.description}</p>
+        <p class="product-description">${product.description ? product.description.substring(0, 120) + '...' : ''}</p>
         <div class="product-footer">
           <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
-          <button class="add-to-cart-btn ${!isAvailable ? 'disabled' : ''}" 
-                  onclick="${isAvailable ? `addToCart('${product.id}')` : ''}" 
+          <button class="add-to-cart-btn ${!isAvailable ? 'disabled' : ''}"
+                  onclick="event.stopPropagation(); ${isAvailable ? `addToCart('${product.id}')` : ''}"
                   ${!isAvailable ? 'disabled' : ''}>
             ${isAvailable ? 'Agregar' : 'Agotado'}
           </button>
@@ -308,13 +312,158 @@ function displayProducts() {
     </div>
   `}).join('');
 
-    // Observe product cards for scroll animation
+    // Attach click listeners for expand
     document.querySelectorAll('.product-card').forEach((card, index) => {
-        // We can add a staggered transition delay based on index for the grid layout
         card.style.transitionDelay = `${(index % 4) * 0.1}s`;
         scrollObserver.observe(card);
+
+        card.addEventListener('click', () => {
+            const productId = card.getAttribute('data-product-id');
+            const product = state.products.find(p => p.id == productId);
+            if (product) expandProductCard(product);
+        });
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                card.click();
+            }
+        });
     });
 }
+
+// ===================================
+// PRODUCT EXPAND PANEL
+// ===================================
+
+function expandProductCard(product) {
+    // Remove any existing panel
+    closeProductExpand();
+
+    const isAvailable = product.available !== false;
+    const panel = document.createElement('div');
+    panel.id = 'productExpandPanel';
+    panel.className = 'product-expand-panel';
+    panel.innerHTML = `
+        <div class="product-expand-backdrop"></div>
+        <div class="product-expand-modal" role="dialog" aria-modal="true" aria-label="${product.name}">
+            <button class="product-expand-close" onclick="closeProductExpand()" aria-label="Cerrar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+
+            <div class="product-expand-body">
+                <!-- Image side with magnifier -->
+                <div class="product-expand-image-wrap" id="expandImageWrap">
+                    <img src="${product.image_url}" alt="${product.name}" class="product-expand-img" id="expandImg" draggable="false">
+                    <!-- Magnifier lens -->
+                    <div class="magnifier-lens" id="magnifierLens" aria-hidden="true"></div>
+                    <div class="magnifier-hint">🔍 Pasa el cursor para ampliar</div>
+                </div>
+
+                <!-- Info side -->
+                <div class="product-expand-info">
+                    <span class="product-expand-cat">${getCategoryName(product.category)}</span>
+                    <h2 class="product-expand-name">${product.name}</h2>
+                    <p class="product-expand-price">$${parseFloat(product.price).toFixed(2)}</p>
+                    <div class="product-expand-divider"></div>
+                    <p class="product-expand-desc">${product.description || ''}</p>
+                    <div class="product-expand-actions">
+                        <button class="add-to-cart-btn product-expand-cart-btn ${!isAvailable ? 'disabled' : ''}"
+                                onclick="${isAvailable ? `addToCart('${product.id}'); closeProductExpand();` : ''}"
+                                ${!isAvailable ? 'disabled' : ''}>
+                            ${isAvailable ? '⚔ Agregar al Arsenal' : 'Agotado'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(panel);
+    document.body.style.overflow = 'hidden';
+
+    // Animate in
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => panel.classList.add('open'));
+    });
+
+    // Close on backdrop click
+    panel.querySelector('.product-expand-backdrop').addEventListener('click', closeProductExpand);
+
+    // ESC key close
+    panel._escHandler = (e) => { if (e.key === 'Escape') closeProductExpand(); };
+    document.addEventListener('keydown', panel._escHandler);
+
+    // Initialize magnifier after image loads
+    const img = panel.querySelector('#expandImg');
+    img.addEventListener('load', () => initMagnifier(panel), { once: true });
+    if (img.complete) initMagnifier(panel);
+}
+
+function closeProductExpand() {
+    const panel = document.getElementById('productExpandPanel');
+    if (!panel) return;
+    if (panel._escHandler) document.removeEventListener('keydown', panel._escHandler);
+    panel.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => panel.remove(), 380);
+}
+
+// ===================================
+// IMAGE MAGNIFIER (LOUPE)
+// ===================================
+
+function initMagnifier(panel) {
+    const wrap = panel.querySelector('#expandImageWrap');
+    const img = panel.querySelector('#expandImg');
+    const lens = panel.querySelector('#magnifierLens');
+    const ZOOM = 2.8;
+    const LENSW = 160;
+    const LENSH = 160;
+
+    lens.style.width = LENSW + 'px';
+    lens.style.height = LENSH + 'px';
+    lens.style.backgroundImage = `url(${img.src})`;
+    lens.style.backgroundRepeat = 'no-repeat';
+
+    function onMove(e) {
+        const rect = wrap.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        let x = clientX - rect.left;
+        let y = clientY - rect.top;
+
+        // Clamp so lens never goes outside the image wrapper
+        x = Math.max(LENSW / 2, Math.min(x, rect.width - LENSW / 2));
+        y = Math.max(LENSH / 2, Math.min(y, rect.height - LENSH / 2));
+
+        // Position the lens centered on cursor
+        lens.style.left = (x - LENSW / 2) + 'px';
+        lens.style.top = (y - LENSH / 2) + 'px';
+
+        // Calculate background position — maps the cursor position to the zoomed image
+        const bgX = (x / rect.width) * img.naturalWidth * ZOOM - LENSW / 2;
+        const bgY = (y / rect.height) * img.naturalHeight * ZOOM - LENSH / 2;
+
+        lens.style.backgroundSize = `${img.naturalWidth * ZOOM}px ${img.naturalHeight * ZOOM}px`;
+        lens.style.backgroundPosition = `-${bgX}px -${bgY}px`;
+        lens.style.opacity = '1';
+        lens.style.transform = 'scale(1)';
+    }
+
+    function onLeave() {
+        lens.style.opacity = '0';
+        lens.style.transform = 'scale(0.5)';
+    }
+
+    wrap.addEventListener('mousemove', onMove);
+    wrap.addEventListener('mouseleave', onLeave);
+    wrap.addEventListener('touchmove', onMove, { passive: true });
+    wrap.addEventListener('touchend', onLeave);
+}
+
 
 function getCategoryName(category) {
     const categoryNames = {
