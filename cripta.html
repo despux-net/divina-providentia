@@ -97,7 +97,8 @@
         </div>
 
         <!-- Libros Ocultos — botón flotante, abre panel lateral -->
-        <button class="libros-ocultos-fab" onclick="toggleLibrarySidebar()" title="Abrir Libros Ocultos">
+        <button class="libros-ocultos-fab" onclick="event.stopPropagation(); toggleLibrarySidebar();"
+            title="Abrir Libros Ocultos">
             📚 <span>Libros Ocultos</span>
         </button>
 
