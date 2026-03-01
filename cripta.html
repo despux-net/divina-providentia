@@ -94,10 +94,12 @@
             <button class="filter-btn" data-filter="stoicism">Estoicismo</button>
             <button class="filter-btn" data-filter="military strategy">Militar</button>
             <button class="filter-btn" data-filter="theology">Teología</button>
-            <button class="filter-btn libros-ocultos-btn" onclick="toggleLibrarySidebar()">
-                📚 Libros Ocultos
-            </button>
         </div>
+
+        <!-- Libros Ocultos — botón flotante, abre panel lateral -->
+        <button class="libros-ocultos-fab" onclick="toggleLibrarySidebar()" title="Abrir Libros Ocultos">
+            📚 <span>Libros Ocultos</span>
+        </button>
 
         <!-- 3D Bookshelf Grid -->
         <div class="cripta-grid" id="criptaGrid">

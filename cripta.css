@@ -267,3 +267,69 @@
         height: 240px;
     }
 }
+
+/* ===== Botón Flotante: Libros Ocultos ===== */
+.libros-ocultos-fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.4rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 100%);
+    color: var(--color-divine-gold, #d4af37);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    border-radius: 50px;
+    font-family: var(--font-heading, 'Cinzel', serif);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(212, 175, 55, 0.15);
+    transition: all 0.3s ease;
+    animation: fabPulse 3s ease-in-out infinite;
+}
+
+.libros-ocultos-fab:hover {
+    background: linear-gradient(135deg, #2d1b4e 0%, #4a2a7a 100%);
+    border-color: var(--color-divine-gold, #d4af37);
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(212, 175, 55, 0.2);
+    transform: translateY(-3px);
+    animation: none;
+}
+
+.libros-ocultos-fab:active {
+    transform: translateY(-1px);
+}
+
+@keyframes fabPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(212, 175, 55, 0.15);
+    }
+
+    50% {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 12px rgba(212, 175, 55, 0.3);
+    }
+}
+
+@media (max-width: 768px) {
+    .libros-ocultos-fab span {
+        display: none;
+    }
+
+    .libros-ocultos-fab {
+        padding: 1rem;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+}
