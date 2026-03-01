@@ -346,11 +346,10 @@ p {
   list-style: none;
   margin-left: auto;
   margin-right: var(--space-md);
-
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(10px);
-  pointer-events: none;
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  pointer-events: all;
   transition: all 0.3s ease;
 }
 
@@ -420,7 +419,7 @@ p {
 }
 
 .mobile-menu-button {
-  display: block;
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
@@ -2199,6 +2198,10 @@ p {
    =================================== */
 
 @media (max-width: 768px) {
+  .mobile-menu-button {
+    display: block;
+  }
+
   .nav-links {
     position: absolute;
     top: 100%;
@@ -2210,12 +2213,17 @@ p {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     border-top: 1px solid rgba(45, 27, 78, 0.1);
     margin: 0;
-
+    opacity: 0;
+    visibility: hidden;
     transform: translateY(-10px);
+    pointer-events: none;
   }
 
   .nav-links.active {
+    opacity: 1;
+    visibility: visible;
     transform: translateY(0);
+    pointer-events: all;
   }
 
   .hero {
