@@ -6,11 +6,12 @@
     },
     "navigation": {
         "links": {
-            "genesis": "Génesis",
-            "dogma": "Dogma",
-            "biblioteca": "Biblioteca",
-            "arsenal": "Arsenal",
-            "alliance": "Alianza"
+            "genesis": "Inicio",
+            "dogma": "Filosofía",
+            "biblioteca": "Noticias",
+            "arsenal": "Librería",
+            "alliance": "Tienda",
+            "contact": "Contacto"
         }
     },
     "hero": {
