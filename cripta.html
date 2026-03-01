@@ -94,6 +94,9 @@
             <button class="filter-btn" data-filter="stoicism">Estoicismo</button>
             <button class="filter-btn" data-filter="military strategy">Militar</button>
             <button class="filter-btn" data-filter="theology">Teología</button>
+            <button class="filter-btn libros-ocultos-btn" onclick="toggleLibrarySidebar()">
+                📚 Libros Ocultos
+            </button>
         </div>
 
         <!-- 3D Bookshelf Grid -->
@@ -125,8 +128,25 @@
         </div>
     </div>
 
-    <!-- Minimal Scripts -->
+    <!-- Library Sidebar (Libros Ocultos) -->
+    <div id="librarySidebar" class="library-sidebar">
+        <div class="sidebar-header">
+            <h2>Libros Ocultos</h2>
+            <button class="close-sidebar-btn" onclick="toggleLibrarySidebar()" aria-label="Cerrar">&#x00D7;</button>
+        </div>
+        <div class="books-list-container" id="booksGrid">
+            <div class="loading-spinner">
+                <p>Cargando biblioteca...</p>
+            </div>
+        </div>
+    </div>
+    <div id="librarySidebarOverlay" class="library-sidebar-overlay" onclick="toggleLibrarySidebar()"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
+    <script src="library.js?v=3"></script>
     <script src="cripta.js"></script>
 </body>
 
