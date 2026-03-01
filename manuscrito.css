@@ -1,0 +1,146 @@
+/* ==========================================================================
+   MANUSCRITO (LIVE BOOK) STYLES
+   ========================================================================== */
+
+.manuscrito-section {
+    padding: 120px 0 60px;
+    min-height: calc(100vh - 400px);
+    background-color: var(--color-obsidian-black, #050505);
+    position: relative;
+    overflow: hidden;
+}
+
+.manuscrito-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.manuscrito-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: var(--color-divine-gold, #CFB53B);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.manuscrito-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    color: var(--color-parchment-white, #E8E5DF);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.manuscrito-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(207, 181, 59, 0.05);
+    border: 1px solid rgba(207, 181, 59, 0.3);
+    border-radius: 4px;
+    font-family: 'Crimson Text', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--color-divine-gold, #CFB53B);
+}
+
+.live-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #ff3333;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.8);
+    position: relative;
+}
+
+.live-indicator::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 1px solid rgba(255, 51, 51, 0.5);
+    border-radius: 50%;
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+
+    75%,
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+.manuscrito-container {
+    max-width: 1000px;
+    /* Optimal reading width for docs */
+    margin: 0 auto;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.manuscrito-frame-wrapper {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    /* Responsive height */
+    min-height: 500px;
+    border: 2px solid rgba(207, 181, 59, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    /* Google docs is white */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: border-color 0.3s ease;
+}
+
+.manuscrito-frame-wrapper:hover {
+    border-color: rgba(207, 181, 59, 0.5);
+}
+
+.manuscrito-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+/* Background elements for aesthetic */
+.manuscrito-ornament-top {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.1;
+    width: 300px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .manuscrito-section {
+        padding: 100px 0 40px;
+    }
+
+    .manuscrito-title {
+        font-size: 2rem;
+    }
+
+    .manuscrito-frame-wrapper {
+        height: 70vh;
+        border-radius: 4px;
+    }
+}

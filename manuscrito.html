@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="El Manuscrito de Divina Providentia. Una obra en desarrollo que se actualiza en tiempo real. // Quanta Cura, hoy.">
+    <meta name="keywords"
+        content="Tradición Occidental, Cultura Cristiana, Quanta Cura, Manuscrito, Obra en desarrollo">
+    <title>El Manuscrito | Divina Providentia</title>
+    <link rel="canonical" href="https://divinaprovidentia.com/manuscrito.html">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://divinaprovidentia.com/manuscrito.html">
+    <meta property="og:title" content="El Manuscrito | Divina Providentia">
+    <meta property="og:description"
+        content="Una obra en desarrollo que se actualiza en tiempo real. Acompaña al autor en la creación de este libro.">
+    <meta property="og:image" content="https://divinaprovidentia.com/favicon.png">
+    <meta property="og:locale" content="es_ES">
+
+    <!-- Schema.org Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "El Manuscrito - Divina Providentia",
+      "url": "https://divinaprovidentia.com/manuscrito.html",
+      "description": "Una obra en desarrollo que se actualiza en tiempo real."
+    }
+    </script>
+
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="shortcut icon" href="favicon.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="manuscrito.css?v=1">
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div id="notification-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar solid-nav" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="LOGOV3.png" alt="Divina Providentia Logo" class="logo-image">
+            </a>
+            <ul class="nav-links">
+                <li class="nav-mega-item">
+                    <a href="#" class="nav-mega-trigger">Navegar</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-content">
+                            <ul class="mega-menu-links">
+                                <li><a href="index.html">Inicio</a></li>
+                                <li><a href="index.html#filosofia">Filosofía</a></li>
+                                <li><a href="news.html">Noticias</a></li>
+                                <li><a href="cripta.html">Librería</a></li>
+                                <li><a href="index.html#coleccion">Colección</a></li>
+                                <li><a href="manuscrito.html" class="active">El Manuscrito</a></li>
+                                <li><a href="index.html#tienda">Tienda</a></li>
+                                <li><a href="#contacto">Contacto</a></li>
+                            </ul>
+                            <div class="mega-menu-image-container">
+                                <img src="LOGOV4.png" alt="Divina Providentia" class="mega-menu-image">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-lang-selector dropdown">
+                    <button class="lang-dropbtn" aria-label="Seleccionar idioma">
+                        🌐 <span class="lang-text">Idioma</span>
+                    </button>
+                    <div class="lang-dropdown-content">
+                        <a href="#" onclick="changeLanguage('en'); return false;">🇬🇧 English</a>
+                        <a href="#" onclick="changeLanguage('es'); return false;">🇪🇸 Español</a>
+                        <a href="#" onclick="changeLanguage('de'); return false;">🇩🇪 Deutsch</a>
+                    </div>
+                </li>
+                <li>
+                    <button class="auth-btn-icon" id="authBtnTrigger" aria-label="Iniciar Sesión"
+                        onclick="openModal('loginModal')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="auth-text">Acceso</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="cart-button" id="cartButton" aria-label="Carrito de compras">
+                        🛒
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </li>
+            </ul>
+            <button class="mobile-menu-button" aria-label="Menú móvil">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Manuscrito Section -->
+    <section class="manuscrito-section">
+        <img src="LOGOV3.png" alt="" class="manuscrito-ornament-top">
+        <div class="manuscrito-header">
+            <h1 class="manuscrito-title">El Manuscrito</h1>
+            <p class="manuscrito-subtitle">
+                Esta sección es una ventana directa a la mesa de trabajo del autor. Estás presenciando la creación de un
+                libro en tiempo real.
+                Cada palabra, cada corrección y cada nuevo capítulo se refleja aquí a medida que la obra cobra vida.
+            </p>
+            <div class="manuscrito-notice">
+                <span class="live-indicator"></span>
+                Transmisión en Vivo desde el Scriptorium
+            </div>
+        </div>
+
+        <div class="manuscrito-container">
+            <div class="manuscrito-frame-wrapper">
+                <iframe src="https://docs.google.com/document/d/10iE9SB7qRdECHDuxTwFwyJeJgpn6JsQWd7rl6togXLM/preview"
+                    title="Documento de Libro en Desarrollo" class="manuscrito-iframe" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><span translate="no" class="notranslate">Divina Providentia</span></h3>
+                    <p>No somos una marca, somos una trinchera. En un mundo en ruinas, la elegancia es la primera forma
+                        de resistencia contra la vulgaridad reinante.</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/providentiadivina/" class="social-link"
+                            aria-label="Instagram" target="_blank">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="white"
+                                    stroke-width="2"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="white" stroke-width="2"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Navegación</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="index.html#filosofia">Filosofía</a></li>
+                        <li><a href="news.html">Noticias</a></li>
+                        <li><a href="index.html#tienda">Tienda</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Comunicaciones</h3>
+                    <p>Teléfono: +18583248313</p>
+                    <p style="margin-bottom: 1.5rem;">Horario: Lun-Vie 9:00-18:00</p>
+
+                    <form id="contactForm" class="contact-form-mini">
+                        <div class="form-group-mini">
+                            <input type="text" id="contactName" placeholder="Nombre" required>
+                        </div>
+                        <div class="form-group-mini">
+                            <input type="email" id="contactEmail" placeholder="Email" required>
+                        </div>
+                        <div class="form-group-mini">
+                            <textarea id="contactMessage" placeholder="Tu mensaje..." rows="2" required></textarea>
+                        </div>
+                        <button type="submit" class="footer-submit-btn">Enviar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 <span translate="no" class="notranslate">Divina Providentia</span>. Ad Maiorem Dei
+                    Gloriam. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals that are required for global functionality -->
+    <!-- Cart Overlay & Modal -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h2>Tu Carrito</h2>
+            <button class="close-cart-btn" id="closeCartBtn" aria-label="Cerrar carrito">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">
+                <div class="empty-cart-icon">⚔️</div>
+                <p>Tu carrito está vacío</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span class="cart-total-label">Total:</span>
+                <span class="cart-total-amount" id="cartTotal">$0.00</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn" disabled>Realizar Compra</button>
+        </div>
+    </div>
+
+    <!-- Login/Register Modals -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="auth-modal">
+            <div class="checkout-header">
+                <h2>Iniciar Sesión</h2>
+                <button class="close-checkout-btn" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+                <button type="submit" class="submit-order-btn" id="loginSubmitBtn">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registerModal">
+        <div class="auth-modal">
+            <div class="checkout-header">
+                <h2>Crear Cuenta</h2>
+                <button class="close-checkout-btn" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="regName">Nombre</label>
+                    <input type="text" id="regName" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Contraseña</label>
+                    <input type="password" id="regPassword" name="password" required minlength="6">
+                </div>
+                <button type="submit" class="submit-order-btn" id="registerSubmitBtn">Solicitar Acceso</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js?v=7"></script>
+    <script src="app.js"></script>
+
+    <!-- Google Translate Script -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'es',
+                includedLanguages: 'es,en,de',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+        function changeLanguage(langCode) {
+            var selectField = document.querySelector(".goog-te-combo");
+            if (selectField) {
+                selectField.value = langCode;
+                selectField.dispatchEvent(new Event('change'));
+            }
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <style>
+        body {
+            top: 0px !important;
+            position: static !important;
+            min-height: 100vh !important;
+        }
+
+        .goog-te-banner-frame,
+        .goog-te-banner-frame.skiptranslate,
+        iframe.goog-te-banner-frame {
+            display: none !important;
+        }
+
+        body>.skiptranslate {
+            display: none !important;
+        }
+
+        .goog-tooltip,
+        .goog-tooltip:hover,
+        #goog-gt-tt,
+        .goog-te-balloon-frame {
+            display: none !important;
+        }
+
+        .goog-text-highlight {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    </style>
+</body>
+
+</html>
