@@ -174,12 +174,9 @@
 
     <!-- Map Viewer -->
     <div class="viewer-container" id="viewerContainer">
-        <div class="loading-overlay" id="loadingText">
-            <div>Cargando pergamino (esto puede demorar por la extrema calidad del mapa)...</div>
-        </div>
-        <!-- Load the 90MB image directly from Google Drive -->
-        <img src="https://drive.google.com/uc?export=view&id=1tQiiSx-XvFTsUOeO0Dc5rbdSx5NobJr4" alt="Mapa de Adán"
-            id="mapImage" style="opacity: 0;">
+        <!-- El visor interactivo propio de Google Drive, maneja tamaños monstruosos dividiendo en tiles y evade el límite de antivirus -->
+        <iframe src="https://drive.google.com/file/d/1tQiiSx-XvFTsUOeO0Dc5rbdSx5NobJr4/preview?usp=sharing" width="100%"
+            height="100%" style="border:none;" allow="fullscreen"></iframe>
     </div>
 
     <!-- Controls -->
@@ -200,167 +197,13 @@
 
     <script src="content-loader.js"></script>
     <script>
+        // La interactividad (pan & zoom) ahora la maneja el visualizador de Google Drive dentro del Iframe
         document.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('viewerContainer');
-            const img = document.getElementById('mapImage');
-            const zoomInBtn = document.getElementById('zoomInBtn');
-            const zoomOutBtn = document.getElementById('zoomOutBtn');
-            const resetBtn = document.getElementById('resetBtn');
             const controls = document.getElementById('controls');
-            const loadingText = document.getElementById('loadingText');
-
-            let scale = 1;
-            let currentX = 0;
-            let currentY = 0;
-
-            // Interaction states
-            let isDragging = false;
-            let startX, startY;
-            let initialX, initialY;
-
-            // Initialize image position based on its size and container size
-            function initPosition() {
-                controls.classList.remove('loading');
-                loadingText.style.display = 'none';
-                img.style.opacity = '1';
-
-                const containerRect = container.getBoundingClientRect();
-                const imgRect = img.getBoundingClientRect();
-
-                // Calculate initial scale to fit screen if image is larger
-                const scaleX = containerRect.width / img.naturalWidth;
-                const scaleY = containerRect.height / img.naturalHeight;
-                scale = Math.min(scaleX, scaleY, 1); // Don't scale up past 1 initially
-
-                // If it's a very small image compared to screen, just use 1
-                if (scale < 0.1) scale = 0.5;
-
-                // Center the image
-                currentX = (containerRect.width - (img.naturalWidth * scale)) / 2;
-                currentY = (containerRect.height - (img.naturalHeight * scale)) / 2;
-
-                updateTransform();
+            if (controls) {
+                // Borramos los controles manuales porque Drive ya trae los suyos (mejores controlados por tiles)
+                controls.style.display = 'none';
             }
-
-            function updateTransform() {
-                img.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
-            }
-
-            // Mouse Drag (Panning)
-            container.addEventListener('mousedown', (e) => {
-                if (controls.classList.contains('loading')) return;
-                isDragging = true;
-                startX = e.clientX;
-                startY = e.clientY;
-                initialX = currentX;
-                initialY = currentY;
-                container.style.cursor = 'grabbing';
-            });
-
-            window.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-
-                currentX = initialX + dx;
-                currentY = initialY + dy;
-
-                updateTransform();
-            });
-
-            window.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    container.style.cursor = 'grab';
-                }
-            });
-
-            // Touch Drag (Panning for mobile)
-            container.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1 && !controls.classList.contains('loading')) { // Single touch for pan
-                    isDragging = true;
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                    initialX = currentX;
-                    initialY = currentY;
-                }
-            }, { passive: true });
-
-            window.addEventListener('touchmove', (e) => {
-                if (!isDragging || e.touches.length !== 1) return;
-
-                const dx = e.touches[0].clientX - startX;
-                const dy = e.touches[0].clientY - startY;
-
-                currentX = initialX + dx;
-                currentY = initialY + dy;
-
-                updateTransform();
-            }, { passive: true });
-
-            window.addEventListener('touchend', () => {
-                isDragging = false;
-            });
-
-            // Zooming logic (Centered around view center/mouse)
-            function zoom(delta, mouseX = null, mouseY = null) {
-                if (controls.classList.contains('loading')) return;
-                const oldScale = scale;
-                scale *= delta;
-
-                // Limits
-                scale = Math.max(0.05, Math.min(scale, 10)); // Min 0.05x, Max 10x
-
-                // Adjust position so we zoom towards the center of view or mouse
-                const containerRect = container.getBoundingClientRect();
-                const x = mouseX !== null ? mouseX : (containerRect.width / 2);
-                const y = mouseY !== null ? mouseY : (containerRect.height / 2);
-
-                currentX = x - (x - currentX) * (scale / oldScale);
-                currentY = y - (y - currentY) * (scale / oldScale);
-
-                updateTransform();
-            }
-
-            // Zoom Buttons
-            zoomInBtn.addEventListener('click', () => zoom(1.3));
-            zoomOutBtn.addEventListener('click', () => zoom(1 / 1.3));
-            resetBtn.addEventListener('click', () => {
-                initPosition();
-            });
-
-            // Mouse Wheel Zoom
-            container.addEventListener('wheel', (e) => {
-                if (controls.classList.contains('loading')) return;
-                e.preventDefault();
-                const delta = e.deltaY < 0 ? 1.1 : (1 / 1.1);
-
-                // Zoom towards mouse pointer
-                const containerRect = container.getBoundingClientRect();
-                const mouseX = e.clientX - containerRect.left;
-                const mouseY = e.clientY - containerRect.top;
-
-                zoom(delta, mouseX, mouseY);
-            }, { passive: false });
-
-            // Initialize on load
-            if (img.complete && img.naturalHeight !== 0) {
-                initPosition();
-            } else {
-                img.addEventListener('load', initPosition);
-                // Subir a supabase demora si la conexion falla
-                img.addEventListener('error', () => {
-                    loadingText.innerHTML = "Error al cargar el mapa gigantesco.<br>Asegúrate de que el enlace de Google Drive esté configurado como 'Cualquier usuario con el enlace puede ver'.";
-                });
-            }
-
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                if (!controls.classList.contains('loading')) {
-                    // Solo recalcular los límites generales o dejar la posición como estaba pero ajustar responsividad si se necesita
-                }
-            });
         });
     </script>
 </body>
