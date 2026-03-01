@@ -177,9 +177,9 @@
         <div class="loading-overlay" id="loadingText">
             <div>Cargando pergamino (esto puede demorar por la extrema calidad del mapa)...</div>
         </div>
-        <!-- Load the 100MB+ image directly from Supabase Storage instead of Git -->
-        <img src="https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/assets/MAPADAN.png"
-            alt="Mapa de Adán" id="mapImage" style="opacity: 0;">
+        <!-- Load the 90MB image directly from Google Drive -->
+        <img src="https://drive.google.com/uc?export=view&id=1tQiiSx-XvFTsUOeO0Dc5rbdSx5NobJr4" alt="Mapa de Adán"
+            id="mapImage" style="opacity: 0;">
     </div>
 
     <!-- Controls -->
@@ -351,7 +351,7 @@
                 img.addEventListener('load', initPosition);
                 // Subir a supabase demora si la conexion falla
                 img.addEventListener('error', () => {
-                    loadingText.innerHTML = "Error al descargar el mapa gigantesco.<br>Asegúrate de haberlo subido al bucket 'assets' en Supabase como 'MAPADAN.png'.";
+                    loadingText.innerHTML = "Error al cargar el mapa gigantesco.<br>Asegúrate de que el enlace de Google Drive esté configurado como 'Cualquier usuario con el enlace puede ver'.";
                 });
             }
 
