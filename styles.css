@@ -495,6 +495,32 @@ p {
   transform: scale(1.03);
 }
 
+@keyframes ping {
+
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.mega-menu-links li a[href="manuscrito.html"] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mega-menu-links li a[href="manuscrito.html"]::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #ff3333;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 51, 51, 0.8);
+  animation: ping 2s infinite;
+}
+
 .cart-button {
   position: relative;
   background: none;
