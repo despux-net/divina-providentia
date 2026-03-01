@@ -194,7 +194,8 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-sm) var(--space-md);
+  padding: 4px var(--space-md);
+  /* Reduced vertical padding to hug the logo */
   max-width: 1280px;
   margin: 0 auto;
 }
