@@ -218,9 +218,116 @@ body.news-body {
     margin-right: 12px;
 }
 
+/* --- 3-Column Broadcast Zone --- */
+.broadcast-zone {
+    display: grid;
+    grid-template-columns: 1fr 2.8fr 1fr;
+    gap: 16px;
+    max-width: 1300px;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+    align-items: start;
+}
+
+/* --- Side Feed (Vertical Carousel) --- */
+.side-feed {
+    height: 420px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--news-border);
+    border-radius: 4px;
+    background: var(--news-surface);
+}
+
+/* Fade mask top and bottom */
+.side-feed::before,
+.side-feed::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 48px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.side-feed::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--news-surface), transparent);
+}
+
+.side-feed::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--news-surface), transparent);
+}
+
+.side-feed-track {
+    display: flex;
+    flex-direction: column;
+    animation: sideFeedScroll 40s linear infinite;
+}
+
+.side-feed-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes sideFeedScroll {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-50%);
+    }
+}
+
+/* Individual side card */
+.side-card {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--news-border);
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.side-card:hover {
+    background: rgba(45, 27, 78, 0.04);
+}
+
+.side-card-tag {
+    font-family: var(--font-meta);
+    font-size: 0.62rem;
+    color: var(--news-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.side-card-title {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    color: var(--news-accent);
+    line-height: 1.35;
+    font-weight: 700;
+    margin: 0 0 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    overflow: hidden;
+}
+
+.side-card-source {
+    font-family: var(--font-meta);
+    font-size: 0.6rem;
+    color: var(--news-text-muted);
+    text-transform: uppercase;
+}
+
 /* --- Cinematic Broadcast Player --- */
 .broadcast-container {
-    max-width: 860px;
+    max-width: 100%;
     margin: 2rem auto;
     padding: 0 1.5rem;
 }

@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }));
                 renderFeed('all');
                 populateTicker();
+                populateSideTickers();
             } else {
                 abstractsGrid.innerHTML = '<div class="no-books"><p>No hay comunicaciones recientes en el observatorio.</p></div>';
             }
@@ -215,8 +216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // --- Broadcast Player Logic ---
-    const broadcastPlayBtn = document.getElementById('broadcastPlayBtn');
+    // --- Broadcast Player: auto-dismiss overlay when iframe loads ---
     const broadcastOverlay = document.getElementById('broadcastOverlay');
     const broadcastIframe = document.getElementById('broadcastIframe');
     const broadcastTimeEl = document.getElementById('broadcastTime');
@@ -228,18 +228,60 @@ document.addEventListener('DOMContentLoaded', async () => {
         const hh = String(now.getHours()).padStart(2, '0');
         const mm = String(now.getMinutes()).padStart(2, '0');
         const ss = String(now.getSeconds()).padStart(2, '0');
-        broadcastTimeEl.textContent = `${hh}:${mm}:${ss} UTC${now.getTimezoneOffset() <= 0 ? '+' : '-'}${String(Math.abs(now.getTimezoneOffset() / 60)).padStart(2, '0')}`;
+        const offset = now.getTimezoneOffset();
+        const sign = offset <= 0 ? '+' : '-';
+        const hrs = String(Math.abs(offset / 60)).padStart(2, '0');
+        broadcastTimeEl.textContent = `${hh}:${mm}:${ss} UTC${sign}${hrs}`;
     }
     updateBroadcastClock();
     setInterval(updateBroadcastClock, 1000);
 
-    // Load YouTube on click (lazy load to avoid autoplay restrictions)
-    if (broadcastPlayBtn && broadcastOverlay && broadcastIframe) {
-        broadcastPlayBtn.addEventListener('click', () => {
-            broadcastIframe.src = 'https://www.youtube.com/embed/QliL4CGc7iY?autoplay=1&rel=0&modestbranding=1&color=white&iv_load_policy=3';
-            broadcastIframe.classList.add('active');
-            broadcastOverlay.classList.add('hidden');
+    // Dismiss overlay once iframe signals it's ready
+    if (broadcastIframe && broadcastOverlay) {
+        broadcastIframe.classList.add('active');
+        broadcastIframe.addEventListener('load', () => {
+            setTimeout(() => broadcastOverlay.classList.add('hidden'), 800);
         });
+    }
+
+    // --- Side Tickers: populate left & right feeds ---
+    function populateSideTickers() {
+        const leftTrack = document.getElementById('leftFeedTrack');
+        const rightTrack = document.getElementById('rightFeedTrack');
+        if (!leftTrack || !rightTrack || newsData.length === 0) return;
+
+        // Split data roughly in half: odd indices left, even right
+        const leftItems = newsData.filter((_, i) => i % 2 === 0);
+        const rightItems = newsData.filter((_, i) => i % 2 !== 0);
+
+        function buildSideCard(item) {
+            const div = document.createElement('a');
+            div.className = 'side-card';
+            div.href = item.url;
+            div.target = '_blank';
+            div.rel = 'noopener noreferrer';
+            div.style.textDecoration = 'none';
+            div.innerHTML = `
+                <span class="side-card-tag">${item.tagName}</span>
+                <p class="side-card-title">${item.title}</p>
+                <span class="side-card-source">${item.source} · ${item.time}</span>
+            `;
+            return div;
+        }
+
+        function fillTrack(track, items) {
+            track.innerHTML = '';
+            // Duplicate content for seamless infinite scroll
+            [...items, ...items].forEach(item => {
+                track.appendChild(buildSideCard(item));
+            });
+            // Dynamically set animation duration based on count
+            const duration = Math.max(20, items.length * 4);
+            track.style.animationDuration = `${duration}s`;
+        }
+
+        fillTrack(leftTrack, leftItems);
+        fillTrack(rightTrack, rightItems);
     }
 
     // Add CSS transition for smooth filter fading
@@ -247,4 +289,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initial render
     fetchLiveNews();
-});
+}); // end DOMContentLoaded

@@ -109,8 +109,58 @@
             eterno.</p>
     </div>
 
-    <!-- Navigation / Filters -->
-    <div class="news-filters-header">
+    <!-- 3-Column Broadcast Zone -->
+    <div class="broadcast-zone">
+
+        <!-- Left Side Feed -->
+        <div class="side-feed" id="leftSideFeed">
+            <div class="side-feed-track" id="leftFeedTrack">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- Center: Video Broadcast -->
+        <div class="broadcast-container">
+            <div class="broadcast-label">
+                <span class="broadcast-signal"></span>
+                <span class="broadcast-title">CANAL DE TRANSMISIÓN</span>
+                <span class="broadcast-live-badge">EN VIVO</span>
+            </div>
+            <div class="broadcast-player" id="broadcastPlayer">
+                <div class="broadcast-overlay" id="broadcastOverlay">
+                    <div class="broadcast-scanlines"></div>
+                    <div class="broadcast-noise"></div>
+                    <div class="broadcast-center-content">
+                        <div class="broadcast-logo-mark">DP</div>
+                        <p class="broadcast-channel-name">DIVINA PROVIDENTIA</p>
+                        <p class="broadcast-channel-sub">Sintonizando señal...</p>
+                    </div>
+                    <div class="broadcast-corner top-left">◈ SEÑAL ACTIVA</div>
+                    <div class="broadcast-corner top-right" id="broadcastTime"></div>
+                    <div class="broadcast-corner bottom-left">CANAL 01 · HD</div>
+                    <div class="broadcast-corner bottom-right">AUTO</div>
+                </div>
+                <!-- Autoplay muted on load -->
+                <iframe id="broadcastIframe"
+                    src="https://www.youtube.com/embed/QliL4CGc7iY?autoplay=1&mute=1&rel=0&modestbranding=1&color=white&iv_load_policy=3&playsinline=1"
+                    title="Divina Providentia — Canal de Transmisión" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Right Side Feed -->
+        <div class="side-feed" id="rightSideFeed">
+            <div class="side-feed-track" id="rightFeedTrack">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Category Filters -->
+    <div class="news-filters-header" style="margin-top:2.5rem;">
         <span class="filter-label">Nivel de Impacto Cultural:</span>
         <button id="refreshNewsBtn" class="refresh-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -130,42 +180,6 @@
         <button class="filter-btn" data-filter="tradition">Tradición</button>
         <button class="filter-btn" data-filter="crisis">Crisis de la Modernidad</button>
         <button class="filter-btn" data-filter="aesthetics">Estética</button>
-    </div>
-
-    <!-- Broadcast Video Transmission -->
-    <div class="broadcast-container">
-        <div class="broadcast-label">
-            <span class="broadcast-signal"></span>
-            <span class="broadcast-title">CANAL DE TRANSMISIÓN</span>
-            <span class="broadcast-live-badge">EN VIVO</span>
-        </div>
-        <div class="broadcast-player" id="broadcastPlayer">
-            <!-- Overlay / pre-reveal screen -->
-            <div class="broadcast-overlay" id="broadcastOverlay">
-                <div class="broadcast-scanlines"></div>
-                <div class="broadcast-noise"></div>
-                <div class="broadcast-center-content">
-                    <div class="broadcast-logo-mark">DP</div>
-                    <p class="broadcast-channel-name">DIVINA PROVIDENTIA</p>
-                    <p class="broadcast-channel-sub">Observatorio de la Civilización</p>
-                    <button class="broadcast-play-btn" id="broadcastPlayBtn" aria-label="Iniciar transmisión">
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-                            <polygon points="5,3 19,12 5,21" />
-                        </svg>
-                        <span>INICIAR TRANSMISIÓN</span>
-                    </button>
-                </div>
-                <div class="broadcast-corner top-left">◈ SEÑAL ACTIVA</div>
-                <div class="broadcast-corner top-right" id="broadcastTime"></div>
-                <div class="broadcast-corner bottom-left">CANAL 01 · HD</div>
-                <div class="broadcast-corner bottom-right">24:00:00:00</div>
-            </div>
-            <!-- YouTube iframe (loaded on click) -->
-            <iframe id="broadcastIframe" src="" title="Divina Providentia — Canal de Transmisión" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
-            </iframe>
-        </div>
     </div>
 
     <!-- Abstracts Feed -->
