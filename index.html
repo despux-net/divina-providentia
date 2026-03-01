@@ -36,13 +36,13 @@
                 <img src="LOGOV3.png" alt="Divina Providentia Logo" class="logo-image">
             </a>
             <ul class="nav-links">
-                <li><a href="#inicio">Génesis</a></li>
-                <li><a href="#filosofia">Dogma</a></li>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#filosofia">Filosofía</a></li>
                 <li><a href="news.html">Noticias</a></li>
                 <li><a href="#" onclick="toggleLibrarySidebar(); return false;">Biblioteca</a></li>
-                <li><a href="cripta.html">La Cripta</a></li>
-                <li><a href="#tienda">Arsenal</a></li>
-                <li><a href="#contacto">Alianza</a></li>
+                <li><a href="cripta.html">Librería</a></li>
+                <li><a href="#tienda">Tienda</a></li>
+                <li><a href="#contacto">Contacto</a></li>
                 <li class="nav-lang-selector dropdown">
                     <button class="lang-dropbtn" aria-label="Seleccionar idioma">
                         🌐 <span class="lang-text">Idioma</span>
@@ -193,8 +193,8 @@
     <section class="products section" id="tienda">
         <div class="container">
             <div class="section-header">
-                <h2>Arsenal del Espíritu</h2>
-                <p>Instrumentos para la Batalla Cultural y Metafísica</p>
+                <h2>Nuestra Tienda</h2>
+                <p>Productos con identidad, estética y propósito</p>
             </div>
 
             <!-- Filters removed by user request -->
@@ -236,13 +236,13 @@
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h3>Orden de Batalla</h3>
+                    <h3>Navegación</h3>
                     <ul class="footer-links">
-                        <li><a href="#inicio">Génesis</a></li>
-                        <li><a href="#filosofia">Dogma</a></li>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#filosofia">Filosofía</a></li>
                         <li><a href="news.html">Noticias</a></li>
-                        <li><a href="#tienda">Arsenal</a></li>
-                        <li><a href="#contacto">Alianza</a></li>
+                        <li><a href="#tienda">Tienda</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -275,13 +275,13 @@
     <div class="cart-overlay" id="cartOverlay"></div>
     <div class="cart-modal" id="cartModal">
         <div class="cart-header">
-            <h2>Tu Arsenal</h2>
+            <h2>Tu Carrito</h2>
             <button class="close-cart-btn" id="closeCartBtn" aria-label="Cerrar carrito">&times;</button>
         </div>
         <div class="cart-items" id="cartItems">
             <div class="empty-cart">
                 <div class="empty-cart-icon">⚔️</div>
-                <p>Tu arsenal está vacío</p>
+                <p>Tu carrito está vacío</p>
             </div>
         </div>
         <div class="cart-footer">
@@ -289,7 +289,7 @@
                 <span class="cart-total-label">Total:</span>
                 <span class="cart-total-amount" id="cartTotal">$0.00</span>
             </div>
-            <button class="checkout-btn" id="checkoutBtn" disabled>Reclamar la Herencia</button>
+            <button class="checkout-btn" id="checkoutBtn" disabled>Realizar Compra</button>
         </div>
     </div>
 
@@ -297,13 +297,13 @@
     <div class="checkout-overlay" id="checkoutOverlay"></div>
     <div class="checkout-modal" id="checkoutModal">
         <div class="checkout-header">
-            <h2>Confirmar la Alianza</h2>
+            <h2>Confirmar Pedido</h2>
             <button class="close-checkout-btn" id="closeCheckoutBtn" aria-label="Cerrar checkout">&times;</button>
         </div>
         <div class="checkout-content" id="checkoutContent">
             <form class="checkout-form" id="checkoutForm">
                 <div class="order-summary">
-                    <h3>Inventario de Batalla</h3>
+                    <h3>Resumen del Pedido</h3>
                     <div id="orderSummaryItems"></div>
                     <div class="order-total">
                         <span>Total:</span>
@@ -312,7 +312,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="customerName">Nombre Completo (Para los registros) *</label>
+                    <label for="customerName">Nombre Completo *</label>
                     <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre">
                 </div>
 
@@ -327,7 +327,7 @@
                         placeholder="Déjanos un mensaje, instrucciones especiales, dirección de envío, etc."></textarea>
                 </div>
 
-                <button type="submit" class="submit-order-btn">Consumar el Pacto</button>
+                <button type="submit" class="submit-order-btn">Confirmar Pedido</button>
             </form>
         </div>
     </div>
@@ -387,7 +387,7 @@
     <div class="modal-overlay" id="registerModal">
         <div class="auth-modal">
             <div class="checkout-header">
-                <h2>Unirse a la Milicia</h2>
+                <h2>Crear Cuenta</h2>
                 <button class="close-checkout-btn" onclick="closeModal('registerModal')">&times;</button>
             </div>
             <form id="registerForm" class="auth-form">

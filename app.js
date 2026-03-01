@@ -598,7 +598,7 @@ function updateCart() {
         cartItems.innerHTML = `
       <div class="empty-cart">
         <div class="empty-cart-icon">⚔️</div>
-        <p>Tu arsenal está desprovisto.</p>
+        <p>Tu carrito está vacío.</p>
       </div>
     `;
         checkoutBtn.disabled = true;
