@@ -959,11 +959,28 @@ async function loadArticles() {
 
         articlesGrid.innerHTML = articles.map((article, index) => {
             const delay = index * 0.1;
+
+            // Check if summary is long enough to need a "Read More"
+            // A reasonable threshold could be 150 characters
+            const isLong = article.summary && article.summary.length > 150;
+            const excerpt = isLong ? article.summary.substring(0, 150) + '...' : article.summary;
+
             return `
-                <div class="syllabus-card" style="cursor: pointer; transition-delay: ${delay}s" onclick="openDrivePdfModal('${article.drive_id}', '${article.title.replace(/'/g, "\\'")}')">
+                <div class="syllabus-card" style="transition-delay: ${delay}s" id="article-card-${index}">
                     <h3 class="syllabus-name">${article.title}</h3>
                     <span class="syllabus-subtitle">${article.subtitle || ''}</span>
-                    <p class="syllabus-desc">${article.summary || ''}</p>
+                    
+                    <div class="syllabus-desc-container">
+                        <p class="syllabus-desc" id="article-desc-${index}">
+                            <span class="desc-text">${isLong ? excerpt : (article.summary || '')}</span>
+                            <span class="desc-full" style="display:none;">${article.summary || ''}</span>
+                        </p>
+                        ${isLong ? `<button class="read-more-btn" onclick="toggleArticleDesc(${index}, event)">Leer más</button>` : ''}
+                    </div>
+                    
+                    <button class="article-open-btn" onclick="openDrivePdfModal('${article.drive_id}', '${article.title.replace(/'/g, "\\'")}')">
+                        Abrir Documento
+                    </button>
                 </div>
              `;
         }).join('');
@@ -978,6 +995,34 @@ async function loadArticles() {
         articlesGrid.innerHTML = '<p class="error-msg">Error al invocar los artículos.</p>';
     }
 }
+
+// Toggle Article Description Length
+window.toggleArticleDesc = function (index, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    const card = document.getElementById(`article-card-${index}`);
+    const descContainer = document.getElementById(`article-desc-${index}`);
+    const btn = card.querySelector('.read-more-btn');
+    const textSpan = descContainer.querySelector('.desc-text');
+    const fullSpan = descContainer.querySelector('.desc-full');
+
+    const isExpanded = card.classList.contains('expanded');
+
+    if (isExpanded) {
+        // Collapse
+        card.classList.remove('expanded');
+        textSpan.style.display = 'inline';
+        fullSpan.style.display = 'none';
+        btn.textContent = 'Leer más';
+    } else {
+        // Expand
+        card.classList.add('expanded');
+        textSpan.style.display = 'none';
+        fullSpan.style.display = 'inline';
+        btn.textContent = 'Leer menos';
+    }
+};
 
 // Drive PDF Viewer Modal
 function openDrivePdfModal(driveId, title) {
