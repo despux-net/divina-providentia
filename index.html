@@ -297,15 +297,17 @@
         </div>
     </section>
 
-    <!-- Syllabus Section -->
-    <section class="syllabus-section section" id="cronos-y-logos">
+    <!-- Articles Section -->
+    <section class="articles-section section" id="articulos">
         <div class="container">
             <div class="section-header">
-                <h2 id="syllabusTitle">Cronos y Logos</h2>
-                <p id="syllabusSubtitle">Syllabus Moderno: Curaduría Cultural y Pensamiento Profundo</p>
+                <h2 id="articlesTitle">Artículos</h2>
+                <p id="articlesSubtitle">Curaduría Cultural y Pensamiento Profundo</p>
             </div>
-            <div class="syllabus-grid" id="syllabusGrid">
-                <!-- Parcialmente cargado por content-loader.js -->
+            <div class="articles-grid" id="articlesGrid">
+                <div class="loading-spinner">
+                    <p>Invocando los Artículos...</p>
+                </div>
             </div>
         </div>
     </section>
@@ -493,6 +495,18 @@
         </div>
         <div class="pdf-viewer-notice">
             📖 Vista previa limitada a las primeras 15 páginas
+        </div>
+    </div>
+
+    <!-- Drive PDF Viewer Modal -->
+    <div class="pdf-viewer-overlay" id="drivePdfOverlay"></div>
+    <div class="pdf-viewer-modal" id="drivePdfModal" style="width: 90%; height: 90vh; max-width: 1200px;">
+        <div class="pdf-viewer-header">
+            <h3 id="drivePdfTitle">Cargando...</h3>
+            <button class="close-pdf-btn" id="closeDrivePdfBtn" aria-label="Cerrar visor">&times;</button>
+        </div>
+        <div class="pdf-viewer-content" style="height: calc(100% - 60px); padding: 0;">
+            <iframe id="drivePdfIframe" style="width: 100%; height: 100%; border: none;" allow="autoplay"></iframe>
         </div>
     </div>
 

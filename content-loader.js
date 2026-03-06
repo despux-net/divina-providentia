@@ -133,21 +133,10 @@ function applyContent() {
         updateText('#manifestoClosing', CONTENT.manifesto.closing);
     }
 
-    // --- SYLLABUS MODERNO ---
-    if (CONTENT.syllabus) {
-        updateText('#syllabusTitle', CONTENT.syllabus.section_title);
-        updateText('#syllabusSubtitle', CONTENT.syllabus.section_subtitle);
-
-        const gridEl = document.getElementById('syllabusGrid');
-        if (gridEl && CONTENT.syllabus.articles) {
-            gridEl.innerHTML = CONTENT.syllabus.articles.map(article => `
-                <div class="syllabus-card">
-                    <h3 class="syllabus-name">${formatText(article.title)}</h3>
-                    <span class="syllabus-subtitle">${formatText(article.subtitle)}</span>
-                    <p class="syllabus-desc">${formatText(article.summary)}</p>
-                </div>
-            `).join('');
-        }
+    // --- ARTICULOS ---
+    if (CONTENT.articles) {
+        updateText('#articlesTitle', CONTENT.articles.section_title);
+        updateText('#articlesSubtitle', CONTENT.articles.section_subtitle);
     }
 
     const contactPs = document.querySelectorAll('.footer-section:nth-child(3) p');

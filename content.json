@@ -56,36 +56,9 @@
             "next_button_label": "Página siguiente"
         }
     },
-    "syllabus": {
-        "section_title": "Cronos y Logos",
-        "section_subtitle": "Syllabus Moderno: Curaduría Cultural y Pensamiento Profundo",
-        "articles": [
-            {
-                "title": "Mármol y Espíritu",
-                "subtitle": "La arquitectura como reflejo del alma",
-                "summary": "La verticalidad de las catedrales góticas y la solidez clásica no son meras técnicas, son encarnaciones de una sociedad que miraba hacia arriba. Observamos cómo la arquitectura moderna refleja el desamparo espiritual y la urgencia de reconstruir espacios que eleven el alma, restaurando la conexión entre la piedra y lo sacro."
-            },
-            {
-                "title": "La Defensa del Verbo",
-                "subtitle": "El lenguaje y la importancia de las palabras precisas",
-                "summary": "Quien controla el diccionario, controla el pensamiento. Exploramos la degradación deliberada del léxico en la modernidad y cómo recuperar la precisión insobornable del lenguaje es el primer y más crítico paso para defender la inteligencia, la memoria cultural y la verdad objetiva frente al eufemismo destructor."
-            },
-            {
-                "title": "Ontología Intransigente",
-                "subtitle": "El concepto de 'Verdad' frente al 'Sentimiento'",
-                "summary": "En la tiranía de la empatía moderna, la emoción ha usurpado arrogantemente el trono de la Razón y la Verdad revelada. Un análisis incisivo sobre la necesidad inaplazable de anclarnos en lo inmutable, recordando que los principios fundamentales no se negocian ni se moldean según el volátil estado de ánimo de la época."
-            },
-            {
-                "title": "Estética Redentora",
-                "subtitle": "Por qué la belleza es una necesidad biológica y espiritual",
-                "summary": "Lejos de ser un ornamento prescindible o un mero capricho subjetivo, la belleza nos ancla al instinto de lo trascendente. Una exploración frontal de cómo el rechazo contemporáneo a la armonía visual y sonora es, en el fondo, un desprecio ontológico por la Creación misma y por nuestra propia naturaleza profundamente ordenada."
-            },
-            {
-                "title": "Cimientos en el Éter",
-                "subtitle": "La herencia de los clásicos en un mundo hiperdigital",
-                "summary": "¿Cómo se habitan los intrincados laberintos algorítmicos sin perder la brújula milenaria? Reflexionamos sobre la integración de la sabiduría patrística, el rigor escolástico y el pensamiento estoico clásico como asedios inexpugnables para preservar la sobriedad mental, la atención sostenida y el alma misma."
-            }
-        ]
+    "articles": {
+        "section_title": "Artículos",
+        "section_subtitle": "Curaduría Cultural y Pensamiento Profundo"
     },
     "symbol_stories": {
         "intro": "Cada pieza tiene una historia que habla del portador, no del objeto.",

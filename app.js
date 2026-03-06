@@ -70,6 +70,11 @@ async function initializeApp() {
     // Load products from Supabase
     await loadProducts();
 
+    // Load articles from Supabase
+    if (typeof loadArticles === 'function') {
+        await loadArticles();
+    }
+
     // Initialize event listeners
     initializeEventListeners();
 
