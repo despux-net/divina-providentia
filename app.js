@@ -929,3 +929,93 @@ async function handleContact(e) {
         submitBtn.disabled = false;
     }
 }
+
+// ===================================
+// ARTICLES MANAGEMENT
+// ===================================
+
+async function loadArticles() {
+    const articlesGrid = document.getElementById('articlesGrid');
+    if (!articlesGrid) return;
+
+    articlesGrid.innerHTML = '<div class="loading-spinner"><p>Invocando los Artículos...</p></div>';
+
+    try {
+        // Use supabaseClient from global scope (initialized in supabase-config.js or similar)
+        const client = window.supabaseClient || window.SupabaseAPI?.client;
+        if (!client) throw new Error("Supabase client not initialized");
+
+        const { data: articles, error } = await client
+            .from('articles')
+            .select('*')
+            .order('order_index', { ascending: true });
+
+        if (error) throw error;
+
+        if (!articles || articles.length === 0) {
+            articlesGrid.innerHTML = '<p class="error-msg">No hay artículos disponibles por ahora.</p>';
+            return;
+        }
+
+        articlesGrid.innerHTML = articles.map((article, index) => {
+            const delay = index * 0.1;
+            return `
+                <div class="syllabus-card" style="cursor: pointer; transition-delay: ${delay}s" onclick="openDrivePdfModal('${article.drive_id}', '${article.title.replace(/'/g, "\\'")}')">
+                    <h3 class="syllabus-name">${article.title}</h3>
+                    <span class="syllabus-subtitle">${article.subtitle || ''}</span>
+                    <p class="syllabus-desc">${article.summary || ''}</p>
+                </div>
+             `;
+        }).join('');
+
+        // Ensure new elements are observed by scroll animation
+        document.querySelectorAll('.articles-grid .syllabus-card').forEach(el => {
+            if (window.scrollObserver) window.scrollObserver.observe(el);
+        });
+
+    } catch (err) {
+        console.error('Error al cargar artículos:', err);
+        articlesGrid.innerHTML = '<p class="error-msg">Error al invocar los artículos.</p>';
+    }
+}
+
+// Drive PDF Viewer Modal
+function openDrivePdfModal(driveId, title) {
+    if (!driveId) {
+        alert("Enlace de documento no disponible.");
+        return;
+    }
+    const overlay = document.getElementById('drivePdfOverlay');
+    const modal = document.getElementById('drivePdfModal');
+    const titleEl = document.getElementById('drivePdfTitle');
+    const iframe = document.getElementById('drivePdfIframe');
+
+    if (!overlay || !modal) return;
+
+    titleEl.textContent = title;
+    iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
+
+    overlay.classList.add('open');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDrivePdfModal() {
+    const overlay = document.getElementById('drivePdfOverlay');
+    const modal = document.getElementById('drivePdfModal');
+    const iframe = document.getElementById('drivePdfIframe');
+
+    if (overlay) overlay.classList.remove('open');
+    if (modal) modal.classList.remove('open');
+    document.body.style.overflow = '';
+
+    // Clear iframe to stop loading
+    setTimeout(() => {
+        if (iframe) iframe.src = '';
+    }, 300);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('closeDrivePdfBtn')?.addEventListener('click', closeDrivePdfModal);
+    document.getElementById('drivePdfOverlay')?.addEventListener('click', closeDrivePdfModal);
+});
