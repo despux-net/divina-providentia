@@ -2748,9 +2748,15 @@ iframe.goog-te-banner-frame {
 
 .syllabus-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-md);
   margin-top: var(--space-xl);
+}
+
+@media (min-width: 768px) {
+  .syllabus-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .syllabus-card {
