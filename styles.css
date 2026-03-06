@@ -2746,7 +2746,7 @@ iframe.goog-te-banner-frame {
   font-size: 1.15rem;
 }
 
-.syllabus-grid {
+.articles-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-md);
@@ -2754,7 +2754,7 @@ iframe.goog-te-banner-frame {
 }
 
 @media (min-width: 768px) {
-  .syllabus-grid {
+  .articles-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
