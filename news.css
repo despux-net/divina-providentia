@@ -764,6 +764,25 @@ body.news-body {
         margin-bottom: 2rem;
     }
 
+    .broadcast-zone {
+        display: flex;
+        flex-direction: column;
+        padding: 0 1rem;
+    }
+
+    .broadcast-container {
+        order: -1;
+        /* Force the video to appear first */
+        width: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .side-feed {
+        width: 100%;
+        height: 350px;
+        /* Make feeds a bit shorter on mobile */
+    }
+
     .abstracts-grid {
         grid-template-columns: 1fr;
     }
