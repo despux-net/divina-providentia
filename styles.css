@@ -2987,52 +2987,251 @@ iframe.goog-te-banner-frame {
 
 .map-card-title {
   font-family: var(--font-primary);
-  color: var(--color-divine-gold);
-  font-size: 1.25rem;
-  margin: 0 0 0.5rem 0;
-}
 
-.map-card-author {
-  font-family: var(--font-secondary);
-  color: var(--color-silver);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0 0 1rem 0;
-  opacity: 0.7;
-}
+  .syllabus-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--color-divine-gold);
+    transition: width 0.3s ease;
+  }
 
-.map-card-desc {
-  font-size: 0.95rem;
-  color: #a0a0a0;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+  .syllabus-card:hover {
+    box-shadow: 0 8px 24px rgba(45, 27, 78, 0.08);
+    transform: translateY(-4px);
+    border-color: rgba(212, 175, 55, 0.3);
+  }
 
-.open-map-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  color: var(--color-white);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 10px 20px;
-  font-family: var(--font-secondary);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
+  .syllabus-card:hover::after {
+    width: 100%;
+  }
 
-.open-map-btn:hover {
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--color-divine-gold);
-  color: var(--color-divine-gold);
-}. o p e n - m a p - b t n   {   c o l o r :   w h i t e   ! i m p o r t a n t ;   }  
- 
+  .syllabus-name {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--color-sacred-purple);
+    margin-bottom: 0;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+
+  .syllabus-subtitle {
+    display: block;
+    font-family: var(--font-quote);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--color-divine-gold-dark);
+    line-height: 1.3;
+  }
+
+  .syllabus-desc-container {
+    position: relative;
+    flex: 1;
+    margin-top: var(--space-xs);
+  }
+
+  .syllabus-desc {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-stone-gray);
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  /* Base state: text is clamped via JS or CSS, but to allow smooth transition, we'll use max-height in JS. */
+
+  .read-more-btn {
+    background: none;
+    border: none;
+    color: var(--color-divine-gold);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0;
+    margin-top: var(--space-sm);
+    cursor: pointer;
+    text-align: left;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .read-more-btn:hover {
+    text-decoration: underline;
+    color: var(--color-divine-gold-dark);
+  }
+
+  .read-more-btn::after {
+    content: '↓';
+    transition: transform 0.3s ease;
+  }
+
+  .syllabus-card.expanded .read-more-btn::after {
+    transform: rotate(180deg);
+  }
+
+  .article-open-btn {
+    margin-top: var(--space-md);
+    align-self: flex-start;
+    background: var(--color-sacred-purple);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .article-open-btn:hover {
+    background: var(--color-sacred-purple-light);
+  }
+
+  /* Staggered entrance for syllabus cards */
+  .syllabus-card:nth-child(1) {
+    transition-delay: 0.1s;
+  }
+
+  .syllabus-card:nth-child(2) {
+    transition-delay: 0.2s;
+  }
+
+  .syllabus-card:nth-child(3) {
+    transition-delay: 0.3s;
+  }
+
+  .syllabus-card:nth-child(4) {
+    transition-delay: 0.4s;
+  }
+
+  .syllabus-card:nth-child(5) {
+    transition-delay: 0.5s;
+  }
+
+  /* ==========================================================================
+   CARTOGRAFIA & COLECCION (MUSEUM GRID)
+   ========================================================================== */
+  .cartography-section {
+    background-color: #030303;
+    padding: 6rem 0;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .cartography-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .map-card {
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .map-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.1);
+  }
+
+  .map-card-image {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.6s ease;
+  }
+
+  .map-card:hover .map-card-image {
+    transform: scale(1.05);
+  }
+
+  .map-image-container {
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Badge indicativo de resolución */
+  .map-badge-hd {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--color-divine-gold);
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    font-family: var(--font-secondary);
+    letter-spacing: 1px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    backdrop-filter: blur(4px);
+    text-transform: uppercase;
+  }
+
+  .map-card-content {
+    padding: 1.5rem;
+  }
+
+  .map-card-title {
+    font-family: var(--font-primary);
+    color: var(--color-divine-gold);
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .map-card-author {
+    font-family: var(--font-secondary);
+    color: #f8fafc;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 1rem 0;
+  }
+
+  .map-card-desc {
+    font-size: 0.95rem;
+    color: #f1f5f9;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .open-map-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--color-white);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    font-family: var(--font-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .open-map-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--color-divine-gold);
+    color: var(--color-divine-gold);
+  }
+
+  .open-map-btn {
+    color: white !important;
+  }
+}
