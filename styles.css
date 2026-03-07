@@ -2343,14 +2343,25 @@ p {
     width: 100%;
     background: white;
     flex-direction: column;
-    padding: var(--space-lg) 0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    /* NEW: Center align items */
+    padding: var(--space-xl) 0;
+    /* INCREASED: padding for better spacing */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     border-top: 1px solid rgba(45, 27, 78, 0.1);
     margin: 0;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     pointer-events: none;
+    gap: var(--space-sm);
+    /* NEW: add gap between items */
+  }
+
+  .nav-links>li {
+    width: 100%;
+    text-align: center;
+    padding: var(--space-xs) 0;
   }
 
   .nav-links.active {
