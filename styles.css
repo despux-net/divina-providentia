@@ -3111,127 +3111,124 @@ iframe.goog-te-banner-frame {
   .syllabus-card:nth-child(5) {
     transition-delay: 0.5s;
   }
+}
 
-  /* ==========================================================================
+/* ==========================================================================
    CARTOGRAFIA & COLECCION (MUSEUM GRID)
    ========================================================================== */
-  .cartography-section {
-    background-color: #030303;
-    padding: 6rem 0;
-    position: relative;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
+.cartography-section {
+  background-color: #030303;
+  padding: 6rem 0;
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-  .cartography-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-  }
+.cartography-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
 
-  .map-card {
-    background: #0a0a0a;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  }
+.map-card {
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
 
-  .map-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(212, 175, 55, 0.3);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.1);
-  }
+.map-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.1);
+}
 
-  .map-card-image {
-    width: 100%;
-    height: 240px;
-    object-fit: cover;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.6s ease;
-  }
+.map-card-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 0.6s ease;
+}
 
-  .map-card:hover .map-card-image {
-    transform: scale(1.05);
-  }
+.map-card:hover .map-card-image {
+  transform: scale(1.05);
+}
 
-  .map-image-container {
-    overflow: hidden;
-    position: relative;
-  }
+.map-image-container {
+  overflow: hidden;
+  position: relative;
+}
 
-  /* Badge indicativo de resolución */
-  .map-badge-hd {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(0, 0, 0, 0.8);
-    color: var(--color-divine-gold);
-    padding: 4px 8px;
-    font-size: 0.7rem;
-    font-family: var(--font-secondary);
-    letter-spacing: 1px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    backdrop-filter: blur(4px);
-    text-transform: uppercase;
-  }
+/* Badge indicativo de resolución */
+.map-badge-hd {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--color-divine-gold);
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  font-family: var(--font-secondary);
+  letter-spacing: 1px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  backdrop-filter: blur(4px);
+  text-transform: uppercase;
+}
 
-  .map-card-content {
-    padding: 1.5rem;
-  }
+.map-card-content {
+  padding: 1.5rem;
+}
 
-  .map-card-title {
-    font-family: var(--font-primary);
-    color: var(--color-divine-gold);
-    font-size: 1.25rem;
-    margin: 0 0 0.5rem 0;
-  }
+.map-card-title {
+  font-family: var(--font-primary);
+  color: var(--color-divine-gold) !important;
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem 0;
+}
 
-  .map-card-author {
-    font-family: var(--font-secondary);
-    color: #f8fafc;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 0 0 1rem 0;
-  }
+.map-card-author {
+  font-family: var(--font-secondary);
+  color: #ffffff !important;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 1rem 0;
+  opacity: 0.9;
+}
 
-  .map-card-desc {
-    font-size: 0.95rem;
-    color: #f1f5f9;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+.map-card-desc {
+  font-size: 0.95rem;
+  color: #f1f5f9 !important;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-  .open-map-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    color: var(--color-white);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 10px 20px;
-    font-family: var(--font-secondary);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
+.open-map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
 
-  .open-map-btn:hover {
-    background: rgba(212, 175, 55, 0.1);
-    border-color: var(--color-divine-gold);
-    color: var(--color-divine-gold);
-  }
-
-  .open-map-btn {
-    color: white !important;
-  }
+.open-map-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--color-divine-gold);
+  color: var(--color-divine-gold) !important;
 }
