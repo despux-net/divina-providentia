@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const spinner = document.getElementById('osintSpinner');
     const resultsContainer = document.getElementById('osintResults');
 
-    // No proxy needed when hosted on real https domains
-    
+    // Supabase Edge Function URL para proxies
+    const EDGE_FUNCTION_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/osint-search';
+
     // APIs Configuration
     const apis = {
         gdelt: {
@@ -36,14 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
             class: "osint-source-acled",
             icon: "⚠️",
             fetchData: async (query) => {
-                const targetUrl = `https://api.acleddata.com/acled/read/?terms=accept&limit=5&country=${encodeURIComponent(query)}`;
-                const res = await fetch(targetUrl);
-                if (!res.ok) {
-                    if (res.status === 401 || res.status === 403) throw new Error("Acceso denegado. ACLED ahora requiere autorización de API (email/key) para consultas públicas.");
-                    throw new Error("Error en servidor ACLED");
-                }
-                const data = await res.json();
-                return data.data || [];
+                const res = await fetch(EDGE_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, provider: 'acled' })
+                });
+                const responseData = await res.json();
+                if (!res.ok) throw new Error(responseData.error || "Error en servidor ACLED");
+                return responseData.data || [];
             },
             render: (items) => {
                 if (!items || items.length === 0) return `<div class="osint-empty">Sin reportes recientes de incidentes.</div>`;
@@ -61,11 +62,14 @@ document.addEventListener('DOMContentLoaded', () => {
             class: "osint-source-sanctions",
             icon: "⚖️",
             fetchData: async (query) => {
-                const targetUrl = `https://api.opensanctions.org/search/default?q=${encodeURIComponent(query)}&limit=5`;
-                const res = await fetch(targetUrl);
-                if (!res.ok) throw new Error("Error en servidor OpenSanctions");
-                const data = await res.json();
-                return data.results || [];
+                const res = await fetch(EDGE_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, provider: 'opensanctions' })
+                });
+                const responseData = await res.json();
+                if (!res.ok) throw new Error(responseData.error || "Error en servidor OpenSanctions");
+                return responseData.data || [];
             },
             render: (items) => {
                 if (!items || items.length === 0) return `<div class="osint-empty">No se encontraron entidades sancionadas o PEPs reportados.</div>`;
@@ -83,11 +87,14 @@ document.addEventListener('DOMContentLoaded', () => {
             class: "osint-source-relief",
             icon: "🏥",
             fetchData: async (query) => {
-                const targetUrl = `https://api.reliefweb.int/v1/reports?appname=osint_search&query[value]=${encodeURIComponent(query)}&limit=5`;
-                const res = await fetch(targetUrl);
-                if (!res.ok) throw new Error("Error en servidor ReliefWeb");
-                const data = await res.json();
-                return data.data || [];
+                const res = await fetch(EDGE_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, provider: 'reliefweb' })
+                });
+                const responseData = await res.json();
+                if (!res.ok) throw new Error(responseData.error || "Error en servidor ReliefWeb");
+                return responseData.data || [];
             },
             render: (items) => {
                 if (!items || items.length === 0) return `<div class="osint-empty">No se encontraron alertas humanitarias recientes.</div>`;
