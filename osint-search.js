@@ -15,11 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
             class: "osint-source-gdelt",
             icon: "🌐",
             fetchData: async (query) => {
-                const targetUrl = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(query)}&mode=artlist&maxrecords=5&format=json`;
-                const res = await fetch(targetUrl);
-                if (!res.ok) throw new Error("Error en servidor GDELT");
-                const data = await res.json();
-                return data.articles || [];
+                const res = await fetch(EDGE_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, provider: 'gdelt' })
+                });
+                const responseData = await res.json();
+                if (!res.ok) throw new Error(responseData.error || "Error en servidor GDELT");
+                return responseData.data || [];
             },
             render: (items) => {
                 if (!items || items.length === 0) return `<div class="osint-empty">No se encontraron artículos recientes.</div>`;
