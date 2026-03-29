@@ -56,6 +56,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css?v=5">
     <link rel="stylesheet" href="library-list.css?v=1">
+    <link rel="stylesheet" href="osint-search.css?v=1">
 
     <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -131,6 +132,31 @@
         </div>
     </nav>
 
+    <!-- OSINT Search Section (Google Style Layout) -->
+    <section class="osint-google-layout" id="osint-search">
+        <div class="osint-container">
+            <div class="osint-logo-wrapper">
+                <img src="DIVINA_PROVIDENTIA.png" alt="Divina Providentia" class="osint-main-logo">
+            </div>
+            <div class="osint-header">
+                <h2>Inteligencia Geopolítica y Monitoreo Global</h2>
+                <p>Buscador avanzado (OSINT) en bases de datos abiertas (GDELT, ACLED, OpenSanctions, ReliefWeb)</p>
+            </div>
+            
+            <form id="osintSearchForm" class="osint-search-box">
+                <span class="osint-search-icon">🔍</span>
+                <input type="text" id="osintSearchInput" class="osint-search-input" placeholder="Buscar país, líder, conflicto..." autocomplete="off">
+                <button type="submit" class="osint-search-button">Buscar</button>
+            </form>
+
+            <div class="osint-spinner" id="osintSpinner"></div>
+            
+            <div id="osintResults">
+                <!-- Data API Cards will be injected here -->
+            </div>
+        </div>
+    </section>
+
     <!-- Hero Section -->
     <section class="hero" id="inicio">
         <div class="hero-content">
@@ -148,6 +174,8 @@
             </div>
         </div>
     </section>
+
+
 
     <!-- Manifiesto Section -->
     <section class="manifesto-section" id="manifiesto">
@@ -600,6 +628,7 @@
     <script src="content-loader.js?v=2"></script>
     <script src="library.js?v=4"></script>
     <script src="app.js?v=2"></script>
+    <script src="osint-search.js?v=1"></script>
 
     <!-- Google Translate Script Oculto -->
     <div id="google_translate_element" style="display:none;"></div>
