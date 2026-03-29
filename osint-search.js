@@ -1,9 +1,14 @@
 const EDGE_FUNCTION_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/osint-search';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('osint-query');
-    const searchBtn = document.getElementById('osint-btn');
-    const resultsGrid = document.getElementById('osint-results');
+    const searchForm = document.getElementById('osintSearchForm');
+    const searchInput = document.getElementById('osintSearchInput');
+    const resultsGrid = document.getElementById('osintResults');
+
+    if (!searchForm || !searchInput || !resultsGrid) {
+        console.error("No se encontraron los elementos del buscador OSINT en el DOM.");
+        return;
+    }
 
     const apis = {
         gdelt: {
@@ -32,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         wikidata: {
             name: "Wiki Intel",
-            class: "osint-source-acled", // Reutilizamos clase de color o la cambiamos
+            class: "osint-source-acled",
             icon: "🏛️",
             fetchData: async (query) => {
                 const res = await fetch(EDGE_FUNCTION_URL, {
@@ -146,15 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    searchBtn.addEventListener('click', () => {
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         const query = searchInput.value.trim();
         if (query) performSearch(query);
-    });
-
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = searchInput.value.trim();
-            if (query) performSearch(query);
-        }
     });
 });
