@@ -5,7 +5,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
+// Identificador único para evitar bloqueos de Rate Limit o Seguridad
+const APP_NAME = 'DivinaProvidentia-OSINT/1.1 (https://divinaprovidentia.com)';
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -34,14 +36,18 @@ Deno.serve(async (req: Request) => {
 
     if (provider === 'opensanctions') {
         const res = await fetch(`https://api.opensanctions.org/search/default?q=${encodeURIComponent(query)}&limit=5`, { headers: commonHeaders });
+        if (res.status === 401) throw new Error("OpenSanctions ahora requiere una API Key personalizada para búsquedas remotas.");
         if (!res.ok) throw new Error(`OpenSanctions devolvió error HTTP ${res.status}`);
         const data = await res.json();
         return new Response(JSON.stringify({ data: data.results || [] }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     if (provider === 'reliefweb') {
-        const res = await fetch(`https://api.reliefweb.int/v1/reports?appname=osint_search&query[value]=${encodeURIComponent(query)}&limit=5`, { headers: commonHeaders });
-        if (!res.ok) throw new Error(`ReliefWeb devolvió error HTTP ${res.status}`);
+        // ACTUALIZADO: Usamos V2 y APP_NAME según documentación oficial de la ONU
+        const res = await fetch(`https://api.reliefweb.int/v2/reports?appname=${encodeURIComponent(APP_NAME)}&query[value]=${encodeURIComponent(query)}&limit=5`, { 
+            headers: commonHeaders 
+        });
+        if (!res.ok) throw new Error(`ReliefWeb (ONU) devolvió error HTTP ${res.status}`);
         const data = await res.json();
         return new Response(JSON.stringify({ data: data.data || [] }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
@@ -50,6 +56,7 @@ Deno.serve(async (req: Request) => {
         const username = Deno.env.get('ACLED_EMAIL') ?? 'despux@gmail.com';
         const password = Deno.env.get('ACLED_PASSWORD') ?? 's_jYNwE7G7kw%P_';
         
+        // 1. Obtener Token OAuth
         const authParams = new URLSearchParams();
         authParams.append('username', username);
         authParams.append('password', password);
@@ -74,7 +81,8 @@ Deno.serve(async (req: Request) => {
         const accessToken = authData.access_token;
         if (!accessToken) throw new Error("ACLED no devolvió un access_token.");
         
-        const dataUrl = `https://api.acleddata.com/acled/read?_format=json&limit=5&country=${encodeURIComponent(query)}`;
+        // 2. Consulta de datos - URL CORREGIDA (Sin subdominio api. y con el path /api/)
+        const dataUrl = `https://acleddata.com/api/acled/read?_format=json&limit=5&country=${encodeURIComponent(query)}`;
         const res = await fetch(dataUrl, {
             method: 'GET',
             headers: {
