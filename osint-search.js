@@ -1,14 +1,10 @@
+const EDGE_FUNCTION_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/osint-search';
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Select elements
-    const searchForm = document.getElementById('osintSearchForm');
-    const searchInput = document.getElementById('osintSearchInput');
-    const spinner = document.getElementById('osintSpinner');
-    const resultsContainer = document.getElementById('osintResults');
+    const searchInput = document.getElementById('osint-query');
+    const searchBtn = document.getElementById('osint-btn');
+    const resultsGrid = document.getElementById('osint-results');
 
-    // Supabase Edge Function URL para proxies
-    const EDGE_FUNCTION_URL = 'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/osint-search';
-
-    // APIs Configuration
     const apis = {
         gdelt: {
             name: "GDELT Project",
@@ -28,154 +24,137 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!items || items.length === 0) return `<div class="osint-empty">No se encontraron artículos recientes.</div>`;
                 return items.map(item => `
                     <div class="osint-item">
-                        <div class="osint-item-title">${item.title}</div>
-                        <div class="osint-item-meta">${item.domain} - ${item.seendate ? item.seendate.substring(0,8) : ''}</div>
-                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="osint-item-link">Leer artículo ↗</a>
+                        <a href="${item.url}" target="_blank" class="osint-link">${item.title}</a>
+                        <span class="osint-meta">${item.domain} • ${item.seendate}</span>
                     </div>
                 `).join('');
             }
         },
-        acled: {
-            name: "ACLED",
-            class: "osint-source-acled",
-            icon: "⚠️",
+        wikidata: {
+            name: "Wiki Intel",
+            class: "osint-source-acled", // Reutilizamos clase de color o la cambiamos
+            icon: "🏛️",
             fetchData: async (query) => {
                 const res = await fetch(EDGE_FUNCTION_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, provider: 'acled' })
+                    body: JSON.stringify({ query, provider: 'wikidata_intel' })
                 });
                 const responseData = await res.json();
-                if (!res.ok) throw new Error(responseData.error || "Error en servidor ACLED");
+                if (!res.ok) throw new Error(responseData.error || "Error en Wikidata Intel");
                 return responseData.data || [];
             },
             render: (items) => {
-                if (!items || items.length === 0) return `<div class="osint-empty">Sin reportes recientes de incidentes.</div>`;
+                if (!items || items.length === 0) return `<div class="osint-empty">No se encontraron perfiles relevantes.</div>`;
                 return items.map(item => `
                     <div class="osint-item">
-                        <div class="osint-item-title">${item.event_type} en ${item.location}</div>
-                        <div class="osint-item-meta">${item.event_date} - Fatalidades: ${item.fatalities}</div>
-                        <div class="osint-item-desc">${item.notes}</div>
+                        <a href="${item.url}" target="_blank" class="osint-link">${item.label}</a>
+                        <p class="osint-item-desc">${item.description}</p>
                     </div>
                 `).join('');
             }
         },
         sanctions: {
-            name: "OpenSanctions",
+            name: "Sanctions Check",
             class: "osint-source-sanctions",
             icon: "⚖️",
             fetchData: async (query) => {
                 const res = await fetch(EDGE_FUNCTION_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, provider: 'opensanctions' })
+                    body: JSON.stringify({ query, provider: 'wikidata_sanctions' })
                 });
                 const responseData = await res.json();
-                if (!res.ok) throw new Error(responseData.error || "Error en servidor OpenSanctions");
+                if (!res.ok) throw new Error(responseData.error || "Error en Sanctions Check");
                 return responseData.data || [];
             },
             render: (items) => {
-                if (!items || items.length === 0) return `<div class="osint-empty">No se encontraron entidades sancionadas o PEPs reportados.</div>`;
+                if (!items || items.length === 0) return `<div class="osint-empty">No se detectaron entidades sancionadas.</div>`;
                 return items.map(item => `
                     <div class="osint-item">
-                        <div class="osint-item-title">${item.caption}</div>
-                        <div class="osint-item-meta">${item.schema}</div>
-                        <div class="osint-item-desc">Propiedades conocidas: ${Object.keys(item.properties).join(', ')}</div>
+                        <div class="osint-sanction-tag">⚠️ POTENCIAL PEP/SANCIÓN</div>
+                        <span class="osint-link" style="color:var(--text-color)">${item.label}</span>
+                        <p class="osint-item-desc">${item.description}</p>
                     </div>
                 `).join('');
             }
         },
-        reliefweb: {
-            name: "ReliefWeb (ONU)",
-            class: "osint-source-relief",
-            icon: "🏥",
+        hazards: {
+            name: "Global Monitoring",
+            class: "osint-source-reliefweb",
+            icon: "🔥",
             fetchData: async (query) => {
                 const res = await fetch(EDGE_FUNCTION_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, provider: 'reliefweb' })
+                    body: JSON.stringify({ query, provider: 'hazards' })
                 });
                 const responseData = await res.json();
-                if (!res.ok) throw new Error(responseData.error || "Error en servidor ReliefWeb");
+                if (!res.ok) throw new Error(responseData.error || "Error en Global Monitoring");
                 return responseData.data || [];
             },
             render: (items) => {
-                if (!items || items.length === 0) return `<div class="osint-empty">No se encontraron alertas humanitarias recientes.</div>`;
+                if (!items || items.length === 0) return `<div class="osint-empty">No se detectaron riesgos activos.</div>`;
                 return items.map(item => `
                     <div class="osint-item">
-                        <div class="osint-item-title">${item.fields && item.fields.title ? item.fields.title : 'Reporte Humanitario'}</div>
-                        <a href="${item.href}" target="_blank" rel="noopener noreferrer" class="osint-item-link">Ver reporte en ReliefWeb ↗</a>
+                        <div class="osint-hazard-badge">ALERTA NASA</div>
+                        <span class="osint-link" style="color:var(--text-color)">${item.title}</span>
+                        <span class="osint-meta">${item.categories?.[0]?.title || 'Incidente'} • ${new Date(item.geometry?.[0]?.date).toLocaleDateString()}</span>
                     </div>
                 `).join('');
             }
         }
     };
 
-    if (!searchForm || !searchInput) return;
+    async function performSearch(query) {
+        resultsGrid.innerHTML = '';
+        resultsGrid.style.display = 'grid';
 
-    searchForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const query = searchInput.value.trim();
-        if (!query) return;
+        // Crear tarjetas de carga
+        Object.keys(apis).forEach(id => {
+            const api = apis[id];
+            const card = document.createElement('div');
+            card.className = `osint-card ${api.class}`;
+            card.id = `card-${id}`;
+            card.innerHTML = `
+                <div class="osint-card-header">
+                    <span class="osint-card-icon">${api.icon}</span>
+                    <h3 class="osint-card-title">${api.name}</h3>
+                </div>
+                <div class="osint-card-content" id="content-${id}">
+                    <div class="osint-loading">Buscando...</div>
+                </div>
+            `;
+            resultsGrid.appendChild(card);
+        });
 
-        // Show spinner, clear old results
-        spinner.style.display = 'block';
-        resultsContainer.innerHTML = '';
-
-        // Prepare the promises wrapper, ensuring individual catches so Promise.all doesn't fail early
-        const fetchDataSafe = async (key) => {
+        // Ejecutar búsquedas en paralelo
+        Object.keys(apis).forEach(async (id) => {
+            const api = apis[id];
+            const contentArea = document.getElementById(`content-${id}`);
             try {
-                const data = await apis[key].fetchData(query);
-                return { key, status: 'success', data };
+                const data = await api.fetchData(query);
+                contentArea.innerHTML = api.render(data);
             } catch (error) {
-                return { key, status: 'error', error: error.message };
-            }
-        };
-
-        // Execute all requests concurrently
-        const apiKeys = Object.keys(apis);
-        const promises = apiKeys.map(key => fetchDataSafe(key));
-        
-        try {
-            const results = await Promise.all(promises);
-            
-            // Render grid
-            const gridHTML = document.createElement('div');
-            gridHTML.className = 'osint-results-grid';
-
-            results.forEach(result => {
-                const apiConfig = apis[result.key];
-                let contentHTML = '';
-
-                if (result.status === 'success') {
-                    contentHTML = apiConfig.render(result.data);
-                } else {
-                    // Friendly error message for this specific card
-                    contentHTML = `<div class="osint-error">
-                        <strong>Ups!</strong> Hubo un problema conectando con ${apiConfig.name}.<br>
-                        <small>Detalle: ${result.error || 'Servicio no disponible.'}</small>
-                    </div>`;
-                }
-
-                const cardHTML = `
-                    <div class="osint-card">
-                        <div class="osint-card-title ${apiConfig.class}">
-                            <span class="osint-icon">${apiConfig.icon}</span> ${apiConfig.name}
-                        </div>
-                        <div class="osint-card-content">
-                            ${contentHTML}
-                        </div>
+                console.error(`Error en API ${id}:`, error);
+                contentArea.innerHTML = `
+                    <div class="osint-error">
+                        <p>Ups! ${error.message}</p>
                     </div>
                 `;
-                gridHTML.innerHTML += cardHTML;
-            });
+            }
+        });
+    }
 
-            resultsContainer.appendChild(gridHTML);
-        } catch (globalError) {
-            console.error("OSINT Error general:", globalError);
-            resultsContainer.innerHTML = `<div class="osint-error" style="max-width: 600px; margin: 0 auto;">Ocurrió un error inesperado al procesar la búsqueda. Por favor, intenta de nuevo.</div>`;
-        } finally {
-            spinner.style.display = 'none';
+    searchBtn.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        if (query) performSearch(query);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            if (query) performSearch(query);
         }
     });
 });
