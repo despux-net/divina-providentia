@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const spinner = document.getElementById('osintSpinner');
     const resultsContainer = document.getElementById('osintResults');
 
-    const getProxyUrl = (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`;
-
+    // No proxy needed when hosted on real https domains
+    
     // APIs Configuration
     const apis = {
         gdelt: {
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: "🌐",
             fetchData: async (query) => {
                 const targetUrl = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(query)}&mode=artlist&maxrecords=5&format=json`;
-                const res = await fetch(getProxyUrl(targetUrl));
+                const res = await fetch(targetUrl);
                 if (!res.ok) throw new Error("Error en servidor GDELT");
                 const data = await res.json();
                 return data.articles || [];
@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: "⚠️",
             fetchData: async (query) => {
                 const targetUrl = `https://api.acleddata.com/acled/read/?terms=accept&limit=5&country=${encodeURIComponent(query)}`;
-                const res = await fetch(getProxyUrl(targetUrl));
+                const res = await fetch(targetUrl);
                 if (!res.ok) {
-                    if (res.status === 401 || res.status === 403) throw new Error("Acceso denegado. Requiere autorización.");
+                    if (res.status === 401 || res.status === 403) throw new Error("Acceso denegado. ACLED ahora requiere autorización de API (email/key) para consultas públicas.");
                     throw new Error("Error en servidor ACLED");
                 }
                 const data = await res.json();
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: "⚖️",
             fetchData: async (query) => {
                 const targetUrl = `https://api.opensanctions.org/search/default?q=${encodeURIComponent(query)}&limit=5`;
-                const res = await fetch(getProxyUrl(targetUrl));
+                const res = await fetch(targetUrl);
                 if (!res.ok) throw new Error("Error en servidor OpenSanctions");
                 const data = await res.json();
                 return data.results || [];
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: "🏥",
             fetchData: async (query) => {
                 const targetUrl = `https://api.reliefweb.int/v1/reports?appname=osint_search&query[value]=${encodeURIComponent(query)}&limit=5`;
-                const res = await fetch(getProxyUrl(targetUrl));
+                const res = await fetch(targetUrl);
                 if (!res.ok) throw new Error("Error en servidor ReliefWeb");
                 const data = await res.json();
                 return data.data || [];
