@@ -5,8 +5,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Identificador único para evitar bloqueos de Rate Limit o Seguridad
-const APP_NAME = 'DivinaProvidentia-OSINT/1.1 (https://divinaprovidentia.com)';
+// Identificador único siguiendo el formato solicitado por ReliefWeb
+const APP_NAME = 'DivinaProvidentiaOSINT-Search-V1';
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 Deno.serve(async (req: Request) => {
@@ -21,9 +21,13 @@ Deno.serve(async (req: Request) => {
 
     if (!query || !provider) throw new Error("Se requiere query y provider");
 
+    // Cabeceras extendidas para simular un navegador real y evitar bloqueos de CDNs
     const commonHeaders = {
         'User-Agent': USER_AGENT,
         'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+        'Referer': 'https://divinaprovidentia.com/',
+        'Origin': 'https://divinaprovidentia.com'
     };
 
     if (provider === 'gdelt') {
@@ -36,18 +40,18 @@ Deno.serve(async (req: Request) => {
 
     if (provider === 'opensanctions') {
         const res = await fetch(`https://api.opensanctions.org/search/default?q=${encodeURIComponent(query)}&limit=5`, { headers: commonHeaders });
-        if (res.status === 401) throw new Error("OpenSanctions ahora requiere una API Key personalizada para búsquedas remotas.");
+        if (res.status === 401) throw new Error("OpenSanctions requiere un API Key (ApiKey) en las cabeceras para habilitar búsquedas.");
         if (!res.ok) throw new Error(`OpenSanctions devolvió error HTTP ${res.status}`);
         const data = await res.json();
         return new Response(JSON.stringify({ data: data.results || [] }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     if (provider === 'reliefweb') {
-        // ACTUALIZADO: Usamos V2 y APP_NAME según documentación oficial de la ONU
+        // ReliefWeb V2 + APP_NAME + Headers de navegación real
         const res = await fetch(`https://api.reliefweb.int/v2/reports?appname=${encodeURIComponent(APP_NAME)}&query[value]=${encodeURIComponent(query)}&limit=5`, { 
             headers: commonHeaders 
         });
-        if (!res.ok) throw new Error(`ReliefWeb (ONU) devolvió error HTTP ${res.status}`);
+        if (!res.ok) throw new Error(`ReliefWeb (ONU) devolvió HTTP ${res.status}. El servidor de la ONU está restringiendo la conexión de servidor.`);
         const data = await res.json();
         return new Response(JSON.stringify({ data: data.data || [] }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
@@ -81,7 +85,7 @@ Deno.serve(async (req: Request) => {
         const accessToken = authData.access_token;
         if (!accessToken) throw new Error("ACLED no devolvió un access_token.");
         
-        // 2. Consulta de datos - URL CORREGIDA (Sin subdominio api. y con el path /api/)
+        // 2. Consulta de datos
         const dataUrl = `https://acleddata.com/api/acled/read?_format=json&limit=5&country=${encodeURIComponent(query)}`;
         const res = await fetch(dataUrl, {
             method: 'GET',
@@ -93,6 +97,8 @@ Deno.serve(async (req: Request) => {
         
         if (!res.ok) {
             const err = await res.text();
+            // ACLED suele devolver 403 si la cuenta de usuario no ha sido aprobada manualmente para el uso de la API.
+            if (res.status === 403) throw new Error("ACLED denegó el acceso (403). Es probable que tu cuenta de usuario necesite aprobación manual en su plataforma.");
             throw new Error(`HTTP ${res.status} de ACLED: ${err}`);
         }
         
