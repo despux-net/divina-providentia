@@ -29,7 +29,7 @@ Deno.serve(async (req: Request) => {
 
     // 1. GDELT (Noticias Globales) con Lógica de Reintento
     if (provider === 'gdelt') {
-        const targetUrl = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(query)}&mode=artlist&maxrecords=30&format=json`;
+        const targetUrl = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(query)}&mode=artlist&maxrecords=10&format=json`;
         
         let attempts = 0;
         const maxAttempts = 3;
