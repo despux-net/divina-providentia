@@ -48,7 +48,17 @@ Deno.serve(async (req: Request) => {
             
             if (!res.ok) throw new Error(`GDELT devolvió HTTP ${res.status}`);
             
-            const data = await res.json();
+            const textData = await res.text();
+            let data;
+            try {
+                data = JSON.parse(textData);
+            } catch (e) {
+                if (textData.toLowerCase().includes("your search")) {
+                     return new Response(JSON.stringify({ data: [] }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+                }
+                throw new Error("Mensaje de GDELT: " + textData.substring(0, 100));
+            }
+            
             return new Response(JSON.stringify({ data: data.articles || [] }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
     }
