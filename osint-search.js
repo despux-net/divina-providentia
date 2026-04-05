@@ -34,6 +34,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `).join('');
             }
+        },
+        gpr: {
+            name: "GPR Index",
+            class: "osint-source-sanctions", /* Reutilizamos un color similar de CSS existente */
+            icon: "📊",
+            fetchData: async (query) => {
+                // Static response for GPR as it has no public REST API for searches
+                return [{
+                    title: "Geopolitical Risk Index (GPR)",
+                    desc: "Desarrollado por Matteo Iacoviello & Dario Caldara",
+                    url: "https://www.matteoiacoviello.com/gpr.htm"
+                }];
+            },
+            render: (items) => {
+                return items.map(item => `
+                    <div class="osint-item">
+                        <div class="osint-sanction-tag" style="background:#555">MACROECONOMÍA Y GEOPOLÍTICA</div>
+                        <a href="${item.url}" target="_blank" class="osint-link" style="color:var(--text-color); font-weight:bold">${item.title}</a>
+                        <p class="osint-item-desc">${item.desc}</p>
+                        <p class="osint-item-desc" style="margin-top:0.5rem; font-style:italic">Acceso a las métricas del impacto económico provocado por la tensión global, actualizadas mensualmente.</p>
+                        <a href="${item.url}" target="_blank" class="osint-item-link">Ver Datos y Gráficos →</a>
+                    </div>
+                `).join('');
+            }
         }
     };
 
