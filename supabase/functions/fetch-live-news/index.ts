@@ -56,8 +56,9 @@ serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // 2. Fetch from NewsAPI.org AND NewsData.io concurrently
-    const NEWSDATA_API_KEY = Deno.env.get('NEWSDATA_API_KEY') ?? 'pub_fe32b0376cb54b20bcf4652ec6b44aa4';
-    const NEWSORG_API_KEY = Deno.env.get('NEWSAPI_ORG_KEY') ?? '39db7cb32cb44798b8f730747ab308f6';
+    // Sin valor de reserva: una clave escrita aquí acaba publicada.
+    const NEWSDATA_API_KEY = Deno.env.get('NEWSDATA_API_KEY') ?? '';
+    const NEWSORG_API_KEY = Deno.env.get('NEWSAPI_ORG_KEY') ?? '';
 
     const newsDataUrl = `https://newsdata.io/api/1/latest?apikey=${NEWSDATA_API_KEY}&category=politics,world&language=es,en&size=10`;
     const newsApiOrgUrl = `https://newsapi.org/v2/top-headlines?category=general&language=en&apiKey=${NEWSORG_API_KEY}&pageSize=10`;

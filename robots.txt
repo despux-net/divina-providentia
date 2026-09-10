@@ -1,0 +1,11 @@
+# Divina Providentia
+#
+# Esto solo lo respetan los buscadores que quieren respetarlo: no es una
+# medida de seguridad. Lo que de verdad protege el panel es la RLS de la
+# base de datos, y admin.html lleva además <meta name="robots" noindex>.
+
+User-agent: *
+Allow: /
+
+# El panel de administración no debe salir en resultados de búsqueda.
+Disallow: /admin.html

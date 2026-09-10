@@ -2,7 +2,8 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const TELEGRAM_BOT_TOKEN = "8281546663:AAGNp5HhbsxHRjY77F5XVqBOIAaqnnwrjco";
+// Ver la nota de send-telegram-order: el token ya no se escribe aquí.
+const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
 
 Deno.serve(async (req) => {
     try {

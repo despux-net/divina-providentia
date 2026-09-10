@@ -23,7 +23,7 @@ function determineContinent(countryArray, textContent) {
     return 'world';
 }
 
-const url = 'https://newsdata.io/api/1/latest?apikey=pub_fe32b0376cb54b20bcf4652ec6b44aa4&category=politics,world&language=es,en&size=50';
+const url = 'https://newsdata.io/api/1/latest?apikey=REEMPLAZA_POR_TU_CLAVE&category=politics,world&language=es,en&size=50';
 
 https.get(url, (res) => {
     let rawData = '';

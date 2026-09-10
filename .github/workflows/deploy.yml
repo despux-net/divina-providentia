@@ -30,10 +30,24 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # El sitio se publicaba con el repositorio entero, así que cualquiera
+      # podía descargar de divinaprovidentia.com el código de las funciones
+      # de Supabase, los scripts y los archivos de prueba. Aquí se recorta
+      # la copia de trabajo antes de empaquetarla: solo afecta al artefacto
+      # que se publica, no al repositorio.
+      - name: Quitar del despliegue lo que no es la web
+        run: |
+          rm -rf supabase .github
+          rm -f *.bat *.py *.sql test-*.js auto-upload.js carousel-new.js
+          rm -f *.md .processed-lookbook.json package*.json
+          rm -f debug.html debug-db.html test-products.html
+          echo "Archivos que se publican:"
+          ls -1
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Sube todo el contenido del repositorio (ya que es un sitio estático)
+          # Sube el contenido del repositorio ya recortado
           path: '.'
 
       - name: Deploy to GitHub Pages

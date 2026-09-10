@@ -1,7 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const TELEGRAM_BOT_TOKEN = "8281546663:AAGNp5HhbsxHRjY77F5XVqBOIAaqnnwrjco";
-const TELEGRAM_CHAT_ID = "1084977504";
+// Estos valores estaban escritos aquí dentro y el sitio publicaba este
+// archivo, así que cualquiera podía leerlos. Ahora salen del almacén de
+// secretos de Supabase:
+//   npx supabase secrets set TELEGRAM_BOT_TOKEN=... TELEGRAM_CHAT_ID=...
+const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
+const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID") ?? "";
 
 interface OrderData {
     customerName: string;
