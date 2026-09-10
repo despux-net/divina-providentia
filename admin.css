@@ -183,6 +183,13 @@ img {
     color: var(--grey);
 }
 
+/* Dentro de una etiqueta el aviso va como <small>, que es lo único que
+   admite ahí, pero tiene que ocupar su propia línea. */
+small.hint {
+    display: block;
+    margin-top: 7px;
+}
+
 .form-error {
     margin: 4px 0 0;
     min-height: 1em;
@@ -1229,6 +1236,38 @@ img {
     padding: 0;
     border: 1px solid var(--grey-light);
     background: none;
+    cursor: pointer;
+}
+
+/* Apagado cuando el color lo decide otro ajuste: sigue enseñando cuál
+   es, pero se ve que no se toca desde aquí. */
+.color-field input[type="color"]:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.check-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Cuelga del selector de color de arriba, al que acompaña. */
+    margin-top: -10px;
+}
+
+.check-field > span {
+    margin-bottom: 0;
+    font-size: var(--fs-micro);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--grey);
+}
+
+.check-field input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: #000;
+    flex: 0 0 auto;
     cursor: pointer;
 }
 

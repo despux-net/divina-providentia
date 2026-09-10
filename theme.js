@@ -48,6 +48,7 @@
 
         fsBody: 13,
         navH: 52,
+        navTitleScale: 1,
 
         heroTitleScale: 1,
         sectionTitleScale: 1,
@@ -62,7 +63,12 @@
         colText: '#000000',
         colGrey: '#767676',
         colLine: '#e4e4e4',
-        colSoft: '#f4f4f4'
+        colSoft: '#f4f4f4',
+
+        // Vacío quiere decir «el mismo color que el resto del texto».
+        // Así la cabecera acompaña al tema sin tener que retocarla
+        // cada vez que se cambia el color general.
+        colNavText: ''
     };
 
     function clamp(n, min, max, fallback) {
@@ -81,6 +87,7 @@
 
             fsBody: clamp(t.fsBody, 11, 20, DEFAULTS.fsBody),
             navH: clamp(t.navH, 40, 120, DEFAULTS.navH),
+            navTitleScale: clamp(t.navTitleScale, 0.6, 3, DEFAULTS.navTitleScale),
 
             heroTitleScale: clamp(t.heroTitleScale, 0.4, 2, DEFAULTS.heroTitleScale),
             sectionTitleScale: clamp(t.sectionTitleScale, 0.6, 3, DEFAULTS.sectionTitleScale),
@@ -95,7 +102,8 @@
             colText: t.colText || DEFAULTS.colText,
             colGrey: t.colGrey || DEFAULTS.colGrey,
             colLine: t.colLine || DEFAULTS.colLine,
-            colSoft: t.colSoft || DEFAULTS.colSoft
+            colSoft: t.colSoft || DEFAULTS.colSoft,
+            colNavText: t.colNavText || ''
         };
     }
 
@@ -143,6 +151,10 @@
 
         set('--nav-h', t.navH + 'px');
 
+        // El título de la cabecera parte del texto pequeño, de modo que
+        // la escala se mantenga aunque se agrande la letra del sitio.
+        set('--nav-title-size', ((t.fsBody - 1) * t.navTitleScale).toFixed(2) + 'px');
+
         // Se conserva el clamp para que siga siendo responsive: la
         // escala multiplica los tres extremos, no fija un tamaño.
         const s = t.heroTitleScale;
@@ -167,6 +179,8 @@
         set('--grey', t.colGrey);
         set('--grey-light', t.colLine);
         set('--grey-bg', t.colSoft);
+
+        set('--nav-text', t.colNavText || t.colText);
 
         return t;
     }

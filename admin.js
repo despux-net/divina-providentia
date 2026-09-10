@@ -952,8 +952,17 @@ function renderTheme() {
 
     document.querySelectorAll('[data-theme]').forEach(input => {
         const key = input.dataset.theme;
+        if (key === 'colNavText') return;   // tiene su propio apartado, abajo
         if (input.value !== String(t[key])) input.value = t[key];
     });
+
+    // El color de la cabecera vacío significa «el mismo que el texto
+    // general»: manda el interruptor y el selector solo enseña, apagado,
+    // el color que se está usando de verdad.
+    const navTextAuto = !t.colNavText;
+    $('navTextAuto').checked = navTextAuto;
+    $('colNavText').disabled = navTextAuto;
+    $('colNavText').value = t.colNavText || t.colText;
 
     document.querySelectorAll('[data-out]').forEach(out => {
         const v = t[out.dataset.out];
@@ -1353,6 +1362,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Los desplegables de tipografía y los colores son texto; el
         // resto son números.
         state.theme[key] = /^(font|col)/.test(key) ? raw : Number(raw);
+        renderTheme();
+    });
+
+    $('navTextAuto').addEventListener('change', (e) => {
+        // Al desmarcar se arranca desde el color que ya se veía, para que
+        // el cambio no dé un salto y se pueda ajustar desde ahí.
+        state.theme.colNavText = e.target.checked ? '' : (state.theme.colText || DPTheme.DEFAULTS.colText);
         renderTheme();
     });
 
