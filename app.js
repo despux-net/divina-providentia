@@ -27,6 +27,7 @@ async function initializeApp() {
     initializeEventListeners();
     loadCartFromStorage();
     loadHeroImage();
+    await loadSiteSettings();
     await loadProducts();
     await loadLookbookImages();
 }
@@ -170,6 +171,26 @@ function displayProducts() {
 
 // La imagen la elige el dueño desde el panel. Si no hay ninguna, la
 // portada se queda como estaba: fondo blanco y rótulo en negro.
+// Ajustes que el dueño controla desde el panel.
+const siteSettings = { requireAccount: false };
+
+async function loadSiteSettings() {
+    if (!window.supabaseClient) return;
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('site_settings')
+            .select('require_account')
+            .eq('id', 1)
+            .maybeSingle();
+
+        if (!error && data) siteSettings.requireAccount = !!data.require_account;
+    } catch (e) {
+        // Ante la duda, no se bloquea la compra: el servidor tiene la
+        // última palabra y rechazará el pedido si hiciera falta cuenta.
+        console.warn('No se pudieron leer los ajustes:', e);
+    }
+}
+
 async function loadHeroImage() {
     const hero = document.getElementById('inicio');
     if (!hero || !window.supabaseClient) return;
@@ -606,7 +627,29 @@ function closeCart() {
 // CHECKOUT
 // ===================================
 
-function openCheckout() {
+// Con el interruptor encendido no se abre el checkout sin sesión: se
+// manda al cliente a identificarse. Es solo comodidad — quien mande la
+// petición a mano se topará igualmente con la comprobación del servidor.
+async function requireAccountOrPrompt() {
+    if (!siteSettings.requireAccount) return true;
+
+    try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (session) return true;
+    } catch (e) {
+        console.warn('No se pudo comprobar la sesión:', e);
+        return true;
+    }
+
+    closeCart();
+    alert('Para comprar hay que tener una cuenta. Inicia sesión o regístrate y tu carrito se conservará.');
+    if (typeof openModal === 'function') openModal('loginModal');
+    return false;
+}
+
+async function openCheckout() {
+    if (!await requireAccountOrPrompt()) return;
+
     closeCart();
 
     const orderSummaryItems = document.getElementById('orderSummaryItems');

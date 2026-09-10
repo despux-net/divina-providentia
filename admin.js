@@ -133,6 +133,7 @@ function showPanel(email) {
     loadOrders();
     loadLookbook();
     loadHero();
+    loadSettings();
 }
 
 async function handleLogin(e) {
@@ -768,6 +769,67 @@ async function removeHero() {
 
 
 // ===================================================================
+// AJUSTES DE LA TIENDA
+// ===================================================================
+
+async function loadSettings() {
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .select('require_account')
+        .eq('id', 1)
+        .maybeSingle();
+
+    if (error) {
+        $('settingsError').textContent =
+            'No se pudo leer la configuración. ¿Has ejecutado la última versión del SQL?';
+        $('requireAccount').disabled = true;
+        console.error(error);
+        return;
+    }
+
+    $('requireAccount').disabled = false;
+    $('requireAccount').checked = !!(data && data.require_account);
+    renderSettingHint();
+}
+
+function renderSettingHint() {
+    $('requireAccountHint').textContent = $('requireAccount').checked
+        ? 'Encendido: para terminar la compra hay que iniciar sesión. A quien no tenga cuenta se le pedirá que se registre.'
+        : 'Apagado: cualquiera puede comprar sin registrarse. Solo se le piden nombre, apellidos, correo y teléfono.';
+}
+
+async function saveRequireAccount() {
+    const input = $('requireAccount');
+    const value = input.checked;
+
+    input.disabled = true;
+    $('settingsError').textContent = '';
+    renderSettingHint();
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .update({ require_account: value })
+        .eq('id', 1)
+        .select();
+
+    input.disabled = false;
+
+    if (error || !data || data.length === 0) {
+        // Se deja el interruptor como estaba de verdad, para que no
+        // parezca guardado algo que no lo está.
+        input.checked = !value;
+        renderSettingHint();
+        $('settingsError').textContent =
+            'No se pudo guardar el cambio. Vuelve a intentarlo.';
+        console.error(error);
+        return;
+    }
+
+    toast(value ? 'Ahora hace falta cuenta para comprar' : 'Ya se puede comprar sin cuenta');
+}
+
+
+// ===================================================================
 // PEDIDOS
 // ===================================================================
 
@@ -1009,6 +1071,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (file) uploadHero(file);
     });
     $('heroRemoveBtn').addEventListener('click', removeHero);
+
+    // Ajustes
+    $('requireAccount').addEventListener('change', saveRequireAccount);
 
     $('pImageBtn').addEventListener('click', () => $('pImageFile').click());
     $('pImageFile').addEventListener('change', (e) => {

@@ -59,6 +59,7 @@
             <button class="tab" data-tab="pedidos">Pedidos</button>
             <button class="tab" data-tab="lookbook">Lookbook</button>
             <button class="tab" data-tab="portada">Portada</button>
+            <button class="tab" data-tab="ajustes">Ajustes</button>
         </nav>
 
         <main class="content">
@@ -138,6 +139,26 @@
                         <p class="hint" id="heroStatus"></p>
                     </div>
                 </div>
+            </section>
+
+            <!-- ---------------- AJUSTES ---------------- -->
+            <section class="tab-panel" id="panel-ajustes">
+                <div class="section-bar">
+                    <h2>Ajustes de la tienda</h2>
+                </div>
+
+                <div class="setting">
+                    <div class="setting-text">
+                        <h3>Exigir cuenta para comprar</h3>
+                        <p class="hint" id="requireAccountHint"></p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="requireAccount">
+                        <span class="switch-track" aria-hidden="true"></span>
+                    </label>
+                </div>
+
+                <p class="form-error" id="settingsError" role="alert"></p>
             </section>
 
         </main>

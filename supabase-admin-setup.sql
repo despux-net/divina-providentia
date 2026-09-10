@@ -373,6 +373,14 @@ begin
     raise exception 'El pedido no tiene artículos.';
   end if;
 
+  -- El interruptor se comprueba aquí, en el servidor. Hacerlo solo en el
+  -- navegador no serviría: bastaría con llamar a esta función a mano para
+  -- saltárselo.
+  if coalesce((select s.require_account from public.site_settings s where s.id = 1), false)
+     and auth.uid() is null then
+    raise exception 'Para completar la compra hay que iniciar sesión.';
+  end if;
+
   insert into public.orders (customer_name, customer_surname, customer_email,
                              customer_phone, customer_message,
                              total_amount, status, user_id)
@@ -536,6 +544,12 @@ end $$;
 
 alter table public.site_settings
   add column if not exists hero_image text;
+
+-- Interruptor de "hay que tener cuenta para comprar".
+-- Apagado (false) = cualquiera compra como invitado, que es lo que hay
+-- hoy. Encendido = solo compran los usuarios identificados.
+alter table public.site_settings
+  add column if not exists require_account boolean not null default false;
 
 -- Debe existir siempre la fila 1: es la que lee la web.
 --
