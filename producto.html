@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Divina Providentia — Ropa y Cartoteca. Prendas de identidad y una colección interactiva de mapas históricos en gigapíxel.">
-    <title>DIVINA PROVIDENTIA</title>
-    <link rel="canonical" href="https://divinaprovidentia.com">
+    <title>Producto | Divina Providentia</title>
+    
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://divinaprovidentia.com">
@@ -33,23 +33,21 @@
     </script>
 </head>
 
-<body>
-    <div id="notification-container"></div>
-
-    <!-- ============ NAV ============ -->
+<body class="page-pdp">
+<!-- ============ NAV ============ -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <button class="mobile-menu-button" aria-label="Menú" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
 
-            <a href="#inicio" class="nav-logo"><span translate="no" class="notranslate">DIVINA PROVIDENTIA</span></a>
+            <a href="index.html" class="nav-logo"><span translate="no" class="notranslate">DIVINA PROVIDENTIA</span></a>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="#tienda">Tienda</a></li>
-                <li><a href="#lookbook">Lookbook</a></li>
-                <li><a href="#coleccion">Cartoteca</a></li>
-                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="index.html#tienda">Tienda</a></li>
+                <li><a href="index.html#lookbook">Lookbook</a></li>
+                <li><a href="index.html#coleccion">Cartoteca</a></li>
+                <li><a href="index.html#contacto">Contacto</a></li>
             </ul>
 
             <div class="nav-actions">
@@ -76,125 +74,18 @@
         </div>
     </nav>
 
-    <!-- ============ HERO ============ -->
-    <header class="hero" id="inicio">
-        <div class="hero-inner">
-            <h1 class="hero-title"><span translate="no" class="notranslate">DIVINA<br>PROVIDENTIA</span></h1>
-            <p class="hero-sub">Colección permanente</p>
-            <a href="#tienda" class="hero-link">Comprar</a>
-        </div>
-        <div class="hero-marquee" aria-hidden="true">
-            <div class="hero-marquee-track">
-                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
-                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
-                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
-                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
-            </div>
-        </div>
-    </header>
+    
+    <main class="pdp" id="pdp">
+        <div class="pdp-status" id="pdpStatus">Cargando…</div>
+    </main>
 
-    <!-- ============ TIENDA ============ -->
-    <section class="products" id="tienda">
+    <section class="related" id="related" hidden>
         <div class="section-head">
-            <h2>Tienda</h2>
-            <nav class="breadcrumbs" aria-label="Migas de pan">
-                <a href="#inicio">Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Tienda</span>
-            </nav>
+            <h2>También te puede interesar</h2>
         </div>
-
-        <div class="shop-toolbar">
-            <p class="shop-count" id="shopCount" role="status" aria-live="polite"></p>
-            <div class="shop-controls">
-                <div class="shop-select-wrap">
-                    <label for="shopFilter">Filtrar</label>
-                    <select class="shop-select" id="shopFilter">
-                        <option value="all">Todo</option>
-                    </select>
-                </div>
-                <div class="shop-select-wrap">
-                    <label for="shopSort">Ordenar por</label>
-                    <select class="shop-select" id="shopSort">
-                        <option value="new">Novedades</option>
-                        <option value="price-asc">Precio: menor a mayor</option>
-                        <option value="price-desc">Precio: mayor a menor</option>
-                        <option value="name">Nombre (A–Z)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="products-grid" id="productsGrid">
-            <div class="loading-spinner"><p>Cargando…</p></div>
-        </div>
+        <div class="products-grid" id="relatedGrid"></div>
     </section>
-
-    <!-- ============ LOOKBOOK ============ -->
-    <section class="lookbook-section" id="lookbook">
-        <div class="section-head">
-            <h2>Lookbook</h2>
-            <span class="section-meta">Campaña</span>
-        </div>
-        <div class="carousel-container" id="lookbookCarousel">
-            <div class="loading-spinner"><p>Cargando…</p></div>
-        </div>
-    </section>
-
-    <!-- ============ CARTOTECA ============ -->
-    <section class="cartography-section" id="coleccion">
-        <div class="section-head">
-            <h2>Cartoteca</h2>
-            <span class="section-meta">Mapas históricos en gigapíxel</span>
-        </div>
-
-        <div class="cartography-grid">
-            <article class="map-card">
-                <a class="map-card-link" href="adan.html">
-                    <div class="map-image-container">
-                        <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="ADAM%20AND%20EVA.jpg" alt="El Pergamino de Adán" class="map-card-image" loading="lazy">
-                    </div>
-                    <div class="map-card-content">
-                        <h3 class="map-card-title">El Pergamino de Adán</h3>
-                        <p class="map-card-author">Patriarcas antediluvianos · S. XIX</p>
-                        <p class="map-card-desc">Árbol genealógico del mundo desde la Creación según las crónicas sagradas. Reconstruido a partir de 160 megapíxeles.</p>
-                        <span class="open-map-btn">Explorar volumen</span>
-                    </div>
-                </a>
-            </article>
-
-            <article class="map-card">
-                <a class="map-card-link" href="romano.html">
-                    <div class="map-image-container">
-                        <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="16242000t.jpg" alt="Imperio Romano" class="map-card-image" loading="lazy">
-                    </div>
-                    <div class="map-card-content">
-                        <h3 class="map-card-title">Imperio Romano</h3>
-                        <p class="map-card-author">Extensión máxima del mundo romano</p>
-                        <p class="map-card-desc">108 megapíxeles que documentan provincias, rutas, ciudades y calzadas del Imperio en su máxima expansión.</p>
-                        <span class="open-map-btn">Explorar volumen</span>
-                    </div>
-                </a>
-            </article>
-
-            <article class="map-card">
-                <a class="map-card-link" href="terra.html">
-                    <div class="map-image-container">
-                        <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="TERRAt.jpg" alt="Terra, Urbano Monte 1587" class="map-card-image" loading="lazy">
-                    </div>
-                    <div class="map-card-content">
-                        <h3 class="map-card-title">Terra (1587)</h3>
-                        <p class="map-card-author">Planisferio monumental de Urbano Monte</p>
-                        <p class="map-card-desc">El mapa del mundo más grande del siglo XVI, ensamblado desde 60 manuscritos originales en proyección polar.</p>
-                        <span class="open-map-btn">Explorar volumen</span>
-                    </div>
-                </a>
-            </article>
-        </div>
-    </section>
-
-    <!-- ============ FOOTER ============ -->
+<!-- ============ FOOTER ============ -->
     <footer class="footer" id="contacto">
         <div class="footer-grid">
             <div class="footer-section">
@@ -208,10 +99,10 @@
             <div class="footer-section">
                 <h3>Navegación</h3>
                 <ul class="footer-links">
-                    <li><a href="#tienda">Tienda</a></li>
-                    <li><a href="#lookbook">Lookbook</a></li>
-                    <li><a href="#coleccion">Cartoteca</a></li>
-                    <li><a href="#contacto">Contacto</a></li>
+                    <li><a href="index.html#tienda">Tienda</a></li>
+                    <li><a href="index.html#lookbook">Lookbook</a></li>
+                    <li><a href="index.html#coleccion">Cartoteca</a></li>
+                    <li><a href="index.html#contacto">Contacto</a></li>
                 </ul>
             </div>
 
@@ -347,6 +238,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=10"></script>
     <script src="app.js?v=12"></script>
+    <script src="producto.js?v=1"></script>
 
     <div id="google_translate_element" style="display:none"></div>
     <script>

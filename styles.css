@@ -2019,3 +2019,288 @@ font font {
 .product-card:hover .product-image-bg {
     transform: scale(1.04);
 }
+
+/* ==========================================================================
+   FICHA DE PRODUCTO
+   ========================================================================== */
+
+.page-pdp {
+    padding-top: var(--nav-h);
+}
+
+.pdp {
+    padding: var(--sp-5) var(--pad-x) 0;
+}
+
+.pdp-status {
+    padding: var(--sp-9) 0;
+    text-align: center;
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+.pdp-crumbs {
+    margin-bottom: var(--sp-5);
+}
+
+.pdp-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+    padding-bottom: var(--section-y);
+}
+
+@media (min-width: 900px) {
+    .pdp-body {
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
+        gap: var(--sp-8);
+        align-items: start;
+    }
+
+    /* La columna de compra acompaña al desplazamiento por la galería:
+       en una ficha larga, el botón no debe perderse arriba. */
+    .pdp-info {
+        position: sticky;
+        top: calc(var(--nav-h) + var(--sp-5));
+    }
+}
+
+/* Galería ---------------------------------------------------------------- */
+
+.pdp-main {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--grey-bg);
+    padding: var(--sp-6);
+    overflow: hidden;
+}
+
+.pdp-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+.pdp-thumbs {
+    display: flex;
+    gap: var(--sp-2);
+    margin-top: var(--sp-2);
+    overflow-x: auto;
+    padding-bottom: var(--sp-1);
+}
+
+.pdp-thumb {
+    flex: 0 0 auto;
+    width: 68px;
+    aspect-ratio: 3 / 4;
+    background: var(--grey-bg);
+    border: 1px solid transparent;
+    padding: var(--sp-1);
+    cursor: pointer;
+    transition: border-color .15s ease;
+}
+
+.pdp-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+.pdp-thumb.is-active {
+    border-color: var(--black);
+}
+
+/* Columna de información ------------------------------------------------- */
+
+.pdp-cat {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+    margin: 0 0 var(--sp-2);
+}
+
+.pdp-name {
+    font-family: var(--font-head);
+    font-size: var(--fs-h2);
+    font-weight: var(--weight-head);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    margin: 0 0 var(--sp-3);
+}
+
+.pdp-price {
+    font-size: var(--fs-lead);
+    margin: 0 0 var(--sp-6);
+    font-variant-numeric: tabular-nums;
+}
+
+.pdp-block {
+    margin-bottom: var(--sp-5);
+}
+
+.pdp-label {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+    margin: 0 0 var(--sp-3);
+}
+
+.pdp-chosen {
+    color: var(--black);
+}
+
+.pdp-hint {
+    margin: var(--sp-3) 0 0;
+    min-height: 1em;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+/* Colores */
+.pdp-colors {
+    display: flex;
+    gap: var(--sp-2);
+}
+
+.pdp-color {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--grey-light);
+    cursor: pointer;
+    transition: box-shadow .15s ease;
+}
+
+.pdp-color.is-active {
+    box-shadow: 0 0 0 1px var(--white) inset, 0 0 0 2px var(--black);
+}
+
+/* Tallas */
+.pdp-sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+}
+
+.pdp-size {
+    min-width: 52px;
+    padding: var(--sp-3);
+    background: var(--white);
+    border: 1px solid var(--grey-light);
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.pdp-size:hover:not(:disabled) {
+    border-color: var(--black);
+}
+
+.pdp-size.is-active {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+}
+
+.pdp-size.out {
+    color: var(--grey-light);
+    border-color: var(--grey-light);
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.pdp-sizes.needs-choice {
+    outline: 1px solid var(--black);
+    outline-offset: var(--sp-1);
+}
+
+/* Botón de compra, a todo el ancho de la columna */
+.pdp-add {
+    display: block;
+    width: 100%;
+    padding: var(--sp-4);
+    background: var(--black);
+    border: 1px solid var(--black);
+    color: var(--white);
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.pdp-add:hover:not(:disabled) {
+    background: var(--white);
+    color: var(--black);
+}
+
+.pdp-add:disabled,
+.pdp-add.disabled {
+    background: var(--white);
+    border-color: var(--grey-light);
+    color: var(--grey);
+    cursor: not-allowed;
+}
+
+/* Texto y desplegables */
+.pdp-text {
+    margin-top: var(--sp-6);
+}
+
+.pdp-text p {
+    margin: 0;
+    color: var(--grey);
+}
+
+.pdp-details {
+    border-top: 1px solid var(--grey-light);
+    padding: var(--sp-4) 0;
+}
+
+.pdp-details summary {
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pdp-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.pdp-details summary::after {
+    content: "+";
+    font-size: var(--fs-lead);
+    line-height: 1;
+}
+
+.pdp-details[open] summary::after {
+    content: "–";
+}
+
+.pdp-details p {
+    margin: var(--sp-3) 0 0;
+    color: var(--grey);
+}
+
+/* Relacionados */
+.related {
+    border-top: 1px solid var(--grey-light);
+}
+
+.related .product-card {
+    cursor: pointer;
+}

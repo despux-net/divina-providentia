@@ -159,10 +159,11 @@ function displayProducts() {
         const colors = productColors(product);
         const wished = isWished(product.id);
 
-        // Con tallas hay que elegir una, así que el botón de la rejilla
-        // abre la ficha en lugar de añadir a ciegas.
+        // Con tallas hay que elegir una, así que el botón lleva a la
+        // ficha en lugar de añadir a ciegas.
+        const href = `producto.html?id=${encodeURIComponent(product.id)}`;
         const action = hasSizes
-            ? `expandProductCardById('${product.id}')`
+            ? `location.href='${href}'`
             : `addToCart('${product.id}')`;
 
         // Metadatos breves: colores si los hay, si no las tallas.
@@ -175,7 +176,7 @@ function displayProducts() {
         }
 
         return `
-    <article class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" role="button" tabindex="0" aria-label="Ver ${escapeHtml(product.name)}">
+    <article class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" data-href="${href}" role="button" tabindex="0" aria-label="Ver ${escapeHtml(product.name)}">
       <div class="product-image-container">
         <img src="${escapeHtml(imgs[0])}" alt="${escapeHtml(product.name)}" loading="lazy" class="product-image-bg">
         ${imgs[1] ? `<img src="${escapeHtml(imgs[1])}" alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
@@ -215,9 +216,7 @@ function displayProducts() {
 
     productsGrid.querySelectorAll('.product-card').forEach(card => {
         card.addEventListener('click', () => {
-            const productId = card.getAttribute('data-product-id');
-            const product = state.products.find(p => p.id == productId);
-            if (product) expandProductCard(product);
+            location.href = card.dataset.href;
         });
         card.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {

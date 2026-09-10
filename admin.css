@@ -1313,3 +1313,148 @@ img {
     transform: scale(.8);
     margin-bottom: -260px;
 }
+
+/* ============================ GALERÍA DEL PRODUCTO ============================ */
+
+.gallery-editor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.gallery-empty {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+    padding: 24px 0;
+}
+
+.gphoto {
+    width: 92px;
+    border: 1px solid var(--grey-light);
+}
+
+.gphoto-img {
+    height: 116px;
+    background: var(--grey-bg);
+    overflow: hidden;
+    position: relative;
+}
+
+.gphoto-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* La primera foto es la portada; conviene que se vea cuál es sin tener
+   que contar posiciones. */
+.gphoto-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--black);
+    color: var(--white);
+    font-size: 9px;
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    padding: 2px 5px;
+}
+
+.gphoto-bar {
+    display: flex;
+    border-top: 1px solid var(--grey-light);
+}
+
+.gphoto-bar button {
+    flex: 1 1 auto;
+    padding: 5px 0;
+    border: 0;
+    background: var(--white);
+    font: inherit;
+    font-size: var(--fs-nano);
+    line-height: 1;
+    cursor: pointer;
+    color: var(--black);
+}
+
+.gphoto-bar button + button {
+    border-left: 1px solid var(--grey-light);
+}
+
+.gphoto-bar button:hover:not(:disabled) {
+    background: var(--grey-bg);
+}
+
+.gphoto-bar button:disabled {
+    opacity: .3;
+    cursor: not-allowed;
+}
+
+.gphoto-bar .danger {
+    color: var(--danger);
+}
+
+.gallery-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ============================ COLORES ============================ */
+
+.color-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.color-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-row input[type="text"] {
+    flex: 1 1 auto;
+    padding: 9px 10px;
+    border: 1px solid var(--grey-light);
+    font: inherit;
+    font-size: var(--fs-small);
+    border-radius: 0;
+}
+
+.color-row input[type="text"]:focus {
+    outline: none;
+    border-color: var(--black);
+}
+
+.color-row input[type="color"] {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--grey-light);
+    background: none;
+    cursor: pointer;
+}
+
+.color-row .lb-btn {
+    flex: 0 0 auto;
+}
+
+/* Aviso de ficha sin terminar en la lista de productos */
+.copy-warn {
+    margin-top: 6px;
+    display: inline-block;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--warn);
+    border: 1px solid var(--warn);
+    padding: 2px 6px;
+}

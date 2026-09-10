@@ -340,18 +340,41 @@
                 <p class="form-error" id="stockWarning"></p>
             </fieldset>
 
-            <div class="form-row">
-                <div class="field">
-                    <span>Imagen</span>
-                    <div class="image-picker">
-                        <div class="image-preview" id="pImagePreview"></div>
-                        <div class="image-actions">
-                            <input type="file" id="pImageFile" accept="image/*" hidden>
-                            <button type="button" class="btn" id="pImageBtn">Elegir archivo…</button>
-                            <span class="image-name" id="pImageName"></span>
-                        </div>
-                    </div>
+            <fieldset class="group">
+                <legend>Fotos</legend>
+                <div class="gallery-editor" id="pGallery"></div>
+                <div class="gallery-actions">
+                    <input type="file" id="pImageFile" accept="image/*" multiple hidden>
+                    <button type="button" class="btn" id="pImageBtn">Añadir fotos…</button>
+                    <span class="image-name" id="pImageName"></span>
                 </div>
+                <p class="hint">
+                    La primera es la portada, la que sale en la rejilla de la tienda.
+                    La segunda aparece al pasar el ratón por encima. Usa las flechas para reordenar.
+                </p>
+            </fieldset>
+
+            <fieldset class="group">
+                <legend>Colores</legend>
+                <div id="pColors" class="color-rows"></div>
+                <button type="button" class="btn" id="pAddColorBtn">Añadir color</button>
+                <p class="hint">
+                    Se muestran como muestras bajo el nombre en la tienda y como
+                    selector en la ficha. Déjalo vacío si el artículo va en un solo color.
+                </p>
+            </fieldset>
+
+            <div class="form-row">
+                <label class="field">
+                    <span>Materiales</span>
+                    <textarea id="pMaterial" rows="3" maxlength="600"
+                              placeholder="100% algodón orgánico de 300 g. Tejido en…"></textarea>
+                </label>
+                <label class="field">
+                    <span>Cuidado</span>
+                    <textarea id="pCare" rows="3" maxlength="600"
+                              placeholder="Lavar a máquina en frío. No usar lejía…"></textarea>
+                </label>
             </div>
 
             <div class="toggles">

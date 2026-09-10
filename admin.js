@@ -33,6 +33,8 @@ const state = {
     heroImage: null,
     theme: {},
     themeSaved: {},
+    gallery: [],
+    colors: [],
     orderFilter: 'all',
     openOrderId: null,
     editing: null,
@@ -261,6 +263,20 @@ async function loadProducts() {
     renderProducts();
 }
 
+// Detecta fichas sin terminar. Un producto publicado con la descripción
+// de relleno se ve como descuido en la tienda, y desde la lista no había
+// forma de saber cuáles faltaban por escribir.
+const PLACEHOLDER_HINTS = ['pendiente', 'lorem', 'placeholder', 'todo', 'xxx', 'prueba', 'test', 'sin descripcion'];
+
+function copyIssue(product) {
+    const d = (product.description || '').trim();
+    if (!d) return 'Sin descripción';
+    const low = d.toLowerCase();
+    if (PLACEHOLDER_HINTS.some(k => low.includes(k))) return 'Texto provisional';
+    if (d.length < 60) return 'Descripción muy corta';
+    return null;
+}
+
 function renderProducts() {
     const list = $('productsList');
 
@@ -270,7 +286,10 @@ function renderProducts() {
     }
 
     list.innerHTML = state.products.map(product => {
-        const url = imageUrl(product.image);
+        const cover = galleryOf(product)[0];
+        const url = imageUrl(cover);
+        const issue = copyIssue(product);
+        const photos = galleryOf(product).length;
         const stock = product.stock_by_size || {};
         const pills = stockKeys(product).map(size => {
             const n = parseInt(stock[size], 10) || 0;
@@ -298,8 +317,9 @@ function renderProducts() {
             </div>
             <div class="prod-main">
                 <div class="prod-name">${escapeHtml(product.name)}</div>
-                <div class="prod-meta">${escapeHtml(CATEGORY_NAMES[product.category] || product.category || '')}</div>
+                <div class="prod-meta">${escapeHtml(CATEGORY_NAMES[product.category] || product.category || '')}${photos > 1 ? ` · ${photos} fotos` : ''}</div>
                 <div class="prod-stock">${pills}</div>
+                ${issue ? `<div class="copy-warn">${escapeHtml(issue)}</div>` : ''}
             </div>
             <div class="prod-price">${money(product.price)}</div>
             <div class="prod-flags">
@@ -329,6 +349,122 @@ function renderProducts() {
     });
 }
 
+// ===================================================================
+// GALERÍA DEL PRODUCTO
+//
+// state.gallery guarda los nombres de archivo dentro del bucket, en el
+// orden en que se mostrarán. La primera es la portada.
+// ===================================================================
+
+function galleryOf(product) {
+    if (!product) return [];
+    const g = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
+    if (g.length) return g.slice();
+    return product.image ? [product.image] : [];
+}
+
+function renderGallery() {
+    const wrap = $('pGallery');
+
+    if (!state.gallery.length) {
+        wrap.innerHTML = '<p class="gallery-empty">Sin fotos todavía</p>';
+        return;
+    }
+
+    wrap.innerHTML = state.gallery.map((file, i) => `
+        <div class="gphoto">
+            <div class="gphoto-img">
+                <img src="${escapeHtml(imageUrl(file))}" alt="">
+                ${i === 0 ? '<span class="gphoto-badge">Portada</span>' : ''}
+            </div>
+            <div class="gphoto-bar">
+                <button type="button" data-gmove="up" data-i="${i}" ${i === 0 ? 'disabled' : ''} title="Mover antes">&larr;</button>
+                <button type="button" data-gmove="down" data-i="${i}" ${i === state.gallery.length - 1 ? 'disabled' : ''} title="Mover después">&rarr;</button>
+                <button type="button" class="danger" data-gdel="${i}" title="Quitar">&times;</button>
+            </div>
+        </div>`).join('');
+
+    wrap.querySelectorAll('[data-gmove]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const i = Number(btn.dataset.i);
+            const j = btn.dataset.gmove === 'up' ? i - 1 : i + 1;
+            if (j < 0 || j >= state.gallery.length) return;
+            const g = state.gallery;
+            [g[i], g[j]] = [g[j], g[i]];
+            renderGallery();
+        });
+    });
+
+    wrap.querySelectorAll('[data-gdel]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Solo se quita de la lista. El archivo sigue en el bucket
+            // por si otro producto o un pedido antiguo lo usa.
+            state.gallery.splice(Number(btn.dataset.gdel), 1);
+            renderGallery();
+        });
+    });
+}
+
+async function addGalleryFiles(files) {
+    const btn = $('pImageBtn');
+    const name = $('pImageName');
+    btn.disabled = true;
+
+    let done = 0;
+    try {
+        for (const file of files) {
+            btn.textContent = `Subiendo ${done + 1}/${files.length}…`;
+            state.gallery.push(await uploadImage(file));
+            done++;
+        }
+        name.textContent = done === 1 ? '1 foto añadida' : `${done} fotos añadidas`;
+    } catch (err) {
+        console.error(err);
+        $('productError').textContent = 'No se pudo subir alguna foto: ' + (err.message || '');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Añadir fotos…';
+        $('pImageFile').value = '';
+        renderGallery();
+    }
+}
+
+
+// ===================================================================
+// COLORES
+// ===================================================================
+
+function renderColors() {
+    const wrap = $('pColors');
+
+    wrap.innerHTML = state.colors.map((c, i) => `
+        <div class="color-row">
+            <input type="color" data-chex="${i}" value="${escapeHtml(c.hex || '#000000')}"
+                   aria-label="Color ${i + 1}">
+            <input type="text" data-cname="${i}" value="${escapeHtml(c.name || '')}"
+                   placeholder="Nombre del color (Negro, Crudo…)" maxlength="40">
+            <button type="button" class="lb-btn danger" data-cdel="${i}" title="Quitar">&times;</button>
+        </div>`).join('');
+
+    wrap.querySelectorAll('[data-cname]').forEach(input => {
+        input.addEventListener('input', () => {
+            state.colors[Number(input.dataset.cname)].name = input.value;
+        });
+    });
+    wrap.querySelectorAll('[data-chex]').forEach(input => {
+        input.addEventListener('input', () => {
+            state.colors[Number(input.dataset.chex)].hex = input.value;
+        });
+    });
+    wrap.querySelectorAll('[data-cdel]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            state.colors.splice(Number(btn.dataset.cdel), 1);
+            renderColors();
+        });
+    });
+}
+
+
 function renderStockFields(sizes, current) {
     const keys = sizes.length ? sizes : [SINGLE_SIZE];
     $('stockFields').innerHTML = keys.map(size => `
@@ -353,12 +489,18 @@ function openProductForm(product) {
     $('pSizes').value = product ? sizesOf(product).join(', ') : '';
     $('pPublished').checked = product ? !!product.published : false;
     $('pAvailable').checked = product ? !!product.available : true;
+    $('pMaterial').value = product ? product.material || '' : '';
+    $('pCare').value = product ? product.care || '' : '';
     $('productError').textContent = '';
     $('pImageName').textContent = '';
     $('pImageFile').value = '';
 
-    const url = product ? imageUrl(product.image) : null;
-    $('pImagePreview').innerHTML = url ? `<img src="${escapeHtml(url)}" alt="">` : '';
+    state.gallery = galleryOf(product);
+    state.colors = product && Array.isArray(product.colors)
+        ? product.colors.map(c => ({ name: c.name || '', hex: c.hex || '#000000' }))
+        : [];
+    renderGallery();
+    renderColors();
 
     renderStockFields(
         product ? sizesOf(product) : [],
@@ -444,16 +586,24 @@ async function saveProduct(e) {
             category: $('pCategory').value,
             sizes,
             stock_by_size: collectStock(),
+            images: state.gallery.slice(),
+            // 'image' se mantiene sincronizada con la primera foto: es la
+            // que usan la web y el panel cuando un producto todavía no
+            // tiene galería.
+            image: state.gallery[0] || null,
+            colors: state.colors
+                .filter(c => c.name && c.name.trim())
+                .map(c => ({ name: c.name.trim(), hex: c.hex || '#000000' })),
+            material: $('pMaterial').value.trim() || null,
+            care: $('pCare').value.trim() || null,
             published: $('pPublished').checked,
             available: $('pAvailable').checked
         };
 
         if (!payload.name) throw new Error('El nombre es obligatorio.');
         if (!(payload.price >= 0)) throw new Error('El precio no es válido.');
-
-        if (state.pendingImage) {
-            btn.textContent = 'Subiendo imagen…';
-            payload.image = await uploadImage(state.pendingImage);
+        if (payload.published && !payload.images.length) {
+            throw new Error('Un producto publicado necesita al menos una foto.');
         }
 
         const id = $('pId').value;
@@ -1235,15 +1385,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('pImageBtn').addEventListener('click', () => $('pImageFile').click());
     $('pImageFile').addEventListener('change', (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-        state.pendingImage = file;
-        $('pImageName').textContent = file.name;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            $('pImagePreview').innerHTML = `<img src="${ev.target.result}" alt="">`;
-        };
-        reader.readAsDataURL(file);
+        const files = Array.from(e.target.files || []);
+        if (files.length) addGalleryFiles(files);
+    });
+
+    $('pAddColorBtn').addEventListener('click', () => {
+        state.colors.push({ name: '', hex: '#000000' });
+        renderColors();
     });
 
     // Pedidos
