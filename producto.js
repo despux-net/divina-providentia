@@ -71,8 +71,9 @@ function renderPDP() {
 
         <div class="pdp-body">
             <div class="pdp-gallery">
-                <div class="pdp-main">
+                <div class="pdp-main" id="pdpMain">
                     <img id="pdpMainImg" src="${escapeHtml(imgs[0] || '')}" alt="${escapeHtml(product.name)}">
+                    <div class="pdp-lens" id="pdpLens" aria-hidden="true"></div>
                     ${!canBuy ? '<div class="product-status-badge">Agotado</div>' : ''}
                 </div>
                 ${imgs.length > 1 ? `
@@ -148,6 +149,8 @@ function bindPDP() {
     const main = document.getElementById('pdpMainImg');
     const imgs = productImages(pdp.product);
 
+    bindZoomLens();
+
     document.querySelectorAll('.pdp-thumb').forEach(btn => {
         btn.addEventListener('click', () => {
             pdp.imageIndex = Number(btn.dataset.img);
@@ -188,6 +191,66 @@ function bindPDP() {
             addToCart(pdp.product.id, pdp.size);
         });
     }
+}
+
+// Lupa: un globo redondo sigue al cursor y enseña la foto ampliada.
+// Solo con ratón —en táctil no hay puntero que seguir— y calculando
+// dónde cae de verdad la imagen dentro del marco, porque object-fit
+// contain deja franjas a los lados o arriba y abajo.
+const PDP_ZOOM = 2.6;
+
+function pdpImageBox(img) {
+    const rect = img.getBoundingClientRect();
+    const nw = img.naturalWidth;
+    const nh = img.naturalHeight;
+    if (!nw || !nh) return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+
+    const scale = Math.min(rect.width / nw, rect.height / nh);
+    const width = nw * scale;
+    const height = nh * scale;
+    return {
+        left: rect.left + (rect.width - width) / 2,
+        top: rect.top + (rect.height - height) / 2,
+        width: width,
+        height: height
+    };
+}
+
+function bindZoomLens() {
+    const frame = document.getElementById('pdpMain');
+    const img = document.getElementById('pdpMainImg');
+    const lens = document.getElementById('pdpLens');
+    if (!frame || !img || !lens) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    frame.classList.add('has-zoom');
+
+    const hide = () => lens.classList.remove('is-on');
+
+    frame.addEventListener('mousemove', event => {
+        if (!img.complete || !img.naturalWidth) return hide();
+
+        const box = pdpImageBox(img);
+        const x = event.clientX - box.left;
+        const y = event.clientY - box.top;
+
+        // Fuera de la prenda (en las franjas del marco) no hay nada que ampliar.
+        if (x < 0 || y < 0 || x > box.width || y > box.height) return hide();
+
+        const frameRect = frame.getBoundingClientRect();
+        const radius = lens.offsetWidth / 2;
+
+        lens.style.left = (event.clientX - frameRect.left) + 'px';
+        lens.style.top = (event.clientY - frameRect.top) + 'px';
+        lens.style.backgroundImage = `url("${(img.currentSrc || img.src).replace(/"/g, '%22')}")`;
+        lens.style.backgroundSize = `${box.width * PDP_ZOOM}px ${box.height * PDP_ZOOM}px`;
+        lens.style.backgroundPosition =
+            `${radius - x * PDP_ZOOM}px ${radius - y * PDP_ZOOM}px`;
+        lens.classList.add('is-on');
+    });
+
+    frame.addEventListener('mouseleave', hide);
+    window.addEventListener('scroll', hide, { passive: true });
 }
 
 // Relacionados: misma categoría primero y, si no llegan a cuatro, se

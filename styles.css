@@ -2072,6 +2072,9 @@ font font {
 .pdp-main {
     position: relative;
     aspect-ratio: 3 / 4;
+    /* La foto no debe obligar a desplazarse: se limita a lo que cabe en
+       pantalla descontando la barra, las migas y las miniaturas. */
+    max-height: calc(100vh - var(--nav-h) - 190px);
     background: var(--grey-bg);
     padding: var(--sp-6);
     overflow: hidden;
@@ -2082,6 +2085,60 @@ font font {
     height: 100%;
     object-fit: contain;
     mix-blend-mode: multiply;
+}
+
+@media (min-width: 900px) {
+    /* En escritorio manda la altura disponible; el ancho lo pone la
+       columna y object-fit centra la prenda sin deformarla. */
+    .pdp-main {
+        aspect-ratio: auto;
+        height: calc(100vh - var(--nav-h) - 210px);
+        max-height: none;
+        min-height: 380px;
+    }
+
+    .pdp-gallery {
+        position: sticky;
+        top: calc(var(--nav-h) + var(--sp-5));
+    }
+}
+
+/* Lupa ------------------------------------------------------------------ */
+
+.pdp-main.has-zoom {
+    cursor: crosshair;
+}
+
+.pdp-lens {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, .18);
+    background-color: var(--white);
+    background-repeat: no-repeat;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .22), inset 0 0 0 4px rgba(255, 255, 255, .55);
+    transform: translate(-50%, -50%) scale(.85);
+    transform-origin: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index: 2;
+}
+
+.pdp-lens.is-on {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+@media (max-width: 899px) {
+    .pdp-lens {
+        display: none;
+    }
 }
 
 .pdp-thumbs {
