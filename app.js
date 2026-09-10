@@ -643,6 +643,8 @@ async function handleCheckout(e) {
 
     const formData = new FormData(e.target);
     const name = formData.get('customerName');
+    const surname = formData.get('customerSurname');
+    const email = formData.get('customerEmail');
     const phone = formData.get('customerPhone');
     const message = formData.get('customerMessage') || '';
 
@@ -651,7 +653,7 @@ async function handleCheckout(e) {
         //    cambiado, producto retirado) no se avisa a nadie y el cliente
         //    ve el motivo real.
         const { data, error } = await window.SupabaseAPI.placeOrder({
-            name, phone, message, items: state.cart
+            name, surname, email, phone, message, items: state.cart
         });
 
         if (error) throw error;
@@ -670,8 +672,8 @@ async function handleCheckout(e) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        customerName: name,
-                        customerPhone: phone,
+                        customerName: `${name} ${surname}`.trim(),
+                        customerPhone: `${phone} · ${email}`,
                         customerMessage: message,
                         items: state.cart.map(item => ({
                             name: item.size && item.size !== SINGLE_SIZE

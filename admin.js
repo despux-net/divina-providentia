@@ -47,6 +47,13 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
+// Los pedidos anteriores a que existieran los apellidos guardan el nombre
+// completo en customer_name, así que concatenar a ciegas duplicaría texto.
+function fullName(order) {
+    return [order.customer_name, order.customer_surname]
+        .filter(Boolean).join(' ').trim() || 'Sin nombre';
+}
+
 function money(n) {
     return '$' + Number(n || 0).toFixed(2);
 }
@@ -792,7 +799,7 @@ function renderOrders() {
         <div class="order">
             <div class="order-head" data-toggle="${order.id}">
                 <span class="order-ref">#${escapeHtml(String(order.id).slice(0, 8))}</span>
-                <span class="order-customer">${escapeHtml(order.customer_name || 'Sin nombre')}</span>
+                <span class="order-customer">${escapeHtml(fullName(order))}</span>
                 <span class="order-date">${escapeHtml(formatDate(order.created_at))}</span>
                 <span class="badge ${escapeHtml(order.status || '')}">${escapeHtml(ORDER_STATUSES[order.status] || order.status || '')}</span>
                 <span class="order-total">${money(order.total_amount)}</span>
@@ -802,8 +809,30 @@ function renderOrders() {
             <div class="order-body">
                 ${lines || '<div class="order-line"><span>Sin líneas registradas</span></div>'}
                 <div class="order-contact">
-                    ${order.customer_phone ? `Teléfono: <a href="tel:${escapeHtml(order.customer_phone)}">${escapeHtml(order.customer_phone)}</a>` : 'Sin teléfono'}
-                    ${order.customer_message ? `<br>Mensaje: ${escapeHtml(order.customer_message)}` : ''}
+                    <div class="contact-row">
+                        <span class="contact-label">Cliente</span>
+                        <span>${escapeHtml(fullName(order))}</span>
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-label">Correo</span>
+                        ${order.customer_email
+                ? `<a href="mailto:${escapeHtml(order.customer_email)}?subject=${encodeURIComponent('Tu pedido ' + String(order.id).slice(0, 8) + ' · Divina Providentia')}">${escapeHtml(order.customer_email)}</a>
+                               <button class="lb-btn" data-copy="${escapeHtml(order.customer_email)}" title="Copiar correo">Copiar</button>`
+                : '<span class="muted">No indicado</span>'}
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-label">Teléfono</span>
+                        ${order.customer_phone
+                ? `<a href="tel:${escapeHtml(order.customer_phone.replace(/[^\d+]/g, ''))}">${escapeHtml(order.customer_phone)}</a>
+                               <a class="lb-btn" target="_blank" rel="noopener"
+                                  href="https://wa.me/${escapeHtml(order.customer_phone.replace(/\D/g, ''))}">WhatsApp</a>`
+                : '<span class="muted">No indicado</span>'}
+                    </div>
+                    ${order.customer_message ? `
+                    <div class="contact-row">
+                        <span class="contact-label">Mensaje</span>
+                        <span>${escapeHtml(order.customer_message)}</span>
+                    </div>` : ''}
                 </div>
                 <div class="order-actions">
                     <span class="label">Estado</span>${buttons}
@@ -824,6 +853,18 @@ function renderOrders() {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             setOrderStatus(btn.dataset.order, btn.dataset.status);
+        });
+    });
+
+    list.querySelectorAll('[data-copy]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            try {
+                await navigator.clipboard.writeText(btn.dataset.copy);
+                toast('Correo copiado');
+            } catch (err) {
+                toast('No se pudo copiar', true);
+            }
         });
     });
 }

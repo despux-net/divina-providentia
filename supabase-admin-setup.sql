@@ -39,9 +39,14 @@ alter table public.products
   add column if not exists stock_by_size jsonb not null default '{}'::jsonb,
   add column if not exists updated_at    timestamptz not null default now();
 
--- 1.3 Datos del cliente en el pedido (hoy la tabla no los guarda)
+-- 1.3 Datos del cliente en el pedido (la tabla original no guardaba
+--     ninguno). customer_name es el nombre de pila; en los pedidos
+--     anteriores a que existiera customer_surname puede contener el
+--     nombre completo, y el panel lo muestra igual de bien.
 alter table public.orders
   add column if not exists customer_name    text,
+  add column if not exists customer_surname text,
+  add column if not exists customer_email   text,
   add column if not exists customer_phone   text,
   add column if not exists customer_message text,
   add column if not exists updated_at       timestamptz not null default now();
@@ -297,8 +302,15 @@ end $$;
 --    p_items: [{"id": 22, "size": "M", "quantity": 2}, ...]
 -- =====================================================================
 
+-- La firma cambió al añadir apellidos y correo. Hay que retirar la
+-- versión anterior: si no, quedarían dos sobrecargas con el mismo nombre
+-- y PostgREST no sabría cuál llamar.
+drop function if exists public.place_order(text, text, text, jsonb);
+
 create or replace function public.place_order(
   p_name    text,
+  p_surname text,
+  p_email   text,
   p_phone   text,
   p_message text,
   p_items   jsonb
@@ -321,6 +333,17 @@ begin
   if p_name is null or btrim(p_name) = '' then
     raise exception 'Falta el nombre del cliente.';
   end if;
+  if p_surname is null or btrim(p_surname) = '' then
+    raise exception 'Faltan los apellidos del cliente.';
+  end if;
+  if p_email is null or btrim(p_email) = '' then
+    raise exception 'Falta el correo del cliente.';
+  end if;
+  -- Comprobación mínima de forma. No valida que el buzón exista, pero
+  -- evita guardar un correo con el que sería imposible contactar.
+  if btrim(p_email) !~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' then
+    raise exception 'El correo electrónico no es válido.';
+  end if;
   if p_phone is null or btrim(p_phone) = '' then
     raise exception 'Falta el teléfono del cliente.';
   end if;
@@ -328,9 +351,11 @@ begin
     raise exception 'El pedido no tiene artículos.';
   end if;
 
-  insert into public.orders (customer_name, customer_phone, customer_message,
+  insert into public.orders (customer_name, customer_surname, customer_email,
+                             customer_phone, customer_message,
                              total_amount, status, user_id)
-  values (btrim(p_name), btrim(p_phone), nullif(btrim(coalesce(p_message,'')),''),
+  values (btrim(p_name), btrim(p_surname), lower(btrim(p_email)),
+          btrim(p_phone), nullif(btrim(coalesce(p_message,'')),''),
           0, 'pending', auth.uid())
   returning id into v_order_id;
 
@@ -391,8 +416,8 @@ begin
 end;
 $$;
 
-revoke all on function public.place_order(text,text,text,jsonb) from public;
-grant execute on function public.place_order(text,text,text,jsonb) to anon, authenticated;
+revoke all on function public.place_order(text,text,text,text,text,jsonb) from public;
+grant execute on function public.place_order(text,text,text,text,text,jsonb) to anon, authenticated;
 
 
 -- =====================================================================

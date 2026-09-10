@@ -988,3 +988,42 @@ img {
     gap: 10px;
     align-items: flex-start;
 }
+
+/* ============================ FICHA DE CONTACTO ============================ */
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 5px 0;
+    font-size: var(--fs-small);
+    color: var(--black);
+}
+
+.contact-label {
+    flex: 0 0 74px;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+.contact-row a {
+    color: var(--black);
+}
+
+.contact-row .muted {
+    color: var(--grey);
+}
+
+/* Los botones de acción de la ficha reutilizan .lb-btn; aquí sólo se
+   ajusta el tamaño para que no compitan con el dato. */
+.contact-row .lb-btn {
+    padding: 4px 8px;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    text-decoration: none;
+    line-height: 1.4;
+}

@@ -232,12 +232,24 @@
                     <div class="order-total"><span>Total</span><span id="orderTotal">$0.00</span></div>
                 </div>
                 <div class="form-group">
-                    <label for="customerName">Nombre completo *</label>
-                    <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre">
+                    <label for="customerName">Nombre *</label>
+                    <input type="text" id="customerName" name="customerName" required
+                           autocomplete="given-name" placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label for="customerSurname">Apellidos *</label>
+                    <input type="text" id="customerSurname" name="customerSurname" required
+                           autocomplete="family-name" placeholder="Tus apellidos">
+                </div>
+                <div class="form-group">
+                    <label for="customerEmail">Correo electrónico *</label>
+                    <input type="email" id="customerEmail" name="customerEmail" required
+                           autocomplete="email" placeholder="tu@correo.com">
                 </div>
                 <div class="form-group">
                     <label for="customerPhone">Teléfono / WhatsApp *</label>
-                    <input type="tel" id="customerPhone" name="customerPhone" required placeholder="+1 234 567 8900">
+                    <input type="tel" id="customerPhone" name="customerPhone" required
+                           autocomplete="tel" placeholder="+1 234 567 8900">
                 </div>
                 <div class="form-group">
                     <label for="customerMessage">Mensaje (opcional)</label>

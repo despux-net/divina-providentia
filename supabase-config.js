@@ -170,10 +170,12 @@ const SupabaseAPI = {
   // Todo el cálculo ocurre dentro de place_order() en Postgres: el precio
   // se lee de la tabla y el stock se descuenta en la misma transacción.
   // El navegador solo dice qué y cuánto; nunca cuánto cuesta.
-  async placeOrder({ name, phone, message, items }) {
+  async placeOrder({ name, surname, email, phone, message, items }) {
     try {
       const { data, error } = await supabaseClient.rpc('place_order', {
         p_name: name,
+        p_surname: surname,
+        p_email: email,
         p_phone: phone,
         p_message: message || null,
         p_items: items.map(i => ({
