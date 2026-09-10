@@ -113,12 +113,18 @@ function displayProducts() {
     }
 
     productsGrid.innerHTML = filtered.map(product => {
-        const isAvailable = product.available !== false;
+        const canBuy = isPurchasable(product);
+        const hasSizes = productSizes(product).length > 0;
+        // Con tallas hay que elegir una, así que el botón de la rejilla
+        // abre la ficha en lugar de añadir a ciegas.
+        const action = hasSizes
+            ? `expandProductCardById('${product.id}')`
+            : `addToCart('${product.id}')`;
         return `
-    <div class="product-card ${!isAvailable ? 'sold-out' : ''}" data-product-id="${product.id}" role="button" tabindex="0" aria-label="Ver ${escapeHtml(product.name)}">
+    <div class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" role="button" tabindex="0" aria-label="Ver ${escapeHtml(product.name)}">
       <div class="product-image-container">
         <img src="${product.image_url}" alt="${escapeHtml(product.name)}" loading="lazy" class="product-image-bg">
-        ${!isAvailable ? '<div class="product-status-badge">Agotado</div>' : ''}
+        ${!canBuy ? '<div class="product-status-badge">Agotado</div>' : ''}
         <div class="product-expand-hint">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           Ver
@@ -132,10 +138,10 @@ function displayProducts() {
         <p class="product-description">${escapeHtml(product.description || '')}</p>
         <div class="product-footer">
           <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
-          <button class="add-to-cart-btn ${!isAvailable ? 'disabled' : ''}"
-                  onclick="event.stopPropagation(); ${isAvailable ? `addToCart('${product.id}')` : ''}"
-                  ${!isAvailable ? 'disabled' : ''}>
-            ${isAvailable ? 'Añadir' : 'Agotado'}
+          <button class="add-to-cart-btn ${!canBuy ? 'disabled' : ''}"
+                  onclick="event.stopPropagation(); ${canBuy ? action : ''}"
+                  ${!canBuy ? 'disabled' : ''}>
+            ${canBuy ? (hasSizes ? 'Elegir talla' : 'Añadir') : 'Agotado'}
           </button>
         </div>
       </div>
@@ -155,6 +161,45 @@ function displayProducts() {
             }
         });
     });
+}
+
+// ===================================
+// TALLAS Y EXISTENCIAS
+// ===================================
+
+// Los artículos que no se venden por tallas (un anillo, una gorra) guardan
+// sus existencias bajo esta clave única, para que el stock se descuente
+// igual que en una prenda.
+const SINGLE_SIZE = 'ÚNICA';
+
+// Tallas que se ofrecen de un producto. Vacío = artículo sin tallas.
+function productSizes(product) {
+    return Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [];
+}
+
+function stockOf(product, size) {
+    const stock = product.stock_by_size || {};
+    return Math.max(0, parseInt(stock[size], 10) || 0);
+}
+
+// Suma de existencias. Devuelve null cuando el producto todavía no tiene
+// stock configurado, para no dar por agotado lo que nunca se contó.
+function totalStock(product) {
+    const stock = product.stock_by_size || {};
+    const keys = productSizes(product).length ? productSizes(product) : Object.keys(stock);
+    if (!keys.length) return null;
+    return keys.reduce((sum, size) => sum + stockOf(product, size), 0);
+}
+
+function isPurchasable(product) {
+    if (product.available === false) return false;
+    const total = totalStock(product);
+    return total === null ? true : total > 0;
+}
+
+// Clave de línea de carrito: el mismo producto en dos tallas son dos líneas.
+function lineKey(productId, size) {
+    return `${productId}::${size || SINGLE_SIZE}`;
 }
 
 function escapeHtml(str) {
@@ -180,10 +225,35 @@ function getCategoryName(category) {
 // FICHA AMPLIADA
 // ===================================
 
+function expandProductCardById(productId) {
+    const product = state.products.find(p => p.id == productId);
+    if (product) expandProductCard(product);
+}
+
 function expandProductCard(product) {
     closeProductExpand();
 
-    const isAvailable = product.available !== false;
+    const canBuy = isPurchasable(product);
+    const sizes = productSizes(product);
+
+    // Una talla sin existencias se muestra tachada pero no se puede elegir:
+    // el cliente ve que existe y que se ha agotado.
+    const sizesHtml = sizes.length ? `
+                    <div class="size-picker" role="group" aria-label="Elegir talla">
+                        <span class="size-picker-label">Talla</span>
+                        <div class="size-options">
+                            ${sizes.map(size => {
+        const left = stockOf(product, size);
+        const out = left <= 0;
+        return `<button type="button" class="size-option${out ? ' out' : ''}"
+                                        data-size="${escapeHtml(size)}"
+                                        ${out ? 'disabled aria-disabled="true"' : ''}
+                                        title="${out ? 'Agotada' : left + ' disponibles'}">${escapeHtml(size)}</button>`;
+    }).join('')}
+                        </div>
+                        <p class="size-hint" id="sizeHint"></p>
+                    </div>` : '';
+
     const panel = document.createElement('div');
     panel.id = 'productExpandPanel';
     panel.className = 'product-expand-panel';
@@ -209,11 +279,12 @@ function expandProductCard(product) {
                     <p class="product-expand-price">$${parseFloat(product.price).toFixed(2)}</p>
                     <div class="product-expand-divider"></div>
                     <p class="product-expand-desc">${escapeHtml(product.description || '')}</p>
+                    ${sizesHtml}
                     <div class="product-expand-actions">
-                        <button class="add-to-cart-btn product-expand-cart-btn ${!isAvailable ? 'disabled' : ''}"
-                                onclick="${isAvailable ? `addToCart('${product.id}'); closeProductExpand();` : ''}"
-                                ${!isAvailable ? 'disabled' : ''}>
-                            ${isAvailable ? 'Añadir a la cesta' : 'Agotado'}
+                        <button class="add-to-cart-btn product-expand-cart-btn ${!canBuy ? 'disabled' : ''}"
+                                id="expandAddBtn"
+                                ${!canBuy ? 'disabled' : ''}>
+                            ${canBuy ? 'Añadir a la cesta' : 'Agotado'}
                         </button>
                     </div>
                 </div>
@@ -228,6 +299,31 @@ function expandProductCard(product) {
     });
 
     panel.querySelector('.product-expand-backdrop').addEventListener('click', closeProductExpand);
+
+    // Selección de talla
+    let chosenSize = sizes.length ? null : SINGLE_SIZE;
+    const hint = panel.querySelector('#sizeHint');
+    panel.querySelectorAll('.size-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            panel.querySelectorAll('.size-option').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            chosenSize = btn.dataset.size;
+            if (hint) hint.textContent = `Quedan ${stockOf(product, chosenSize)} unidades`;
+        });
+    });
+
+    const addBtn = panel.querySelector('#expandAddBtn');
+    if (addBtn && canBuy) {
+        addBtn.addEventListener('click', () => {
+            if (!chosenSize) {
+                if (hint) hint.textContent = 'Elige una talla para continuar';
+                panel.querySelector('.size-picker')?.classList.add('needs-choice');
+                return;
+            }
+            addToCart(product.id, chosenSize);
+            closeProductExpand();
+        });
+    }
 
     panel._escHandler = (e) => { if (e.key === 'Escape') closeProductExpand(); };
     document.addEventListener('keydown', panel._escHandler);
@@ -326,15 +422,36 @@ function initializeEventListeners() {
 // CESTA
 // ===================================
 
-function addToCart(productId) {
+function addToCart(productId, size) {
     const product = state.products.find(p => p.id == productId);
     if (!product) return;
 
-    const existing = state.cart.find(item => item.id == productId);
+    const chosen = size || SINGLE_SIZE;
+    const key = lineKey(productId, chosen);
+    const available = stockOf(product, chosen);
+    const capped = totalStock(product) !== null;
+
+    const existing = state.cart.find(item => item.key === key);
+    const wanted = (existing ? existing.quantity : 0) + 1;
+
+    // No se deja meter en la cesta más de lo que hay en el almacén.
+    if (capped && wanted > available) {
+        alert(`Solo quedan ${available} unidades de "${product.name}"${size ? ` en talla ${size}` : ''}.`);
+        return;
+    }
+
     if (existing) {
-        existing.quantity += 1;
+        existing.quantity = wanted;
     } else {
-        state.cart.push({ ...product, quantity: 1 });
+        state.cart.push({
+            key,
+            id: product.id,
+            size: chosen,
+            name: product.name,
+            price: product.price,
+            image_url: product.image_url,
+            quantity: 1
+        });
     }
 
     updateCart();
@@ -342,20 +459,31 @@ function addToCart(productId) {
     openCart();
 }
 
-function removeFromCart(productId) {
-    state.cart = state.cart.filter(item => item.id != productId);
+function removeFromCart(key) {
+    state.cart = state.cart.filter(item => item.key !== key);
     updateCart();
     saveCartToStorage();
 }
 
-function updateQuantity(productId, change) {
-    const item = state.cart.find(item => item.id == productId);
+function updateQuantity(key, change) {
+    const item = state.cart.find(item => item.key === key);
     if (!item) return;
+
+    if (change > 0) {
+        const product = state.products.find(p => p.id == item.id);
+        if (product && totalStock(product) !== null) {
+            const available = stockOf(product, item.size);
+            if (item.quantity + change > available) {
+                alert(`Solo quedan ${available} unidades.`);
+                return;
+            }
+        }
+    }
 
     item.quantity += change;
 
     if (item.quantity <= 0) {
-        removeFromCart(productId);
+        removeFromCart(key);
     } else {
         updateCart();
         saveCartToStorage();
@@ -388,12 +516,13 @@ function updateCart() {
         </div>
         <div class="cart-item-details">
           <div class="cart-item-name">${escapeHtml(item.name)}</div>
+          ${item.size && item.size !== SINGLE_SIZE ? `<div class="cart-item-size">Talla ${escapeHtml(item.size)}</div>` : ''}
           <div class="cart-item-price">$${parseFloat(item.price).toFixed(2)}</div>
           <div class="cart-item-controls">
-            <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)" aria-label="Quitar una unidad">−</button>
+            <button class="quantity-btn" onclick="updateQuantity('${item.key}', -1)" aria-label="Quitar una unidad">−</button>
             <span class="cart-item-quantity">${item.quantity}</span>
-            <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)" aria-label="Añadir una unidad">+</button>
-            <button class="remove-item-btn" onclick="removeFromCart('${item.id}')" aria-label="Eliminar">
+            <button class="quantity-btn" onclick="updateQuantity('${item.key}', 1)" aria-label="Añadir una unidad">+</button>
+            <button class="remove-item-btn" onclick="removeFromCart('${item.key}')" aria-label="Eliminar">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -414,7 +543,14 @@ function loadCartFromStorage() {
     const saved = localStorage.getItem('divinaCart');
     if (!saved) return;
     try {
-        state.cart = JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Cestas guardadas antes de que existieran las tallas no traen
+        // 'key' ni 'size'; se les pone la talla única para no perderlas.
+        state.cart = parsed.map(item => ({
+            ...item,
+            size: item.size || SINGLE_SIZE,
+            key: item.key || lineKey(item.id, item.size || SINGLE_SIZE)
+        }));
         updateCart();
     } catch (e) {
         localStorage.removeItem('divinaCart');
@@ -447,7 +583,7 @@ function openCheckout() {
     if (orderSummaryItems) {
         orderSummaryItems.innerHTML = state.cart.map(item => `
     <div class="order-item">
-      <span>${escapeHtml(item.name)} ×${item.quantity}</span>
+      <span>${escapeHtml(item.name)}${item.size && item.size !== SINGLE_SIZE ? ` · ${escapeHtml(item.size)}` : ''} ×${item.quantity}</span>
       <span>$${(item.price * item.quantity).toFixed(2)}</span>
     </div>`).join('');
     }
@@ -473,43 +609,63 @@ async function handleCheckout(e) {
     submitBtn.textContent = 'Enviando…';
 
     const formData = new FormData(e.target);
-    const totalPrice = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    const orderData = {
-        customerName: formData.get('customerName'),
-        customerPhone: formData.get('customerPhone'),
-        customerMessage: formData.get('customerMessage') || '',
-        items: state.cart.map(item => ({
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity
-        })),
-        total: totalPrice
-    };
+    const name = formData.get('customerName');
+    const phone = formData.get('customerPhone');
+    const message = formData.get('customerMessage') || '';
 
     try {
-        const response = await fetch(
-            'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/send-telegram-order',
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            }
-        );
+        // 1. La venta se registra primero. Si esto falla (sin stock, precio
+        //    cambiado, producto retirado) no se avisa a nadie y el cliente
+        //    ve el motivo real.
+        const { data, error } = await window.SupabaseAPI.placeOrder({
+            name, phone, message, items: state.cart
+        });
 
-        const result = await response.json();
-        if (!response.ok || !result.success) {
-            throw new Error(result.error || 'Error al enviar el pedido');
+        if (error) throw error;
+
+        const orderId = data && data.order_id ? data.order_id : null;
+        const total = data && data.total != null
+            ? Number(data.total)
+            : state.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+        // 2. El aviso de Telegram es secundario: si falla, el pedido ya
+        //    está guardado y visible en el panel, así que no se pierde.
+        try {
+            await fetch(
+                'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/send-telegram-order',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerName: name,
+                        customerPhone: phone,
+                        customerMessage: message,
+                        items: state.cart.map(item => ({
+                            name: item.size && item.size !== SINGLE_SIZE
+                                ? `${item.name} (${item.size})`
+                                : item.name,
+                            price: item.price,
+                            quantity: item.quantity
+                        })),
+                        total
+                    })
+                }
+            );
+        } catch (notifyError) {
+            console.warn('El pedido se guardó, pero falló el aviso de Telegram:', notifyError);
         }
 
-        showSuccessMessage('DP-' + Date.now());
+        showSuccessMessage(orderId ? orderId.slice(0, 8).toUpperCase() : 'DP-' + Date.now());
 
         state.cart = [];
         updateCart();
         saveCartToStorage();
+
+        // El stock ha cambiado: se recarga para que la tienda lo refleje.
+        loadProducts();
     } catch (error) {
-        console.error('Error enviando el pedido:', error);
-        alert('Hubo un error al enviar tu pedido. Por favor, inténtalo de nuevo.');
+        console.error('Error registrando el pedido:', error);
+        alert(error.message || 'Hubo un error al enviar tu pedido. Por favor, inténtalo de nuevo.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Confirmar pedido';
     }

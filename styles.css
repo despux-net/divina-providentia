@@ -1533,3 +1533,84 @@ font font {
     background: none !important;
     box-shadow: none !important;
 }
+
+/* ==========================================================================
+   SELECTOR DE TALLA
+   ========================================================================== */
+
+.size-picker {
+    margin: 24px 0 4px;
+}
+
+.size-picker-label {
+    display: block;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 10px;
+}
+
+.size-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.size-option {
+    min-width: 46px;
+    padding: 10px 12px;
+    background: var(--white);
+    border: 1px solid var(--grey-light);
+    color: var(--black);
+    font: inherit;
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.size-option:hover:not(:disabled) {
+    border-color: var(--black);
+}
+
+.size-option.selected {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+}
+
+/* Talla agotada: sigue a la vista, tachada, pero no se puede elegir. */
+.size-option.out {
+    color: var(--grey-light);
+    border-color: var(--grey-light);
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.size-hint {
+    margin: 10px 0 0;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--grey);
+    min-height: 1em;
+}
+
+.size-picker.needs-choice .size-options {
+    outline: 1px solid var(--black);
+    outline-offset: 5px;
+}
+
+.size-picker.needs-choice .size-hint {
+    color: var(--black);
+}
+
+.cart-item-size {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-top: 2px;
+}

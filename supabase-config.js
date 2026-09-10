@@ -165,6 +165,32 @@ const SupabaseAPI = {
     }
   },
 
+  // Registra la venta.
+  //
+  // Todo el cálculo ocurre dentro de place_order() en Postgres: el precio
+  // se lee de la tabla y el stock se descuenta en la misma transacción.
+  // El navegador solo dice qué y cuánto; nunca cuánto cuesta.
+  async placeOrder({ name, phone, message, items }) {
+    try {
+      const { data, error } = await supabaseClient.rpc('place_order', {
+        p_name: name,
+        p_phone: phone,
+        p_message: message || null,
+        p_items: items.map(i => ({
+          id: i.id,
+          size: i.size || null,
+          quantity: i.quantity
+        }))
+      });
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error registrando el pedido:', error);
+      return { data: null, error };
+    }
+  },
+
   // Get lookbook carousel images
   async getLookbookImages() {
     try {

@@ -4,301 +4,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Divina Providentia</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            padding: 40px 20px;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #d4af37 0%, #f4e5b1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .product-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(212, 175, 55, 0.5);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #d4af37;
-        }
-
-        .product-price {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            color: #f4e5b1;
-        }
-
-        .upload-section {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-input-label {
-            display: block;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #d4af37 0%, #f4e5b1 100%);
-            color: #1a1a2e;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .file-input-label:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-        }
-
-        .upload-btn {
-            width: 100%;
-            padding: 12px 20px;
-            background: rgba(212, 175, 55, 0.2);
-            border: 1px solid #d4af37;
-            color: #d4af37;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .upload-btn:hover:not(:disabled) {
-            background: rgba(212, 175, 55, 0.3);
-            transform: scale(1.02);
-        }
-
-        .upload-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .status-message {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        .status-success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid #4CAF50;
-            color: #4CAF50;
-        }
-
-        .status-error {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid #f44336;
-            color: #f44336;
-        }
-
-        .status-loading {
-            background: rgba(255, 193, 7, 0.2);
-            border: 1px solid #FFC107;
-            color: #FFC107;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: #d4af37;
-        }
-    </style>
-    <!-- Supabase Client -->
+    <meta name="robots" content="noindex, nofollow">
+    <title>Administración | Divina Providentia</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="admin.css?v=1">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-    <div class="container">
-        <h1>🏛️ Admin - Gestión de Productos</h1>
-        <div id="productsContainer" class="products-grid">
-            <div class="loading">Cargando productos...</div>
-        </div>
+
+    <!-- ============================ ACCESO ============================ -->
+    <div class="login-view" id="loginView" hidden>
+        <form class="login-box" id="loginForm">
+            <h1 class="login-brand">Divina Providentia</h1>
+            <p class="login-sub">Administración</p>
+
+            <label class="field">
+                <span>Correo</span>
+                <input type="email" id="loginEmail" autocomplete="username" required>
+            </label>
+
+            <label class="field">
+                <span>Contraseña</span>
+                <input type="password" id="loginPassword" autocomplete="current-password" required>
+            </label>
+
+            <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Entrar</button>
+            <p class="login-error" id="loginError" role="alert"></p>
+        </form>
     </div>
 
-    <script src="supabase-config.js"></script>
-    <script>
-        let products = [];
+    <!-- ============================ CARGANDO ============================ -->
+    <div class="boot" id="bootView">
+        <span>Comprobando acceso…</span>
+    </div>
 
-        async function loadProducts() {
-            const container = document.getElementById('productsContainer');
+    <!-- ============================ PANEL ============================ -->
+    <div class="panel" id="panelView" hidden>
 
-            const { data, error } = await window.SupabaseAPI.getProducts();
+        <header class="topbar">
+            <div class="topbar-left">
+                <a href="index.html" class="topbar-brand">Divina Providentia</a>
+                <span class="topbar-tag">Admin</span>
+            </div>
+            <div class="topbar-right">
+                <span class="topbar-user" id="currentUser"></span>
+                <button class="btn btn-ghost" id="logoutBtn">Salir</button>
+            </div>
+        </header>
 
-            if (error || !data) {
-                container.innerHTML = '<div class="loading">Error al cargar productos</div>';
-                return;
-            }
+        <nav class="tabs" id="tabs">
+            <button class="tab is-active" data-tab="resumen">Resumen</button>
+            <button class="tab" data-tab="productos">Productos</button>
+            <button class="tab" data-tab="pedidos">Pedidos</button>
+        </nav>
 
-            products = data;
-            displayProducts();
-        }
+        <main class="content">
 
-        function displayProducts() {
-            const container = document.getElementById('productsContainer');
+            <!-- ---------------- RESUMEN ---------------- -->
+            <section class="tab-panel is-active" id="panel-resumen">
+                <div class="stats" id="statsGrid">
+                    <div class="loading">Cargando…</div>
+                </div>
+            </section>
 
-            container.innerHTML = products.map(product => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${product.image_url
-                    ? `<img src="${product.image_url}" alt="${product.name}">`
-                    : '🏛️'
-                }
-                    </div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
-                    
-                    <div class="upload-section">
-                        <div class="file-input-wrapper">
-                            <input 
-                                type="file" 
-                                id="file-${product.id}" 
-                                accept="image/*"
-                                onchange="handleFileSelect(${product.id}, this)"
-                            >
-                            <label for="file-${product.id}" class="file-input-label">
-                                📷 Seleccionar Imagen
-                            </label>
-                        </div>
-                        <button 
-                            class="upload-btn" 
-                            id="upload-btn-${product.id}"
-                            onclick="uploadImage(${product.id})"
-                            disabled
-                        >
-                            Subir Imagen
-                        </button>
-                        <div id="status-${product.id}"></div>
+            <!-- ---------------- PRODUCTOS ---------------- -->
+            <section class="tab-panel" id="panel-productos">
+                <div class="section-bar">
+                    <h2>Productos</h2>
+                    <button class="btn btn-primary" id="newProductBtn">Nuevo producto</button>
+                </div>
+                <div id="productsList">
+                    <div class="loading">Cargando…</div>
+                </div>
+            </section>
+
+            <!-- ---------------- PEDIDOS ---------------- -->
+            <section class="tab-panel" id="panel-pedidos">
+                <div class="section-bar">
+                    <h2>Pedidos</h2>
+                    <div class="filters" id="orderFilters">
+                        <button class="chip is-active" data-status="all">Todos</button>
+                        <button class="chip" data-status="pending">Pendientes</button>
+                        <button class="chip" data-status="shipped">Enviados</button>
+                        <button class="chip" data-status="delivered">Entregados</button>
+                        <button class="chip" data-status="cancelled">Cancelados</button>
                     </div>
                 </div>
-            `).join('');
-        }
+                <div id="ordersList">
+                    <div class="loading">Cargando…</div>
+                </div>
+            </section>
 
-        const selectedFiles = {};
+        </main>
+    </div>
 
-        function handleFileSelect(productId, input) {
-            if (input.files && input.files[0]) {
-                selectedFiles[productId] = input.files[0];
-                document.getElementById(`upload-btn-${productId}`).disabled = false;
+    <!-- ============================ FICHA DE PRODUCTO ============================ -->
+    <div class="modal-overlay" id="productOverlay" hidden></div>
+    <div class="modal" id="productModal" hidden role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+        <div class="modal-head">
+            <h2 id="productModalTitle">Producto</h2>
+            <button class="btn btn-ghost" id="closeProductBtn" aria-label="Cerrar">&times;</button>
+        </div>
 
-                // Preview
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const card = input.closest('.product-card');
-                    const imageDiv = card.querySelector('.product-image');
-                    imageDiv.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+        <form class="modal-body" id="productForm">
+            <input type="hidden" id="pId">
 
-        async function uploadImage(productId) {
-            const file = selectedFiles[productId];
-            if (!file) return;
+            <div class="form-row">
+                <label class="field">
+                    <span>Nombre</span>
+                    <input type="text" id="pName" required maxlength="120">
+                </label>
+                <label class="field field-narrow">
+                    <span>Precio (USD)</span>
+                    <input type="number" id="pPrice" step="0.01" min="0" required>
+                </label>
+            </div>
 
-            const statusDiv = document.getElementById(`status-${productId}`);
-            const uploadBtn = document.getElementById(`upload-btn-${productId}`);
+            <label class="field">
+                <span>Descripción</span>
+                <textarea id="pDescription" rows="4" maxlength="2000"></textarea>
+            </label>
 
-            uploadBtn.disabled = true;
-            statusDiv.innerHTML = '<div class="status-message status-loading">Subiendo imagen...</div>';
+            <div class="form-row">
+                <label class="field">
+                    <span>Categoría</span>
+                    <select id="pCategory">
+                        <option value="vestments">Prendas</option>
+                        <option value="headwear">Gorras</option>
+                        <option value="accessories">Accesorios</option>
+                        <option value="prints">Impresiones</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Tallas <small>separadas por comas — déjalo vacío si no tiene tallas</small></span>
+                    <input type="text" id="pSizes" placeholder="S, M, L, XL">
+                </label>
+            </div>
 
-            try {
-                const { data, error } = await window.SupabaseAPI.uploadProductImage(file, productId);
+            <fieldset class="stock-block">
+                <legend>Existencias</legend>
+                <div id="stockFields" class="stock-fields"></div>
+                <p class="hint">El stock se descuenta solo con cada venta. Una talla a 0 aparece tachada en la tienda.</p>
+            </fieldset>
 
-                if (error) throw error;
+            <div class="form-row">
+                <div class="field">
+                    <span>Imagen</span>
+                    <div class="image-picker">
+                        <div class="image-preview" id="pImagePreview"></div>
+                        <div class="image-actions">
+                            <input type="file" id="pImageFile" accept="image/*" hidden>
+                            <button type="button" class="btn" id="pImageBtn">Elegir archivo…</button>
+                            <span class="image-name" id="pImageName"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                statusDiv.innerHTML = '<div class="status-message status-success">✓ Imagen subida exitosamente</div>';
+            <div class="toggles">
+                <label class="toggle">
+                    <input type="checkbox" id="pPublished">
+                    <span>Publicado <small>visible en la tienda</small></span>
+                </label>
+                <label class="toggle">
+                    <input type="checkbox" id="pAvailable">
+                    <span>A la venta <small>si lo desactivas, sale como agotado</small></span>
+                </label>
+            </div>
 
-                // Reload products to show new image
-                setTimeout(() => {
-                    loadProducts();
-                }, 1500);
+            <p class="form-error" id="productError" role="alert"></p>
 
-            } catch (error) {
-                console.error('Error uploading image:', error);
-                statusDiv.innerHTML = `<div class="status-message status-error">✗ Error: ${error.message}</div>`;
-                uploadBtn.disabled = false;
-            }
-        }
+            <div class="modal-foot">
+                <button type="button" class="btn btn-danger" id="deleteProductBtn">Eliminar</button>
+                <div class="spacer"></div>
+                <button type="button" class="btn" id="cancelProductBtn">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="saveProductBtn">Guardar</button>
+            </div>
+        </form>
+    </div>
 
-        // Load products on page load
-        loadProducts();
-    </script>
+    <div class="toast" id="toast" hidden></div>
+
+    <script src="supabase-config.js"></script>
+    <script src="admin.js?v=1"></script>
 </body>
 
 </html>
