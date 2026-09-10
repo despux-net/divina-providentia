@@ -10,7 +10,8 @@ if ('scrollRestoration' in history) {
 const state = {
     cart: [],
     products: [],
-    currentCategory: 'all'
+    currentCategory: 'all',
+    sort: 'new'
 };
 
 // ===================================
@@ -95,7 +96,38 @@ async function loadProducts() {
         state.products = [];
     }
 
+    buildFilterOptions();
     displayProducts();
+}
+
+function sortProducts(list, mode) {
+    const out = list.slice();
+    if (mode === 'price-asc') out.sort((a, b) => a.price - b.price);
+    else if (mode === 'price-desc') out.sort((a, b) => b.price - a.price);
+    else if (mode === 'name') out.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+    else out.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    return out;
+}
+
+// El desplegable de filtro se construye con las categorías que hay de
+// verdad en el catálogo, no con una lista fija: así no ofrece filtros
+// que no devuelven nada.
+function buildFilterOptions() {
+    const select = document.getElementById('shopFilter');
+    if (!select) return;
+
+    const counts = {};
+    state.products.filter(p => productImages(p).length).forEach(p => {
+        counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+
+    const current = select.value || 'all';
+    select.innerHTML = '<option value="all">Todo</option>' +
+        Object.keys(counts).sort().map(cat =>
+            `<option value="${escapeHtml(cat)}">${escapeHtml(getCategoryName(cat))} (${counts[cat]})</option>`
+        ).join('');
+    select.value = current;
+    if (select.selectedIndex < 0) select.value = 'all';
 }
 
 function displayProducts() {
@@ -106,38 +138,69 @@ function displayProducts() {
         ? state.products
         : state.products.filter(p => p.category === state.currentCategory);
 
-    // Sólo se muestran productos con imagen.
-    filtered = filtered.filter(p => p.image_url);
+    // Sólo se muestran productos con alguna foto.
+    filtered = filtered.filter(p => productImages(p).length > 0);
+    filtered = sortProducts(filtered, state.sort);
+
+    const counter = document.getElementById('shopCount');
+    if (counter) {
+        counter.textContent = filtered.length === 1 ? '1 artículo' : `${filtered.length} artículos`;
+    }
 
     if (filtered.length === 0) {
-        productsGrid.innerHTML = '<div class="no-products"><p>No hay artículos disponibles</p></div>';
+        productsGrid.innerHTML = '<div class="no-products"><p>No hay artículos en esta categoría</p></div>';
         return;
     }
 
     productsGrid.innerHTML = filtered.map(product => {
         const canBuy = isPurchasable(product);
         const hasSizes = productSizes(product).length > 0;
+        const imgs = productImages(product);
+        const colors = productColors(product);
+        const wished = isWished(product.id);
+
         // Con tallas hay que elegir una, así que el botón de la rejilla
         // abre la ficha en lugar de añadir a ciegas.
         const action = hasSizes
             ? `expandProductCardById('${product.id}')`
             : `addToCart('${product.id}')`;
+
+        // Metadatos breves: colores si los hay, si no las tallas.
+        let meta = '';
+        if (colors.length > 1) meta = `${colors.length} colores`;
+        else if (colors.length === 1) meta = escapeHtml(colors[0].name);
+        else if (hasSizes) {
+            const sizes = productSizes(product);
+            meta = sizes.length > 1 ? `${sizes.length} tallas` : `Talla ${escapeHtml(sizes[0])}`;
+        }
+
         return `
-    <div class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" role="button" tabindex="0" aria-label="Ver ${escapeHtml(product.name)}">
+    <article class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" role="button" tabindex="0" aria-label="Ver ${escapeHtml(product.name)}">
       <div class="product-image-container">
-        <img src="${product.image_url}" alt="${escapeHtml(product.name)}" loading="lazy" class="product-image-bg">
+        <img src="${escapeHtml(imgs[0])}" alt="${escapeHtml(product.name)}" loading="lazy" class="product-image-bg">
+        ${imgs[1] ? `<img src="${escapeHtml(imgs[1])}" alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
         ${!canBuy ? '<div class="product-status-badge">Agotado</div>' : ''}
-        <div class="product-expand-hint">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-          Ver
-        </div>
+
+        <button class="wish-btn${wished ? ' is-active' : ''}" data-wish="${product.id}"
+                aria-pressed="${wished}" aria-label="${wished ? 'Quitar de guardados' : 'Guardar artículo'}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        </button>
+
+        ${imgs.length > 1 ? `<div class="card-dots" aria-hidden="true">${
+            imgs.map((_, i) => `<span class="card-dot${i === 0 ? ' is-active' : ''}"></span>`).join('')
+        }</div>` : ''}
+
         <div class="product-info-overlay">
           <span class="product-category">${escapeHtml(getCategoryName(product.category))}</span>
-          <h3 class="product-name">${escapeHtml(product.name)}</h3>
         </div>
       </div>
+
       <div class="product-info">
-        <p class="product-description">${escapeHtml(product.description || '')}</p>
+        <h3 class="product-name">${escapeHtml(product.name)}</h3>
+        ${meta ? `<p class="product-meta-line">${meta}</p>` : ''}
+        ${colors.length ? `<div class="swatches" aria-hidden="true">${
+            colors.slice(0, 5).map(c => `<span class="swatch" style="background:${escapeHtml(c.hex || '#fff')}" title="${escapeHtml(c.name)}"></span>`).join('')
+        }</div>` : ''}
         <div class="product-footer">
           <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
           <button class="add-to-cart-btn ${!canBuy ? 'disabled' : ''}"
@@ -147,7 +210,7 @@ function displayProducts() {
           </button>
         </div>
       </div>
-    </div>`;
+    </article>`;
     }).join('');
 
     productsGrid.querySelectorAll('.product-card').forEach(card => {
@@ -161,6 +224,15 @@ function displayProducts() {
                 e.preventDefault();
                 card.click();
             }
+        });
+    });
+
+    // El corazón va dentro de la tarjeta, que abre la ficha al pulsarla:
+    // sin stopPropagation, guardar abriría además el producto.
+    productsGrid.querySelectorAll('[data-wish]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleWish(btn.dataset.wish, btn);
         });
     });
 }
@@ -271,6 +343,59 @@ function isPurchasable(product) {
 // Clave de línea de carrito: el mismo producto en dos tallas son dos líneas.
 function lineKey(productId, size) {
     return `${productId}::${size || SINGLE_SIZE}`;
+}
+
+// ===================================
+// GALERÍA, COLORES Y LISTA DE DESEOS
+// ===================================
+
+// Fotos de un producto. 'images' es la galería; si está vacía se usa la
+// portada, que es lo que tienen los productos anteriores a la galería.
+function productImages(product) {
+    const gallery = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
+    const files = gallery.length ? gallery : (product.image ? [product.image] : []);
+    return files.map(f => /^https?:\/\//i.test(f)
+        ? f
+        : `${window.SUPABASE_URL}/storage/v1/object/public/products/${f}`);
+}
+
+function productColors(product) {
+    return Array.isArray(product.colors) ? product.colors.filter(c => c && c.name) : [];
+}
+
+// La lista de deseos vive en el navegador: no hace falta cuenta para
+// guardar algo, y así funciona igual con la tienda abierta o cerrada.
+const WISH_KEY = 'divinaWishlist';
+
+function getWishlist() {
+    try {
+        return JSON.parse(localStorage.getItem(WISH_KEY)) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function isWished(id) {
+    return getWishlist().includes(String(id));
+}
+
+function toggleWish(id, btn) {
+    const list = getWishlist();
+    const key = String(id);
+    const i = list.indexOf(key);
+
+    if (i >= 0) list.splice(i, 1); else list.push(key);
+
+    try {
+        localStorage.setItem(WISH_KEY, JSON.stringify(list));
+    } catch (e) { /* almacenamiento bloqueado: no es crítico */ }
+
+    if (btn) {
+        const active = i < 0;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
+        btn.setAttribute('aria-label', active ? 'Quitar de guardados' : 'Guardar artículo');
+    }
 }
 
 function escapeHtml(str) {
@@ -480,6 +605,16 @@ function initializeEventListeners() {
 
     document.getElementById('checkoutForm')?.addEventListener('submit', handleCheckout);
     document.getElementById('contactForm')?.addEventListener('submit', handleContact);
+
+    document.getElementById('shopFilter')?.addEventListener('change', (e) => {
+        state.currentCategory = e.target.value;
+        displayProducts();
+    });
+
+    document.getElementById('shopSort')?.addEventListener('change', (e) => {
+        state.sort = e.target.value;
+        displayProducts();
+    });
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {

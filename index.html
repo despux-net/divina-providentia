@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=10">
+    <link rel="stylesheet" href="styles.css?v=11">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="theme.js?v=1"></script>
@@ -54,11 +54,16 @@
 
             <div class="nav-actions">
                 <div class="nav-lang">
-                    <button class="lang-btn" aria-label="Idioma" aria-expanded="false">ES</button>
-                    <div class="lang-menu">
-                        <a href="#" onclick="changeLanguage('es'); return false;">Español</a>
-                        <a href="#" onclick="changeLanguage('en'); return false;">English</a>
-                        <a href="#" onclick="changeLanguage('de'); return false;">Deutsch</a>
+                    <button class="lang-btn" id="langBtn" aria-label="Cambiar idioma"
+                            aria-haspopup="true" aria-expanded="false">
+                        <span class="lang-current">ES</span>
+                        <span class="lang-rest">/ EN / DE</span>
+                        <span class="lang-caret" aria-hidden="true"></span>
+                    </button>
+                    <div class="lang-menu" role="menu">
+                        <a href="#" role="menuitem" data-lang="es" onclick="changeLanguage('es'); return false;">Español</a>
+                        <a href="#" role="menuitem" data-lang="en" onclick="changeLanguage('en'); return false;">English</a>
+                        <a href="#" role="menuitem" data-lang="de" onclick="changeLanguage('de'); return false;">Deutsch</a>
                     </div>
                 </div>
                 <div id="auth-buttons" class="nav-auth">
@@ -92,8 +97,32 @@
     <section class="products" id="tienda">
         <div class="section-head">
             <h2>Tienda</h2>
-            <span class="section-meta">Todos los artículos</span>
+            <nav class="breadcrumbs" aria-label="Migas de pan">
+                <a href="#inicio">Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Tienda</span>
+            </nav>
         </div>
+
+        <div class="shop-toolbar">
+            <p class="shop-count" id="shopCount" role="status" aria-live="polite"></p>
+            <div class="shop-controls">
+                <div class="shop-select-wrap">
+                    <label for="shopFilter">Filtrar</label>
+                    <select class="shop-select" id="shopFilter">
+                        <option value="all">Todo</option>
+                    </select>
+                </div>
+                <div class="shop-select-wrap">
+                    <label for="shopSort">Ordenar por</label>
+                    <select class="shop-select" id="shopSort">
+                        <option value="new">Novedades</option>
+                        <option value="price-asc">Precio: menor a mayor</option>
+                        <option value="price-desc">Precio: mayor a menor</option>
+                        <option value="name">Nombre (A–Z)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <div class="products-grid" id="productsGrid">
             <div class="loading-spinner"><p>Cargando…</p></div>
         </div>
@@ -317,7 +346,7 @@
     <!-- ============ SCRIPTS ============ -->
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=10"></script>
-    <script src="app.js?v=10"></script>
+    <script src="app.js?v=11"></script>
 
     <div id="google_translate_element" style="display:none"></div>
     <script>

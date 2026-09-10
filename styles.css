@@ -17,13 +17,37 @@
 
     --nav-h: 52px;
 
+    /* Escala tipográfica. Los cuatro primeros los recalcula el editor de
+       Apariencia a partir del tamaño del texto; los de arriba escalan
+       con la ventana para no romperse en móvil. */
     --fs-micro: 10px;
     --fs-nano: 11px;
     --fs-small: 12px;
     --fs-body: 13px;
+    --fs-lead: 15px;
+    --fs-h3: clamp(1rem, 1.6vw, 1.25rem);
+    --fs-h2: clamp(1.35rem, 3vw, 2rem);
+    --fs-h1: clamp(2rem, 5vw, 3.25rem);
 
     --track: 0.09em;
     --track-wide: 0.16em;
+
+    /* Espaciado en base 4/8. Todo el aire del sitio sale de aquí: si un
+       margen no encaja en la escala, es que está mal medido. */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 24px;
+    --sp-6: 32px;
+    --sp-7: 48px;
+    --sp-8: 64px;
+    --sp-9: 96px;
+
+    /* Aire vertical entre secciones. Un solo valor para todas, que es lo
+       que hace que el ritmo se lea como intencionado y no como casual. */
+    --section-y: var(--sp-8);
+    --gutter: var(--sp-5);
 
     --pad-x: 20px;
 
@@ -163,7 +187,7 @@ button {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 16px;
+    gap: var(--sp-4);
 }
 
 .nav-logo {
@@ -181,7 +205,7 @@ button {
     grid-row: 1;
     display: flex;
     align-items: center;
-    gap: 22px;
+    gap: var(--sp-5);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -215,7 +239,7 @@ button {
     justify-self: end;
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: var(--sp-4);
     white-space: nowrap;
 }
 
@@ -255,7 +279,7 @@ button {
     min-width: 130px;
     background: var(--white);
     border: 1px solid var(--black);
-    padding: 6px 0;
+    padding: var(--sp-1) 0;
     display: none;
 }
 
@@ -267,7 +291,7 @@ button {
 
 .lang-menu a {
     display: block;
-    padding: 7px 14px;
+    padding: var(--sp-2) var(--sp-3);
     font-size: var(--fs-nano);
     letter-spacing: var(--track);
     text-transform: uppercase;
@@ -323,7 +347,7 @@ button {
 }
 
 .hero-inner {
-    padding: 60px var(--pad-x);
+    padding: var(--sp-8) var(--pad-x);
 }
 
 .hero-title {
@@ -332,7 +356,7 @@ button {
     font-weight: var(--weight-head);
     line-height: .92;
     letter-spacing: 0.02em;
-    margin: 0 0 26px;
+    margin: 0 0 var(--sp-5);
 }
 
 .hero-sub {
@@ -340,12 +364,12 @@ button {
     letter-spacing: var(--track-wide);
     text-transform: uppercase;
     color: var(--grey);
-    margin: 0 0 34px;
+    margin: 0 0 var(--sp-6);
 }
 
 .hero-link {
     display: inline-block;
-    padding: 13px 44px;
+    padding: var(--sp-3) var(--sp-7);
     border: 1px solid var(--black);
     background: var(--black);
     color: var(--white);
@@ -365,7 +389,7 @@ button {
     bottom: 0;
     overflow: hidden;
     border-top: 1px solid var(--black);
-    padding: 11px 0;
+    padding: var(--sp-3) 0;
 }
 
 .hero-marquee-track {
@@ -379,7 +403,7 @@ button {
     letter-spacing: var(--track-wide);
     text-transform: uppercase;
     white-space: nowrap;
-    padding-right: 10px;
+    padding-right: var(--sp-2);
 }
 
 @keyframes marquee {
@@ -395,12 +419,22 @@ button {
    CABECERAS DE SECCIÓN
    ========================================================================== */
 
+/* Cabecera de sección. El aire de arriba sale de --section-y, así que
+   cambiar ese único valor recompone el ritmo de toda la página. */
 .section-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 20px;
-    padding: 64px var(--pad-x) 26px;
+    gap: var(--sp-4);
+    padding: var(--section-y) var(--pad-x) var(--sp-5);
+}
+
+/* Cierre de cada sección, para que el hueco entre bloques sea el mismo
+   se mire por donde se mire. */
+.products,
+.lookbook-section,
+.cartography-section {
+    padding-bottom: var(--section-y);
 }
 
 .section-head h2 {
@@ -417,13 +451,14 @@ button {
    TIENDA — retícula de línea fina
    ========================================================================== */
 
+/* Antes la retícula se dibujaba con fondo negro y un hueco de 1px entre
+   celdas blancas: de ahí las líneas gruesas. Ahora el separador es el
+   aire, como en una revista. */
 .products-grid,
 .cartography-grid {
     display: grid;
-    gap: 1px;
-    background: var(--black);
-    border-top: 1px solid var(--black);
-    border-bottom: 1px solid var(--black);
+    gap: var(--gutter);
+    padding: 0 var(--pad-x);
 }
 
 .products-grid {
@@ -441,19 +476,29 @@ button {
     cursor: pointer;
 }
 
+/* Lienzo común. 'contain' con un poco de margen deja cada prenda
+   flotando sobre el mismo gris, venga la foto recortada o con su propio
+   fondo. Es lo que hace que la fila se lea como una colección y no como
+   cuatro fotos sueltas. */
 .product-image-container {
     position: relative;
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--grey-bg);
+    padding: var(--sp-5);
 }
 
 .product-image-bg {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform .6s cubic-bezier(.2, .7, .3, 1);
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    transition: transform .6s cubic-bezier(.2, .7, .3, 1), opacity .4s ease;
 }
+
+/* multiply funde los fondos blancos de los JPG con el gris del lienzo,
+   de modo que no se vea el recuadro de la foto. Sobre PNG recortado no
+   cambia nada, porque no hay fondo que fundir. */
 
 .product-card:hover .product-image-bg {
     transform: scale(1.04);
@@ -466,20 +511,25 @@ button {
 
 .product-info-overlay {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 12px;
+    left: var(--sp-3);
+    top: var(--sp-3);
     pointer-events: none;
+}
+
+.product-info-overlay .product-category {
+    color: var(--grey);
 }
 
 .product-category {
     display: block;
     color: var(--grey);
-    margin-bottom: 3px;
+    margin-bottom: var(--sp-1);
 }
 
-.product-info-overlay .product-name {
+/* El nombre bajó del recuadro sobre la foto al bloque de texto: sobre la
+   imagen competía con la prenda, y la lectura de una rejilla editorial
+   va foto → nombre → dato → precio, en columna. */
+.product-name {
     font-size: var(--fs-small);
     font-weight: 500;
     letter-spacing: var(--track);
@@ -491,7 +541,7 @@ button {
     position: absolute;
     top: 10px;
     left: 10px;
-    padding: 4px 9px;
+    padding: var(--sp-1) var(--sp-2);
     background: var(--black);
     color: var(--white);
     font-size: var(--fs-micro);
@@ -505,8 +555,8 @@ button {
     right: 10px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 9px;
+    gap: var(--sp-1);
+    padding: var(--sp-1) var(--sp-2);
     background: var(--white);
     border: 1px solid var(--black);
     font-size: var(--fs-micro);
@@ -521,7 +571,7 @@ button {
 }
 
 .product-info {
-    padding: 14px 12px 18px;
+    padding: var(--sp-3) 0 0;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -530,7 +580,7 @@ button {
 .product-description {
     font-size: var(--fs-small);
     color: var(--grey);
-    margin: 0 0 14px;
+    margin: 0 0 var(--sp-3);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -539,11 +589,11 @@ button {
 }
 
 .product-footer {
-    margin-top: auto;
+    margin-top: var(--sp-3);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--sp-3);
 }
 
 .product-price {
@@ -551,7 +601,7 @@ button {
 }
 
 .add-to-cart-btn {
-    padding: 9px 16px;
+    padding: var(--sp-2) var(--sp-4);
     border: 1px solid var(--black);
     background: var(--white);
     transition: background .18s ease, color .18s ease;
@@ -577,7 +627,7 @@ button {
 .loading-spinner {
     grid-column: 1 / -1;
     background: var(--white);
-    padding: 70px var(--pad-x);
+    padding: var(--sp-8) var(--pad-x);
     text-align: center;
     color: var(--grey);
     font-size: var(--fs-nano);
@@ -693,7 +743,7 @@ button {
     position: absolute;
     left: 12px;
     bottom: 12px;
-    padding: 4px 9px;
+    padding: var(--sp-1) var(--sp-2);
     background: var(--white);
     border: 1px solid var(--black);
     font-size: var(--fs-micro);
@@ -703,7 +753,7 @@ button {
 }
 
 .product-expand-info {
-    padding: 40px var(--pad-x);
+    padding: var(--sp-6) var(--pad-x);
     display: flex;
     flex-direction: column;
 }
@@ -718,7 +768,7 @@ button {
 .product-expand-name {
     font-size: clamp(1.2rem, 3vw, 1.8rem);
     font-weight: 600;
-    margin: 12px 0 8px;
+    margin: var(--sp-3) 0 var(--sp-2);
 }
 
 .product-expand-price {
@@ -731,13 +781,13 @@ button {
 .product-expand-divider {
     height: 1px;
     background: var(--black);
-    margin: 24px 0;
+    margin: var(--sp-5) 0;
 }
 
 .product-expand-desc {
     font-size: var(--fs-body);
     color: #2b2b2b;
-    margin: 0 0 28px;
+    margin: 0 0 var(--sp-5);
 }
 
 .product-expand-actions {
@@ -746,7 +796,7 @@ button {
 
 .product-expand-cart-btn {
     width: 100%;
-    padding: 15px 20px;
+    padding: var(--sp-4) var(--sp-4);
     background: var(--black);
     color: var(--white);
 }
@@ -870,14 +920,14 @@ button {
     position: absolute;
     top: 10px;
     left: 10px;
-    padding: 4px 9px;
+    padding: var(--sp-1) var(--sp-2);
     background: var(--black);
     color: var(--white);
     font-size: var(--fs-micro);
 }
 
 .map-card-content {
-    padding: 22px var(--pad-x) 26px;
+    padding: var(--sp-5) var(--pad-x) var(--sp-5);
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -886,7 +936,7 @@ button {
 .map-card-title {
     font-size: var(--fs-small);
     font-weight: 600;
-    margin: 0 0 6px;
+    margin: 0 0 var(--sp-1);
 }
 
 .map-card-author {
@@ -894,19 +944,19 @@ button {
     letter-spacing: var(--track);
     text-transform: uppercase;
     color: var(--grey);
-    margin: 0 0 14px;
+    margin: 0 0 var(--sp-3);
 }
 
 .map-card-desc {
     font-size: var(--fs-small);
     color: #2b2b2b;
-    margin: 0 0 22px;
+    margin: 0 0 var(--sp-5);
 }
 
 .open-map-btn {
     margin-top: auto;
     align-self: flex-start;
-    padding: 11px 26px;
+    padding: var(--sp-3) var(--sp-5);
     border: 1px solid var(--black);
     transition: background .18s ease, color .18s ease;
 }
@@ -922,14 +972,14 @@ button {
 
 .footer {
     border-top: 1px solid var(--black);
-    padding-top: 56px;
+    padding-top: var(--sp-7);
 }
 
 .footer-grid {
     padding: 0 var(--pad-x);
     display: grid;
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: var(--sp-6);
 }
 
 @media (min-width: 700px) {
@@ -943,13 +993,13 @@ button {
 .footer-section h3 {
     font-size: var(--fs-nano);
     font-weight: 600;
-    margin: 0 0 16px;
+    margin: 0 0 var(--sp-4);
 }
 
 .footer-section p {
     font-size: var(--fs-small);
     color: var(--grey);
-    margin: 0 0 6px;
+    margin: 0 0 var(--sp-1);
 }
 
 .footer-links {
@@ -959,7 +1009,7 @@ button {
 }
 
 .footer-links li {
-    margin-bottom: 8px;
+    margin-bottom: var(--sp-2);
 }
 
 .footer-links a:hover,
@@ -969,19 +1019,19 @@ button {
 }
 
 .social-links {
-    margin-top: 16px;
+    margin-top: var(--sp-4);
 }
 
 /* Formulario de contacto */
 .contact-form-mini {
     display: grid;
-    gap: 10px;
+    gap: var(--sp-2);
 }
 
 .form-group-mini input,
 .form-group-mini textarea {
     width: 100%;
-    padding: 11px 12px;
+    padding: var(--sp-3) var(--sp-3);
     background: var(--white);
     border: 1px solid var(--black);
     font-size: var(--fs-small);
@@ -1005,7 +1055,7 @@ button {
 }
 
 .footer-submit-btn {
-    padding: 13px 20px;
+    padding: var(--sp-3) var(--sp-4);
     background: var(--black);
     color: var(--white);
     border: 1px solid var(--black);
@@ -1018,12 +1068,12 @@ button {
 }
 
 .footer-bottom {
-    margin-top: 56px;
-    padding: 18px var(--pad-x);
+    margin-top: var(--sp-7);
+    padding: var(--sp-4) var(--pad-x);
     border-top: 1px solid var(--black);
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--sp-2);
     justify-content: space-between;
 }
 
@@ -1080,8 +1130,8 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding: 18px 20px;
+    gap: var(--sp-4);
+    padding: var(--sp-4) var(--sp-4);
     border-bottom: 1px solid var(--black);
 }
 
@@ -1110,11 +1160,11 @@ button {
 .cart-items {
     flex: 1;
     overflow-y: auto;
-    padding: 0 20px;
+    padding: 0 var(--sp-4);
 }
 
 .empty-cart {
-    padding: 70px 0;
+    padding: var(--sp-8) 0;
     text-align: center;
     color: var(--grey);
     font-size: var(--fs-nano);
@@ -1129,8 +1179,8 @@ button {
 .cart-item {
     display: grid;
     grid-template-columns: 72px 1fr;
-    gap: 14px;
-    padding: 18px 0;
+    gap: var(--sp-3);
+    padding: var(--sp-4) 0;
     border-bottom: 1px solid var(--grey-light);
 }
 
@@ -1152,20 +1202,20 @@ button {
     font-size: var(--fs-small);
     letter-spacing: var(--track);
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: var(--sp-1);
 }
 
 .cart-item-price {
     font-size: var(--fs-nano);
     color: var(--grey);
     font-variant-numeric: tabular-nums;
-    margin-bottom: 12px;
+    margin-bottom: var(--sp-3);
 }
 
 .cart-item-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--sp-2);
 }
 
 .quantity-btn {
@@ -1203,14 +1253,14 @@ button {
 }
 
 .cart-footer {
-    padding: 18px 20px;
+    padding: var(--sp-4) var(--sp-4);
     border-top: 1px solid var(--black);
 }
 
 .cart-total {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: var(--sp-3);
     font-size: var(--fs-nano);
     letter-spacing: var(--track);
     text-transform: uppercase;
@@ -1223,7 +1273,7 @@ button {
 .checkout-btn,
 .submit-order-btn {
     width: 100%;
-    padding: 15px 20px;
+    padding: var(--sp-4) var(--sp-4);
     background: var(--black);
     color: var(--white);
     border: 1px solid var(--black);
@@ -1275,34 +1325,34 @@ button {
 }
 
 .checkout-content {
-    padding: 22px 20px 26px;
+    padding: var(--sp-5) var(--sp-4) var(--sp-5);
 }
 
 .order-summary {
     border: 1px solid var(--black);
-    padding: 16px;
-    margin-bottom: 22px;
+    padding: var(--sp-4);
+    margin-bottom: var(--sp-5);
 }
 
 .order-summary h3 {
     font-size: var(--fs-nano);
     font-weight: 600;
-    margin: 0 0 12px;
+    margin: 0 0 var(--sp-3);
 }
 
 .order-item {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--sp-3);
     font-size: var(--fs-small);
-    padding: 5px 0;
+    padding: var(--sp-1) 0;
 }
 
 .order-total {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-3);
     border-top: 1px solid var(--black);
     font-size: var(--fs-nano);
     letter-spacing: var(--track);
@@ -1311,12 +1361,12 @@ button {
 }
 
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: var(--sp-4);
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: var(--sp-1);
     font-size: var(--fs-micro);
     letter-spacing: var(--track);
     text-transform: uppercase;
@@ -1326,7 +1376,7 @@ button {
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 11px 12px;
+    padding: var(--sp-3) var(--sp-3);
     background: var(--white);
     border: 1px solid var(--black);
     font-size: var(--fs-small);
@@ -1335,18 +1385,18 @@ button {
 
 .success-message {
     text-align: center;
-    padding: 40px 10px;
+    padding: var(--sp-6) var(--sp-2);
 }
 
 .success-icon {
     font-size: 30px;
-    margin-bottom: 14px;
+    margin-bottom: var(--sp-3);
 }
 
 .success-message h3 {
     font-size: var(--fs-small);
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: var(--sp-3);
 }
 
 .success-message p {
@@ -1361,7 +1411,7 @@ button {
 
 .cta-button {
     display: inline-block;
-    padding: 13px 30px;
+    padding: var(--sp-3) var(--sp-6);
     background: var(--black);
     color: var(--white);
     border: 1px solid var(--black);
@@ -1384,7 +1434,7 @@ button {
     display: none;
     align-items: flex-start;
     justify-content: center;
-    padding: 24px 16px;
+    padding: var(--sp-5) var(--sp-4);
     overflow-y: auto;
 }
 
@@ -1398,11 +1448,11 @@ button {
 }
 
 .auth-form {
-    padding: 22px 20px 26px;
+    padding: var(--sp-5) var(--sp-4) var(--sp-5);
 }
 
 .auth-footer {
-    margin: 16px 0 0;
+    margin: var(--sp-4) 0 0;
     text-align: center;
     font-size: var(--fs-small);
     color: var(--grey);
@@ -1417,14 +1467,14 @@ button {
 .auth-warning,
 .auth-success {
     border: 1px solid var(--black);
-    padding: 14px 16px;
-    margin-top: 16px;
+    padding: var(--sp-3) var(--sp-4);
+    margin-top: var(--sp-4);
     font-size: var(--fs-small);
 }
 
 .auth-warning p,
 .auth-success p {
-    margin: 0 0 4px;
+    margin: 0 0 var(--sp-1);
 }
 
 /* ==========================================================================
@@ -1438,17 +1488,17 @@ button {
     z-index: 1300;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--sp-2);
     pointer-events: none;
 }
 
 .toast {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: var(--sp-2);
     background: var(--black);
     color: var(--white);
-    padding: 12px 18px;
+    padding: var(--sp-3) var(--sp-4);
     font-size: var(--fs-nano);
     letter-spacing: var(--track);
     text-transform: uppercase;
@@ -1483,7 +1533,7 @@ button {
         flex-direction: column;
         align-items: flex-start;
         gap: 0;
-        padding: 8px var(--pad-x) 22px;
+        padding: var(--sp-2) var(--pad-x) var(--sp-5);
         background: var(--white);
         border-bottom: 1px solid var(--black);
         transform: translateY(-8px);
@@ -1505,7 +1555,7 @@ button {
 
     .nav-links a {
         display: block;
-        padding: 15px 0;
+        padding: var(--sp-4) 0;
     }
 
     .nav-links a::after {
@@ -1513,7 +1563,7 @@ button {
     }
 
     .nav-actions {
-        gap: 14px;
+        gap: var(--sp-3);
     }
 
     .nav-auth,
@@ -1532,8 +1582,8 @@ button {
 
     .section-head {
         flex-direction: column;
-        gap: 6px;
-        padding-top: 48px;
+        gap: var(--sp-1);
+        padding-top: var(--sp-7);
     }
 }
 
@@ -1560,7 +1610,7 @@ font font {
    ========================================================================== */
 
 .size-picker {
-    margin: 24px 0 4px;
+    margin: var(--sp-5) 0 var(--sp-1);
 }
 
 .size-picker-label {
@@ -1569,18 +1619,18 @@ font font {
     letter-spacing: var(--track-wide);
     text-transform: uppercase;
     color: var(--grey);
-    margin-bottom: 10px;
+    margin-bottom: var(--sp-2);
 }
 
 .size-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--sp-1);
 }
 
 .size-option {
     min-width: 46px;
-    padding: 10px 12px;
+    padding: var(--sp-2) var(--sp-3);
     background: var(--white);
     border: 1px solid var(--grey-light);
     color: var(--black);
@@ -1611,7 +1661,7 @@ font font {
 }
 
 .size-hint {
-    margin: 10px 0 0;
+    margin: var(--sp-2) 0 0;
     font-size: var(--fs-micro);
     letter-spacing: var(--track);
     text-transform: uppercase;
@@ -1688,4 +1738,284 @@ font font {
     z-index: 1;
     background: var(--white);
     color: var(--black);
+}
+
+/* ==========================================================================
+   BARRA DE LA TIENDA — contador, filtros y orden
+   ========================================================================== */
+
+.shop-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+    padding: 0 var(--pad-x) var(--sp-5);
+}
+
+.shop-count {
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+    font-variant-numeric: tabular-nums;
+}
+
+.shop-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-5);
+}
+
+.shop-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+.shop-select-wrap > label {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+.shop-select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    border-bottom: 1px solid var(--black);
+    background: none;
+    padding: var(--sp-1) var(--sp-5) var(--sp-1) 0;
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.shop-select:focus {
+    outline: none;
+    border-bottom-width: 2px;
+}
+
+/* Punta del desplegable, dibujada aparte porque quitamos la nativa. */
+.shop-select-wrap::after {
+    content: "";
+    position: absolute;
+    right: var(--sp-2);
+    width: 6px;
+    height: 6px;
+    border-right: 1px solid var(--black);
+    border-bottom: 1px solid var(--black);
+    transform: translateY(-2px) rotate(45deg);
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   TARJETA DE PRODUCTO — guardar, puntos de galería, metadatos
+   ========================================================================== */
+
+/* Guardar / lista de deseos */
+.wish-btn {
+    position: absolute;
+    top: var(--sp-3);
+    right: var(--sp-3);
+    z-index: 3;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    color: var(--black);
+    opacity: .55;
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+.product-card:hover .wish-btn,
+.wish-btn.is-active,
+.wish-btn:focus-visible {
+    opacity: 1;
+}
+
+.wish-btn:hover {
+    transform: scale(1.12);
+}
+
+.wish-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+}
+
+.wish-btn.is-active svg {
+    fill: currentColor;
+}
+
+/* Puntos de galería, sólo si el producto tiene más de una foto */
+.card-dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--sp-3);
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-1);
+    pointer-events: none;
+}
+
+.card-dot {
+    width: 5px;
+    height: 5px;
+    border: 1px solid var(--black);
+    background: transparent;
+    transition: background .2s ease;
+}
+
+.card-dot.is-active {
+    background: var(--black);
+}
+
+/* Segunda foto: se apila encima y aparece al pasar el ratón */
+.product-image-alt {
+    position: absolute;
+    inset: var(--sp-5);
+    width: auto;
+    height: auto;
+    opacity: 0;
+}
+
+.product-card:hover .product-image-alt {
+    opacity: 1;
+}
+
+.product-card:hover .product-image-bg:not(.product-image-alt) {
+    opacity: 0;
+}
+
+/* Metadatos bajo el nombre */
+.product-meta-line {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+    margin: var(--sp-1) 0 0;
+}
+
+/* Muestras de color en la tarjeta */
+.swatches {
+    display: flex;
+    gap: var(--sp-1);
+    margin-top: var(--sp-2);
+}
+
+.swatch {
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--grey-light);
+}
+
+/* ==========================================================================
+   MIGAS DE PAN
+   ========================================================================== */
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+.breadcrumbs a:hover {
+    color: var(--black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.breadcrumbs [aria-current="page"] {
+    color: var(--black);
+}
+
+/* ==========================================================================
+   SELECTOR DE IDIOMA
+   Antes solo decía «ES» y no se veía que hubiera nada que desplegar.
+   Ahora enseña los tres idiomas y una punta que indica el menú.
+   ========================================================================== */
+
+.lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    font-size: var(--fs-nano);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+}
+
+.lang-current {
+    color: var(--black);
+}
+
+.lang-rest {
+    color: var(--grey);
+}
+
+.lang-caret {
+    width: 5px;
+    height: 5px;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform .2s ease;
+}
+
+.nav-lang.open .lang-caret,
+.nav-lang:hover .lang-caret {
+    transform: translateY(0) rotate(-135deg);
+}
+
+.lang-menu a[aria-current="true"] {
+    font-weight: 600;
+}
+
+/* En móvil el botón se queda solo con el idioma activo, por espacio. */
+@media (max-width: 700px) {
+    .lang-rest {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   BOTONES — inversión a negro/blanco al pasar el ratón
+   ========================================================================== */
+
+.add-to-cart-btn {
+    border: 1px solid var(--black);
+    background: var(--white);
+    color: var(--black);
+    padding: var(--sp-2) var(--sp-4);
+    transition: background .2s ease, color .2s ease;
+}
+
+.add-to-cart-btn:hover:not(.disabled):not(:disabled) {
+    background: var(--black);
+    color: var(--white);
+}
+
+.add-to-cart-btn.disabled,
+.add-to-cart-btn:disabled {
+    border-color: var(--grey-light);
+    color: var(--grey);
+    cursor: not-allowed;
+}
+
+/* Zoom contenido al pasar por la tarjeta. Con 'contain' la prenda no
+   llena la celda, así que el zoom se nota sin recortar nada. */
+.product-card:hover .product-image-bg {
+    transform: scale(1.04);
 }

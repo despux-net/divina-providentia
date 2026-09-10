@@ -39,6 +39,20 @@ alter table public.products
   add column if not exists stock_by_size jsonb not null default '{}'::jsonb,
   add column if not exists updated_at    timestamptz not null default now();
 
+-- 1.2b Galería, colores y ficha técnica.
+--
+--   images:   ["archivo1.png", "archivo2.png"] — nombres dentro del
+--             bucket 'products'. La portada sigue siendo 'image', para
+--             no romper lo que ya está publicado; si 'images' está
+--             vacío, la web usa 'image' como foto única.
+--   colors:   [{"name": "Negro", "hex": "#000000"}]
+alter table public.products
+  add column if not exists images   jsonb not null default '[]'::jsonb,
+  add column if not exists colors   jsonb not null default '[]'::jsonb,
+  add column if not exists material text,
+  add column if not exists care     text;
+
+
 -- 1.3 Datos del cliente en el pedido (la tabla original no guardaba
 --     ninguno). customer_name es el nombre de pila; en los pedidos
 --     anteriores a que existiera customer_surname puede contener el
