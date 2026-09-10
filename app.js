@@ -179,11 +179,28 @@ async function loadSiteSettings() {
     try {
         const { data, error } = await window.supabaseClient
             .from('site_settings')
-            .select('require_account')
+            .select('require_account, theme')
             .eq('id', 1)
             .maybeSingle();
 
-        if (!error && data) siteSettings.requireAccount = !!data.require_account;
+        if (!error && data) {
+            siteSettings.requireAccount = !!data.require_account;
+
+            // En la vista previa del panel manda el borrador que el
+            // dueño está tocando, no lo que hay guardado: si se aplicara
+            // aquí, machacaría sus cambios sin avisar.
+            const isPreview = location.search.includes('preview');
+
+            // El tema se guarda también en el navegador para poder
+            // aplicarlo de inmediato en la siguiente visita, antes de
+            // que dé tiempo a consultar la base.
+            if (data.theme && window.DPTheme && !isPreview) {
+                window.DPTheme.apply(data.theme);
+                try {
+                    localStorage.setItem('dpTheme', JSON.stringify(data.theme));
+                } catch (e) { /* almacenamiento lleno o bloqueado */ }
+            }
+        }
     } catch (e) {
         // Ante la duda, no se bloquea la compra: el servidor tiene la
         // última palabra y rechazará el pedido si hiciera falta cuenta.

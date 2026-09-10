@@ -21,6 +21,16 @@
     <link rel="stylesheet" href="styles.css?v=10">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="theme.js?v=1"></script>
+    <script>
+        // El tema guardado se aplica antes de pintar, desde la copia que
+        // quedó en el navegador. Sin esto la web se vería un instante con
+        // los colores y la tipografía de fábrica antes de cambiar.
+        try {
+            var t = localStorage.getItem('dpTheme');
+            if (t) window.DPTheme.apply(JSON.parse(t));
+        } catch (e) { /* sin copia local: se usan los valores de fábrica */ }
+    </script>
 </head>
 
 <body>

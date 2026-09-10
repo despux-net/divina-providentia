@@ -545,6 +545,11 @@ end $$;
 alter table public.site_settings
   add column if not exists hero_image text;
 
+-- Apariencia de la web: tipografías, tamaños, colores y portada.
+-- Vacío significa "los valores de fábrica de styles.css".
+alter table public.site_settings
+  add column if not exists theme jsonb not null default '{}'::jsonb;
+
 -- Interruptor de "hay que tener cuenta para comprar".
 -- Apagado (false) = cualquiera compra como invitado, que es lo que hay
 -- hoy. Encendido = solo compran los usuarios identificados.

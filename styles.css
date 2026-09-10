@@ -4,6 +4,10 @@
    en mayúsculas. Sin color, sin radios, sin sombras, sin degradados.
    ========================================================================== */
 
+/* Todo lo que hay aquí abajo se puede sobrescribir desde el panel de
+   administración (pestaña Apariencia). Estos son los valores de fábrica:
+   si el dueño no toca nada, o si algo falla al leer sus ajustes, la web
+   se ve exactamente así. */
 :root {
     --black: #000;
     --white: #fff;
@@ -22,6 +26,21 @@
     --track-wide: 0.16em;
 
     --pad-x: 20px;
+
+    /* Tipografía */
+    --font-body: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+    --font-head: var(--font-body);
+    --weight-head: 600;
+
+    /* Portada */
+    --hero-title-size: clamp(2.6rem, 11vw, 9rem);
+    --hero-align: center;
+    --hero-justify: center;
+    --hero-min-h: 100svh;
+    --hero-overlay: .32;
+
+    /* Títulos de sección */
+    --section-title-size: var(--fs-small);
 }
 
 @media (min-width: 900px) {
@@ -47,7 +66,7 @@ body {
     margin: 0;
     background: var(--white);
     color: var(--black);
-    font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+    font-family: var(--font-body);
     font-size: var(--fs-body);
     line-height: 1.45;
     -webkit-font-smoothing: antialiased;
@@ -292,13 +311,13 @@ button {
    ========================================================================== */
 
 .hero {
-    min-height: 100svh;
+    min-height: var(--hero-min-h);
     padding-top: var(--nav-h);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    text-align: center;
+    align-items: var(--hero-justify);
+    text-align: var(--hero-align);
     position: relative;
     border-bottom: 1px solid var(--black);
 }
@@ -308,8 +327,9 @@ button {
 }
 
 .hero-title {
-    font-size: clamp(2.6rem, 11vw, 9rem);
-    font-weight: 600;
+    font-family: var(--font-head);
+    font-size: var(--hero-title-size);
+    font-weight: var(--weight-head);
     line-height: .92;
     letter-spacing: 0.02em;
     margin: 0 0 26px;
@@ -384,8 +404,9 @@ button {
 }
 
 .section-head h2 {
-    font-size: clamp(1.1rem, 2.6vw, 1.6rem);
-    font-weight: 600;
+    font-family: var(--font-head);
+    font-size: var(--section-title-size);
+    font-weight: var(--weight-head);
 }
 
 .section-meta {
@@ -1634,7 +1655,7 @@ font font {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, .32);
+    background: rgba(0, 0, 0, var(--hero-overlay));
     pointer-events: none;
 }
 

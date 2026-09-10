@@ -31,6 +31,8 @@ const state = {
     orders: [],
     lookbook: [],
     heroImage: null,
+    theme: {},
+    themeSaved: {},
     orderFilter: 'all',
     openOrderId: null,
     editing: null,
@@ -134,6 +136,7 @@ function showPanel(email) {
     loadLookbook();
     loadHero();
     loadSettings();
+    loadTheme();
 }
 
 async function handleLogin(e) {
@@ -769,6 +772,123 @@ async function removeHero() {
 
 
 // ===================================================================
+// APARIENCIA
+//
+// El borrador vive en state.theme. Se pinta en el marco de vista previa
+// a cada cambio y solo llega a la base cuando se pulsa Guardar, para
+// poder trastear sin que lo vean los clientes.
+// ===================================================================
+
+function themeIsDirty() {
+    return JSON.stringify(state.theme) !== JSON.stringify(state.themeSaved);
+}
+
+function markThemeDirty() {
+    $('themeDirty').hidden = !themeIsDirty();
+}
+
+function fillFontSelects() {
+    const options = Object.entries(DPTheme.FONTS)
+        .map(([key, f]) => `<option value="${escapeHtml(key)}">${escapeHtml(f.label)}</option>`)
+        .join('');
+    $('fontHead').innerHTML = options;
+    $('fontBody').innerHTML = options;
+}
+
+// Vuelca el borrador en los controles y en la vista previa.
+function renderTheme() {
+    const t = DPTheme.normalize(state.theme);
+    state.theme = t;
+
+    document.querySelectorAll('[data-theme]').forEach(input => {
+        const key = input.dataset.theme;
+        if (input.value !== String(t[key])) input.value = t[key];
+    });
+
+    document.querySelectorAll('[data-out]').forEach(out => {
+        const v = t[out.dataset.out];
+        out.textContent = typeof v === 'number' ? String(Math.round(v * 100) / 100) : v;
+    });
+
+    $('heroAlignSeg').querySelectorAll('button').forEach(b => {
+        b.classList.toggle('is-active', b.dataset.align === t.heroAlign);
+    });
+
+    applyThemeToPreview();
+    markThemeDirty();
+}
+
+function applyThemeToPreview() {
+    const frame = $('themePreview');
+    const doc = frame && frame.contentDocument;
+    // Antes de que el marco cargue no hay nada que pintar; al terminar
+    // de cargar se vuelve a llamar desde el evento 'load'.
+    if (!doc || !doc.documentElement) return;
+    try {
+        DPTheme.apply(state.theme, doc);
+    } catch (e) {
+        console.warn('No se pudo pintar la vista previa:', e);
+    }
+}
+
+async function loadTheme() {
+    fillFontSelects();
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .select('theme')
+        .eq('id', 1)
+        .maybeSingle();
+
+    if (error) {
+        $('themeError').textContent =
+            'No se pudo leer la apariencia. ¿Has ejecutado la última versión del SQL?';
+        $('themeSaveBtn').disabled = true;
+        console.error(error);
+        return;
+    }
+
+    $('themeSaveBtn').disabled = false;
+    state.themeSaved = DPTheme.normalize((data && data.theme) || {});
+    state.theme = Object.assign({}, state.themeSaved);
+    renderTheme();
+}
+
+async function saveTheme() {
+    const btn = $('themeSaveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Guardando…';
+    $('themeError').textContent = '';
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .update({ theme: state.theme })
+        .eq('id', 1)
+        .select();
+
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+
+    if (error || !data || data.length === 0) {
+        $('themeError').textContent = 'No se pudo guardar la apariencia.';
+        console.error(error);
+        return;
+    }
+
+    state.themeSaved = Object.assign({}, state.theme);
+    markThemeDirty();
+    toast('Apariencia guardada');
+}
+
+function resetTheme() {
+    if (!confirm('¿Volver a la apariencia original? Se pierden los cambios que no hayas guardado.')) return;
+    state.theme = Object.assign({}, DPTheme.DEFAULTS);
+    renderTheme();
+    toast('Valores de fábrica cargados. Pulsa Guardar para aplicarlos.');
+}
+
+
+// ===================================================================
 // AJUSTES DE LA TIENDA
 // ===================================================================
 
@@ -1074,6 +1194,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ajustes
     $('requireAccount').addEventListener('change', saveRequireAccount);
+
+    // Apariencia
+    $('themeControls').addEventListener('input', (e) => {
+        const key = e.target.dataset.theme;
+        if (!key) return;
+        const raw = e.target.value;
+        // Los desplegables de tipografía y los colores son texto; el
+        // resto son números.
+        state.theme[key] = /^(font|col)/.test(key) ? raw : Number(raw);
+        renderTheme();
+    });
+
+    $('heroAlignSeg').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-align]');
+        if (!btn) return;
+        state.theme.heroAlign = btn.dataset.align;
+        renderTheme();
+    });
+
+    $('previewSizeSeg').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-w]');
+        if (!btn) return;
+        $('previewSizeSeg').querySelectorAll('button').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        $('themePreview').classList.toggle('is-mobile', btn.dataset.w === '390');
+    });
+
+    // El marco tarda en cargar y puede recargarse solo; cada vez hay que
+    // volver a pintarle el borrador.
+    $('themePreview').addEventListener('load', applyThemeToPreview);
+
+    $('themeSaveBtn').addEventListener('click', saveTheme);
+    $('themeResetBtn').addEventListener('click', resetTheme);
+
+    // Aviso al salir con cambios sin guardar.
+    window.addEventListener('beforeunload', (e) => {
+        if (themeIsDirty()) { e.preventDefault(); e.returnValue = ''; }
+    });
 
     $('pImageBtn').addEventListener('click', () => $('pImageFile').click());
     $('pImageFile').addEventListener('change', (e) => {

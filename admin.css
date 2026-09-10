@@ -1146,3 +1146,170 @@ img {
     opacity: .4;
     cursor: not-allowed;
 }
+
+/* ============================ APARIENCIA ============================ */
+
+.appearance {
+    display: grid;
+    grid-template-columns: minmax(280px, 340px) 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .appearance {
+        grid-template-columns: 1fr;
+    }
+}
+
+.appearance-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dirty-flag {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 3px 8px;
+}
+
+.appearance-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.group {
+    border: 1px solid var(--grey-light);
+    padding: 16px;
+    margin: 0;
+}
+
+.group legend {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+    padding: 0 6px;
+}
+
+.group .field:last-child {
+    margin-bottom: 0;
+}
+
+.group .field > span b {
+    color: var(--black);
+    font-weight: 600;
+}
+
+.appearance input[type="range"] {
+    width: 100%;
+    accent-color: #000;
+    margin: 0;
+}
+
+.color-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.color-field > span {
+    margin-bottom: 0;
+}
+
+.color-field input[type="color"] {
+    width: 46px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--grey-light);
+    background: none;
+    cursor: pointer;
+}
+
+/* Segmentado (alineación, tamaño de la vista previa) */
+.seg {
+    display: flex;
+}
+
+.seg button {
+    flex: 1 1 auto;
+    padding: 9px 10px;
+    border: 1px solid var(--grey-light);
+    background: var(--white);
+    font: inherit;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--grey);
+    cursor: pointer;
+}
+
+.seg button + button {
+    border-left: 0;
+}
+
+.seg button.is-active {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+}
+
+/* Vista previa */
+.appearance-preview {
+    position: sticky;
+    top: 116px;
+    border: 1px solid var(--grey-light);
+    background: var(--grey-bg);
+}
+
+.preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--grey-light);
+    background: var(--white);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+.preview-bar .seg {
+    flex: 0 0 auto;
+}
+
+.preview-frame-wrap {
+    height: 62vh;
+    min-height: 420px;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+}
+
+#themePreview {
+    border: 1px solid var(--grey-light);
+    background: #fff;
+    width: 1100px;
+    height: 1400px;
+    /* Se encoge para que quepa entera; el ancho real sigue siendo el de
+       arriba, así la web se maqueta como en un navegador de verdad. */
+    transform: scale(.46);
+    transform-origin: top center;
+    margin-bottom: -700px;
+    transition: width .2s ease, transform .2s ease;
+}
+
+#themePreview.is-mobile {
+    width: 390px;
+    transform: scale(.8);
+    margin-bottom: -260px;
+}
