@@ -1614,3 +1614,57 @@ font font {
     color: var(--grey);
     margin-top: 2px;
 }
+
+/* ==========================================================================
+   PORTADA CON IMAGEN
+   Solo se activa cuando el administrador ha subido una foto. Sin ella,
+   la portada mantiene el blanco original.
+   ========================================================================== */
+
+.hero.has-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--white);
+}
+
+/* Velo oscuro: sin él, el rótulo negro desaparece sobre una foto clara
+   y el blanco sobre una oscura. Con el velo, cualquier foto vale. */
+.hero.has-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .32);
+    pointer-events: none;
+}
+
+.hero.has-image .hero-inner {
+    position: relative;
+    z-index: 1;
+}
+
+.hero.has-image .hero-title {
+    color: var(--white);
+}
+
+.hero.has-image .hero-sub {
+    color: rgba(255, 255, 255, .82);
+}
+
+.hero.has-image .hero-link {
+    background: var(--white);
+    border-color: var(--white);
+    color: var(--black);
+}
+
+.hero.has-image .hero-link:hover {
+    background: transparent;
+    color: var(--white);
+}
+
+/* La marquesina inferior va sobre el velo, no bajo él. */
+.hero.has-image .hero-marquee {
+    z-index: 1;
+    background: var(--white);
+    color: var(--black);
+}

@@ -57,6 +57,8 @@
             <button class="tab is-active" data-tab="resumen">Resumen</button>
             <button class="tab" data-tab="productos">Productos</button>
             <button class="tab" data-tab="pedidos">Pedidos</button>
+            <button class="tab" data-tab="lookbook">Lookbook</button>
+            <button class="tab" data-tab="portada">Portada</button>
         </nav>
 
         <main class="content">
@@ -93,6 +95,48 @@
                 </div>
                 <div id="ordersList">
                     <div class="loading">Cargando…</div>
+                </div>
+            </section>
+
+            <!-- ---------------- LOOKBOOK ---------------- -->
+            <section class="tab-panel" id="panel-lookbook">
+                <div class="section-bar">
+                    <h2>Lookbook</h2>
+                    <div>
+                        <input type="file" id="lookbookFile" accept="image/*" multiple hidden>
+                        <button class="btn btn-primary" id="addLookbookBtn">Añadir imágenes</button>
+                    </div>
+                </div>
+                <p class="hint" style="margin-bottom:18px">
+                    Son las fotos del carrusel «Nuestros modelos». Se muestran en el orden de abajo;
+                    usa las flechas para moverlas.
+                </p>
+                <div id="lookbookGrid">
+                    <div class="loading">Cargando…</div>
+                </div>
+            </section>
+
+            <!-- ---------------- PORTADA ---------------- -->
+            <section class="tab-panel" id="panel-portada">
+                <div class="section-bar">
+                    <h2>Portada</h2>
+                </div>
+                <p class="hint" style="margin-bottom:18px">
+                    Imagen de fondo de la primera pantalla, detrás del rótulo DIVINA PROVIDENTIA.
+                    Si no pones ninguna, el fondo queda en blanco.
+                    Se recomienda una foto apaisada y grande (mínimo 1920&nbsp;px de ancho).
+                </p>
+
+                <div class="hero-editor">
+                    <div class="hero-preview" id="heroPreview">
+                        <div class="hero-preview-empty">Sin imagen</div>
+                    </div>
+                    <div class="hero-editor-actions">
+                        <input type="file" id="heroFile" accept="image/*" hidden>
+                        <button class="btn btn-primary" id="heroUploadBtn">Subir imagen…</button>
+                        <button class="btn btn-danger" id="heroRemoveBtn">Quitar imagen</button>
+                        <p class="hint" id="heroStatus"></p>
+                    </div>
                 </div>
             </section>
 
@@ -146,6 +190,7 @@
                 <legend>Existencias</legend>
                 <div id="stockFields" class="stock-fields"></div>
                 <p class="hint">El stock se descuenta solo con cada venta. Una talla a 0 aparece tachada en la tienda.</p>
+                <p class="form-error" id="stockWarning"></p>
             </fieldset>
 
             <div class="form-row">

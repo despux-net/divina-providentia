@@ -29,6 +29,8 @@ const CATEGORY_NAMES = {
 const state = {
     products: [],
     orders: [],
+    lookbook: [],
+    heroImage: null,
     orderFilter: 'all',
     openOrderId: null,
     editing: null,
@@ -122,6 +124,8 @@ function showPanel(email) {
     loadStats();
     loadProducts();
     loadOrders();
+    loadLookbook();
+    loadHero();
 }
 
 async function handleLogin(e) {
@@ -219,6 +223,14 @@ function stockKeys(product) {
     return stored.length ? stored : [SINGLE_SIZE];
 }
 
+// Unidades totales. Es lo que decide si la tienda deja comprar, así que
+// el panel tiene que enseñarlo igual que lo aplica la web.
+function totalStock(product) {
+    const stock = product.stock_by_size || {};
+    return stockKeys(product)
+        .reduce((sum, size) => sum + (parseInt(stock[size], 10) || 0), 0);
+}
+
 async function loadProducts() {
     const list = $('productsList');
 
@@ -255,6 +267,19 @@ function renderProducts() {
             return `<span class="stock-pill${n === 0 ? ' zero' : ''}">${escapeHtml(label)}${n}</span>`;
         }).join('');
 
+        // Estado efectivo, que es el que ve el cliente. Marcar "a la venta"
+        // no basta: si no hay unidades, la tienda lo sigue dando por
+        // agotado, y eso desde el panel era invisible.
+        const units = totalStock(product);
+        let saleFlag, saleClass;
+        if (!product.available) {
+            saleFlag = 'Agotado'; saleClass = 'off';
+        } else if (units === 0) {
+            saleFlag = 'Sin stock'; saleClass = 'warn';
+        } else {
+            saleFlag = 'A la venta'; saleClass = 'on';
+        }
+
         return `
         <div class="prod-row" data-id="${product.id}">
             <div class="prod-thumb">
@@ -268,7 +293,7 @@ function renderProducts() {
             <div class="prod-price">${money(product.price)}</div>
             <div class="prod-flags">
                 <span class="flag ${product.published ? 'on' : 'off'}">${product.published ? 'Publicado' : 'Borrador'}</span>
-                <span class="flag ${product.available ? 'on' : 'off'}">${product.available ? 'A la venta' : 'Agotado'}</span>
+                <span class="flag ${saleClass}">${saleFlag}</span>
             </div>
         </div>`;
     }).join('');
@@ -318,6 +343,7 @@ function openProductForm(product) {
     );
 
     $('deleteProductBtn').hidden = !product;
+    refreshStockWarning();
 
     $('productOverlay').hidden = false;
     $('productModal').hidden = false;
@@ -341,6 +367,19 @@ function onSizesChanged() {
         current[input.dataset.size] = parseInt(input.value, 10) || 0;
     });
     renderStockFields(sizes, current);
+    refreshStockWarning();
+}
+
+// Avisa en vivo del caso que más despista: interruptor puesto y cero
+// unidades, que en la tienda se sigue viendo como agotado.
+function refreshStockWarning() {
+    const el = $('stockWarning');
+    if (!el) return;
+
+    const units = Object.values(collectStock()).reduce((a, b) => a + b, 0);
+    el.textContent = ($('pAvailable').checked && units === 0)
+        ? 'Está marcado «A la venta» pero no hay unidades: en la tienda seguirá saliendo AGOTADO hasta que pongas cantidades.'
+        : '';
 }
 
 function collectStock() {
@@ -395,12 +434,18 @@ async function saveProduct(e) {
         }
 
         const id = $('pId').value;
+        // El .select() no es decorativo: sin él, una escritura que la RLS
+        // filtre devuelve error null y el panel cantaría "guardado" sin
+        // haber guardado nada. Con él comprobamos que volvió la fila.
         const query = id
-            ? supabaseClient.from('products').update(payload).eq('id', id)
-            : supabaseClient.from('products').insert([payload]);
+            ? supabaseClient.from('products').update(payload).eq('id', id).select()
+            : supabaseClient.from('products').insert([payload]).select();
 
-        const { error } = await query;
+        const { data, error } = await query;
         if (error) throw error;
+        if (!data || data.length === 0) {
+            throw new Error('La base de datos rechazó el cambio. Cierra sesión, vuelve a entrar e inténtalo otra vez.');
+        }
 
         closeProductForm();
         toast(id ? 'Producto actualizado' : 'Producto creado');
@@ -436,6 +481,261 @@ async function deleteProduct() {
     toast('Producto eliminado');
     loadProducts();
     loadStats();
+}
+
+
+// ===================================================================
+// LOOKBOOK
+//
+// A diferencia de los productos, aquí la tabla guarda la URL pública
+// entera, no el nombre del archivo. Se respeta ese formato para no
+// romper las filas que ya existen.
+// ===================================================================
+
+const LOOKBOOK_BUCKET = 'lookbook';
+
+async function loadLookbook() {
+    const grid = $('lookbookGrid');
+
+    const { data, error } = await supabaseClient
+        .from('lookbook_images')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+    if (error) {
+        grid.innerHTML = '<div class="loading">No se pudo cargar el lookbook</div>';
+        console.error(error);
+        return;
+    }
+
+    state.lookbook = data || [];
+    renderLookbook();
+}
+
+function renderLookbook() {
+    const grid = $('lookbookGrid');
+
+    if (!state.lookbook.length) {
+        grid.innerHTML = '<div class="loading">Todavía no hay imágenes</div>';
+        return;
+    }
+
+    grid.className = 'lb-grid';
+    grid.innerHTML = state.lookbook.map((img, i) => `
+        <div class="lb-card">
+            <div class="lb-thumb">
+                <img src="${escapeHtml(img.image_url)}" alt="" loading="lazy">
+            </div>
+            <div class="lb-bar">
+                <span class="lb-pos">${i + 1}</span>
+                <button class="lb-btn" data-move="up" data-id="${img.id}"
+                        ${i === 0 ? 'disabled' : ''} title="Mover antes">&uarr;</button>
+                <button class="lb-btn" data-move="down" data-id="${img.id}"
+                        ${i === state.lookbook.length - 1 ? 'disabled' : ''} title="Mover después">&darr;</button>
+                <button class="lb-btn danger" data-remove="${img.id}" title="Eliminar">&times;</button>
+            </div>
+        </div>`).join('');
+
+    grid.querySelectorAll('[data-move]').forEach(btn => {
+        btn.addEventListener('click', () => moveLookbook(btn.dataset.id, btn.dataset.move));
+    });
+    grid.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', () => removeLookbook(btn.dataset.remove));
+    });
+}
+
+async function addLookbookImages(files) {
+    const btn = $('addLookbookBtn');
+    btn.disabled = true;
+
+    // Se sigue numerando a partir del último, para que las nuevas caigan
+    // al final en lugar de colarse delante.
+    let next = state.lookbook.length
+        ? Math.max(...state.lookbook.map(i => i.display_order || 0)) + 1
+        : 0;
+
+    let ok = 0;
+    try {
+        for (const file of files) {
+            btn.textContent = `Subiendo ${ok + 1}/${files.length}…`;
+
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+            const { error: upErr } = await supabaseClient.storage
+                .from(LOOKBOOK_BUCKET)
+                .upload(filename, file, { cacheControl: '3600', upsert: false });
+            if (upErr) throw upErr;
+
+            const publicUrl =
+                `${window.SUPABASE_URL}/storage/v1/object/public/${LOOKBOOK_BUCKET}/${filename}`;
+
+            const { data, error } = await supabaseClient
+                .from('lookbook_images')
+                .insert([{ image_url: publicUrl, display_order: next++ }])
+                .select();
+
+            if (error) throw error;
+            if (!data || !data.length) {
+                throw new Error('La base de datos rechazó la inserción.');
+            }
+            ok++;
+        }
+
+        toast(ok === 1 ? 'Imagen añadida' : `${ok} imágenes añadidas`);
+    } catch (err) {
+        console.error(err);
+        toast(err.message || 'No se pudo subir', true);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Añadir imágenes';
+        $('lookbookFile').value = '';
+        loadLookbook();
+    }
+}
+
+async function moveLookbook(id, direction) {
+    const i = state.lookbook.findIndex(x => String(x.id) === String(id));
+    const j = direction === 'up' ? i - 1 : i + 1;
+    if (i < 0 || j < 0 || j >= state.lookbook.length) return;
+
+    const a = state.lookbook[i];
+    const b = state.lookbook[j];
+
+    // Se intercambian las posiciones. Se usan los índices y no los
+    // display_order guardados porque pueden venir repetidos o con huecos.
+    const { error } = await supabaseClient.from('lookbook_images')
+        .upsert([{ id: a.id, display_order: j }, { id: b.id, display_order: i }]);
+
+    if (error) {
+        toast('No se pudo reordenar', true);
+        console.error(error);
+        return;
+    }
+
+    state.lookbook[i] = b;
+    state.lookbook[j] = a;
+    renderLookbook();
+}
+
+async function removeLookbook(id) {
+    if (!confirm('¿Eliminar esta imagen del lookbook?')) return;
+
+    const img = state.lookbook.find(x => String(x.id) === String(id));
+
+    const { error } = await supabaseClient
+        .from('lookbook_images').delete().eq('id', id);
+
+    if (error) {
+        toast('No se pudo eliminar', true);
+        console.error(error);
+        return;
+    }
+
+    // Se borra también el archivo, pero solo si vive en nuestro bucket:
+    // algunas filas antiguas apuntan al bucket de productos y no
+    // conviene dejar sin foto a un producto por limpiar el lookbook.
+    if (img && img.image_url.includes(`/public/${LOOKBOOK_BUCKET}/`)) {
+        const filename = img.image_url.split('/').pop();
+        await supabaseClient.storage.from(LOOKBOOK_BUCKET).remove([filename]);
+    }
+
+    toast('Imagen eliminada');
+    loadLookbook();
+}
+
+
+// ===================================================================
+// PORTADA
+// ===================================================================
+
+async function loadHero() {
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .select('hero_image')
+        .eq('id', 1)
+        .maybeSingle();
+
+    if (error) {
+        $('heroStatus').textContent =
+            'No se pudo leer la configuración. ¿Has ejecutado la última versión del SQL?';
+        console.error(error);
+        return;
+    }
+
+    state.heroImage = data ? data.hero_image : null;
+    renderHero();
+}
+
+function renderHero() {
+    const preview = $('heroPreview');
+
+    if (state.heroImage) {
+        preview.innerHTML =
+            `<img src="${escapeHtml(state.heroImage)}" alt="">
+             <div class="hero-preview-label">DIVINA<br>PROVIDENTIA</div>`;
+        $('heroRemoveBtn').hidden = false;
+    } else {
+        preview.innerHTML = '<div class="hero-preview-empty">Sin imagen</div>';
+        $('heroRemoveBtn').hidden = true;
+    }
+}
+
+async function saveHero(url) {
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .update({ hero_image: url })
+        .eq('id', 1)
+        .select();
+
+    if (error) throw error;
+    if (!data || !data.length) {
+        throw new Error('La base de datos rechazó el cambio. Ejecuta la última versión del SQL y vuelve a intentarlo.');
+    }
+
+    state.heroImage = url;
+    renderHero();
+}
+
+async function uploadHero(file) {
+    const btn = $('heroUploadBtn');
+    btn.disabled = true;
+    btn.textContent = 'Subiendo…';
+    $('heroStatus').textContent = '';
+
+    try {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const filename = `hero-${Date.now()}.${ext}`;
+
+        const { error: upErr } = await supabaseClient.storage
+            .from(LOOKBOOK_BUCKET)
+            .upload(filename, file, { cacheControl: '3600', upsert: false });
+        if (upErr) throw upErr;
+
+        await saveHero(
+            `${window.SUPABASE_URL}/storage/v1/object/public/${LOOKBOOK_BUCKET}/${filename}`
+        );
+        toast('Portada actualizada');
+    } catch (err) {
+        console.error(err);
+        $('heroStatus').textContent = err.message || 'No se pudo subir la imagen.';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Subir imagen…';
+        $('heroFile').value = '';
+    }
+}
+
+async function removeHero() {
+    if (!confirm('¿Quitar la imagen de portada? El fondo volverá a ser blanco.')) return;
+
+    try {
+        await saveHero(null);
+        toast('Portada sin imagen');
+    } catch (err) {
+        console.error(err);
+        $('heroStatus').textContent = err.message || 'No se pudo quitar la imagen.';
+    }
 }
 
 
@@ -576,6 +876,23 @@ document.addEventListener('DOMContentLoaded', () => {
     $('deleteProductBtn').addEventListener('click', deleteProduct);
     $('pSizes').addEventListener('change', onSizesChanged);
     $('pSizes').addEventListener('blur', onSizesChanged);
+    $('pAvailable').addEventListener('change', refreshStockWarning);
+    $('stockFields').addEventListener('input', refreshStockWarning);
+
+    // Lookbook
+    $('addLookbookBtn').addEventListener('click', () => $('lookbookFile').click());
+    $('lookbookFile').addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length) addLookbookImages(files);
+    });
+
+    // Portada
+    $('heroUploadBtn').addEventListener('click', () => $('heroFile').click());
+    $('heroFile').addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) uploadHero(file);
+    });
+    $('heroRemoveBtn').addEventListener('click', removeHero);
 
     $('pImageBtn').addEventListener('click', () => $('pImageFile').click());
     $('pImageFile').addEventListener('change', (e) => {

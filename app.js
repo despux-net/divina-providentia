@@ -26,6 +26,7 @@ async function initializeApp() {
     initializeNavbar();
     initializeEventListeners();
     loadCartFromStorage();
+    loadHeroImage();
     await loadProducts();
     await loadLookbookImages();
 }
@@ -161,6 +162,38 @@ function displayProducts() {
             }
         });
     });
+}
+
+// ===================================
+// PORTADA
+// ===================================
+
+// La imagen la elige el dueño desde el panel. Si no hay ninguna, la
+// portada se queda como estaba: fondo blanco y rótulo en negro.
+async function loadHeroImage() {
+    const hero = document.getElementById('inicio');
+    if (!hero || !window.supabaseClient) return;
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('site_settings')
+            .select('hero_image')
+            .eq('id', 1)
+            .maybeSingle();
+
+        if (error || !data || !data.hero_image) return;
+
+        // Se precarga antes de aplicarla para que no se vea el salto de
+        // blanco a foto ni un rótulo blanco sobre fondo blanco.
+        const img = new Image();
+        img.onload = () => {
+            hero.style.backgroundImage = `url("${data.hero_image}")`;
+            hero.classList.add('has-image');
+        };
+        img.src = data.hero_image;
+    } catch (e) {
+        console.warn('No se pudo cargar la portada:', e);
+    }
 }
 
 // ===================================

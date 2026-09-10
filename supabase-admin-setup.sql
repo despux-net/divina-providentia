@@ -481,7 +481,40 @@ end $$;
 
 
 -- =====================================================================
--- 11. COMPROBACIÓN
+-- 11. AJUSTES DEL SITIO Y PORTADA
+--     Esta tabla ya existía pero se quedó fuera del primer reparto de
+--     políticas: tenía RLS activa y ninguna política, así que no podía
+--     escribir en ella nadie, ni siquiera el administrador.
+-- =====================================================================
+
+alter table public.site_settings
+  add column if not exists hero_image text;
+
+-- Debe existir siempre la fila 1: es la que lee la web.
+insert into public.site_settings (id) values (1)
+on conflict (id) do nothing;
+
+alter table public.site_settings enable row level security;
+
+do $$
+declare r record;
+begin
+  for r in select policyname from pg_policies
+            where schemaname = 'public' and tablename = 'site_settings'
+  loop
+    execute format('drop policy %I on public.site_settings', r.policyname);
+  end loop;
+end $$;
+
+create policy site_settings_public_read on public.site_settings
+  for select using (true);
+
+create policy site_settings_admin_write on public.site_settings
+  for all using (public.is_admin()) with check (public.is_admin());
+
+
+-- =====================================================================
+-- 12. COMPROBACIÓN
 --     Debe devolver una fila por tabla, todas con rls_activa = true.
 -- =====================================================================
 
@@ -493,6 +526,7 @@ select c.relname            as tabla,
   left join pg_policies p on p.schemaname = 'public' and p.tablename = c.relname
  where n.nspname = 'public'
    and c.relname in ('products','orders','order_items','lookbook_images',
-                     'mensajes_contacto','profiles','books','articles')
+                     'mensajes_contacto','profiles','books','articles',
+                     'site_settings')
  group by c.relname, c.relrowsecurity
  order by c.relname;
