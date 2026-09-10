@@ -87,6 +87,16 @@ grant execute on function public.is_admin() to anon, authenticated;
 --    La política de UPDATE de 'profiles' deja a cada usuario editar su
 --    propia fila, y eso incluiría la columna is_admin. Este disparador
 --    lo impide.
+--
+--    La condición 'auth.uid() is not null' es lo que permite nombrar al
+--    primer administrador: en el editor SQL del panel de Supabase no hay
+--    sesión de usuario, así que auth.uid() es NULL. Sin esa condición el
+--    disparador se bloquearía a sí mismo y nunca habría un admin.
+--
+--    No abre ningún hueco: una petición anónima contra la API tampoco
+--    tiene auth.uid(), pero la política profiles_self_update del punto
+--    5.5 le impide tocar ninguna fila. Aquí solo se filtra al usuario
+--    autenticado que intente ascenderse él mismo.
 -- =====================================================================
 
 create or replace function public.protect_admin_flag()
@@ -96,7 +106,9 @@ security definer
 set search_path = public
 as $$
 begin
-  if new.is_admin is distinct from old.is_admin and not public.is_admin() then
+  if new.is_admin is distinct from old.is_admin
+     and auth.uid() is not null
+     and not public.is_admin() then
     raise exception 'No autorizado: is_admin solo lo puede cambiar un administrador.';
   end if;
   return new;
@@ -235,31 +247,42 @@ create policy articles_admin_write on public.articles
 --    solo del admin.
 -- =====================================================================
 
-insert into storage.buckets (id, name, public)
-values ('products','products',true), ('lookbook','lookbook',true)
-on conflict (id) do update set public = true;
-
+-- Storage pertenece al rol supabase_storage_admin. Según el proyecto, el
+-- rol del editor SQL puede no ser dueño de storage.objects y entonces
+-- DROP POLICY falla. Va dentro de un bloque con captura de errores para
+-- que eso no tumbe toda la migración: si no se puede, avisa y sigue.
 do $$
 declare r record;
 begin
+  begin
+    insert into storage.buckets (id, name, public)
+    values ('products','products',true), ('lookbook','lookbook',true)
+    on conflict (id) do update set public = true;
+  exception when others then
+    raise warning 'No se pudieron crear/actualizar los buckets: %', sqlerrm;
+  end;
+
   for r in select policyname from pg_policies
             where schemaname = 'storage' and tablename = 'objects'
   loop
     execute format('drop policy %I on storage.objects', r.policyname);
   end loop;
+
+  execute 'create policy storage_public_read on storage.objects
+             for select using (true)';
+  execute 'create policy storage_admin_insert on storage.objects
+             for insert with check (public.is_admin())';
+  execute 'create policy storage_admin_update on storage.objects
+             for update using (public.is_admin()) with check (public.is_admin())';
+  execute 'create policy storage_admin_delete on storage.objects
+             for delete using (public.is_admin())';
+
+  raise notice 'Políticas de Storage aplicadas.';
+exception when others then
+  raise warning
+    'STORAGE SIN PROTEGER: no hay permisos para cambiar las politicas de storage.objects (%). Hazlo a mano en Storage -> Policies. El resto de la migracion si se ha aplicado.',
+    sqlerrm;
 end $$;
-
-create policy storage_public_read on storage.objects
-  for select using (true);
-
-create policy storage_admin_insert on storage.objects
-  for insert with check (public.is_admin());
-
-create policy storage_admin_update on storage.objects
-  for update using (public.is_admin()) with check (public.is_admin());
-
-create policy storage_admin_delete on storage.objects
-  for delete using (public.is_admin());
 
 
 -- =====================================================================
