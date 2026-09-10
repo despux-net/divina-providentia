@@ -51,6 +51,28 @@ alter table public.orders
   add column if not exists customer_message text,
   add column if not exists updated_at       timestamptz not null default now();
 
+-- La tienda vende sin obligar a registrarse, así que en un pedido de
+-- invitado auth.uid() es NULL. La tabla venía con user_id NOT NULL y eso
+-- hacía que ninguna compra anónima pudiera completarse.
+alter table public.orders alter column user_id drop not null;
+
+-- Si las claves primarias se quedaron sin valor por defecto, el alta del
+-- pedido fallaría al no poder generar el id.
+do $$
+begin
+  if exists (select 1 from information_schema.columns
+              where table_schema = 'public' and table_name = 'orders'
+                and column_name = 'id' and column_default is null) then
+    alter table public.orders alter column id set default gen_random_uuid();
+  end if;
+
+  if exists (select 1 from information_schema.columns
+              where table_schema = 'public' and table_name = 'order_items'
+                and column_name = 'id' and column_default is null) then
+    alter table public.order_items alter column id set default gen_random_uuid();
+  end if;
+end $$;
+
 -- 1.4 Talla comprada y nombre/precio congelados en el momento de la venta.
 --     Si mañana renombras o resubes un producto, el pedido antiguo
 --     debe seguir contando lo que se vendió aquel día.
