@@ -516,8 +516,16 @@ alter table public.site_settings
   add column if not exists hero_image text;
 
 -- Debe existir siempre la fila 1: es la que lee la web.
-insert into public.site_settings (id) values (1)
-on conflict (id) do nothing;
+--
+-- 'id' está declarada GENERATED ALWAYS, así que la base rechaza que se
+-- le imponga un valor. Por eso no vale un INSERT normal: hay que pedir
+-- OVERRIDING SYSTEM VALUE, y solo cuando la fila no exista todavía.
+do $$
+begin
+  if not exists (select 1 from public.site_settings where id = 1) then
+    insert into public.site_settings (id) overriding system value values (1);
+  end if;
+end $$;
 
 alter table public.site_settings enable row level security;
 
