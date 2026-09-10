@@ -4,551 +4,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Filosofía tradicionalista, Cultura Cristiana y herencia de Occidente. Perennial Values for a world that has forgotten its roots. // Quanta Cura, hoy.">
-    <meta name="keywords"
-        content="Tradición Occidental, Cultura Cristiana, Quanta Cura, Filosofía Tradicionalista, Valores Perennes, Civilización Europea, Western Tradition, Perennial Values, Christian Civilization, Classical Wisdom, Heritage of the West">
-    <title>Divina Providentia | Western Tradition & Cultura Clásica</title>
+    <meta name="description" content="Divina Providentia — Ropa y Cartoteca. Prendas de identidad y una colección interactiva de mapas históricos en gigapíxel.">
+    <title>DIVINA PROVIDENTIA</title>
     <link rel="canonical" href="https://divinaprovidentia.com">
 
-    <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://divinaprovidentia.com">
-    <meta property="og:title" content="Divina Providentia | Western Tradition & Cultura Clásica">
-    <meta property="og:description"
-        content="Filosofía tradicionalista, Cultura Cristiana y herencia de Occidente. Perennial Values for a world that has forgotten its roots.">
+    <meta property="og:title" content="DIVINA PROVIDENTIA">
+    <meta property="og:description" content="Ropa y Cartoteca.">
     <meta property="og:image" content="https://divinaprovidentia.com/favicon.png">
-    <meta property="og:locale" content="es_ES">
-    <meta property="og:locale:alternate" content="en_US">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Divina Providentia | Western Tradition & Cultura Clásica">
-    <meta name="twitter:description"
-        content="Filosofía tradicionalista, Cultura Cristiana y herencia de Occidente. Perennial Values for a world that has forgotten its roots.">
-    <meta name="twitter:image" content="https://divinaprovidentia.com/favicon.png">
 
-    <!-- Schema.org Organization -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Divina Providentia",
-      "url": "https://divinaprovidentia.com",
-      "logo": "https://divinaprovidentia.com/favicon.png",
-      "description": "Filosofía Tradicionalista, Cultura Cristiana y Herencia de Occidente — Perennial Values for a world that has forgotten its roots.",
-      "sameAs": ["https://www.instagram.com/providentiadivina/"]
-    }
-    </script>
-
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
-        rel="stylesheet">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
-    <link rel="shortcut icon" href="favicon.png">
 
-    <!-- Styles -->
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css?v=5">
-    <link rel="stylesheet" href="library-list.css?v=1">
-    <link rel="stylesheet" href="osint-search.css?v=1">
+    <link rel="stylesheet" href="styles.css?v=10">
 
-    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
     <div id="notification-container"></div>
-    <!-- Navigation -->
+
+    <!-- ============ NAV ============ -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <!-- Removed nav-left-controls -->
-            <a href="#" class="nav-logo">
-                <img src="LOGOV3.png" alt="Divina Providentia Logo" class="logo-image">
-            </a>
-            <ul class="nav-links">
-                <li class="nav-mega-item">
-                    <a href="#" class="nav-mega-trigger">Navegar</a>
-                    <div class="mega-menu">
-                        <div class="mega-menu-content">
-                            <ul class="mega-menu-links">
-                                <li><a href="#inicio">Inicio</a></li>
-                                <li><a href="#filosofia">Filosofía</a></li>
-                                <li><a href="#articulos">Artículos</a></li>
-                                <li><a href="news.html">Noticias</a></li>
-                                <li><a href="cripta.html">Librería</a></li>
-                                <li><a href="#coleccion">Colección</a></li>
-                                <li><a href="manuscrito.html">El Manuscrito</a></li>
-                                <li><a href="#tienda">Tienda</a></li>
-                                <li><a href="#contacto">Contacto</a></li>
-                            </ul>
-                            <div class="mega-menu-image-container">
-                                <img src="LOGOV4.png" alt="Divina Providentia Logo Extra" class="mega-menu-image">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-lang-selector dropdown">
-                    <button class="lang-dropbtn" aria-label="Seleccionar idioma">
-                        🌐 <span class="lang-text">Idioma</span>
-                    </button>
-                    <div class="lang-dropdown-content">
-                        <a href="#" onclick="changeLanguage('en'); return false;">🇬🇧 English</a>
-                        <a href="#" onclick="changeLanguage('es'); return false;">🇪🇸 Español</a>
-                        <a href="#" onclick="changeLanguage('de'); return false;">🇩🇪 Deutsch</a>
-                    </div>
-                </li>
-                <li>
-                    <button class="auth-btn-icon" id="authBtnTrigger" aria-label="Iniciar Sesión"
-                        onclick="openModal('loginModal')">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <span class="auth-text">Acceso</span>
-                    </button>
-                </li>
-                <li>
-                    <button class="cart-button" id="cartButton" aria-label="Carrito de compras">
-                        🛒
-                        <span class="cart-count" id="cartCount">0</span>
-                    </button>
-                </li>
-            </ul>
-            <button class="mobile-menu-button" aria-label="Menú móvil">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+            <button class="mobile-menu-button" aria-label="Menú" aria-expanded="false">
+                <span></span><span></span><span></span>
             </button>
+
+            <a href="#inicio" class="nav-logo"><span translate="no" class="notranslate">DIVINA PROVIDENTIA</span></a>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#tienda">Tienda</a></li>
+                <li><a href="#lookbook">Lookbook</a></li>
+                <li><a href="#coleccion">Cartoteca</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <div class="nav-lang">
+                    <button class="lang-btn" aria-label="Idioma" aria-expanded="false">ES</button>
+                    <div class="lang-menu">
+                        <a href="#" onclick="changeLanguage('es'); return false;">Español</a>
+                        <a href="#" onclick="changeLanguage('en'); return false;">English</a>
+                        <a href="#" onclick="changeLanguage('de'); return false;">Deutsch</a>
+                    </div>
+                </div>
+                <div id="auth-buttons" class="nav-auth">
+                    <button onclick="openModal('loginModal')">Acceso</button>
+                </div>
+                <button class="cart-button" id="cartButton" aria-label="Carrito">
+                    <span class="cart-label">Carrito</span> <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <!-- OSINT Search Section (Google Style Layout) -->
-    <section class="osint-google-layout" id="osint-search">
-        <div class="osint-container">
-            <div class="osint-logo-wrapper">
-                <img src="DIVINA_PROVIDENTIA.png" alt="Divina Providentia" class="osint-main-logo">
+    <!-- ============ HERO ============ -->
+    <header class="hero" id="inicio">
+        <div class="hero-inner">
+            <h1 class="hero-title"><span translate="no" class="notranslate">DIVINA<br>PROVIDENTIA</span></h1>
+            <p class="hero-sub">Colección permanente</p>
+            <a href="#tienda" class="hero-link">Comprar</a>
+        </div>
+        <div class="hero-marquee" aria-hidden="true">
+            <div class="hero-marquee-track">
+                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
+                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
+                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
+                <span>DIVINA PROVIDENTIA — COLECCIÓN PERMANENTE — CARTOTECA — </span>
             </div>
-            <div class="osint-header">
-                <h2>Inteligencia Geopolítica y Monitoreo Global</h2>
-                <p>Buscador avanzado (OSINT) en bases de datos abiertas (GDELT Project, GPR Index)</p>
-            </div>
-            
-            <form id="osintSearchForm" class="osint-search-box">
-                <span class="osint-search-icon">🔍</span>
-                <input type="text" id="osintSearchInput" class="osint-search-input" placeholder="Buscar país, líder, conflicto..." autocomplete="off">
-                <button type="submit" class="osint-search-button">Buscar</button>
-            </form>
+        </div>
+    </header>
 
-            <div class="osint-spinner" id="osintSpinner"></div>
-            
-            <div id="osintResults">
-                <!-- Data API Cards will be injected here -->
-            </div>
+    <!-- ============ TIENDA ============ -->
+    <section class="products" id="tienda">
+        <div class="section-head">
+            <h2>Tienda</h2>
+            <span class="section-meta">Todos los artículos</span>
+        </div>
+        <div class="products-grid" id="productsGrid">
+            <div class="loading-spinner"><p>Cargando…</p></div>
         </div>
     </section>
 
-    <!-- Hero Section -->
-    <section class="hero" id="inicio">
-        <div class="hero-content">
-            <div class="hero-quote" id="heroQuote">
-                <blockquote></blockquote>
-                <cite></cite>
-            </div>
-            <h1 class="hero-title"><span translate="no" class="notranslate">Divina Providentia</span></h1>
-            <button class="cta-button silver-btn" id="conoceBtn" aria-expanded="false">CONOCE</button>
-            <div class="hero-summary-collapse" id="heroSummaryContainer">
-                <p class="hero-summary-text"></p>
-                <div class="hero-summary-actions">
-                    <a href="#tienda" class="cta-button-gold">Ver el Arsenal</a>
-                </div>
-            </div>
+    <!-- ============ LOOKBOOK ============ -->
+    <section class="lookbook-section" id="lookbook">
+        <div class="section-head">
+            <h2>Lookbook</h2>
+            <span class="section-meta">Campaña</span>
+        </div>
+        <div class="carousel-container" id="lookbookCarousel">
+            <div class="loading-spinner"><p>Cargando…</p></div>
         </div>
     </section>
 
-
-
-    <!-- Manifiesto Section -->
-    <section class="manifesto-section" id="manifiesto">
-        <div class="manifesto-inner">
-            <div class="manifesto-ornament">✦</div>
-            <h2 class="manifesto-title" id="manifestoTitle">Vivir con Propósito</h2>
-            <div class="manifesto-body" id="manifestoBody">
-                <!-- Populated by content-loader.js -->
-            </div>
-            <p class="manifesto-closing" id="manifestoClosing"></p>
-            <div class="manifesto-ornament">✦</div>
-        </div>
-    </section>
-
-    <!-- Philosophy Section -->
-    <section class="philosophy section" id="filosofia">
-        <div class="container">
-            <div class="section-crest" style="margin-bottom: 2rem;">
-                <img src="LOGOV3.png" alt="Escudo Divina Providentia" class="crest-image">
-            </div>
-            <div class="section-header">
-                <h2>Dogmas de Resistencia</h2>
-            </div>
-
-            <div class="philosophy-grid">
-                <div class="philosophy-card">
-                    <h3>Sabiduría y Libertad</h3>
-                    <p>La Divina Providencia guía todas las cosas con amor y poder. Aunque poseemos libertad y podemos
-                        extraviarnos, Dios respeta esa libertad y de manera misteriosa sabe sacar el bien del mal,
-                        llevándonos hacia nuestro propósito último.</p>
-                </div>
-                <div class="philosophy-card">
-                    <h3>Previsión Eterna</h3>
-                    <p>Todo lo que ocurre ha sido previsto por Dios desde la eternidad, siendo querido o permitido por
-                        Él. Aunque atravieses pruebas incomprensibles, Dios está contigo. Confía en Él, pues obrará todo
-                        a tu favor.</p>
-                </div>
-                <div class="philosophy-card">
-                    <h3>Todo Contribuye al Bien</h3>
-                    <p>Dios no permite nada que no contribuya a tu bien y al del mundo entero. Incluso las
-                        contradicciones y reveses son permitidos por Dios para conducirnos a una verdadera humildad y a
-                        un amor más puro.</p>
-                </div>
-                <div class="philosophy-card">
-                    <h3>Abandono y Acción</h3>
-                    <p>El abandono en la Providencia no nos exime de esforzarnos por cumplir Su voluntad y Sus
-                        mandamientos. Debemos poner nuestra confianza en Dios mientras hacemos con responsabilidad lo
-                        que nos corresponde en la vida.</p>
-                </div>
-            </div>
-
-
-
-
-        </div>
-    </section>
-
-    <!-- Cartography Collection Section -->
+    <!-- ============ CARTOTECA ============ -->
     <section class="cartography-section" id="coleccion">
-        <div class="container">
-            <div class="section-header">
-                <h2 style="color: var(--color-divine-gold, #d4af37);">Cartoteca</h2>
-                <p>Nuestra colección interactiva de mapas históricos y artefactos fractales</p>
-            </div>
+        <div class="section-head">
+            <h2>Cartoteca</h2>
+            <span class="section-meta">Mapas históricos en gigapíxel</span>
+        </div>
 
-            <div class="cartography-grid">
-                <!-- Primer Mapa: Pergamino de Adán -->
-                <article class="map-card">
+        <div class="cartography-grid">
+            <article class="map-card">
+                <a class="map-card-link" href="adan.html">
                     <div class="map-image-container">
                         <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="ADAM%20AND%20EVA.jpg" alt="Miniatura del Pergamino de Adán" class="map-card-image"
-                            onerror="this.src='ADAM%20AND%20EVA.jpg'; this.style.opacity='0.5';">
+                        <img src="ADAM%20AND%20EVA.jpg" alt="El Pergamino de Adán" class="map-card-image" loading="lazy">
                     </div>
                     <div class="map-card-content">
                         <h3 class="map-card-title">El Pergamino de Adán</h3>
-                        <p class="map-card-author">Cartografía de la Tradición de los Patriarcas Antediluvianos (S. XIX)
-                        </p>
-                        <p class="map-card-desc">Una monumental representación del árbol genealógico del mundo desde la
-                            Creación según las crónicas sagradas. Reconstruido a partir de 160 megapíxeles para una
-                            inmersión sin precedentes.</p>
-                        <a href="adan.html" class="open-map-btn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                <line x1="11" y1="8" x2="11" y2="14"></line>
-                                <line x1="8" y1="11" x2="14" y2="11"></line>
-                            </svg>
-                            Explorar Volúmen
-                        </a>
+                        <p class="map-card-author">Patriarcas antediluvianos · S. XIX</p>
+                        <p class="map-card-desc">Árbol genealógico del mundo desde la Creación según las crónicas sagradas. Reconstruido a partir de 160 megapíxeles.</p>
+                        <span class="open-map-btn">Explorar volumen</span>
                     </div>
-                </article>
+                </a>
+            </article>
 
-                <!-- Segundo Mapa: Imperio Romano -->
-                <article class="map-card">
+            <article class="map-card">
+                <a class="map-card-link" href="romano.html">
                     <div class="map-image-container">
                         <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="16242000t.jpg" alt="Miniatura del Imperio Romano" class="map-card-image"
-                            onerror="this.src='LOGOV3.png'; this.style.opacity='0.5';">
+                        <img src="16242000t.jpg" alt="Imperio Romano" class="map-card-image" loading="lazy">
                     </div>
                     <div class="map-card-content">
                         <h3 class="map-card-title">Imperio Romano</h3>
-                        <p class="map-card-author">Cartografía de la Extensión Máxima del Mundo Romano</p>
-                        <p class="map-card-desc">Un extraordinario mapa histórico reconstruido a partir de 108
-                            megapíxeles que documenta las provincias, rutas, ciudades y calzadas del Imperio en su
-                            máxima expansión geográfica y cultural.</p>
-                        <a href="romano.html" class="open-map-btn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                <line x1="11" y1="8" x2="11" y2="14"></line>
-                                <line x1="8" y1="11" x2="14" y2="11"></line>
-                            </svg>
-                            Explorar Volúmen
-                        </a>
+                        <p class="map-card-author">Extensión máxima del mundo romano</p>
+                        <p class="map-card-desc">108 megapíxeles que documentan provincias, rutas, ciudades y calzadas del Imperio en su máxima expansión.</p>
+                        <span class="open-map-btn">Explorar volumen</span>
                     </div>
-                </article>
+                </a>
+            </article>
 
-                <!-- Tercer Mapa: Terra (Urbano Monte) -->
-                <article class="map-card">
+            <article class="map-card">
+                <a class="map-card-link" href="terra.html">
                     <div class="map-image-container">
                         <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="TERRAt.jpg" alt="Miniatura de Terra de Urbano Monte" class="map-card-image"
-                            onerror="this.src='LOGOV3.png'; this.style.opacity='0.5';">
+                        <img src="TERRAt.jpg" alt="Terra, Urbano Monte 1587" class="map-card-image" loading="lazy">
                     </div>
                     <div class="map-card-content">
                         <h3 class="map-card-title">Terra (1587)</h3>
-                        <p class="map-card-author">Planisferio Monumental de Urbano Monte</p>
-                        <p class="map-card-desc">El mapa del mundo más grande del siglo XVI, ensamblado digitalmente a
-                            partir de 60 manuscritos originales. Una impresionante proyección polar de la Tierra con
-                            criaturas míticas y una extraordinaria densidad de detalles.</p>
-                        <a href="terra.html" class="open-map-btn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                <line x1="11" y1="8" x2="11" y2="14"></line>
-                                <line x1="8" y1="11" x2="14" y2="11"></line>
-                            </svg>
-                            Explorar Volúmen
-                        </a>
+                        <p class="map-card-author">Planisferio monumental de Urbano Monte</p>
+                        <p class="map-card-desc">El mapa del mundo más grande del siglo XVI, ensamblado desde 60 manuscritos originales en proyección polar.</p>
+                        <span class="open-map-btn">Explorar volumen</span>
                     </div>
-                </article>
-
-                <!-- Placeholder for future maps items -->
-            </div>
+                </a>
+            </article>
         </div>
     </section>
 
-    <!-- Articles Section -->
-    <section class="articles-section section" id="articulos">
-        <div class="container">
-            <div class="section-header">
-                <h2 id="articlesTitle">Artículos</h2>
-                <p id="articlesSubtitle">Curaduría Cultural y Pensamiento Profundo</p>
-            </div>
-            <div class="articles-grid" id="articlesGrid">
-                <div class="loading-spinner">
-                    <p>Invocando los Artículos...</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Library Section (Moved to Sidebar) -->
-    <section class="section" id="biblioteca" style="padding: 0; min-height: 0;">
-    </section>
-
-
-
-
-
-
-    <!-- Lookbook Carousel -->
-    <section class="lookbook-section" id="lookbook">
-        <div class="container">
-            <h2 class="section-title">Nuestros Modelos</h2>
-            <div class="carousel-container" id="lookbookCarousel">
-                <div class="loading-spinner">
-                    <p>Cargando galería...</p>
-                </div>
-                <button class="carousel-nav prev" onclick="prevSlide()" aria-label="Anterior">‹</button>
-                <button class="carousel-nav next" onclick="nextSlide()" aria-label="Siguiente">›</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products section" id="tienda">
-        <div class="container">
-            <div class="section-header">
-                <h2>Nuestra Tienda</h2>
-                <p>Productos con identidad, estética y propósito</p>
-            </div>
-
-            <!-- Filters removed by user request -->
-
-            <div class="products-grid" id="productsGrid">
-                <div class="loading-spinner">
-                    <p>Invocando los Artefactos...</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
+    <!-- ============ FOOTER ============ -->
     <footer class="footer" id="contacto">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3><span translate="no" class="notranslate">Divina Providentia</span></h3>
-                    <p>No somos una marca, somos una trinchera. En un mundo en ruinas, la elegancia es la primera forma
-                        de resistencia contra la vulgaridad reinante.</p>
-                    <div class="social-links">
-                        <a href="https://www.instagram.com/providentiadivina/" class="social-link"
-                            aria-label="Instagram" target="_blank">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="white"
-                                    stroke-width="2"></path>
-                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="white" stroke-width="2"></line>
-                            </svg>
-                        </a>
-
-                        <a href="#" class="social-link" aria-label="Twitter">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                                </path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Navegación</h3>
-                    <ul class="footer-links">
-                        <li><a href="#inicio">Inicio</a></li>
-                        <li><a href="#filosofia">Filosofía</a></li>
-                        <li><a href="news.html">Noticias</a></li>
-                        <li><a href="#tienda">Tienda</a></li>
-                        <li><a href="#contacto">Contacto</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Comunicaciones</h3>
-                    <p>Teléfono: +18583248313</p>
-                    <p style="margin-bottom: 1.5rem;">Horario: Lun-Vie 9:00-18:00</p>
-
-                    <form id="contactForm" class="contact-form-mini">
-                        <div class="form-group-mini">
-                            <input type="text" id="contactName" placeholder="Nombre" required>
-                        </div>
-                        <div class="form-group-mini">
-                            <input type="email" id="contactEmail" placeholder="Email" required>
-                        </div>
-                        <div class="form-group-mini">
-                            <textarea id="contactMessage" placeholder="Tu mensaje..." rows="2" required></textarea>
-                        </div>
-                        <button type="submit" class="footer-submit-btn">Enviar</button>
-                    </form>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>Divina Providentia</h3>
+                <p>No somos una marca, somos una trinchera.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/providentiadivina/" target="_blank" rel="noopener">Instagram</a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 <span translate="no" class="notranslate">Divina Providentia</span>. Todos los derechos
-                    reservados.</p>
+
+            <div class="footer-section">
+                <h3>Navegación</h3>
+                <ul class="footer-links">
+                    <li><a href="#tienda">Tienda</a></li>
+                    <li><a href="#lookbook">Lookbook</a></li>
+                    <li><a href="#coleccion">Cartoteca</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
             </div>
+
+            <div class="footer-section">
+                <h3>Atención</h3>
+                <p>+1 858 324 8313</p>
+                <p>Lun–Vie · 9:00–18:00</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Escríbenos</h3>
+                <form id="contactForm" class="contact-form-mini">
+                    <div class="form-group-mini"><input type="text" id="contactName" placeholder="Nombre" required></div>
+                    <div class="form-group-mini"><input type="email" id="contactEmail" placeholder="Email" required></div>
+                    <div class="form-group-mini"><textarea id="contactMessage" placeholder="Mensaje" rows="3" required></textarea></div>
+                    <button type="submit" class="footer-submit-btn">Enviar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year">2026</span> <span translate="no" class="notranslate">Divina Providentia</span></p>
+            <p>Todos los derechos reservados</p>
         </div>
     </footer>
 
-    <!-- Cart Modal -->
+    <!-- ============ CARRITO ============ -->
     <div class="cart-overlay" id="cartOverlay"></div>
-    <div class="cart-modal" id="cartModal">
+    <aside class="cart-modal" id="cartModal" aria-label="Carrito">
         <div class="cart-header">
-            <h2>Tu Carrito</h2>
-            <button class="close-cart-btn" id="closeCartBtn" aria-label="Cerrar carrito">&times;</button>
+            <h2>Carrito</h2>
+            <button class="close-cart-btn" id="closeCartBtn" aria-label="Cerrar">&times;</button>
         </div>
         <div class="cart-items" id="cartItems">
-            <div class="empty-cart">
-                <div class="empty-cart-icon">⚔️</div>
-                <p>Tu carrito está vacío</p>
-            </div>
+            <div class="empty-cart"><p>Tu carrito está vacío</p></div>
         </div>
         <div class="cart-footer">
             <div class="cart-total">
-                <span class="cart-total-label">Total:</span>
+                <span class="cart-total-label">Total</span>
                 <span class="cart-total-amount" id="cartTotal">$0.00</span>
             </div>
-            <button class="checkout-btn" id="checkoutBtn" disabled>Realizar Compra</button>
+            <button class="checkout-btn" id="checkoutBtn" disabled>Realizar compra</button>
         </div>
-    </div>
+    </aside>
 
-    <!-- Checkout Modal -->
+    <!-- ============ CHECKOUT ============ -->
     <div class="checkout-overlay" id="checkoutOverlay"></div>
-    <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-modal" id="checkoutModal" role="dialog" aria-label="Confirmar pedido">
         <div class="checkout-header">
-            <h2>Confirmar Pedido</h2>
-            <button class="close-checkout-btn" id="closeCheckoutBtn" aria-label="Cerrar checkout">&times;</button>
+            <h2>Confirmar pedido</h2>
+            <button class="close-checkout-btn" id="closeCheckoutBtn" aria-label="Cerrar">&times;</button>
         </div>
         <div class="checkout-content" id="checkoutContent">
             <form class="checkout-form" id="checkoutForm">
                 <div class="order-summary">
-                    <h3>Resumen del Pedido</h3>
+                    <h3>Resumen</h3>
                     <div id="orderSummaryItems"></div>
-                    <div class="order-total">
-                        <span>Total:</span>
-                        <span id="orderTotal">$0.00</span>
-                    </div>
+                    <div class="order-total"><span>Total</span><span id="orderTotal">$0.00</span></div>
                 </div>
-
                 <div class="form-group">
-                    <label for="customerName">Nombre Completo *</label>
+                    <label for="customerName">Nombre completo *</label>
                     <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre">
                 </div>
-
                 <div class="form-group">
                     <label for="customerPhone">Teléfono / WhatsApp *</label>
                     <input type="tel" id="customerPhone" name="customerPhone" required placeholder="+1 234 567 8900">
                 </div>
-
                 <div class="form-group">
-                    <label for="customerMessage">Mensaje (Opcional)</label>
-                    <textarea id="customerMessage" name="customerMessage" rows="3"
-                        placeholder="Déjanos un mensaje, instrucciones especiales, dirección de envío, etc."></textarea>
+                    <label for="customerMessage">Mensaje (opcional)</label>
+                    <textarea id="customerMessage" name="customerMessage" rows="3" placeholder="Dirección de envío, instrucciones especiales…"></textarea>
                 </div>
-
-                <button type="submit" class="submit-order-btn">Confirmar Pedido</button>
+                <button type="submit" class="submit-order-btn">Confirmar pedido</button>
             </form>
         </div>
     </div>
 
-    <!-- PDF Viewer Modal -->
-    <div class="pdf-viewer-overlay" id="pdfViewerOverlay"></div>
-    <div class="pdf-viewer-modal" id="pdfViewerModal">
-        <div class="pdf-viewer-header">
-            <h3 id="pdfBookTitle">Cargando...</h3>
-            <button class="close-pdf-btn" id="closePdfBtn" aria-label="Cerrar visor">&times;</button>
-        </div>
-        <div class="pdf-viewer-content">
-            <canvas id="pdfCanvas"></canvas>
-        </div>
-        <div class="pdf-viewer-controls">
-            <button id="prevPage">← Anterior</button>
-            <span id="pageInfo">Página 1 de 15</span>
-            <button id="nextPage">Siguiente →</button>
-        </div>
-        <div class="pdf-viewer-notice">
-            📖 Vista previa limitada a las primeras 15 páginas
-        </div>
-    </div>
-
-    <!-- Drive PDF Viewer Modal -->
-    <div class="pdf-viewer-overlay" id="drivePdfOverlay"></div>
-    <div class="pdf-viewer-modal" id="drivePdfModal" style="width: 90%; height: 90vh; max-width: 1200px;">
-        <div class="pdf-viewer-header">
-            <h3 id="drivePdfTitle">Cargando...</h3>
-            <button class="close-pdf-btn" id="closeDrivePdfBtn" aria-label="Cerrar visor">&times;</button>
-        </div>
-        <div class="pdf-viewer-content" style="height: calc(100% - 60px); padding: 0;">
-            <iframe id="drivePdfIframe" style="width: 100%; height: 100%; border: none;" allow="autoplay"></iframe>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
-    <!-- Login Modal -->
+    <!-- ============ LOGIN ============ -->
     <div class="modal-overlay" id="loginModal">
         <div class="auth-modal">
             <div class="checkout-header">
-                <h2>Iniciar Sesión</h2>
-                <button class="close-checkout-btn" onclick="closeModal('loginModal')">&times;</button>
+                <h2>Iniciar sesión</h2>
+                <button class="close-checkout-btn" onclick="closeModal('loginModal')" aria-label="Cerrar">&times;</button>
             </div>
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
@@ -560,132 +265,52 @@
                     <input type="password" id="loginPassword" name="password" required>
                 </div>
                 <button type="submit" class="submit-order-btn" id="loginSubmitBtn">Entrar</button>
-                <div class="auth-footer" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;">
-                    <p>¿No tienes cuenta? <a href="#"
-                            onclick="closeModal('loginModal'); openModal('registerModal'); return false;"
-                            style="color: var(--color-sacred-purple); text-decoration: underline;">Regístrate aquí</a>
-                    </p>
-                </div>
+                <p class="auth-footer">¿No tienes cuenta?
+                    <a href="#" onclick="closeModal('loginModal'); openModal('registerModal'); return false;">Regístrate</a>
+                </p>
             </form>
         </div>
     </div>
 
-    <!-- Register Modal -->
+    <!-- ============ REGISTRO ============ -->
     <div class="modal-overlay" id="registerModal">
         <div class="auth-modal">
             <div class="checkout-header">
-                <h2>Crear Cuenta</h2>
-                <button class="close-checkout-btn" onclick="closeModal('registerModal')">&times;</button>
+                <h2>Crear cuenta</h2>
+                <button class="close-checkout-btn" onclick="closeModal('registerModal')" aria-label="Cerrar">&times;</button>
             </div>
             <form id="registerForm" class="auth-form">
-                <div class="form-group">
-                    <label for="regName">Nombre</label>
-                    <input type="text" id="regName" name="first_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="regSurname">Apellidos</label>
-                    <input type="text" id="regSurname" name="last_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="regCountry">País</label>
-                    <input type="text" id="regCountry" name="country" required>
-                </div>
-                <div class="form-group">
-                    <label for="regAge">Edad</label>
-                    <input type="number" id="regAge" name="age" required min="18">
-                </div>
-                <div class="form-group">
-                    <label for="regEmail">Email</label>
-                    <input type="email" id="regEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="regPassword">Contraseña</label>
-                    <input type="password" id="regPassword" name="password" required minlength="6">
-                </div>
-                <div class="form-group">
-                    <label for="regMessage">Mensaje a los Moderadores (Opcional)</label>
-                    <textarea id="regMessage" name="message" rows="3" placeholder="¿Por qué deseas unirte?"></textarea>
-                </div>
-                <button type="submit" class="submit-order-btn" id="registerSubmitBtn">Solicitar Acceso</button>
+                <div class="form-group"><label for="regName">Nombre</label><input type="text" id="regName" name="first_name" required></div>
+                <div class="form-group"><label for="regSurname">Apellidos</label><input type="text" id="regSurname" name="last_name" required></div>
+                <div class="form-group"><label for="regCountry">País</label><input type="text" id="regCountry" name="country" required></div>
+                <div class="form-group"><label for="regAge">Edad</label><input type="number" id="regAge" name="age" required min="18"></div>
+                <div class="form-group"><label for="regEmail">Email</label><input type="email" id="regEmail" name="email" required></div>
+                <div class="form-group"><label for="regPassword">Contraseña</label><input type="password" id="regPassword" name="password" required minlength="6"></div>
+                <div class="form-group"><label for="regMessage">Mensaje (opcional)</label><textarea id="regMessage" name="message" rows="3"></textarea></div>
+                <button type="submit" class="submit-order-btn" id="registerSubmitBtn">Solicitar acceso</button>
             </form>
         </div>
     </div>
 
-    <!-- Library Sidebar -->
-    <div id="librarySidebar" class="library-sidebar">
-        <div class="sidebar-header">
-            <h2>Biblioteca</h2>
-            <button class="close-sidebar-btn" onclick="toggleLibrarySidebar()"
-                aria-label="Cerrar biblioteca">&times;</button>
-        </div>
-        <div class="books-list-container" id="booksGrid">
-            <div class="loading-spinner">
-                <p>Cargando biblioteca...</p>
-            </div>
-        </div>
-    </div>
-    <script src="auth.js?v=8"></script>
-    <script src="content-loader.js?v=2"></script>
-    <script src="library.js?v=4"></script>
-    <script src="app.js?v=2"></script>
-    <script src="osint-search.js?v=2"></script>
+    <!-- ============ SCRIPTS ============ -->
+    <script src="supabase-config.js"></script>
+    <script src="auth.js?v=10"></script>
+    <script src="app.js?v=10"></script>
 
-    <!-- Google Translate Script Oculto -->
-    <div id="google_translate_element" style="display:none;"></div>
-    <script type="text/javascript">
+    <div id="google_translate_element" style="display:none"></div>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
-                pageLanguage: 'es',
-                includedLanguages: 'es,en,de',
-                autoDisplay: false
+                pageLanguage: 'es', includedLanguages: 'es,en,de', autoDisplay: false
             }, 'google_translate_element');
         }
         function changeLanguage(langCode) {
-            var selectField = document.querySelector(".goog-te-combo");
-            if (selectField) {
-                selectField.value = langCode;
-                selectField.dispatchEvent(new Event('change'));
-            }
+            var sel = document.querySelector('.goog-te-combo');
+            if (sel) { sel.value = langCode; sel.dispatchEvent(new Event('change')); }
         }
     </script>
-    <script type="text/javascript"
-        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-    <!-- Ocultar barra superior de Google Translate -->
-    <style>
-        /* Forzar que el body no baje por la barra de Google */
-        body {
-            top: 0px !important;
-            position: static !important;
-            min-height: 100vh !important;
-        }
-
-        /* Ocultar la barra espantosa de arriba (banner frame y su contenedor) */
-        .goog-te-banner-frame,
-        .goog-te-banner-frame.skiptranslate,
-        iframe.goog-te-banner-frame {
-            display: none !important;
-        }
-
-        body>.skiptranslate {
-            display: none !important;
-        }
-
-        /* Ocultar los tooltips (burbujitas sobre el texto) y otros popups */
-        .goog-tooltip,
-        .goog-tooltip:hover,
-        #goog-gt-tt,
-        .goog-te-balloon-frame {
-            display: none !important;
-        }
-
-        /* Quitar el color de fondo resaltado al pasar el ratón por texto traducido */
-        .goog-text-highlight {
-            background-color: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-    </style>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

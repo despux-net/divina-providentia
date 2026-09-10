@@ -190,102 +190,39 @@ window.isUserValidated = false;
 
 // Initialize Auth UI
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("Auth UI Initializing...");
-
-    // Safety check for user-greeting
-    const userGreeting = document.getElementById('user-greeting'); // Expecting null is fine, but logging it helps
-
     if (!window.supabaseClient) {
-        console.error("Supabase Client not found! Make sure supabase-config.js is loaded.");
+        console.error('Supabase client no encontrado. Revisa supabase-config.js.');
         return;
     }
 
-    // 1. Check current session
-    const { data: { session }, error } = await supabaseClient.auth.getSession();
-
-    if (error) {
-        console.error("Error getting session:", error);
-    } else {
-        console.log("Session found:", !!session);
-    }
-
     const authButtons = document.getElementById('auth-buttons');
-    // userGreeting already declared above
 
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (error) console.error('Error al obtener la sesion:', error);
 
     if (session) {
-        // User is logged in
-        // Get profile to check validation
         const { data: profile } = await supabaseClient
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single();
 
-        const isValidated = profile?.is_validated;
-        const displayName = profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : session.user.email;
+        const displayName = profile?.first_name
+            ? `${profile.first_name} ${profile.last_name || ''}`.trim()
+            : session.user.email;
 
-        window.isUserValidated = isValidated;
+        window.isUserValidated = profile?.is_validated;
 
-        // Dispatch event for other scripts (like library.js)
-        const event = new CustomEvent('auth:validated', { detail: { isValidated, displayName } });
-        window.dispatchEvent(event);
-
-        // Check if we should show login notification
         if (sessionStorage.getItem('showLoginNotification') === 'true') {
-            console.log("Showing login notification for:", displayName);
-            // Small delay to ensure UI is ready
-            setTimeout(() => {
-                showNotification(`${displayName} ya se encuentra en línea`);
-            }, 500);
+            setTimeout(() => showNotification(`${displayName} ya se encuentra en linea`), 500);
             sessionStorage.removeItem('showLoginNotification');
         }
 
-        // Force library reload if user is validated
-        if (isValidated && typeof window.loadLibraryBooks === 'function') {
-            console.log("Reloading library for validated user...");
-            window.loadLibraryBooks();
+        if (authButtons) {
+            authButtons.innerHTML = '<button onclick="handleSignOut()">Salir</button>';
         }
-
-        authButtons.innerHTML = `
-            <button onclick="handleSignOut()" class="cta-button" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Cerrar Sesión</button>
-        `;
-
-        // Show validation status message if NOT validated
-        const libraryHeader = document.querySelector('#biblioteca .section-header');
-        if (!isValidated) {
-            const warningDiv = document.createElement('div');
-            warningDiv.className = 'auth-warning';
-            warningDiv.innerHTML = `
-                <p><strong>Estado: Pendiente de Validación</strong></p>
-                <p>Tus credenciales están siendo revisadas por nuestros moderadores. Tienes acceso limitado a la biblioteca.</p>
-             `;
-            libraryHeader.appendChild(warningDiv);
-        } else {
-            const successDiv = document.createElement('div');
-            successDiv.className = 'auth-success';
-            successDiv.innerHTML = `
-               <p><strong>Bienvenido, ${displayName}</strong></p>
-               <p>Tienes acceso completo a la Biblioteca Sagrada.</p>
-            `;
-            libraryHeader.appendChild(successDiv);
-        }
-
-    } else {
-        // User is guest
-        authButtons.innerHTML = `
-            <button onclick="openModal('loginModal')" class="cta-button" style="background: transparent; border: 1px solid var(--color-sacred-purple); color: var(--color-sacred-purple); margin-right: 0.5rem;">Entrar</button>
-            <button onclick="openModal('registerModal')" class="cta-button">Registrarse</button>
-        `;
-
-        const libraryHeader = document.querySelector('#biblioteca .section-header');
-        const guestDiv = document.createElement('div');
-        guestDiv.className = 'auth-warning';
-        guestDiv.innerHTML = `
-            <p><strong>Acceso Restringido</strong></p>
-            <p>Se requiere registro y validación para acceder al contenido completo.</p>
-        `;
-        libraryHeader.appendChild(guestDiv);
+    } else if (authButtons) {
+        authButtons.innerHTML = `<button onclick="openModal('loginModal')">Acceso</button>`;
     }
 
     // Attach Event Listeners to Forms

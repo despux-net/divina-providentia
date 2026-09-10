@@ -4,165 +4,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Página no encontrada - Divina Providentia">
-    <title>404 - Página No Encontrada | Divina Providentia</title>
+    <meta name="description" content="Página no encontrada — Divina Providentia">
+    <title>404 | Divina Providentia</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
-        rel="stylesheet">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
 
-    <!-- Core Styles if needed -->
-    <link rel="stylesheet" href="/styles.css">
-
     <style>
-        /* Base reset for standalone page */
-        body,
-        html {
+        html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
             height: 100%;
-            background-color: #0a0a0a;
-            /* Dark background matching the site */
+            background: #fff;
+            color: #000;
+            font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
         }
 
         .error-page-wrapper {
+            min-height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            color: #f5f5f5;
             text-align: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
+            padding: 40px 20px;
             box-sizing: border-box;
         }
 
-        /* Subtle background glow to match the site's aesthetic */
-        .error-page-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50vw;
-            height: 50vw;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, rgba(10, 10, 10, 0) 70%);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .error-content {
-            position: relative;
-            z-index: 1;
-            max-width: 600px;
-            animation: fadeIn 1s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .error-logo {
-            width: 90px;
-            margin-bottom: 2.5rem;
-            opacity: 0.9;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.2));
-            transition: opacity 0.3s ease;
-        }
-
-        .error-logo:hover {
-            opacity: 1;
+        .error-brand {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 60px;
         }
 
         .error-code {
-            font-family: 'Cinzel', serif;
-            font-size: 7rem;
-            font-weight: 700;
-            color: #d4af37;
-            /* Divine Gold */
+            font-size: clamp(4rem, 18vw, 12rem);
+            font-weight: 600;
+            line-height: .9;
+            letter-spacing: 0.02em;
             margin: 0;
-            line-height: 1;
-            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
-            letter-spacing: 0.05em;
         }
 
         .error-title {
-            font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: #ffffff;
-            letter-spacing: 0.05em;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
+            margin: 26px 0 0;
         }
 
         .error-message {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 3rem;
-            font-weight: 300;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #767676;
+            max-width: 420px;
+            margin: 18px 0 40px;
         }
 
         .error-btn {
             display: inline-block;
-            padding: 1rem 2.5rem;
-            background: rgba(255, 255, 255, 0.03);
-            color: #f5f5f5;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 13px 44px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #000;
             text-decoration: none;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            letter-spacing: 0.2em;
+            font-size: 11px;
+            letter-spacing: 0.09em;
             text-transform: uppercase;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(5px);
+            transition: background .2s ease, color .2s ease;
         }
 
         .error-btn:hover {
-            border-color: #d4af37;
-            color: #d4af37;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
-            background: rgba(212, 175, 55, 0.05);
-            transform: translateY(-2px);
+            background: #fff;
+            color: #000;
         }
     </style>
 </head>
 
 <body>
     <div class="error-page-wrapper">
-        <div class="error-content">
-            <a href="/">
-                <img src="/LOGOV3.png" alt="Divina Providentia" class="error-logo" onerror="this.src='LOGOV3.png'">
-            </a>
-            <h1 class="error-code">404</h1>
-            <h2 class="error-title">Página no encontrada</h2>
-            <p class="error-message">
-                La ruta que buscas no se encuentra en nuestros registros.<br>
-                Es posible que el contenido haya sido reubicado o ya no exista.
-            </p>
-            <a href="/" class="error-btn">Volver al Inicio</a>
-        </div>
+        <a href="/" class="error-brand" style="color:inherit;text-decoration:none">Divina Providentia</a>
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">Página no encontrada</h2>
+        <p class="error-message">
+            La ruta que buscas no existe o ha sido reubicada.
+        </p>
+        <a href="/" class="error-btn">Volver al inicio</a>
     </div>
 </body>
 
