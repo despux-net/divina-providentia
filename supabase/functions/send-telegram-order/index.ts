@@ -8,6 +8,7 @@ const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
 const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID") ?? "";
 
 interface OrderData {
+    type?: "order";
     customerName: string;
     customerPhone: string;
     customerMessage: string;
@@ -17,6 +18,58 @@ interface OrderData {
         price: number;
     }>;
     total: number;
+}
+
+interface ContactData {
+    type: "contact";
+    name: string;
+    email: string;
+    message: string;
+}
+
+type Payload = OrderData | ContactData;
+
+// Todo lo que escribe el visitante pasa por aquí antes de entrar en el
+// mensaje. Sin esto, un nombre con < o & rompe el analizador de Telegram
+// y el aviso no llega nunca.
+function esc(value: unknown): string {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+function buildOrderMessage(d: OrderData): string {
+    const lines = (d.items ?? []).map((item) =>
+        `• ${esc(item.name)} x${item.quantity} — $${(item.price * item.quantity).toFixed(2)}`
+    ).join("\n");
+
+    return [
+        "🛍️ <b>NUEVO PEDIDO — Divina Providentia</b>",
+        "",
+        `👤 <b>Cliente:</b> ${esc(d.customerName)}`,
+        `📱 <b>Contacto:</b> ${esc(d.customerPhone)}`,
+        `💬 <b>Mensaje:</b> ${esc(d.customerMessage) || "Sin mensaje"}`,
+        "",
+        "📦 <b>Productos:</b>",
+        lines || "—",
+        "",
+        `💰 <b>Total: $${Number(d.total ?? 0).toFixed(2)}</b>`,
+    ].join("\n");
+}
+
+function buildContactMessage(d: ContactData): string {
+    return [
+        "✉️ <b>NUEVO MENSAJE — Divina Providentia</b>",
+        "",
+        `👤 <b>Nombre:</b> ${esc(d.name)}`,
+        `📧 <b>Email:</b> ${esc(d.email)}`,
+        "",
+        "💬 <b>Mensaje:</b>",
+        esc(d.message),
+        "",
+        "<i>Enviado desde el formulario del pie de página</i>",
+    ].join("\n");
 }
 
 Deno.serve(async (req: Request) => {
@@ -32,33 +85,21 @@ Deno.serve(async (req: Request) => {
     }
 
     try {
-        const orderData: OrderData = await req.json();
+        if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+            throw new Error(
+                "Faltan TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID en los secretos de la función.",
+            );
+        }
 
-        // Format the message for Telegram
-        const message = `
-🛍️ *NUEVO PEDIDO - Divina Providentia*
+        const payload: Payload = await req.json();
 
-👤 *Cliente:*
-${orderData.customerName}
+        // Sin 'type' se asume pedido, que es como llamaba la web hasta
+        // ahora: así los pedidos siguen funcionando aunque no se
+        // actualice el resto.
+        const message = payload.type === "contact"
+            ? buildContactMessage(payload)
+            : buildOrderMessage(payload as OrderData);
 
-📱 *Teléfono:*
-${orderData.customerPhone}
-
-💬 *Mensaje:*
-${orderData.customerMessage || "Sin mensaje"}
-
-📦 *Productos:*
-${orderData.items.map(item =>
-            `• ${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`
-        ).join('\n')}
-
-💰 *Total: $${orderData.total.toFixed(2)}*
-
----
-_Pedido recibido desde la tienda web_
-    `.trim();
-
-        // Send message to Telegram
         const telegramResponse = await fetch(
             `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
             {
@@ -69,9 +110,9 @@ _Pedido recibido desde la tienda web_
                 body: JSON.stringify({
                     chat_id: TELEGRAM_CHAT_ID,
                     text: message,
-                    parse_mode: "Markdown",
+                    parse_mode: "HTML",
                 }),
-            }
+            },
         );
 
         const telegramData = await telegramResponse.json();
@@ -83,14 +124,14 @@ _Pedido recibido desde la tienda web_
         return new Response(
             JSON.stringify({
                 success: true,
-                message: "Pedido enviado exitosamente",
+                message: "Aviso enviado correctamente",
             }),
             {
                 headers: {
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*",
                 },
-            }
+            },
         );
     } catch (error) {
         console.error("Error sending Telegram message:", error);
@@ -98,7 +139,7 @@ _Pedido recibido desde la tienda web_
         return new Response(
             JSON.stringify({
                 success: false,
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
             }),
             {
                 status: 500,
@@ -106,7 +147,7 @@ _Pedido recibido desde la tienda web_
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*",
                 },
-            }
+            },
         );
     }
 });

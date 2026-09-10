@@ -794,11 +794,33 @@ async function handleContact(e) {
     const mensaje = document.getElementById('contactMessage').value;
 
     try {
+        // 1. Primero se guarda. Si esto falla, el visitante ve el error y
+        //    puede reintentar; nada se pierde en silencio.
         const { error } = await window.supabaseClient
             .from('mensajes_contacto')
             .insert([{ nombre, email, mensaje }]);
 
         if (error) throw error;
+
+        // 2. El aviso a Telegram es secundario, igual que en los pedidos:
+        //    si falla, el mensaje ya está guardado en la base de datos.
+        try {
+            await fetch(
+                'https://nzwtafacdpdgulzcwntx.supabase.co/functions/v1/send-telegram-order',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'contact',
+                        name: nombre,
+                        email: email,
+                        message: mensaje
+                    })
+                }
+            );
+        } catch (notifyError) {
+            console.warn('El mensaje se guardó, pero falló el aviso de Telegram:', notifyError);
+        }
 
         submitBtn.textContent = 'Enviado';
         e.target.reset();
