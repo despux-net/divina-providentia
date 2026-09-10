@@ -302,6 +302,8 @@ function renderProducts() {
                 <span class="flag ${product.published ? 'on' : 'off'}">${product.published ? 'Publicado' : 'Borrador'}</span>
                 <span class="flag ${saleClass}">${saleFlag}</span>
             </div>
+            <button class="lb-btn danger prod-delete" data-delete="${product.id}"
+                    title="Eliminar producto" aria-label="Eliminar ${escapeHtml(product.name)}">&times;</button>
         </div>`;
     }).join('');
 
@@ -309,6 +311,16 @@ function renderProducts() {
         row.addEventListener('click', () => {
             const product = state.products.find(p => String(p.id) === row.dataset.id);
             if (product) openProductForm(product);
+        });
+    });
+
+    // La papelera va dentro de la fila, que abre la ficha al pulsarla: sin
+    // stopPropagation, borrar abriría además el formulario del producto.
+    list.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const product = state.products.find(p => String(p.id) === btn.dataset.delete);
+            if (product) deleteProduct(product.id, product.name, false);
         });
     });
 }
@@ -467,24 +479,33 @@ async function saveProduct(e) {
     }
 }
 
-async function deleteProduct() {
-    const id = $('pId').value;
+// Se llama desde la papelera de la lista y desde el botón de la ficha.
+// 'fromForm' solo decide dónde se enseña el error.
+async function deleteProduct(id, name, fromForm) {
     if (!id) return;
 
-    const name = state.editing ? state.editing.name : 'este producto';
-    if (!confirm(`¿Eliminar "${name}"? Esta acción no se puede deshacer.`)) return;
+    if (!confirm(`¿Eliminar "${name}"?\n\nSe borra el producto y su ficha. Los pedidos ya hechos conservan lo que se vendió.\n\nEsta acción no se puede deshacer.`)) return;
 
-    const { error } = await supabaseClient.from('products').delete().eq('id', id);
+    // El .select() distingue "no se pudo" de "no había nada que borrar":
+    // sin él, una fila filtrada por la RLS devuelve error null y parecería
+    // que se ha borrado.
+    const { data, error } = await supabaseClient
+        .from('products').delete().eq('id', id).select();
 
-    if (error) {
-        // Un pedido antiguo puede seguir apuntando al producto.
-        $('productError').textContent =
-            'No se pudo eliminar. Si el producto aparece en algún pedido, desmárcalo como publicado en lugar de borrarlo.';
+    if (error || !data || data.length === 0) {
+        // El caso típico: order_items todavía apunta a este producto y la
+        // clave ajena lo impide. Borrarlo rompería el histórico de ventas.
+        const msg = error && error.code === '23503'
+            ? 'No se puede eliminar: el producto aparece en pedidos ya realizados. Desmárcalo como «Publicado» para retirarlo de la tienda sin perder el histórico.'
+            : 'No se pudo eliminar el producto.';
+
+        if (fromForm) $('productError').textContent = msg;
+        else toast(msg, true);
         console.error(error);
         return;
     }
 
-    closeProductForm();
+    if (fromForm) closeProductForm();
     toast('Producto eliminado');
     loadProducts();
     loadStats();
@@ -837,6 +858,9 @@ function renderOrders() {
                 <div class="order-actions">
                     <span class="label">Estado</span>${buttons}
                 </div>
+                <div class="order-actions">
+                    <button class="btn btn-danger" data-delete-order="${order.id}">Eliminar pedido</button>
+                </div>
             </div>` : ''}
         </div>`;
     }).join('');
@@ -856,6 +880,13 @@ function renderOrders() {
         });
     });
 
+    list.querySelectorAll('[data-delete-order]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteOrder(btn.dataset.deleteOrder);
+        });
+    });
+
     list.querySelectorAll('[data-copy]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -867,6 +898,48 @@ function renderOrders() {
             }
         });
     });
+}
+
+async function deleteOrder(orderId) {
+    const order = state.orders.find(o => o.id === orderId);
+    if (!order) return;
+
+    const ref = String(orderId).slice(0, 8);
+    const ok = confirm(
+        `¿Eliminar el pedido #${ref} de ${fullName(order)}?\n\n` +
+        `Se borra el pedido y sus ${(order.order_items || []).length} línea(s), y deja de contar en los ingresos del resumen.\n\n` +
+        `El stock NO se repone: si los artículos vuelven al almacén, ajústalos a mano en Productos.\n\n` +
+        `Esta acción no se puede deshacer.`
+    );
+    if (!ok) return;
+
+    // Primero las líneas y después la cabecera. Al revés, la clave ajena
+    // de order_items lo impediría si la tabla no borra en cascada.
+    const { error: itemsError } = await supabaseClient
+        .from('order_items').delete().eq('order_id', orderId);
+
+    if (itemsError) {
+        toast('No se pudieron borrar las líneas del pedido', true);
+        console.error(itemsError);
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from('orders').delete().eq('id', orderId).select();
+
+    if (error || !data || data.length === 0) {
+        toast('No se pudo eliminar el pedido', true);
+        console.error(error);
+        loadOrders();
+        return;
+    }
+
+    state.orders = state.orders.filter(o => o.id !== orderId);
+    if (state.openOrderId === orderId) state.openOrderId = null;
+
+    renderOrders();
+    loadStats();
+    toast('Pedido eliminado');
 }
 
 async function setOrderStatus(orderId, status) {
@@ -914,7 +987,9 @@ document.addEventListener('DOMContentLoaded', () => {
     $('closeProductBtn').addEventListener('click', closeProductForm);
     $('cancelProductBtn').addEventListener('click', closeProductForm);
     $('productOverlay').addEventListener('click', closeProductForm);
-    $('deleteProductBtn').addEventListener('click', deleteProduct);
+    $('deleteProductBtn').addEventListener('click', () => {
+        deleteProduct($('pId').value, state.editing ? state.editing.name : 'este producto', true);
+    });
     $('pSizes').addEventListener('change', onSizesChanged);
     $('pSizes').addEventListener('blur', onSizesChanged);
     $('pAvailable').addEventListener('change', refreshStockWarning);

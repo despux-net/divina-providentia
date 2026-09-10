@@ -1027,3 +1027,35 @@ img {
     text-decoration: none;
     line-height: 1.4;
 }
+
+/* ============================ BORRADO ============================ */
+
+/* La papelera vive dentro de una fila que ya es pulsable, así que se
+   mantiene discreta hasta que el ratón entra en la fila. En táctil no
+   hay hover, por eso se deja siempre visible por debajo de 700px. */
+.prod-delete {
+    flex: 0 0 auto;
+    margin-left: 10px;
+    padding: 6px 10px;
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+
+.prod-row:hover .prod-delete,
+.prod-delete:focus-visible {
+    opacity: 1;
+}
+
+@media (hover: none), (max-width: 700px) {
+    .prod-delete {
+        opacity: 1;
+    }
+}
+
+/* Separa la fila de borrado de la de estados, para que no se pulse por
+   inercia después de cambiar el estado. */
+.order-actions + .order-actions {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--grey-light);
+}
