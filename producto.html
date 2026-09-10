@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=14">
+    <link rel="stylesheet" href="styles.css?v=15">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="theme.js?v=2"></script>
@@ -89,15 +89,15 @@
     <footer class="footer" id="contacto">
         <div class="footer-grid">
             <div class="footer-section">
-                <h3>Divina Providentia</h3>
-                <p>No somos una marca, somos una trinchera.</p>
-                <div class="social-links">
+                <h3 data-footer="brandTitle">Divina Providentia</h3>
+                <p data-footer="tagline">No somos una marca, somos una trinchera.</p>
+                <div class="social-links" data-footer-list="social">
                     <a href="https://www.instagram.com/providentiadivina/" target="_blank" rel="noopener">Instagram</a>
                 </div>
             </div>
 
             <div class="footer-section">
-                <h3>Navegación</h3>
+                <h3 data-footer="navTitle">Navegación</h3>
                 <ul class="footer-links">
                     <li><a href="index.html#tienda">Tienda</a></li>
                     <li><a href="index.html#lookbook">Lookbook</a></li>
@@ -107,13 +107,15 @@
             </div>
 
             <div class="footer-section">
-                <h3>Atención</h3>
-                <p>+1 858 324 8313</p>
-                <p>Lun–Vie · 9:00–18:00</p>
+                <h3 data-footer="contactTitle">Atención</h3>
+                <div data-footer-list="contactLines">
+                    <p>+1 858 324 8313</p>
+                    <p>Lun–Vie · 9:00–18:00</p>
+                </div>
             </div>
 
             <div class="footer-section">
-                <h3>Escríbenos</h3>
+                <h3 data-footer="formTitle">Escríbenos</h3>
                 <form id="contactForm" class="contact-form-mini">
                     <div class="form-group-mini"><input type="text" id="contactName" placeholder="Nombre" required></div>
                     <div class="form-group-mini"><input type="email" id="contactEmail" placeholder="Email" required></div>
@@ -124,7 +126,7 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; <span id="year">2026</span> <span translate="no" class="notranslate">Divina Providentia</span></p>
-            <p>Todos los derechos reservados</p>
+            <p data-footer="rights">Todos los derechos reservados</p>
         </div>
     </footer>
 
@@ -237,7 +239,8 @@
     <!-- ============ SCRIPTS ============ -->
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=10"></script>
-    <script src="app.js?v=12"></script>
+    <script src="footer.js?v=1"></script>
+    <script src="app.js?v=13"></script>
     <script src="producto.js?v=2"></script>
 
     <div id="google_translate_element" style="display:none"></div>

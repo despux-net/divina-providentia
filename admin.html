@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Administración | Divina Providentia</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="admin.css?v=3">
+    <link rel="stylesheet" href="admin.css?v=4">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -59,6 +59,7 @@
             <button class="tab" data-tab="pedidos">Pedidos</button>
             <button class="tab" data-tab="lookbook">Lookbook</button>
             <button class="tab" data-tab="portada">Portada</button>
+            <button class="tab" data-tab="pie">Pie de página</button>
             <button class="tab" data-tab="apariencia">Apariencia</button>
             <button class="tab" data-tab="ajustes">Ajustes</button>
         </nav>
@@ -139,6 +140,80 @@
                         <button class="btn btn-danger" id="heroRemoveBtn">Quitar imagen</button>
                         <p class="hint" id="heroStatus"></p>
                     </div>
+                </div>
+            </section>
+
+            <!-- ---------------- PIE DE PÁGINA ---------------- -->
+            <section class="tab-panel" id="panel-pie">
+                <div class="section-bar">
+                    <h2>Pie de página</h2>
+                    <div class="appearance-actions">
+                        <span class="dirty-flag" id="footerDirty" hidden>Sin guardar</span>
+                        <button class="btn" id="footerResetBtn">Restablecer</button>
+                        <button class="btn btn-primary" id="footerSaveBtn">Guardar</button>
+                    </div>
+                </div>
+
+                <p class="form-error" id="footerError" role="alert"></p>
+
+                <p class="hint" style="margin-bottom:18px">
+                    Los enlaces de la columna «Navegación» llevan a las secciones de la
+                    tienda, así que se quedan como están. Todo lo demás se escribe aquí.
+                </p>
+
+                <div class="footer-editor" id="footerControls">
+
+                    <fieldset class="group">
+                        <legend>Columna de la marca</legend>
+                        <label class="field">
+                            <span>Título</span>
+                            <input type="text" data-footer-field="brandTitle" maxlength="80">
+                        </label>
+                        <label class="field">
+                            <span>Lema</span>
+                            <textarea data-footer-field="tagline" rows="2" maxlength="300"></textarea>
+                        </label>
+                        <div class="field">
+                            <span>Redes y enlaces</span>
+                            <div class="repeater" id="socialRows"></div>
+                            <button type="button" class="btn btn-ghost" id="socialAddBtn">Añadir enlace</button>
+                            <small class="hint">
+                                El enlace tiene que empezar por https://, mailto: o tel:.
+                                Los que no lo hagan no se guardan.
+                            </small>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="group">
+                        <legend>Las otras columnas</legend>
+                        <label class="field">
+                            <span>Título de la columna de navegación</span>
+                            <input type="text" data-footer-field="navTitle" maxlength="40">
+                        </label>
+                        <label class="field">
+                            <span>Título de la columna de atención</span>
+                            <input type="text" data-footer-field="contactTitle" maxlength="40">
+                        </label>
+                        <label class="field">
+                            <span>Datos de atención</span>
+                            <textarea data-footer-field="contactLines" rows="4" maxlength="800"></textarea>
+                            <small class="hint">Una línea por renglón: teléfono, horario, lo que haga falta.</small>
+                        </label>
+                        <label class="field">
+                            <span>Título del formulario</span>
+                            <input type="text" data-footer-field="formTitle" maxlength="40">
+                        </label>
+                    </fieldset>
+
+                    <fieldset class="group">
+                        <legend>Línea final</legend>
+                        <label class="field">
+                            <span>Aviso de derechos</span>
+                            <input type="text" data-footer-field="rights" maxlength="160">
+                            <small class="hint">El año y el nombre de la marca ya van delante, puestos solos.</small>
+                        </label>
+                    </fieldset>
+
                 </div>
             </section>
 
@@ -416,7 +491,8 @@
 
     <script src="supabase-config.js"></script>
     <script src="theme.js?v=2"></script>
-    <script src="admin.js?v=3"></script>
+    <script src="footer.js?v=1"></script>
+    <script src="admin.js?v=4"></script>
 </body>
 
 </html>

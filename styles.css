@@ -1026,6 +1026,11 @@ button {
 
 .social-links {
     margin-top: var(--sp-4);
+    /* Ahora los enlaces los pone el dueño y pueden ser varios: en fila,
+       con aire, y bajando de línea cuando no quepan. */
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--sp-4);
 }
 
 /* Formulario de contacto */

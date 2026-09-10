@@ -1271,6 +1271,46 @@ small.hint {
     cursor: pointer;
 }
 
+/* Editor del pie. Mismas cajas que Apariencia, pero a dos columnas en
+   pantallas anchas: son campos de texto y no hay vista previa al lado. */
+.footer-editor {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    align-items: start;
+    max-width: 900px;
+}
+
+@media (min-width: 900px) {
+    .footer-editor {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.repeater {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.repeater-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.repeater-row input {
+    margin: 0;
+}
+
+.repeater-remove {
+    padding: 0 10px;
+    line-height: 1;
+    font-size: 18px;
+}
+
 /* Segmentado (alineación, tamaño de la vista previa) */
 .seg {
     display: flex;

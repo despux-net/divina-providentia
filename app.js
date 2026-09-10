@@ -248,14 +248,31 @@ const siteSettings = { requireAccount: false };
 async function loadSiteSettings() {
     if (!window.supabaseClient) return;
     try {
-        const { data, error } = await window.supabaseClient
+        let { data, error } = await window.supabaseClient
             .from('site_settings')
-            .select('require_account, theme')
+            .select('require_account, theme, footer')
             .eq('id', 1)
             .maybeSingle();
 
+        // Mientras no se ejecute el SQL del pie esa columna no existe y
+        // la consulta entera falla. Se reintenta sin ella: sería absurdo
+        // perder el tema y el interruptor de cuenta por unos rótulos.
+        if (error) {
+            ({ data, error } = await window.supabaseClient
+                .from('site_settings')
+                .select('require_account, theme')
+                .eq('id', 1)
+                .maybeSingle());
+        }
+
         if (!error && data) {
             siteSettings.requireAccount = !!data.require_account;
+
+            // Los textos del pie. Si no hay nada guardado se deja el HTML
+            // tal cual, que ya trae escritos los de fábrica.
+            if (data.footer && window.DPFooter) {
+                window.DPFooter.apply(data.footer);
+            }
 
             // En la vista previa del panel manda el borrador que el
             // dueño está tocando, no lo que hay guardado: si se aplicara

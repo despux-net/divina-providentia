@@ -33,6 +33,8 @@ const state = {
     heroImage: null,
     theme: {},
     themeSaved: {},
+    footer: {},
+    footerSaved: {},
     gallery: [],
     colors: [],
     orderFilter: 'all',
@@ -139,6 +141,7 @@ function showPanel(email) {
     loadHero();
     loadSettings();
     loadTheme();
+    loadFooter();
 }
 
 async function handleLogin(e) {
@@ -922,6 +925,134 @@ async function removeHero() {
 
 
 // ===================================================================
+// PIE DE PÁGINA
+//
+// El borrador se lee del formulario cada vez que se escribe, y solo se
+// normaliza al guardar: si se limpiara a cada tecla, una fila de enlace
+// a medio escribir desaparecería bajo los dedos.
+// ===================================================================
+
+const NEWLINE = String.fromCharCode(10);
+
+function readFooterForm() {
+    const draft = {};
+
+    document.querySelectorAll('[data-footer-field]').forEach(input => {
+        const key = input.dataset.footerField;
+        draft[key] = key === 'contactLines'
+            ? input.value.split(NEWLINE).map(l => l.trim()).filter(Boolean)
+            : input.value;
+    });
+
+    draft.social = Array.from(document.querySelectorAll('#socialRows .repeater-row'))
+        .map(row => ({
+            label: row.querySelector('.social-label').value,
+            url: row.querySelector('.social-url').value
+        }));
+
+    return draft;
+}
+
+function footerIsDirty() {
+    // Se comparan las versiones limpias: unos espacios de más al final
+    // no son un cambio que merezca avisar de que hay algo sin guardar.
+    return JSON.stringify(DPFooter.normalize(state.footer)) !== JSON.stringify(state.footerSaved);
+}
+
+function markFooterDirty() {
+    $('footerDirty').hidden = !footerIsDirty();
+}
+
+function addSocialRow(item) {
+    const row = document.createElement('div');
+    row.className = 'repeater-row';
+    row.innerHTML = `
+        <input type="text" class="social-label" placeholder="Nombre" maxlength="40">
+        <input type="url" class="social-url" placeholder="https://…" maxlength="300">
+        <button type="button" class="btn btn-ghost repeater-remove" aria-label="Quitar enlace">&times;</button>`;
+    row.querySelector('.social-label').value = (item && item.label) || '';
+    row.querySelector('.social-url').value = (item && item.url) || '';
+    $('socialRows').appendChild(row);
+}
+
+// Vuelca el borrador en el formulario. Solo se llama al cargar, al
+// restablecer y al añadir o quitar filas.
+function renderFooterEditor() {
+    const f = DPFooter.normalize(state.footer);
+
+    document.querySelectorAll('[data-footer-field]').forEach(input => {
+        const key = input.dataset.footerField;
+        input.value = key === 'contactLines' ? f.contactLines.join(NEWLINE) : f[key];
+    });
+
+    $('socialRows').innerHTML = '';
+    f.social.forEach(addSocialRow);
+
+    markFooterDirty();
+}
+
+async function loadFooter() {
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .select('footer')
+        .eq('id', 1)
+        .maybeSingle();
+
+    if (error) {
+        $('footerError').textContent =
+            'No se pudo leer el pie. ¿Has ejecutado la última versión del SQL?';
+        $('footerSaveBtn').disabled = true;
+        console.error(error);
+        return;
+    }
+
+    $('footerSaveBtn').disabled = false;
+    state.footerSaved = DPFooter.normalize((data && data.footer) || {});
+    state.footer = Object.assign({}, state.footerSaved);
+    renderFooterEditor();
+}
+
+async function saveFooter() {
+    const btn = $('footerSaveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Guardando…';
+    $('footerError').textContent = '';
+
+    const clean = DPFooter.normalize(readFooterForm());
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .update({ footer: clean })
+        .eq('id', 1)
+        .select();
+
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+
+    if (error || !data || data.length === 0) {
+        $('footerError').textContent = 'No se pudo guardar el pie.';
+        console.error(error);
+        return;
+    }
+
+    state.footer = clean;
+    state.footerSaved = clean;
+
+    // Se repinta con lo que ha quedado guardado de verdad: así se ve al
+    // momento si un enlace se ha caído por no llevar https://.
+    renderFooterEditor();
+    toast('Pie de página guardado');
+}
+
+function resetFooter() {
+    if (!confirm('¿Volver a los textos originales del pie? Se pierden los cambios que no hayas guardado.')) return;
+    state.footer = JSON.parse(JSON.stringify(DPFooter.DEFAULTS));
+    renderFooterEditor();
+    toast('Textos originales cargados. Pulsa Guardar para aplicarlos.');
+}
+
+
+// ===================================================================
 // APARIENCIA
 //
 // El borrador vive en state.theme. Se pinta en el marco de vista previa
@@ -1394,9 +1525,32 @@ document.addEventListener('DOMContentLoaded', () => {
     $('themeSaveBtn').addEventListener('click', saveTheme);
     $('themeResetBtn').addEventListener('click', resetTheme);
 
+    // Pie de página
+    $('footerControls').addEventListener('input', () => {
+        state.footer = readFooterForm();
+        markFooterDirty();
+    });
+
+    $('socialAddBtn').addEventListener('click', () => {
+        addSocialRow(null);
+        state.footer = readFooterForm();
+        markFooterDirty();
+    });
+
+    $('socialRows').addEventListener('click', (e) => {
+        const btn = e.target.closest('.repeater-remove');
+        if (!btn) return;
+        btn.closest('.repeater-row').remove();
+        state.footer = readFooterForm();
+        markFooterDirty();
+    });
+
+    $('footerSaveBtn').addEventListener('click', saveFooter);
+    $('footerResetBtn').addEventListener('click', resetFooter);
+
     // Aviso al salir con cambios sin guardar.
     window.addEventListener('beforeunload', (e) => {
-        if (themeIsDirty()) { e.preventDefault(); e.returnValue = ''; }
+        if (themeIsDirty() || footerIsDirty()) { e.preventDefault(); e.returnValue = ''; }
     });
 
     $('pImageBtn').addEventListener('click', () => $('pImageFile').click());

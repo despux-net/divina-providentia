@@ -570,6 +570,12 @@ alter table public.site_settings
 alter table public.site_settings
   add column if not exists require_account boolean not null default false;
 
+-- Textos del pie de página: rótulos, lema, enlaces de redes y datos de
+-- atención. Vacío significa "los textos que ya trae escritos el HTML",
+-- así que la web sigue viéndose igual mientras no se toque el panel.
+alter table public.site_settings
+  add column if not exists footer jsonb not null default '{}'::jsonb;
+
 -- Debe existir siempre la fila 1: es la que lee la web.
 --
 -- 'id' está declarada GENERATED ALWAYS, así que la base rechaza que se
