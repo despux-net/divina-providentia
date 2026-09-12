@@ -353,6 +353,63 @@ small.hint {
     margin-bottom: 22px;
 }
 
+/* Va justo encima del recuadro de existencias, y sin aire propio se le
+   pega al borde. */
+#printfulLock {
+    margin-bottom: 18px;
+}
+
+.bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Lista de productos de Printful dentro del modal de importar. */
+.pf-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--grey-light);
+}
+
+.pf-row:last-child {
+    border-bottom: 0;
+}
+
+.pf-thumb {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    background: var(--grey-bg);
+    border: 1px solid var(--grey-light);
+    overflow: hidden;
+}
+
+.pf-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pf-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.pf-name {
+    font-weight: 600;
+}
+
+.pf-meta {
+    margin-top: 2px;
+    color: var(--grey);
+    font-size: var(--fs-nano);
+}
+
 .section-bar h2 {
     margin: 0;
     font-size: var(--fs-small);

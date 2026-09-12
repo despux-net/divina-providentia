@@ -60,8 +60,24 @@ function fullName(order) {
         .filter(Boolean).join(' ').trim() || 'Sin nombre';
 }
 
-function money(n) {
-    return '$' + Number(n || 0).toFixed(2);
+const CURRENCY_SYMBOLS = { USD: '$', EUR: '€', GBP: '£' };
+
+function money(n, currency) {
+    const code = String(currency || 'USD').toUpperCase();
+    const symbol = CURRENCY_SYMBOLS[code];
+    const value = Number(n || 0).toFixed(2);
+    return symbol ? symbol + value : value + ' ' + code;
+}
+
+// Los ingresos se enseñan moneda por moneda. Sumar euros con dólares
+// daría un número que no significa nada.
+function moneyByCurrency(totals) {
+    const entries = Object.entries(totals || {});
+    if (!entries.length) return money(0);
+    return entries
+        .sort((x, y) => x[0].localeCompare(y[0]))
+        .map(([code, total]) => money(total, code))
+        .join(' · ');
 }
 
 function formatDate(iso) {
@@ -200,8 +216,8 @@ async function loadStats() {
     }
 
     const cards = [
-        ['Ingresos totales', money(data.revenue)],
-        ['Últimos 30 días', money(data.revenue_30d)],
+        ['Ingresos totales', moneyByCurrency(data.revenue_by_currency)],
+        ['Últimos 30 días', moneyByCurrency(data.revenue_30d_by_currency)],
         ['Pedidos', data.orders_total ?? 0],
         ['Pendientes', data.orders_pending ?? 0],
         ['Productos', `${data.published ?? 0}/${data.products ?? 0}`],
@@ -230,6 +246,12 @@ function sizesOf(product) {
     return Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [];
 }
 
+// Impresión bajo demanda: Printful fabrica la prenda al recibir el
+// pedido. No hay almacén, así que no hay nada que contar ni reponer.
+function isPrintOnDemand(product) {
+    return !!product && product.fulfillment === 'printful';
+}
+
 // Claves de stock de un producto: sus tallas, o la talla única si no
 // se vende por tallas.
 function stockKeys(product) {
@@ -240,8 +262,10 @@ function stockKeys(product) {
 }
 
 // Unidades totales. Es lo que decide si la tienda deja comprar, así que
-// el panel tiene que enseñarlo igual que lo aplica la web.
+// el panel tiene que enseñarlo igual que lo aplica la web. Devuelve null
+// cuando no hay límite: bajo demanda nunca se agota.
 function totalStock(product) {
+    if (isPrintOnDemand(product)) return null;
     const stock = product.stock_by_size || {};
     return stockKeys(product)
         .reduce((sum, size) => sum + (parseInt(stock[size], 10) || 0), 0);
@@ -294,11 +318,13 @@ function renderProducts() {
         const issue = copyIssue(product);
         const photos = galleryOf(product).length;
         const stock = product.stock_by_size || {};
-        const pills = stockKeys(product).map(size => {
-            const n = parseInt(stock[size], 10) || 0;
-            const label = size === SINGLE_SIZE ? '' : size + ' ';
-            return `<span class="stock-pill${n === 0 ? ' zero' : ''}">${escapeHtml(label)}${n}</span>`;
-        }).join('');
+        const pills = isPrintOnDemand(product)
+            ? '<span class="stock-pill">Bajo demanda</span>'
+            : stockKeys(product).map(size => {
+                const n = parseInt(stock[size], 10) || 0;
+                const label = size === SINGLE_SIZE ? '' : size + ' ';
+                return `<span class="stock-pill${n === 0 ? ' zero' : ''}">${escapeHtml(label)}${n}</span>`;
+            }).join('');
 
         // Estado efectivo, que es el que ve el cliente. Marcar "a la venta"
         // no basta: si no hay unidades, la tienda lo sigue dando por
@@ -324,7 +350,7 @@ function renderProducts() {
                 <div class="prod-stock">${pills}</div>
                 ${issue ? `<div class="copy-warn">${escapeHtml(issue)}</div>` : ''}
             </div>
-            <div class="prod-price">${money(product.price)}</div>
+            <div class="prod-price">${money(product.price, product.currency)}</div>
             <div class="prod-flags">
                 <span class="flag ${product.published ? 'on' : 'off'}">${product.published ? 'Publicado' : 'Borrador'}</span>
                 <span class="flag ${saleClass}">${saleFlag}</span>
@@ -505,6 +531,19 @@ function openProductForm(product) {
     renderGallery();
     renderColors();
 
+    // Bajo demanda no se rellenan existencias: se explica en su lugar.
+    const onDemand = isPrintOnDemand(product);
+    $('stockBlock').hidden = onDemand;
+    $('onDemandBlock').hidden = !onDemand;
+
+    // El precio se enseña en la moneda del producto, y en lo que fabrica
+    // Printful ni el precio ni las tallas se editan aquí: los manda él.
+    $('pPriceLabel').textContent =
+        `Precio (${product && product.currency ? product.currency : 'USD'})`;
+    $('pPrice').readOnly = onDemand;
+    $('pSizes').readOnly = onDemand;
+    $('printfulLock').hidden = !onDemand;
+
     renderStockFields(
         product ? sizesOf(product) : [],
         product ? product.stock_by_size : {}
@@ -544,6 +583,11 @@ function refreshStockWarning() {
     const el = $('stockWarning');
     if (!el) return;
 
+    if (isPrintOnDemand(state.editing)) {
+        el.textContent = '';
+        return;
+    }
+
     const units = Object.values(collectStock()).reduce((a, b) => a + b, 0);
     el.textContent = ($('pAvailable').checked && units === 0)
         ? 'Está marcado «A la venta» pero no hay unidades: en la tienda seguirá saliendo AGOTADO hasta que pongas cantidades.'
@@ -557,6 +601,123 @@ function collectStock() {
     });
     return stock;
 }
+
+// ===================================================================
+// IMPORTAR DE PRINTFUL
+//
+// El enlace entre la tienda de Printful y el catálogo. Trae nombre,
+// tallas, precios y mockups, y deja escrito qué variante corresponde a
+// cada talla, que es lo que la pasarela necesita para encargar la prenda.
+// ===================================================================
+
+async function callPrintful(payload) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) throw new Error('Se ha cerrado la sesión. Vuelve a entrar.');
+
+    const response = await fetch(`${window.SUPABASE_URL}/functions/v1/printful-import`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'Printful no respondió como se esperaba.');
+    return data;
+}
+
+function openPrintfulModal() {
+    $('printfulOverlay').hidden = false;
+    $('printfulModal').hidden = false;
+    document.body.style.overflow = 'hidden';
+    loadPrintfulCatalogue();
+}
+
+function closePrintfulModal() {
+    $('printfulOverlay').hidden = true;
+    $('printfulModal').hidden = true;
+    document.body.style.overflow = '';
+}
+
+async function loadPrintfulCatalogue() {
+    const list = $('printfulList');
+    list.innerHTML = '<div class="loading">Consultando tu tienda de Printful…</div>';
+
+    try {
+        const { products } = await callPrintful({ action: 'list' });
+
+        if (!products.length) {
+            list.innerHTML = '<div class="loading">Tu tienda de Printful todavía no tiene productos.</div>';
+            return;
+        }
+
+        list.innerHTML = products.map(p => {
+            const yaEsta = p.productId
+                ? ` · ya en la tienda como «${escapeHtml(p.localName || '')}»${p.published ? '' : ' (borrador)'}`
+                : '';
+            return `
+            <div class="pf-row">
+                <div class="pf-thumb">
+                    ${p.thumbnail ? `<img src="${escapeHtml(p.thumbnail)}" alt="" loading="lazy">` : ''}
+                </div>
+                <div class="pf-main">
+                    <div class="pf-name">${escapeHtml(p.name)}</div>
+                    <div class="pf-meta">${p.synced} de ${p.variants} tallas sincronizadas${yaEsta}</div>
+                </div>
+                <button type="button" class="btn${p.productId ? '' : ' btn-primary'}"
+                        data-import="${p.syncProductId}"
+                        data-enlazado="${p.productId ? '1' : ''}">
+                    ${p.productId ? 'Actualizar' : 'Importar'}
+                </button>
+            </div>`;
+        }).join('');
+
+        list.querySelectorAll('[data-import]').forEach(btn => {
+            btn.addEventListener('click', () => importFromPrintful(btn));
+        });
+    } catch (error) {
+        console.error('No se pudo leer la tienda de Printful:', error);
+        list.innerHTML = `<div class="loading">${escapeHtml(error.message)}</div>`;
+    }
+}
+
+async function importFromPrintful(btn) {
+    const syncProductId = Number(btn.dataset.import);
+    const enlazado = !!btn.dataset.enlazado;
+
+    // Al reimportar, las fotos son suyas: puede haberlas cambiado o
+    // reordenado, y traer las de Printful se lo desharía sin avisar.
+    const replaceImages = enlazado
+        ? confirm('¿Traer también los mockups de Printful y reemplazar las fotos que tiene ahora?\n\nAceptar: se sustituyen las fotos.\nCancelar: se actualizan tallas y precios, y las fotos se quedan como están.')
+        : false;
+
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Importando…';
+
+    try {
+        const r = await callPrintful({ action: 'import', syncProductId, replaceImages });
+
+        let aviso = r.created
+            ? `«${r.name}» importado como borrador, con ${r.sizes.length} tallas.`
+            : `«${r.name}» actualizado: ${r.sizes.length} tallas.`;
+        if (r.skipped && r.skipped.length) {
+            aviso += ` ${r.skipped.length} variantes de otro color no se han enlazado.`;
+        }
+        toast(aviso, !!(r.skipped && r.skipped.length));
+
+        await loadProducts();
+        await loadPrintfulCatalogue();
+    } catch (error) {
+        console.error('No se pudo importar de Printful:', error);
+        toast(error.message, true);
+        btn.disabled = false;
+        btn.textContent = original;
+    }
+}
+
 
 async function uploadImage(file) {
     const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
@@ -1280,7 +1441,7 @@ function renderOrders() {
         const lines = items.map(item => `
             <div class="order-line">
                 <span>${escapeHtml(item.product_name || 'Artículo')}${item.size && item.size !== SINGLE_SIZE ? ' · ' + escapeHtml(item.size) : ''} ×${item.quantity}</span>
-                <span>${money((item.price_at_purchase || 0) * (item.quantity || 0))}</span>
+                <span>${money((item.price_at_purchase || 0) * (item.quantity || 0), order.currency)}</span>
             </div>`).join('');
 
         const buttons = Object.entries(ORDER_STATUSES).map(([value, label]) =>
@@ -1295,7 +1456,7 @@ function renderOrders() {
                 <span class="order-customer">${escapeHtml(fullName(order))}</span>
                 <span class="order-date">${escapeHtml(formatDate(order.created_at))}</span>
                 <span class="badge ${escapeHtml(order.status || '')}">${escapeHtml(ORDER_STATUSES[order.status] || order.status || '')}</span>
-                <span class="order-total">${money(order.total_amount)}</span>
+                <span class="order-total">${money(order.total_amount, order.currency)}</span>
             </div>
 
             ${open ? `
@@ -1552,6 +1713,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeunload', (e) => {
         if (themeIsDirty() || footerIsDirty()) { e.preventDefault(); e.returnValue = ''; }
     });
+
+    $('printfulBtn').addEventListener('click', openPrintfulModal);
+    $('closePrintfulBtn').addEventListener('click', closePrintfulModal);
+    $('printfulOverlay').addEventListener('click', closePrintfulModal);
 
     $('pImageBtn').addEventListener('click', () => $('pImageFile').click());
     $('pImageFile').addEventListener('change', (e) => {

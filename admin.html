@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Administración | Divina Providentia</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="admin.css?v=4">
+    <link rel="stylesheet" href="admin.css?v=5">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -77,7 +77,10 @@
             <section class="tab-panel" id="panel-productos">
                 <div class="section-bar">
                     <h2>Productos</h2>
-                    <button class="btn btn-primary" id="newProductBtn">Nuevo producto</button>
+                    <div class="bar-actions">
+                        <button class="btn" id="printfulBtn">Importar de Printful</button>
+                        <button class="btn btn-primary" id="newProductBtn">Nuevo producto</button>
+                    </div>
                 </div>
                 <div id="productsList">
                     <div class="loading">Cargando…</div>
@@ -379,6 +382,25 @@
     </div>
 
     <!-- ============================ FICHA DE PRODUCTO ============================ -->
+    <!-- ---------------- IMPORTAR DE PRINTFUL ---------------- -->
+    <div class="modal-overlay" id="printfulOverlay" hidden></div>
+    <div class="modal" id="printfulModal" hidden role="dialog" aria-modal="true" aria-labelledby="printfulTitle">
+        <div class="modal-head">
+            <h2 id="printfulTitle">Importar de Printful</h2>
+            <button class="btn btn-ghost" id="closePrintfulBtn" aria-label="Cerrar">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p class="hint">
+                Trae de tu tienda de Printful el nombre, las tallas, los precios y los mockups,
+                y deja enlazada cada talla con su variante. Lo que entre nuevo se guarda como
+                <strong>borrador</strong>: revísalo y publícalo cuando esté a tu gusto.
+            </p>
+            <div id="printfulList">
+                <div class="loading">Cargando…</div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="productOverlay" hidden></div>
     <div class="modal" id="productModal" hidden role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
         <div class="modal-head">
@@ -395,7 +417,7 @@
                     <input type="text" id="pName" required maxlength="120">
                 </label>
                 <label class="field field-narrow">
-                    <span>Precio (USD)</span>
+                    <span id="pPriceLabel">Precio (USD)</span>
                     <input type="number" id="pPrice" step="0.01" min="0" required>
                 </label>
             </div>
@@ -421,11 +443,23 @@
                 </label>
             </div>
 
-            <fieldset class="stock-block">
+            <p class="hint" id="printfulLock" hidden>
+                El precio y las tallas de esta prenda los manda Printful: se cobra lo que
+                figure allí, así que cambiarlos aquí solo haría que la web enseñase una cosa
+                y se cobrase otra. Cámbialos en Printful y pulsa «Importar de Printful».
+            </p>
+
+            <fieldset class="stock-block" id="stockBlock">
                 <legend>Existencias</legend>
                 <div id="stockFields" class="stock-fields"></div>
                 <p class="hint">El stock se descuenta solo con cada venta. Una talla a 0 aparece tachada en la tienda.</p>
                 <p class="form-error" id="stockWarning"></p>
+            </fieldset>
+
+            <!-- En su lugar, para lo que fabrica Printful al recibir el pedido. -->
+            <fieldset class="stock-block" id="onDemandBlock" hidden>
+                <legend>Existencias</legend>
+                <p class="hint">Esta prenda se fabrica bajo demanda: Printful la imprime y la envía cuando alguien la compra, así que no hay unidades que contar ni que reponer. Se paga en línea con tarjeta o PayPal.</p>
             </fieldset>
 
             <fieldset class="group">
@@ -492,7 +526,7 @@
     <script src="supabase-config.js"></script>
     <script src="theme.js?v=2"></script>
     <script src="footer.js?v=1"></script>
-    <script src="admin.js?v=4"></script>
+    <script src="admin.js?v=7"></script>
 </body>
 
 </html>

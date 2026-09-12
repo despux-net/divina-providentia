@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initializeApp() {
     initializeNavbar();
     initializeEventListeners();
+    rememberCheckoutForm();
     loadCartFromStorage();
+    handleCheckoutReturn();
     loadHeroImage();
     await loadSiteSettings();
     await loadProducts();
@@ -98,6 +100,7 @@ async function loadProducts() {
 
     buildFilterOptions();
     displayProducts();
+    syncCartWithCatalog();
 }
 
 function sortProducts(list, mode) {
@@ -203,7 +206,7 @@ function displayProducts() {
             colors.slice(0, 5).map(c => `<span class="swatch" style="background:${escapeHtml(c.hex || '#fff')}" title="${escapeHtml(c.name)}"></span>`).join('')
         }</div>` : ''}
         <div class="product-footer">
-          <span class="product-price">$${parseFloat(product.price).toFixed(2)}</span>
+          <span class="product-price">${money(product.price, product.currency)}</span>
           <button class="add-to-cart-btn ${!canBuy ? 'disabled' : ''}"
                   onclick="event.stopPropagation(); ${canBuy ? action : ''}"
                   ${!canBuy ? 'disabled' : ''}>
@@ -331,23 +334,63 @@ async function loadHeroImage() {
 // igual que en una prenda.
 const SINGLE_SIZE = 'ÚNICA';
 
+// Cómo se sirve el artículo. 'printful' es impresión bajo demanda: la
+// prenda se fabrica al recibir el pedido, se paga con tarjeta o PayPal y
+// se envía sola. El resto del catálogo se sigue cerrando a mano.
+function isPrintOnDemand(product) {
+    return !!product && product.fulfillment === 'printful';
+}
+
 // Tallas que se ofrecen de un producto. Vacío = artículo sin tallas.
 function productSizes(product) {
     return Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [];
 }
 
 function stockOf(product, size) {
+    // Bajo demanda no hay almacén que vaciar: nunca se agota.
+    if (isPrintOnDemand(product)) return Infinity;
     const stock = product.stock_by_size || {};
     return Math.max(0, parseInt(stock[size], 10) || 0);
 }
 
-// Suma de existencias. Devuelve null cuando el producto todavía no tiene
-// stock configurado, para no dar por agotado lo que nunca se contó.
+// Suma de existencias. Devuelve null cuando no hay nada que contar:
+// porque se fabrica bajo demanda, o porque el producto todavía no tiene
+// stock configurado y sería injusto darlo por agotado.
 function totalStock(product) {
+    if (isPrintOnDemand(product)) return null;
     const stock = product.stock_by_size || {};
     const keys = productSizes(product).length ? productSizes(product) : Object.keys(stock);
     if (!keys.length) return null;
     return keys.reduce((sum, size) => sum + stockOf(product, size), 0);
+}
+
+// Rótulo de una talla en el selector.
+function sizeTitle(product, size) {
+    if (isPrintOnDemand(product)) return 'Disponible';
+    const left = stockOf(product, size);
+    return left > 0 ? `${left} disponibles` : 'Agotada';
+}
+
+// Aviso que sale bajo el selector al elegir talla.
+function sizeHintText(product, size) {
+    if (isPrintOnDemand(product)) return 'Se fabrica al hacer el pedido.';
+    return `Quedan ${stockOf(product, size)} unidades`;
+}
+
+// ===================================
+// MONEDA
+// ===================================
+
+// Cada producto se cobra en la suya: los de siempre en dólares y la
+// franela de Printful en euros, que es la moneda de la cuenta de Stripe.
+// Sin esto la web enseñaría '$23.90' y cobraría 23,90 €.
+const CURRENCY_SYMBOLS = { USD: '$', EUR: '€', GBP: '£' };
+
+function money(amount, currency) {
+    const code = String(currency || 'USD').toUpperCase();
+    const symbol = CURRENCY_SYMBOLS[code];
+    const value = (Number(amount) || 0).toFixed(2);
+    return symbol ? `${symbol}${value}` : `${value} ${code}`;
 }
 
 function isPurchasable(product) {
@@ -460,7 +503,7 @@ function expandProductCard(product) {
         return `<button type="button" class="size-option${out ? ' out' : ''}"
                                         data-size="${escapeHtml(size)}"
                                         ${out ? 'disabled aria-disabled="true"' : ''}
-                                        title="${out ? 'Agotada' : left + ' disponibles'}">${escapeHtml(size)}</button>`;
+                                        title="${sizeTitle(product, size)}">${escapeHtml(size)}</button>`;
     }).join('')}
                         </div>
                         <p class="size-hint" id="sizeHint"></p>
@@ -488,7 +531,7 @@ function expandProductCard(product) {
                 <div class="product-expand-info">
                     <span class="product-expand-cat">${escapeHtml(getCategoryName(product.category))}</span>
                     <h2 class="product-expand-name">${escapeHtml(product.name)}</h2>
-                    <p class="product-expand-price">$${parseFloat(product.price).toFixed(2)}</p>
+                    <p class="product-expand-price">${money(product.price, product.currency)}</p>
                     <div class="product-expand-divider"></div>
                     <p class="product-expand-desc">${escapeHtml(product.description || '')}</p>
                     ${sizesHtml}
@@ -520,7 +563,7 @@ function expandProductCard(product) {
             panel.querySelectorAll('.size-option').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             chosenSize = btn.dataset.size;
-            if (hint) hint.textContent = `Quedan ${stockOf(product, chosenSize)} unidades`;
+            if (hint) hint.textContent = sizeHintText(product, chosenSize);
         });
     });
 
@@ -616,6 +659,8 @@ function initializeEventListeners() {
     document.getElementById('cartOverlay')?.addEventListener('click', closeCart);
 
     document.getElementById('checkoutBtn')?.addEventListener('click', openCheckout);
+    document.getElementById('payCardBtn')?.addEventListener('click', (e) => payNow(null, e.currentTarget));
+    document.getElementById('payPaypalBtn')?.addEventListener('click', (e) => payNow('paypal', e.currentTarget));
     document.getElementById('closeCheckoutBtn')?.addEventListener('click', closeCheckout);
     document.getElementById('checkoutOverlay')?.addEventListener('click', closeCheckout);
 
@@ -644,6 +689,18 @@ function initializeEventListeners() {
 // CESTA
 // ===================================
 
+// Una cesta entera se paga de una sola manera: o toda en línea con
+// Stripe, o toda por el trato de siempre. Mezclar las dos deja un pedido
+// a medio cobrar, así que se avisa antes de meterlo.
+function cartIsPrintOnDemand() {
+    return state.cart.length > 0 && state.cart.every(item => item.fulfillment === 'printful');
+}
+
+function cartHasMix() {
+    return state.cart.some(item => item.fulfillment === 'printful')
+        && state.cart.some(item => item.fulfillment !== 'printful');
+}
+
 function addToCart(productId, size) {
     const product = state.products.find(p => p.id == productId);
     if (!product) return;
@@ -662,6 +719,17 @@ function addToCart(productId, size) {
         return;
     }
 
+    // Los artículos bajo demanda se pagan en línea y el resto se cierran
+    // por mensaje: no caben en el mismo pedido.
+    const mixes = state.cart.some(item =>
+        (item.fulfillment === 'printful') !== isPrintOnDemand(product));
+    if (!existing && mixes) {
+        alert(isPrintOnDemand(product)
+            ? 'Esta prenda se paga en línea y en tu cesta hay artículos que se cierran por mensaje. Termina ese pedido primero o vacía la cesta.'
+            : 'En tu cesta hay una prenda que se paga en línea. Termina ese pedido primero o vacía la cesta para añadir este artículo.');
+        return;
+    }
+
     if (existing) {
         existing.quantity = wanted;
     } else {
@@ -671,7 +739,9 @@ function addToCart(productId, size) {
             size: chosen,
             name: product.name,
             price: product.price,
-            image_url: product.image_url,
+            currency: product.currency,
+            fulfillment: product.fulfillment,
+            image_url: productImages(product)[0] || product.image_url,
             quantity: 1
         });
     }
@@ -679,6 +749,34 @@ function addToCart(productId, size) {
     updateCart();
     saveCartToStorage();
     openCart();
+}
+
+// La cesta vive en el navegador y puede llevar semanas ahí. En cuanto
+// llega el catálogo se le refrescan nombre, precio, moneda y forma de
+// envío, y se caen los artículos que ya no existen: si no, una prenda
+// retirada llegaría hasta la pasarela de pago para morir allí.
+function syncCartWithCatalog() {
+    if (!state.cart.length || !state.products.length) return;
+
+    const before = state.cart.length;
+
+    state.cart = state.cart.filter(item => {
+        const product = state.products.find(p => p.id == item.id);
+        if (!product) return false;
+        item.name = product.name;
+        item.price = product.price;
+        item.currency = product.currency;
+        item.fulfillment = product.fulfillment;
+        item.image_url = productImages(product)[0] || product.image_url;
+        return true;
+    });
+
+    if (state.cart.length !== before && typeof showNotification === 'function') {
+        showNotification('Algún artículo de tu cesta ya no está a la venta y se ha quitado.');
+    }
+
+    updateCart();
+    saveCartToStorage();
 }
 
 function removeFromCart(key) {
@@ -723,7 +821,15 @@ function updateCart() {
     const totalPrice = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     cartCount.textContent = totalItems;
-    cartTotal.textContent = `$${totalPrice.toFixed(2)}`;
+    cartTotal.textContent = money(totalPrice, state.cart.length ? state.cart[0].currency : 'USD');
+
+    // Bajo demanda se paga en la pasarela y no hay nada que acordar
+    // después, así que en lugar de "Realizar compra" salen directamente
+    // los botones de tarjeta y PayPal.
+    const payOnline = cartIsPrintOnDemand();
+    const payButtons = document.getElementById('payButtons');
+    if (payButtons) payButtons.hidden = !payOnline;
+    checkoutBtn.hidden = payOnline;
 
     if (state.cart.length === 0) {
         cartItems.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío</p></div>';
@@ -739,7 +845,7 @@ function updateCart() {
         <div class="cart-item-details">
           <div class="cart-item-name">${escapeHtml(item.name)}</div>
           ${item.size && item.size !== SINGLE_SIZE ? `<div class="cart-item-size">Talla ${escapeHtml(item.size)}</div>` : ''}
-          <div class="cart-item-price">$${parseFloat(item.price).toFixed(2)}</div>
+          <div class="cart-item-price">${money(item.price, item.currency)}</div>
           <div class="cart-item-controls">
             <button class="quantity-btn" onclick="updateQuantity('${item.key}', -1)" aria-label="Quitar una unidad">−</button>
             <span class="cart-item-quantity">${item.quantity}</span>
@@ -795,6 +901,16 @@ function closeCart() {
 // CHECKOUT
 // ===================================
 
+// El formulario tal y como viene en la página. Al terminar un pedido se
+// sustituye por el mensaje de gracias, y hace falta poder devolverlo
+// entero: reescribirlo a mano en el código era lo que hacía que se
+// perdieran campos por el camino.
+let checkoutFormHtml = '';
+
+function rememberCheckoutForm() {
+    checkoutFormHtml = document.getElementById('checkoutContent')?.innerHTML || '';
+}
+
 // Con el interruptor encendido no se abre el checkout sin sesión: se
 // manda al cliente a identificarse. Es solo comodidad — quien mande la
 // petición a mano se topará igualmente con la comprobación del servidor.
@@ -818,20 +934,27 @@ async function requireAccountOrPrompt() {
 async function openCheckout() {
     if (!await requireAccountOrPrompt()) return;
 
+    // Cesta mezclada: no hay una sola manera de cobrarla.
+    if (cartHasMix()) {
+        alert('Las prendas bajo demanda se pagan en línea y el resto se cierran por mensaje, así que van en pedidos distintos. Deja en la cesta unas u otros.');
+        return;
+    }
+
     closeCart();
 
     const orderSummaryItems = document.getElementById('orderSummaryItems');
     const orderTotal = document.getElementById('orderTotal');
     const totalPrice = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const currency = state.cart.length ? state.cart[0].currency : 'USD';
 
     if (orderSummaryItems) {
         orderSummaryItems.innerHTML = state.cart.map(item => `
     <div class="order-item">
       <span>${escapeHtml(item.name)}${item.size && item.size !== SINGLE_SIZE ? ` · ${escapeHtml(item.size)}` : ''} ×${item.quantity}</span>
-      <span>$${(item.price * item.quantity).toFixed(2)}</span>
+      <span>${money(item.price * item.quantity, item.currency)}</span>
     </div>`).join('');
     }
-    if (orderTotal) orderTotal.textContent = `$${totalPrice.toFixed(2)}`;
+    if (orderTotal) orderTotal.textContent = money(totalPrice, currency);
 
     document.getElementById('checkoutModal')?.classList.add('open');
     document.getElementById('checkoutOverlay')?.classList.add('open');
@@ -845,10 +968,116 @@ function closeCheckout() {
     document.getElementById('checkoutForm')?.reset();
 }
 
+// Marca del pedido que se ha ido a pagar a Stripe. Solo sirve para poder
+// enseñar su número al volver: quien decide si está pagado es el
+// webhook, en el servidor.
+const PENDING_ORDER_KEY = 'divinaPendingOrder';
+
+// Pide al servidor una sesión de pago y manda allí al cliente. Los
+// precios, las tallas y las variantes de Printful los vuelve a comprobar
+// la Edge Function contra la base de datos: lo que diga el navegador no
+// decide cuánto se cobra.
+//
+// No se le manda ningún dato del comprador porque no se le ha pedido
+// ninguno: la pasarela ya tiene que preguntarle la dirección de envío,
+// así que de paso recoge el correo, el nombre y el teléfono. Pedirlo
+// antes era rellenar el mismo formulario dos veces.
+async function startStripeCheckout(paymentMethod) {
+    const response = await fetch(`${window.SUPABASE_URL}/functions/v1/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            items: state.cart.map(item => ({
+                productId: item.id,
+                size: item.size,
+                quantity: item.quantity
+            })),
+            paymentMethod: paymentMethod || undefined
+        })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.url) {
+        throw new Error(data.error || 'No se pudo abrir la pasarela de pago.');
+    }
+
+    try {
+        localStorage.setItem(PENDING_ORDER_KEY, String(data.orderId));
+    } catch (e) { /* almacenamiento bloqueado: solo se pierde el número */ }
+
+    // La cesta no se vacía aquí: si el cliente se echa atrás en Stripe,
+    // tiene que encontrarla intacta al volver.
+    window.location.href = data.url;
+}
+
+// Los dos botones de la cesta. 'paypal' lleva a la pasarela con PayPal
+// ya elegido; sin nada, sale la tarjeta y debajo el resto de métodos
+// que tengas encendidos en Stripe.
+async function payNow(paymentMethod, button) {
+    if (!state.cart.length) return;
+
+    if (cartHasMix()) {
+        alert('Las prendas bajo demanda se pagan en línea y el resto se cierran por mensaje, así que van en pedidos distintos. Deja en la cesta unas u otros.');
+        return;
+    }
+
+    if (!await requireAccountOrPrompt()) return;
+
+    const all = document.querySelectorAll('#payButtons .checkout-btn');
+    const label = button.textContent;
+    all.forEach(b => { b.disabled = true; });
+    button.textContent = 'Abriendo el pago…';
+
+    try {
+        await startStripeCheckout(paymentMethod);
+    } catch (error) {
+        console.error('No se pudo iniciar el pago:', error);
+        alert(error.message || 'No se pudo abrir la pasarela de pago. Inténtalo de nuevo.');
+        all.forEach(b => { b.disabled = false; });
+        button.textContent = label;
+    }
+}
+
+// La vuelta desde Stripe. El cobro y el pedido en Printful los cierra el
+// webhook; aquí solo se informa al cliente y se vacía la cesta.
+function handleCheckoutReturn() {
+    const params = new URLSearchParams(location.search);
+    const outcome = params.get('checkout');
+    if (!outcome) return;
+
+    // Se quita la marca de la barra de direcciones para que al recargar
+    // no vuelva a salir el mensaje.
+    history.replaceState(null, '', location.pathname + location.hash);
+
+    if (outcome !== 'success') {
+        if (typeof showNotification === 'function') {
+            showNotification('Pago cancelado. Tu cesta sigue como estaba.');
+        }
+        return;
+    }
+
+    let reference = '';
+    try {
+        reference = localStorage.getItem(PENDING_ORDER_KEY) || '';
+        localStorage.removeItem(PENDING_ORDER_KEY);
+    } catch (e) { /* almacenamiento bloqueado */ }
+
+    state.cart = [];
+    saveCartToStorage();
+    updateCart();
+
+    showSuccessMessage(reference ? reference.slice(0, 8).toUpperCase() : '', true);
+    document.getElementById('checkoutModal')?.classList.add('open');
+    document.getElementById('checkoutOverlay')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
 async function handleCheckout(e) {
     e.preventDefault();
 
     const submitBtn = e.target.querySelector('.submit-order-btn');
+    const originalLabel = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Enviando…';
 
@@ -913,20 +1142,22 @@ async function handleCheckout(e) {
         console.error('Error registrando el pedido:', error);
         alert(error.message || 'Hubo un error al enviar tu pedido. Por favor, inténtalo de nuevo.');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Confirmar pedido';
+        submitBtn.textContent = originalLabel;
     }
 }
 
-function showSuccessMessage(orderId) {
+function showSuccessMessage(orderId, paid) {
     const checkoutContent = document.getElementById('checkoutContent');
     if (!checkoutContent) return;
 
     checkoutContent.innerHTML = `
     <div class="success-message">
       <div class="success-icon">✓</div>
-      <h3>Pedido confirmado</h3>
-      <p>Gracias por tu compra. Nos pondremos en contacto contigo en breve.</p>
-      <p>Número de pedido: <span class="order-id">${orderId}</span></p>
+      <h3>${paid ? 'Pago recibido' : 'Pedido confirmado'}</h3>
+      <p>${paid
+        ? 'Gracias por tu compra. Tu prenda entra en producción y te escribiremos al correo con el seguimiento en cuanto salga del taller.'
+        : 'Gracias por tu compra. Nos pondremos en contacto contigo en breve.'}</p>
+      ${orderId ? `<p>Número de pedido: <span class="order-id">${escapeHtml(orderId)}</span></p>` : ''}
       <button class="cta-button" onclick="closeCheckoutAndReset()" style="margin-top:24px">Seguir comprando</button>
     </div>`;
 }
@@ -936,31 +1167,10 @@ function closeCheckoutAndReset() {
 
     setTimeout(() => {
         const checkoutContent = document.getElementById('checkoutContent');
-        if (!checkoutContent) return;
+        if (!checkoutContent || !checkoutFormHtml) return;
 
-        checkoutContent.innerHTML = `
-      <form class="checkout-form" id="checkoutForm">
-        <div class="order-summary">
-          <h3>Resumen</h3>
-          <div id="orderSummaryItems"></div>
-          <div class="order-total"><span>Total</span><span id="orderTotal">$0.00</span></div>
-        </div>
-        <div class="form-group">
-          <label for="customerName">Nombre completo *</label>
-          <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre">
-        </div>
-        <div class="form-group">
-          <label for="customerPhone">Teléfono / WhatsApp *</label>
-          <input type="tel" id="customerPhone" name="customerPhone" required placeholder="+1 234 567 8900">
-        </div>
-        <div class="form-group">
-          <label for="customerMessage">Mensaje (opcional)</label>
-          <textarea id="customerMessage" name="customerMessage" rows="3" placeholder="Dirección de envío, instrucciones especiales…"></textarea>
-        </div>
-        <button type="submit" class="submit-order-btn">Confirmar pedido</button>
-      </form>`;
-
-        document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
+        checkoutContent.innerHTML = checkoutFormHtml;
+        document.getElementById('checkoutForm')?.addEventListener('submit', handleCheckout);
     }, 300);
 }
 

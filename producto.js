@@ -33,6 +33,7 @@ async function initProductPage() {
 
     // Lo necesita addToCart() de app.js para encontrar el artículo.
     state.products = data;
+    syncCartWithCatalog();
 
     const product = data.find(p => String(p.id) === String(id));
     if (!product) return pdpFail('Este producto ya no está disponible.');
@@ -90,7 +91,7 @@ function renderPDP() {
             <div class="pdp-info">
                 <p class="pdp-cat">${escapeHtml(getCategoryName(product.category))}</p>
                 <h1 class="pdp-name">${escapeHtml(product.name)}</h1>
-                <p class="pdp-price">$${parseFloat(product.price).toFixed(2)}</p>
+                <p class="pdp-price">${money(product.price, product.currency)}</p>
 
                 ${colors.length ? `
                 <div class="pdp-block">
@@ -112,7 +113,7 @@ function renderPDP() {
         const out = left <= 0;
         return `<button class="pdp-size${out ? ' out' : ''}${pdp.size === size ? ' is-active' : ''}"
                                         data-size="${escapeHtml(size)}" ${out ? 'disabled' : ''}
-                                        title="${out ? 'Agotada' : left + ' disponibles'}">${escapeHtml(size)}</button>`;
+                                        title="${sizeTitle(product, size)}">${escapeHtml(size)}</button>`;
     }).join('')}
                     </div>
                     <p class="pdp-hint" id="pdpSizeHint"></p>
@@ -176,7 +177,7 @@ function bindPDP() {
         btn.addEventListener('click', () => {
             pdp.size = btn.dataset.size;
             document.querySelectorAll('.pdp-size').forEach(b => b.classList.toggle('is-active', b === btn));
-            if (hint) hint.textContent = `Quedan ${stockOf(pdp.product, pdp.size)} unidades`;
+            if (hint) hint.textContent = sizeHintText(pdp.product, pdp.size);
         });
     });
 
@@ -289,7 +290,7 @@ function renderRelated() {
             <h3 class="product-name">${escapeHtml(p.name)}</h3>
             ${meta ? `<p class="product-meta-line">${meta}</p>` : ''}
             <div class="product-footer">
-              <span class="product-price">$${parseFloat(p.price).toFixed(2)}</span>
+              <span class="product-price">${money(p.price, p.currency)}</span>
             </div>
           </div>
         </a>`;

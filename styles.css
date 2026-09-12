@@ -1305,6 +1305,32 @@ button {
     cursor: not-allowed;
 }
 
+/* Pago en línea: dos botones en lugar del formulario. El de PayPal va en
+   negativo para distinguirse de un vistazo sin romper el blanco y negro
+   del sitio. */
+.pay-buttons {
+    display: grid;
+    gap: var(--sp-2);
+}
+
+.pay-buttons .checkout-btn.pay-alt {
+    background: var(--white);
+    color: var(--black);
+}
+
+.pay-buttons .checkout-btn.pay-alt:hover:not(:disabled) {
+    background: var(--black);
+    color: var(--white);
+}
+
+.pay-note {
+    margin: var(--sp-2) 0 0;
+    color: var(--grey);
+    font-size: var(--fs-micro);
+    line-height: 1.5;
+    text-align: center;
+}
+
 /* ==========================================================================
    CHECKOUT Y MODALES DE CUENTA
    ========================================================================== */

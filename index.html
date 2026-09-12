@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=15">
+    <link rel="stylesheet" href="styles.css?v=17">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="theme.js?v=2"></script>
@@ -255,6 +255,15 @@
                 <span class="cart-total-amount" id="cartTotal">$0.00</span>
             </div>
             <button class="checkout-btn" id="checkoutBtn" disabled>Realizar compra</button>
+
+            <!-- Bajo demanda no hay trato que cerrar: se paga y ya. Estos
+                 botones sustituyen al de arriba cuando toda la cesta se
+                 fabrica al pedirla. -->
+            <div class="pay-buttons" id="payButtons" hidden>
+                <button class="checkout-btn" id="payCardBtn">Tarjeta de crédito o débito</button>
+                <button class="checkout-btn pay-alt" id="payPaypalBtn">PayPal</button>
+                <p class="pay-note">Pago seguro con Stripe. El correo y la dirección de envío se piden en el paso siguiente.</p>
+            </div>
         </div>
     </aside>
 
@@ -349,7 +358,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=10"></script>
     <script src="footer.js?v=1"></script>
-    <script src="app.js?v=13"></script>
+    <script src="app.js?v=15"></script>
 
     <div id="google_translate_element" style="display:none"></div>
     <script>
