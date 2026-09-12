@@ -1061,7 +1061,20 @@ async function openEmbeddedCheckout({ clientSecret, publishableKey }) {
     // plegado, así que se espera a que esté abierta del todo.
     await new Promise(listo => setTimeout(listo, 340));
 
+    const aviso = document.getElementById('payLoading');
+    if (aviso) aviso.hidden = false;
+
     pasarelaEmbebida.mount('#payEmbed');
+
+    // El aviso se retira en cuanto el marco de Stripe tiene alto, que es
+    // la señal de que ya ha pintado el formulario.
+    const vigilante = setInterval(() => {
+        if ((document.querySelector('#payEmbed iframe')?.offsetHeight || 0) > 0) {
+            if (aviso) aviso.hidden = true;
+            clearInterval(vigilante);
+        }
+    }, 250);
+    setTimeout(() => clearInterval(vigilante), 60000);
 }
 
 // Cerrar es cancelar: el pedido se queda en 'pending' sin cobrar, y la
