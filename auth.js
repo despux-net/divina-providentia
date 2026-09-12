@@ -73,7 +73,7 @@ async function handleSignUp(event) {
                 // Continue anyway, auth was successful
             }
 
-            alert('Registro exitoso. Tus credenciales están siendo validadas por nuestros moderadores.');
+            alert('Registration complete. Your details are being reviewed by our moderators.');
             closeModal('registerModal');
             // Reload to update UI state
             window.location.reload();
@@ -81,7 +81,7 @@ async function handleSignUp(event) {
 
     } catch (error) {
         console.error('Registration error:', error);
-        alert(`Error al registrarse: ${error.message}`);
+        alert(`Sign-up failed: ${error.message}`);
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -118,7 +118,7 @@ async function handleSignIn(event) {
 
     } catch (error) {
         console.error('Login error:', error);
-        alert(`Error al iniciar sesión: ${error.message}`);
+        alert(`Sign-in failed: ${error.message}`);
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -133,7 +133,7 @@ async function handleSignOut() {
         window.location.reload();
     } catch (error) {
         console.error('Logout error:', error);
-        alert('Error al cerrar sesión');
+        alert('Sign-out failed');
     }
 }
 
@@ -219,10 +219,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (authButtons) {
-            authButtons.innerHTML = '<button onclick="handleSignOut()">Salir</button>';
+            authButtons.innerHTML = '<button onclick="handleSignOut()">Sign out</button>';
         }
     } else if (authButtons) {
-        authButtons.innerHTML = `<button onclick="openModal('loginModal')">Acceso</button>`;
+        authButtons.innerHTML = `<button onclick="openModal('loginModal')">Sign in</button>`;
     }
 
     // Attach Event Listeners to Forms

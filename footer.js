@@ -15,13 +15,13 @@
 
     const DEFAULTS = {
         brandTitle: 'Divina Providentia',
-        tagline: 'No somos una marca, somos una trinchera.',
+        tagline: 'We are not a brand, we are a trench.',
         social: [{ label: 'Instagram', url: 'https://www.instagram.com/providentiadivina/' }],
-        navTitle: 'Navegación',
-        contactTitle: 'Atención',
-        contactLines: ['+1 858 324 8313', 'Lun–Vie · 9:00–18:00'],
-        formTitle: 'Escríbenos',
-        rights: 'Todos los derechos reservados'
+        navTitle: 'Navigation',
+        contactTitle: 'Support',
+        contactLines: ['+1 858 324 8313', 'Mon–Fri · 9:00–18:00'],
+        formTitle: 'Write to us',
+        rights: 'All rights reserved'
     };
 
     const MAX_SOCIAL = 8;

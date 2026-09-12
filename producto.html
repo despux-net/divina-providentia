@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Divina Providentia — Ropa y Cartoteca. Prendas de identidad y una colección interactiva de mapas históricos en gigapíxel.">
-    <title>Producto | Divina Providentia</title>
+    <meta name="description" content="Divina Providentia — Clothing and Map Library. Garments of identity and an interactive collection of historical maps in gigapixel.">
+    <title>Product | Divina Providentia</title>
     
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://divinaprovidentia.com">
     <meta property="og:title" content="DIVINA PROVIDENTIA">
-    <meta property="og:description" content="Ropa y Cartoteca.">
+    <meta property="og:description" content="Clothing and Map Library.">
     <meta property="og:image" content="https://divinaprovidentia.com/favicon.png">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -40,38 +40,25 @@
 <!-- ============ NAV ============ -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <button class="mobile-menu-button" aria-label="Menú" aria-expanded="false">
+            <button class="mobile-menu-button" aria-label="Menu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
 
             <a href="index.html" class="nav-logo"><span translate="no" class="notranslate">DIVINA PROVIDENTIA</span></a>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html#tienda">Tienda</a></li>
+                <li><a href="index.html#tienda">Shop</a></li>
                 <li><a href="index.html#lookbook">Lookbook</a></li>
-                <li><a href="index.html#coleccion">Cartoteca</a></li>
-                <li><a href="index.html#contacto">Contacto</a></li>
+                <li><a href="index.html#coleccion">Map Library</a></li>
+                <li><a href="index.html#contacto">Contact</a></li>
             </ul>
 
             <div class="nav-actions">
-                <div class="nav-lang">
-                    <button class="lang-btn" id="langBtn" aria-label="Cambiar idioma"
-                            aria-haspopup="true" aria-expanded="false">
-                        <span class="lang-current">ES</span>
-                        <span class="lang-rest">/ EN / DE</span>
-                        <span class="lang-caret" aria-hidden="true"></span>
-                    </button>
-                    <div class="lang-menu" role="menu">
-                        <a href="#" role="menuitem" data-lang="es" onclick="changeLanguage('es'); return false;">Español</a>
-                        <a href="#" role="menuitem" data-lang="en" onclick="changeLanguage('en'); return false;">English</a>
-                        <a href="#" role="menuitem" data-lang="de" onclick="changeLanguage('de'); return false;">Deutsch</a>
-                    </div>
-                </div>
                 <div id="auth-buttons" class="nav-auth">
-                    <button onclick="openModal('loginModal')">Acceso</button>
+                    <button onclick="openModal('loginModal')">Sign in</button>
                 </div>
-                <button class="cart-button" id="cartButton" aria-label="Carrito">
-                    <span class="cart-label">Carrito</span> <span class="cart-count" id="cartCount">0</span>
+                <button class="cart-button" id="cartButton" aria-label="Cart">
+                    <span class="cart-label">Cart</span> <span class="cart-count" id="cartCount">0</span>
                 </button>
             </div>
         </div>
@@ -79,12 +66,12 @@
 
     
     <main class="pdp" id="pdp">
-        <div class="pdp-status" id="pdpStatus">Cargando…</div>
+        <div class="pdp-status" id="pdpStatus">Loading…</div>
     </main>
 
     <section class="related" id="related" hidden>
         <div class="section-head">
-            <h2>También te puede interesar</h2>
+            <h2>You may also like</h2>
         </div>
         <div class="products-grid" id="relatedGrid"></div>
     </section>
@@ -93,133 +80,133 @@
         <div class="footer-grid">
             <div class="footer-section">
                 <h3 data-footer="brandTitle">Divina Providentia</h3>
-                <p data-footer="tagline">No somos una marca, somos una trinchera.</p>
+                <p data-footer="tagline">We are not a brand, we are a trench.</p>
                 <div class="social-links" data-footer-list="social">
                     <a href="https://www.instagram.com/providentiadivina/" target="_blank" rel="noopener">Instagram</a>
                 </div>
             </div>
 
             <div class="footer-section">
-                <h3 data-footer="navTitle">Navegación</h3>
+                <h3 data-footer="navTitle">Navigation</h3>
                 <ul class="footer-links">
-                    <li><a href="index.html#tienda">Tienda</a></li>
+                    <li><a href="index.html#tienda">Shop</a></li>
                     <li><a href="index.html#lookbook">Lookbook</a></li>
-                    <li><a href="index.html#coleccion">Cartoteca</a></li>
-                    <li><a href="index.html#contacto">Contacto</a></li>
+                    <li><a href="index.html#coleccion">Map Library</a></li>
+                    <li><a href="index.html#contacto">Contact</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
-                <h3 data-footer="contactTitle">Atención</h3>
+                <h3 data-footer="contactTitle">Support</h3>
                 <div data-footer-list="contactLines">
                     <p>+1 858 324 8313</p>
-                    <p>Lun–Vie · 9:00–18:00</p>
+                    <p>Mon–Fri · 9:00–18:00</p>
                 </div>
             </div>
 
             <div class="footer-section">
-                <h3 data-footer="formTitle">Escríbenos</h3>
+                <h3 data-footer="formTitle">Write to us</h3>
                 <form id="contactForm" class="contact-form-mini">
-                    <div class="form-group-mini"><input type="text" id="contactName" placeholder="Nombre" required></div>
+                    <div class="form-group-mini"><input type="text" id="contactName" placeholder="Name" required></div>
                     <div class="form-group-mini"><input type="email" id="contactEmail" placeholder="Email" required></div>
-                    <div class="form-group-mini"><textarea id="contactMessage" placeholder="Mensaje" rows="3" required></textarea></div>
-                    <button type="submit" class="footer-submit-btn">Enviar</button>
+                    <div class="form-group-mini"><textarea id="contactMessage" placeholder="Message" rows="3" required></textarea></div>
+                    <button type="submit" class="footer-submit-btn">Send</button>
                 </form>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; <span id="year">2026</span> <span translate="no" class="notranslate">Divina Providentia</span></p>
-            <p data-footer="rights">Todos los derechos reservados</p>
+            <p data-footer="rights">All rights reserved</p>
         </div>
     </footer>
 
     <!-- ============ CARRITO ============ -->
     <div class="cart-overlay" id="cartOverlay"></div>
-    <aside class="cart-modal" id="cartModal" aria-label="Carrito">
+    <aside class="cart-modal" id="cartModal" aria-label="Cart">
         <div class="cart-header">
-            <h2>Carrito</h2>
-            <button class="close-cart-btn" id="closeCartBtn" aria-label="Cerrar">&times;</button>
+            <h2>Cart</h2>
+            <button class="close-cart-btn" id="closeCartBtn" aria-label="Close">&times;</button>
         </div>
         <div class="cart-items" id="cartItems">
-            <div class="empty-cart"><p>Tu carrito está vacío</p></div>
+            <div class="empty-cart"><p>Your cart is empty</p></div>
         </div>
         <div class="cart-footer">
             <div class="cart-total">
                 <span class="cart-total-label">Total</span>
                 <span class="cart-total-amount" id="cartTotal">$0.00</span>
             </div>
-            <button class="checkout-btn" id="checkoutBtn" disabled>Realizar compra</button>
+            <button class="checkout-btn" id="checkoutBtn" disabled>Place order</button>
 
             <!-- Bajo demanda no hay trato que cerrar: se paga y ya. Estos
                  botones sustituyen al de arriba cuando toda la cesta se
                  fabrica al pedirla. -->
             <div class="pay-buttons" id="payButtons" hidden>
-                <button class="checkout-btn" id="payCardBtn">Tarjeta de crédito o débito</button>
+                <button class="checkout-btn" id="payCardBtn">Credit or debit card</button>
                 <button class="checkout-btn pay-alt" id="payPaypalBtn">PayPal</button>
-                <p class="pay-note">Pago seguro con Stripe. El correo y la dirección de envío se piden en el paso siguiente.</p>
+                <p class="pay-note">Secure payment with Stripe. Your email and shipping address are requested in the next step.</p>
             </div>
 
             <!-- PayPal propio, aparte de Stripe. Puede estar encendido a la vez
                  que el de arriba, o solo. -->
             <div class="pay-buttons" id="paypalButtons" hidden>
                 <div id="paypalButton"></div>
-                <p class="pay-note">Pago seguro con PayPal. La dirección de envío se toma de tu cuenta de PayPal.</p>
+                <p class="pay-note">Secure payment with PayPal. The shipping address is taken from your PayPal account.</p>
             </div>
         </div>
     </aside>
 
     <!-- ============ PAGO EN LA PROPIA PÁGINA ============ -->
     <div class="checkout-overlay" id="payOverlay"></div>
-    <div class="checkout-modal pay-modal" id="payModal" role="dialog" aria-label="Pago seguro">
+    <div class="checkout-modal pay-modal" id="payModal" role="dialog" aria-label="Secure payment">
         <div class="checkout-header">
-            <h2>Pago seguro</h2>
-            <button class="close-checkout-btn" id="closePayBtn" aria-label="Cerrar">&times;</button>
+            <h2>Secure payment</h2>
+            <button class="close-checkout-btn" id="closePayBtn" aria-label="Close">&times;</button>
         </div>
         <div class="pay-embed-wrap">
-            <p class="pay-loading" id="payLoading">Cargando la pasarela de pago…</p>
+            <p class="pay-loading" id="payLoading">Loading the payment gateway…</p>
             <div id="payEmbed"></div>
         </div>
     </div>
 
     <!-- ============ CHECKOUT ============ -->
     <div class="checkout-overlay" id="checkoutOverlay"></div>
-    <div class="checkout-modal" id="checkoutModal" role="dialog" aria-label="Confirmar pedido">
+    <div class="checkout-modal" id="checkoutModal" role="dialog" aria-label="Confirm order">
         <div class="checkout-header">
-            <h2>Confirmar pedido</h2>
-            <button class="close-checkout-btn" id="closeCheckoutBtn" aria-label="Cerrar">&times;</button>
+            <h2>Confirm order</h2>
+            <button class="close-checkout-btn" id="closeCheckoutBtn" aria-label="Close">&times;</button>
         </div>
         <div class="checkout-content" id="checkoutContent">
             <form class="checkout-form" id="checkoutForm">
                 <div class="order-summary">
-                    <h3>Resumen</h3>
+                    <h3>Summary</h3>
                     <div id="orderSummaryItems"></div>
                     <div class="order-total"><span>Total</span><span id="orderTotal">$0.00</span></div>
                 </div>
                 <div class="form-group">
-                    <label for="customerName">Nombre *</label>
+                    <label for="customerName">First name *</label>
                     <input type="text" id="customerName" name="customerName" required
-                           autocomplete="given-name" placeholder="Tu nombre">
+                           autocomplete="given-name" placeholder="Your first name">
                 </div>
                 <div class="form-group">
-                    <label for="customerSurname">Apellidos *</label>
+                    <label for="customerSurname">Last name *</label>
                     <input type="text" id="customerSurname" name="customerSurname" required
-                           autocomplete="family-name" placeholder="Tus apellidos">
+                           autocomplete="family-name" placeholder="Your last name">
                 </div>
                 <div class="form-group">
-                    <label for="customerEmail">Correo electrónico *</label>
+                    <label for="customerEmail">Email *</label>
                     <input type="email" id="customerEmail" name="customerEmail" required
-                           autocomplete="email" placeholder="tu@correo.com">
+                           autocomplete="email" placeholder="you@email.com">
                 </div>
                 <div class="form-group">
-                    <label for="customerPhone">Teléfono / WhatsApp *</label>
+                    <label for="customerPhone">Phone / WhatsApp *</label>
                     <input type="tel" id="customerPhone" name="customerPhone" required
                            autocomplete="tel" placeholder="+1 234 567 8900">
                 </div>
                 <div class="form-group">
-                    <label for="customerMessage">Mensaje (opcional)</label>
-                    <textarea id="customerMessage" name="customerMessage" rows="3" placeholder="Dirección de envío, instrucciones especiales…"></textarea>
+                    <label for="customerMessage">Message (optional)</label>
+                    <textarea id="customerMessage" name="customerMessage" rows="3" placeholder="Shipping address, special instructions…"></textarea>
                 </div>
-                <button type="submit" class="submit-order-btn">Confirmar pedido</button>
+                <button type="submit" class="submit-order-btn">Confirm order</button>
             </form>
         </div>
     </div>
@@ -228,8 +215,8 @@
     <div class="modal-overlay" id="loginModal">
         <div class="auth-modal">
             <div class="checkout-header">
-                <h2>Iniciar sesión</h2>
-                <button class="close-checkout-btn" onclick="closeModal('loginModal')" aria-label="Cerrar">&times;</button>
+                <h2>Sign in</h2>
+                <button class="close-checkout-btn" onclick="closeModal('loginModal')" aria-label="Close">&times;</button>
             </div>
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
@@ -237,12 +224,12 @@
                     <input type="email" id="loginEmail" name="email" autocomplete="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="loginPassword">Contraseña</label>
+                    <label for="loginPassword">Password</label>
                     <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
                 </div>
-                <button type="submit" class="submit-order-btn" id="loginSubmitBtn">Entrar</button>
-                <p class="auth-footer">¿No tienes cuenta?
-                    <a href="#" onclick="closeModal('loginModal'); openModal('registerModal'); return false;">Regístrate</a>
+                <button type="submit" class="submit-order-btn" id="loginSubmitBtn">Sign in</button>
+                <p class="auth-footer">Don't have an account?
+                    <a href="#" onclick="closeModal('loginModal'); openModal('registerModal'); return false;">Sign up</a>
                 </p>
             </form>
         </div>
@@ -252,43 +239,32 @@
     <div class="modal-overlay" id="registerModal">
         <div class="auth-modal">
             <div class="checkout-header">
-                <h2>Crear cuenta</h2>
-                <button class="close-checkout-btn" onclick="closeModal('registerModal')" aria-label="Cerrar">&times;</button>
+                <h2>Create account</h2>
+                <button class="close-checkout-btn" onclick="closeModal('registerModal')" aria-label="Close">&times;</button>
             </div>
             <form id="registerForm" class="auth-form">
-                <div class="form-group"><label for="regName">Nombre</label><input type="text" id="regName" name="first_name" required></div>
-                <div class="form-group"><label for="regSurname">Apellidos</label><input type="text" id="regSurname" name="last_name" required></div>
-                <div class="form-group"><label for="regCountry">País</label><input type="text" id="regCountry" name="country" required></div>
-                <div class="form-group"><label for="regAge">Edad</label><input type="number" id="regAge" name="age" required min="18"></div>
+                <div class="form-group"><label for="regName">First name</label><input type="text" id="regName" name="first_name" required></div>
+                <div class="form-group"><label for="regSurname">Last name</label><input type="text" id="regSurname" name="last_name" required></div>
+                <div class="form-group"><label for="regCountry">Country</label><input type="text" id="regCountry" name="country" required></div>
+                <div class="form-group"><label for="regAge">Age</label><input type="number" id="regAge" name="age" required min="18"></div>
                 <div class="form-group"><label for="regEmail">Email</label><input type="email" id="regEmail" name="email" autocomplete="username" required></div>
-                <div class="form-group"><label for="regPassword">Contraseña</label><input type="password" id="regPassword" name="password" autocomplete="new-password" required minlength="8"></div>
-                <div class="form-group"><label for="regMessage">Mensaje (opcional)</label><textarea id="regMessage" name="message" rows="3"></textarea></div>
-                <button type="submit" class="submit-order-btn" id="registerSubmitBtn">Solicitar acceso</button>
+                <div class="form-group"><label for="regPassword">Password</label><input type="password" id="regPassword" name="password" autocomplete="new-password" required minlength="8"></div>
+                <div class="form-group"><label for="regMessage">Message (optional)</label><textarea id="regMessage" name="message" rows="3"></textarea></div>
+                <button type="submit" class="submit-order-btn" id="registerSubmitBtn">Request access</button>
             </form>
         </div>
     </div>
 
     <!-- ============ SCRIPTS ============ -->
     <script src="supabase-config.js"></script>
-    <script src="auth.js?v=10"></script>
-    <script src="footer.js?v=1"></script>
-    <script src="app.js?v=23"></script>
-    <script src="producto.js?v=3"></script>
+    <script src="auth.js?v=11"></script>
+    <script src="footer.js?v=2"></script>
+    <script src="app.js?v=25"></script>
+    <script src="producto.js?v=4"></script>
 
-    <div id="google_translate_element" style="display:none"></div>
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'es', includedLanguages: 'es,en,de', autoDisplay: false
-            }, 'google_translate_element');
-        }
-        function changeLanguage(langCode) {
-            var sel = document.querySelector('.goog-te-combo');
-            if (sel) { sel.value = langCode; sel.dispatchEvent(new Event('change')); }
-        }
     </script>
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

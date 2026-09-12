@@ -26,17 +26,17 @@ function pdpFail(message) {
 
 async function initProductPage() {
     const id = pdpParamId();
-    if (!id) return pdpFail('No se ha indicado ningún producto.');
+    if (!id) return pdpFail('No product was specified.');
 
     const { data, error } = await window.SupabaseAPI.getProducts();
-    if (error || !data) return pdpFail('No se pudo cargar el catálogo.');
+    if (error || !data) return pdpFail('The catalogue could not be loaded.');
 
     // Lo necesita addToCart() de app.js para encontrar el artículo.
     state.products = data;
     syncCartWithCatalog();
 
     const product = data.find(p => String(p.id) === String(id));
-    if (!product) return pdpFail('Este producto ya no está disponible.');
+    if (!product) return pdpFail('This product is no longer available.');
 
     pdp.product = product;
     pdp.imageIndex = 0;
@@ -64,9 +64,9 @@ function renderPDP() {
     const canBuy = isPurchasable(product);
 
     document.getElementById('pdp').innerHTML = `
-        <nav class="breadcrumbs pdp-crumbs" aria-label="Migas de pan">
-            <a href="index.html">Inicio</a><span aria-hidden="true">/</span>
-            <a href="index.html#tienda">Tienda</a><span aria-hidden="true">/</span>
+        <nav class="breadcrumbs pdp-crumbs" aria-label="Breadcrumb">
+            <a href="index.html">Home</a><span aria-hidden="true">/</span>
+            <a href="index.html#tienda">Shop</a><span aria-hidden="true">/</span>
             <span aria-current="page">${escapeHtml(product.name)}</span>
         </nav>
 
@@ -75,10 +75,10 @@ function renderPDP() {
                 <div class="pdp-main" id="pdpMain">
                     <img id="pdpMainImg" src="${escapeHtml(imgs[0] || '')}" alt="${escapeHtml(product.name)}">
                     <div class="pdp-lens" id="pdpLens" aria-hidden="true"></div>
-                    ${!canBuy ? '<div class="product-status-badge">Agotado</div>' : ''}
+                    ${!canBuy ? '<div class="product-status-badge">Sold out</div>' : ''}
                 </div>
                 ${imgs.length > 1 ? `
-                <div class="pdp-thumbs" role="tablist" aria-label="Fotos del producto">
+                <div class="pdp-thumbs" role="tablist" aria-label="Product photos">
                     ${imgs.map((src, i) => `
                         <button class="pdp-thumb${i === 0 ? ' is-active' : ''}" data-img="${i}"
                                 role="tab" aria-selected="${i === 0}"
@@ -106,7 +106,7 @@ function renderPDP() {
 
                 ${sizes.length ? `
                 <div class="pdp-block">
-                    <p class="pdp-label">Talla</p>
+                    <p class="pdp-label">Size</p>
                     <div class="pdp-sizes">
                         ${sizes.map(size => {
         const left = stockOf(product, size);
@@ -120,12 +120,12 @@ function renderPDP() {
                 </div>` : ''}
 
                 <button class="pdp-add${!canBuy ? ' disabled' : ''}" id="pdpAdd" ${!canBuy ? 'disabled' : ''}>
-                    ${canBuy ? 'Añadir al carrito' : 'Agotado'}
+                    ${canBuy ? 'Add to cart' : 'Sold out'}
                 </button>
 
                 ${product.description ? `
                 <div class="pdp-block pdp-text">
-                    <p class="pdp-label">Descripción</p>
+                    <p class="pdp-label">Description</p>
                     <p>${escapeHtml(product.description)}</p>
                 </div>` : ''}
 
@@ -284,7 +284,7 @@ function renderRelated() {
           <div class="product-image-container">
             <img src="${escapeHtml(imgs[0])}" alt="${escapeHtml(p.name)}" loading="lazy" class="product-image-bg">
             ${imgs[1] ? `<img src="${escapeHtml(imgs[1])}" alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
-            ${!isPurchasable(p) ? '<div class="product-status-badge">Agotado</div>' : ''}
+            ${!isPurchasable(p) ? '<div class="product-status-badge">Sold out</div>' : ''}
           </div>
           <div class="product-info">
             <h3 class="product-name">${escapeHtml(p.name)}</h3>

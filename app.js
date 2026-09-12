@@ -82,7 +82,7 @@ async function loadProducts() {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
 
-    productsGrid.innerHTML = '<div class="loading-spinner"><p>Cargando…</p></div>';
+    productsGrid.innerHTML = '<div class="loading-spinner"><p>Loading…</p></div>';
 
     try {
         const { data, error } = await window.SupabaseAPI.getProducts();
@@ -125,7 +125,7 @@ function buildFilterOptions() {
     });
 
     const current = select.value || 'all';
-    select.innerHTML = '<option value="all">Todo</option>' +
+    select.innerHTML = '<option value="all">All</option>' +
         Object.keys(counts).sort().map(cat =>
             `<option value="${escapeHtml(cat)}">${escapeHtml(getCategoryName(cat))} (${counts[cat]})</option>`
         ).join('');
@@ -147,11 +147,11 @@ function displayProducts() {
 
     const counter = document.getElementById('shopCount');
     if (counter) {
-        counter.textContent = filtered.length === 1 ? '1 artículo' : `${filtered.length} artículos`;
+        counter.textContent = filtered.length === 1 ? '1 item' : `${filtered.length} items`;
     }
 
     if (filtered.length === 0) {
-        productsGrid.innerHTML = '<div class="no-products"><p>No hay artículos en esta categoría</p></div>';
+        productsGrid.innerHTML = '<div class="no-products"><p>No items in this category</p></div>';
         return;
     }
 
@@ -175,18 +175,18 @@ function displayProducts() {
         else if (colors.length === 1) meta = escapeHtml(colors[0].name);
         else if (hasSizes) {
             const sizes = productSizes(product);
-            meta = sizes.length > 1 ? `${sizes.length} tallas` : `Talla ${escapeHtml(sizes[0])}`;
+            meta = sizes.length > 1 ? `${sizes.length} sizes` : `Size ${escapeHtml(sizes[0])}`;
         }
 
         return `
-    <article class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" data-href="${href}" role="button" tabindex="0" aria-label="Ver ${escapeHtml(product.name)}">
+    <article class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" data-href="${href}" role="button" tabindex="0" aria-label="View ${escapeHtml(product.name)}">
       <div class="product-image-container">
         <img src="${escapeHtml(imgs[0])}" alt="${escapeHtml(product.name)}" loading="lazy" class="product-image-bg">
         ${imgs[1] ? `<img src="${escapeHtml(imgs[1])}" alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
-        ${!canBuy ? '<div class="product-status-badge">Agotado</div>' : ''}
+        ${!canBuy ? '<div class="product-status-badge">Sold out</div>' : ''}
 
         <button class="wish-btn${wished ? ' is-active' : ''}" data-wish="${product.id}"
-                aria-pressed="${wished}" aria-label="${wished ? 'Quitar de guardados' : 'Guardar artículo'}">
+                aria-pressed="${wished}" aria-label="${wished ? 'Remove from saved' : 'Save item'}">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
         </button>
 
@@ -210,7 +210,7 @@ function displayProducts() {
           <button class="add-to-cart-btn ${!canBuy ? 'disabled' : ''}"
                   onclick="event.stopPropagation(); ${canBuy ? action : ''}"
                   ${!canBuy ? 'disabled' : ''}>
-            ${canBuy ? (hasSizes ? 'Elegir talla' : 'Añadir') : 'Agotado'}
+            ${canBuy ? (hasSizes ? 'Choose size' : 'Add') : 'Sold out'}
           </button>
         </div>
       </div>
@@ -360,7 +360,7 @@ async function loadHeroImage() {
 // Los artículos que no se venden por tallas (un anillo, una gorra) guardan
 // sus existencias bajo esta clave única, para que el stock se descuente
 // igual que en una prenda.
-const SINGLE_SIZE = 'ÚNICA';
+const SINGLE_SIZE = 'ONE SIZE';
 
 // Cómo se sirve el artículo. 'printful' es impresión bajo demanda: la
 // prenda se fabrica al recibir el pedido, se paga con tarjeta o PayPal y
@@ -394,14 +394,14 @@ function totalStock(product) {
 
 // Rótulo de una talla en el selector.
 function sizeTitle(product, size) {
-    if (isPrintOnDemand(product)) return 'Disponible';
+    if (isPrintOnDemand(product)) return 'Available';
     const left = stockOf(product, size);
     return left > 0 ? `${left} disponibles` : 'Agotada';
 }
 
 // Aviso que sale bajo el selector al elegir talla.
 function sizeHintText(product, size) {
-    if (isPrintOnDemand(product)) return 'Se fabrica al hacer el pedido.';
+    if (isPrintOnDemand(product)) return 'Made to order.';
     return `Quedan ${stockOf(product, size)} unidades`;
 }
 
@@ -481,7 +481,7 @@ function toggleWish(id, btn) {
         const active = i < 0;
         btn.classList.toggle('is-active', active);
         btn.setAttribute('aria-pressed', String(active));
-        btn.setAttribute('aria-label', active ? 'Quitar de guardados' : 'Guardar artículo');
+        btn.setAttribute('aria-label', active ? 'Remove from saved' : 'Save item');
     }
 }
 
@@ -495,11 +495,11 @@ function escapeHtml(str) {
 
 function getCategoryName(category) {
     const names = {
-        vestments: 'Prendas',
-        vestiment: 'Prendas',
-        headwear: 'Gorras',
-        accessories: 'Accesorios',
-        prints: 'Impresiones'
+        vestments: 'Garments',
+        vestiment: 'Garments',
+        headwear: 'Headwear',
+        accessories: 'Accessories',
+        prints: 'Prints'
     };
     return names[category] || category || '';
 }
@@ -522,8 +522,8 @@ function expandProductCard(product) {
     // Una talla sin existencias se muestra tachada pero no se puede elegir:
     // el cliente ve que existe y que se ha agotado.
     const sizesHtml = sizes.length ? `
-                    <div class="size-picker" role="group" aria-label="Elegir talla">
-                        <span class="size-picker-label">Talla</span>
+                    <div class="size-picker" role="group" aria-label="Choose size">
+                        <span class="size-picker-label">Size</span>
                         <div class="size-options">
                             ${sizes.map(size => {
         const left = stockOf(product, size);
@@ -543,7 +543,7 @@ function expandProductCard(product) {
     panel.innerHTML = `
         <div class="product-expand-backdrop"></div>
         <div class="product-expand-modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(product.name)}">
-            <button class="product-expand-close" onclick="closeProductExpand()" aria-label="Cerrar">
+            <button class="product-expand-close" onclick="closeProductExpand()" aria-label="Close">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
@@ -567,7 +567,7 @@ function expandProductCard(product) {
                         <button class="add-to-cart-btn product-expand-cart-btn ${!canBuy ? 'disabled' : ''}"
                                 id="expandAddBtn"
                                 ${!canBuy ? 'disabled' : ''}>
-                            ${canBuy ? 'Añadir a la cesta' : 'Agotado'}
+                            ${canBuy ? 'Add to cart' : 'Sold out'}
                         </button>
                     </div>
                 </div>
@@ -769,8 +769,8 @@ function addToCart(productId, size) {
         (item.fulfillment === 'printful') !== isPrintOnDemand(product));
     if (!existing && mixes) {
         alert(isPrintOnDemand(product)
-            ? 'Esta prenda se paga en línea y en tu cesta hay artículos que se cierran por mensaje. Termina ese pedido primero o vacía la cesta.'
-            : 'En tu cesta hay una prenda que se paga en línea. Termina ese pedido primero o vacía la cesta para añadir este artículo.');
+            ? 'This garment is paid online, and your cart holds items that are closed by message. Finish that order first, or empty the cart.'
+            : 'Your cart holds a garment that is paid online. Finish that order first, or empty the cart to add this item.');
         return;
     }
 
@@ -816,7 +816,7 @@ function syncCartWithCatalog() {
     });
 
     if (state.cart.length !== before && typeof showNotification === 'function') {
-        showNotification('Algún artículo de tu cesta ya no está a la venta y se ha quitado.');
+        showNotification('An item in your cart is no longer for sale and has been removed.');
     }
 
     updateCart();
@@ -884,7 +884,7 @@ function updateCart() {
     if (conPaypal) renderPaypalButton();
 
     if (state.cart.length === 0) {
-        cartItems.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío</p></div>';
+        cartItems.innerHTML = '<div class="empty-cart"><p>Your cart is empty</p></div>';
         checkoutBtn.disabled = true;
         return;
     }
@@ -896,12 +896,12 @@ function updateCart() {
         </div>
         <div class="cart-item-details">
           <div class="cart-item-name">${escapeHtml(item.name)}</div>
-          ${item.size && item.size !== SINGLE_SIZE ? `<div class="cart-item-size">Talla ${escapeHtml(item.size)}</div>` : ''}
+          ${item.size && item.size !== SINGLE_SIZE ? `<div class="cart-item-size">Size ${escapeHtml(item.size)}</div>` : ''}
           <div class="cart-item-price">${money(item.price, item.currency)}</div>
           <div class="cart-item-controls">
-            <button class="quantity-btn" onclick="updateQuantity('${item.key}', -1)" aria-label="Quitar una unidad">−</button>
+            <button class="quantity-btn" onclick="updateQuantity('${item.key}', -1)" aria-label="Remove one">−</button>
             <span class="cart-item-quantity">${item.quantity}</span>
-            <button class="quantity-btn" onclick="updateQuantity('${item.key}', 1)" aria-label="Añadir una unidad">+</button>
+            <button class="quantity-btn" onclick="updateQuantity('${item.key}', 1)" aria-label="Add one">+</button>
             <button class="remove-item-btn" onclick="removeFromCart('${item.key}')" aria-label="Eliminar">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6"></polyline>
@@ -978,7 +978,7 @@ async function requireAccountOrPrompt() {
     }
 
     closeCart();
-    alert('Para comprar hay que tener una cuenta. Inicia sesión o regístrate y tu carrito se conservará.');
+    alert('You need an account to buy. Sign in or sign up and your cart will be kept.');
     if (typeof openModal === 'function') openModal('loginModal');
     return false;
 }
@@ -988,7 +988,7 @@ async function openCheckout() {
 
     // Cesta mezclada: no hay una sola manera de cobrarla.
     if (cartHasMix()) {
-        alert('Las prendas bajo demanda se pagan en línea y el resto se cierran por mensaje, así que van en pedidos distintos. Deja en la cesta unas u otros.');
+        alert('Made-to-order garments are paid online and the rest are closed by message, so they go in separate orders. Leave one kind or the other in the cart.');
         return;
     }
 
@@ -1016,14 +1016,14 @@ async function openCheckout() {
     const mensaje = document.getElementById('customerMessage');
     if (etiqueta) {
         etiqueta.textContent = pideDireccion
-            ? 'Dirección de envío completa *'
-            : 'Mensaje (opcional)';
+            ? 'Full shipping address *'
+            : 'Message (optional)';
     }
     if (mensaje) {
         mensaje.required = pideDireccion;
         mensaje.placeholder = pideDireccion
-            ? 'Calle y número, código postal, ciudad y país'
-            : 'Dirección de envío, instrucciones especiales…';
+            ? 'Street and number, postcode, city and country'
+            : 'Shipping address, special instructions…';
     }
 
     document.getElementById('checkoutModal')?.classList.add('open');
@@ -1076,7 +1076,7 @@ async function startStripeCheckout(paymentMethod) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-        throw new Error(data.error || 'No se pudo abrir la pasarela de pago.');
+        throw new Error(data.error || 'We could not open the payment gateway.');
     }
 
     try {
@@ -1089,7 +1089,7 @@ async function startStripeCheckout(paymentMethod) {
     }
 
     if (!data.url) {
-        throw new Error('No se pudo abrir la pasarela de pago.');
+        throw new Error('We could not open the payment gateway.');
     }
 
     // La cesta no se vacía aquí: si el cliente se echa atrás en Stripe,
@@ -1175,7 +1175,7 @@ async function payNow(paymentMethod, button) {
     if (!state.cart.length) return;
 
     if (cartHasMix()) {
-        alert('Las prendas bajo demanda se pagan en línea y el resto se cierran por mensaje, así que van en pedidos distintos. Deja en la cesta unas u otros.');
+        alert('Made-to-order garments are paid online and the rest are closed by message, so they go in separate orders. Leave one kind or the other in the cart.');
         return;
     }
 
@@ -1191,7 +1191,7 @@ async function payNow(paymentMethod, button) {
         await startStripeCheckout(paymentMethod);
     } catch (error) {
         console.error('No se pudo iniciar el pago:', error);
-        alert(error.message || 'No se pudo abrir la pasarela de pago. Inténtalo de nuevo.');
+        alert(error.message || 'We could not open the payment gateway. Please try again.');
         resetPayButtons();
     }
 }
@@ -1214,7 +1214,7 @@ function loadPaypalSdk() {
             + `&currency=${encodeURIComponent(String(moneda).toUpperCase())}`
             + '&intent=capture';
         script.onload = listo;
-        script.onerror = () => falla(new Error('No se pudo cargar PayPal.'));
+        script.onerror = () => falla(new Error('PayPal could not be loaded.'));
         document.head.appendChild(script);
     });
 }
@@ -1239,10 +1239,10 @@ async function renderPaypalButton() {
             // base: lo que diga el navegador no decide cuánto se cobra.
             createOrder: async () => {
                 if (cartHasMix()) {
-                    throw new Error('En la cesta hay artículos que no se pueden pagar en línea.');
+                    throw new Error('Your cart holds items that cannot be paid online.');
                 }
                 if (!await requireAccountOrPrompt()) {
-                    throw new Error('Hay que iniciar sesión para comprar.');
+                    throw new Error('You need to sign in to buy.');
                 }
 
                 const response = await fetch(`${window.SUPABASE_URL}/functions/v1/paypal-create-order`, {
@@ -1259,7 +1259,7 @@ async function renderPaypalButton() {
 
                 const data = await response.json().catch(() => ({}));
                 if (!response.ok || !data.paypalOrderId) {
-                    throw new Error(data.error || 'No se pudo iniciar el pago con PayPal.');
+                    throw new Error(data.error || 'We could not start the PayPal payment.');
                 }
 
                 try {
@@ -1294,7 +1294,7 @@ async function renderPaypalButton() {
                     }
 
                     alert(resultado.error
-                        || 'Tu pago se ha hecho, pero no pudimos cerrar el pedido. Escríbenos y lo resolvemos.');
+                        || 'Your payment went through, but we could not close the order. Write to us and we will sort it out.');
                     return;
                 }
 
@@ -1317,13 +1317,13 @@ async function renderPaypalButton() {
 
             onCancel: () => {
                 if (typeof showNotification === 'function') {
-                    showNotification('Pago cancelado. Tu cesta sigue como estaba.');
+                    showNotification('Payment cancelled. Your cart is unchanged.');
                 }
             },
 
             onError: (err) => {
                 console.error('PayPal:', err);
-                alert('No se pudo completar el pago con PayPal. Inténtalo de nuevo.');
+                alert('The PayPal payment could not be completed. Please try again.');
             }
         }).render('#paypalButton');
     } catch (error) {
@@ -1345,7 +1345,7 @@ function handleCheckoutReturn() {
 
     if (outcome !== 'success') {
         if (typeof showNotification === 'function') {
-            showNotification('Pago cancelado. Tu cesta sigue como estaba.');
+            showNotification('Payment cancelled. Your cart is unchanged.');
         }
         return;
     }
@@ -1372,7 +1372,7 @@ async function handleCheckout(e) {
     const submitBtn = e.target.querySelector('.submit-order-btn');
     const originalLabel = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando…';
+    submitBtn.textContent = 'Sending…';
 
     const formData = new FormData(e.target);
     const name = formData.get('customerName');
@@ -1433,7 +1433,7 @@ async function handleCheckout(e) {
         loadProducts();
     } catch (error) {
         console.error('Error registrando el pedido:', error);
-        alert(error.message || 'Hubo un error al enviar tu pedido. Por favor, inténtalo de nuevo.');
+        alert(error.message || 'Something went wrong sending your order. Please try again.');
         submitBtn.disabled = false;
         submitBtn.textContent = originalLabel;
     }
@@ -1446,11 +1446,11 @@ function showSuccessMessage(orderId, paid) {
     checkoutContent.innerHTML = `
     <div class="success-message">
       <div class="success-icon">✓</div>
-      <h3>${paid ? 'Pago recibido' : 'Pedido confirmado'}</h3>
+      <h3>${paid ? 'Payment received' : 'Order confirmed'}</h3>
       <p>${paid
-        ? 'Gracias por tu compra. Tu prenda entra en producción y te escribiremos al correo con el seguimiento en cuanto salga del taller.'
-        : 'Gracias por tu compra. Nos pondremos en contacto contigo en breve.'}</p>
-      ${orderId ? `<p>Número de pedido: <span class="order-id">${escapeHtml(orderId)}</span></p>` : ''}
+        ? 'Thank you for your purchase. Your garment goes into production and we will email you the tracking as soon as it leaves the workshop.'
+        : 'Thank you for your purchase. We will get in touch with you shortly.'}</p>
+      ${orderId ? `<p>Order number: <span class="order-id">${escapeHtml(orderId)}</span></p>` : ''}
       <button class="cta-button" onclick="closeCheckoutAndReset()" style="margin-top:24px">Seguir comprando</button>
     </div>`;
 }
@@ -1478,7 +1478,7 @@ async function loadLookbookImages() {
     const { data, error } = await SupabaseAPI.getLookbookImages();
 
     if (error || !data || data.length === 0) {
-        container.innerHTML = '<div class="loading-spinner"><p>No hay imágenes disponibles</p></div>';
+        container.innerHTML = '<div class="loading-spinner"><p>No images available</p></div>';
         return;
     }
 
@@ -1501,7 +1501,7 @@ async function handleContact(e) {
     const submitBtn = e.target.querySelector('.footer-submit-btn');
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando…';
+    submitBtn.textContent = 'Sending…';
 
     const nombre = document.getElementById('contactName').value;
     const email = document.getElementById('contactEmail').value;
@@ -1545,7 +1545,7 @@ async function handleContact(e) {
         }, 3000);
     } catch (error) {
         console.error('Error enviando el mensaje:', error);
-        alert('No se pudo enviar el mensaje. Inténtalo de nuevo más tarde.');
+        alert('The message could not be sent. Please try again later.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
