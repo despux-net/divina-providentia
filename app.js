@@ -246,7 +246,24 @@ function displayProducts() {
 // La imagen la elige el dueño desde el panel. Si no hay ninguna, la
 // portada se queda como estaba: fondo blanco y rótulo en negro.
 // Ajustes que el dueño controla desde el panel.
-const siteSettings = { requireAccount: false, onlinePayment: true };
+const siteSettings = {
+    requireAccount: false,
+    onlinePayment: true,
+    paypalPayment: false,
+    paypalClientId: null
+};
+
+// PayPal propio: encendido y con Client ID puesto. Es independiente de
+// Stripe; pueden estar los dos, uno, o ninguno.
+function paypalOn() {
+    return siteSettings.paypalPayment === true && !!siteSettings.paypalClientId;
+}
+
+// ¿Hay alguna forma de cobrar en la web? Si no la hay, la tienda entera
+// vuelve al trato directo.
+function anyOnlinePayment() {
+    return onlinePaymentOn() || paypalOn();
+}
 
 // Con el cobro en línea apagado la tienda entera vuelve al trato
 // directo: el cliente deja su pedido, llega el aviso y el cobro se
@@ -261,7 +278,7 @@ async function loadSiteSettings() {
     try {
         let { data, error } = await window.supabaseClient
             .from('site_settings')
-            .select('require_account, online_payment, theme, footer')
+            .select('require_account, online_payment, paypal_payment, paypal_client_id, theme, footer')
             .eq('id', 1)
             .maybeSingle();
 
@@ -271,7 +288,7 @@ async function loadSiteSettings() {
         if (error) {
             ({ data, error } = await window.supabaseClient
                 .from('site_settings')
-                .select('require_account, online_payment, theme')
+                .select('require_account, online_payment, paypal_payment, paypal_client_id, theme')
                 .eq('id', 1)
                 .maybeSingle());
         }
@@ -279,6 +296,8 @@ async function loadSiteSettings() {
         if (!error && data) {
             siteSettings.requireAccount = !!data.require_account;
             siteSettings.onlinePayment = data.online_payment !== false;
+            siteSettings.paypalPayment = data.paypal_payment === true;
+            siteSettings.paypalClientId = data.paypal_client_id || null;
 
             // Los textos del pie. Si no hay nada guardado se deja el HTML
             // tal cual, que ya trae escritos los de fábrica.
@@ -703,15 +722,25 @@ function initializeEventListeners() {
 // Una cesta entera se paga de una sola manera: o toda en línea con
 // Stripe, o toda por el trato de siempre. Mezclar las dos deja un pedido
 // a medio cobrar, así que se avisa antes de meterlo.
-function cartIsPrintOnDemand() {
-    if (!onlinePaymentOn()) return false;
+// La cesta es entera de prendas que fabrica Printful.
+function cartIsAllPrintOnDemand() {
     return state.cart.length > 0 && state.cart.every(item => item.fulfillment === 'printful');
 }
 
-// Apagado el cobro en línea no hay dos caminos, así que tampoco hay
-// mezcla que impedir: todo se cierra igual.
+// Cobrable con Stripe.
+function cartIsPrintOnDemand() {
+    return onlinePaymentOn() && cartIsAllPrintOnDemand();
+}
+
+// Cobrable con el PayPal propio.
+function cartPaysWithPaypal() {
+    return paypalOn() && cartIsAllPrintOnDemand();
+}
+
+// Sin ninguna forma de cobro en línea no hay dos caminos, así que
+// tampoco hay mezcla que impedir: todo se cierra igual.
 function cartHasMix() {
-    if (!onlinePaymentOn()) return false;
+    if (!anyOnlinePayment()) return false;
     return state.cart.some(item => item.fulfillment === 'printful')
         && state.cart.some(item => item.fulfillment !== 'printful');
 }
@@ -736,7 +765,7 @@ function addToCart(productId, size) {
 
     // Los artículos bajo demanda se pagan en línea y el resto se cierran
     // por mensaje: no caben en el mismo pedido.
-    const mixes = onlinePaymentOn() && state.cart.some(item =>
+    const mixes = anyOnlinePayment() && state.cart.some(item =>
         (item.fulfillment === 'printful') !== isPrintOnDemand(product));
     if (!existing && mixes) {
         alert(isPrintOnDemand(product)
@@ -841,10 +870,18 @@ function updateCart() {
     // Bajo demanda se paga en la pasarela y no hay nada que acordar
     // después, así que en lugar de "Realizar compra" salen directamente
     // los botones de tarjeta y PayPal.
-    const payOnline = cartIsPrintOnDemand();
+    const conStripe = cartIsPrintOnDemand();
+    const conPaypal = cartPaysWithPaypal();
+
     const payButtons = document.getElementById('payButtons');
-    if (payButtons) payButtons.hidden = !payOnline;
-    checkoutBtn.hidden = payOnline;
+    if (payButtons) payButtons.hidden = !conStripe;
+
+    const paypalButtons = document.getElementById('paypalButtons');
+    if (paypalButtons) paypalButtons.hidden = !conPaypal;
+
+    checkoutBtn.hidden = conStripe || conPaypal;
+
+    if (conPaypal) renderPaypalButton();
 
     if (state.cart.length === 0) {
         cartItems.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío</p></div>';
@@ -973,7 +1010,7 @@ async function openCheckout() {
 
     // Sin pasarela nadie recoge la dirección de envío, y para fabricar
     // la prenda hace falta. Se pide aquí, y se vuelve obligatoria.
-    const pideDireccion = !onlinePaymentOn()
+    const pideDireccion = !anyOnlinePayment()
         && state.cart.some(item => item.fulfillment === 'printful');
     const etiqueta = document.querySelector('label[for="customerMessage"]');
     const mensaje = document.getElementById('customerMessage');
@@ -1156,6 +1193,132 @@ async function payNow(paymentMethod, button) {
         console.error('No se pudo iniciar el pago:', error);
         alert(error.message || 'No se pudo abrir la pasarela de pago. Inténtalo de nuevo.');
         resetPayButtons();
+    }
+}
+
+// ===================================
+// PAYPAL
+// ===================================
+
+// El botón lo dibuja PayPal con su propia librería, que se carga solo
+// cuando hace falta: no tiene sentido pedirla a todo el que entre en la
+// web si el cobro por PayPal está apagado.
+function loadPaypalSdk() {
+    if (window.paypal) return Promise.resolve();
+
+    return new Promise((listo, falla) => {
+        const moneda = state.cart.length ? (state.cart[0].currency || 'EUR') : 'EUR';
+        const script = document.createElement('script');
+        script.src = 'https://www.paypal.com/sdk/js'
+            + `?client-id=${encodeURIComponent(siteSettings.paypalClientId)}`
+            + `&currency=${encodeURIComponent(String(moneda).toUpperCase())}`
+            + '&intent=capture';
+        script.onload = listo;
+        script.onerror = () => falla(new Error('No se pudo cargar PayPal.'));
+        document.head.appendChild(script);
+    });
+}
+
+// Se dibuja una sola vez. El botón lee la cesta cuando lo pulsan, no
+// cuando se pinta, así que no hay que rehacerlo con cada cambio.
+let paypalPintado = false;
+
+async function renderPaypalButton() {
+    if (paypalPintado) return;
+    if (!document.getElementById('paypalButton')) return;
+
+    paypalPintado = true;
+
+    try {
+        await loadPaypalSdk();
+
+        window.paypal.Buttons({
+            style: { layout: 'horizontal', color: 'black', shape: 'rect', height: 45, tagline: false },
+
+            // El servidor vuelve a comprobar precios y tallas contra la
+            // base: lo que diga el navegador no decide cuánto se cobra.
+            createOrder: async () => {
+                if (cartHasMix()) {
+                    throw new Error('En la cesta hay artículos que no se pueden pagar en línea.');
+                }
+                if (!await requireAccountOrPrompt()) {
+                    throw new Error('Hay que iniciar sesión para comprar.');
+                }
+
+                const response = await fetch(`${window.SUPABASE_URL}/functions/v1/paypal-create-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: state.cart.map(item => ({
+                            productId: item.id,
+                            size: item.size,
+                            quantity: item.quantity
+                        }))
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || !data.paypalOrderId) {
+                    throw new Error(data.error || 'No se pudo iniciar el pago con PayPal.');
+                }
+
+                try {
+                    localStorage.setItem(PENDING_ORDER_KEY, String(data.orderId));
+                } catch (e) { /* almacenamiento bloqueado */ }
+
+                return data.paypalOrderId;
+            },
+
+            // Aprobado en PayPal, pero el dinero no se ha movido todavía:
+            // lo cobra el servidor, que es quien comprueba el importe y
+            // encarga la prenda a Printful.
+            onApprove: async (data) => {
+                const response = await fetch(`${window.SUPABASE_URL}/functions/v1/paypal-capture-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paypalOrderId: data.orderID })
+                });
+
+                const resultado = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    console.error('Fallo al cerrar el pago de PayPal:', resultado);
+                    alert(resultado.error
+                        || 'Tu pago se ha hecho, pero no pudimos cerrar el pedido. Escríbenos y lo resolvemos.');
+                    return;
+                }
+
+                let referencia = '';
+                try {
+                    referencia = localStorage.getItem(PENDING_ORDER_KEY) || '';
+                    localStorage.removeItem(PENDING_ORDER_KEY);
+                } catch (e) { /* almacenamiento bloqueado */ }
+
+                state.cart = [];
+                saveCartToStorage();
+                updateCart();
+                closeCart();
+
+                showSuccessMessage(referencia ? referencia.slice(0, 8).toUpperCase() : '', true);
+                document.getElementById('checkoutModal')?.classList.add('open');
+                document.getElementById('checkoutOverlay')?.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            },
+
+            onCancel: () => {
+                if (typeof showNotification === 'function') {
+                    showNotification('Pago cancelado. Tu cesta sigue como estaba.');
+                }
+            },
+
+            onError: (err) => {
+                console.error('PayPal:', err);
+                alert('No se pudo completar el pago con PayPal. Inténtalo de nuevo.');
+            }
+        }).render('#paypalButton');
+    } catch (error) {
+        console.error('No se pudo preparar PayPal:', error);
+        paypalPintado = false;
     }
 }
 

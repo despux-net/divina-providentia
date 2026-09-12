@@ -386,6 +386,26 @@
                     </label>
                 </div>
 
+                <div class="setting">
+                    <div class="setting-text">
+                        <h3>Cobro con PayPal</h3>
+                        <p class="hint" id="paypalPaymentHint"></p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="paypalPayment">
+                        <span class="switch-track" aria-hidden="true"></span>
+                    </label>
+                </div>
+
+                <label class="field">
+                    <span>Client ID de PayPal
+                        <small>es público, va en la web. El secreto NO se pone aquí.</small></span>
+                    <input type="text" id="paypalClientId" placeholder="A…" autocomplete="off" spellcheck="false">
+                </label>
+                <div class="gallery-actions">
+                    <button type="button" class="btn" id="savePaypalClientId">Guardar Client ID</button>
+                </div>
+
                 <p class="form-error" id="settingsError" role="alert"></p>
             </section>
 
@@ -537,7 +557,7 @@
     <script src="supabase-config.js"></script>
     <script src="theme.js?v=2"></script>
     <script src="footer.js?v=1"></script>
-    <script src="admin.js?v=8"></script>
+    <script src="admin.js?v=9"></script>
 </body>
 
 </html>

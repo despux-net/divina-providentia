@@ -158,6 +158,13 @@
                 <button class="checkout-btn pay-alt" id="payPaypalBtn">PayPal</button>
                 <p class="pay-note">Pago seguro con Stripe. El correo y la dirección de envío se piden en el paso siguiente.</p>
             </div>
+
+            <!-- PayPal propio, aparte de Stripe. Puede estar encendido a la vez
+                 que el de arriba, o solo. -->
+            <div class="pay-buttons" id="paypalButtons" hidden>
+                <div id="paypalButton"></div>
+                <p class="pay-note">Pago seguro con PayPal. La dirección de envío se toma de tu cuenta de PayPal.</p>
+            </div>
         </div>
     </aside>
 
@@ -265,7 +272,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=10"></script>
     <script src="footer.js?v=1"></script>
-    <script src="app.js?v=21"></script>
+    <script src="app.js?v=22"></script>
     <script src="producto.js?v=3"></script>
 
     <div id="google_translate_element" style="display:none"></div>
