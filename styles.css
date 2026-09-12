@@ -1332,9 +1332,32 @@ button {
 /* El sitio se reserva antes de montar: si el hueco nace a cero, Stripe
    mide cero y el marco se queda plegado para siempre. Y de paso no se ve
    una caja vacía mientras carga. */
-.pay-embed {
-    padding: var(--sp-4);
+/* El hueco lo reserva el envoltorio, no el contenedor de Stripe: Stripe
+   exige montar sobre un elemento vacío y se niega si encuentra algo
+   dentro, así que el aviso de carga va al lado, superpuesto. */
+.pay-embed-wrap {
+    position: relative;
     min-height: 420px;
+    padding: var(--sp-4);
+}
+
+/* Stripe puede tardar unos segundos en dibujar su formulario. Sin este
+   aviso solo se ve un recuadro en blanco, que parece una web rota justo
+   en el momento de pagar. */
+.pay-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    color: var(--grey);
+    font-size: var(--fs-small);
+}
+
+/* Sin esto el 'display: grid' de arriba le gana al display:none que trae
+   el atributo hidden, y el aviso se queda encima del formulario. */
+.pay-loading[hidden] {
+    display: none;
 }
 
 .pay-note {

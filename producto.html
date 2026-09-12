@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=19">
+    <link rel="stylesheet" href="styles.css?v=22">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Dibuja la pasarela dentro de esta misma página. Si no carga, el
@@ -168,7 +168,10 @@
             <h2>Pago seguro</h2>
             <button class="close-checkout-btn" id="closePayBtn" aria-label="Cerrar">&times;</button>
         </div>
-        <div class="pay-embed" id="payEmbed"></div>
+        <div class="pay-embed-wrap">
+            <p class="pay-loading" id="payLoading">Cargando la pasarela de pago…</p>
+            <div id="payEmbed"></div>
+        </div>
     </div>
 
     <!-- ============ CHECKOUT ============ -->
@@ -262,7 +265,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=10"></script>
     <script src="footer.js?v=1"></script>
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=20"></script>
     <script src="producto.js?v=3"></script>
 
     <div id="google_translate_element" style="display:none"></div>
