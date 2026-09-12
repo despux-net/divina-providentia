@@ -1313,6 +1313,13 @@ button {
     gap: var(--sp-2);
 }
 
+/* Sin esto el 'display: grid' de arriba le gana al display:none que trae
+   el atributo hidden, y los botones se quedan a la vista aunque el cobro
+   esté apagado. */
+.pay-buttons[hidden] {
+    display: none;
+}
+
 .pay-buttons .checkout-btn.pay-alt {
     background: var(--white);
     color: var(--black);

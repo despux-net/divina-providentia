@@ -61,6 +61,19 @@ Deno.serve(async (req: Request) => {
       throw new Error("El carrito está vacío");
     }
 
+    // El interruptor se comprueba aquí, no solo en el navegador. Si no,
+    // esconder los botones sería decoración: cualquiera podría llamar a
+    // esta función y llegar a la pasarela con el cobro apagado.
+    const { data: ajustes } = await supabase
+      .from("site_settings")
+      .select("online_payment")
+      .eq("id", 1)
+      .maybeSingle();
+
+    if (ajustes?.online_payment === false) {
+      throw new Error("El cobro con Stripe está apagado");
+    }
+
     // Look up authoritative prices + Printful variant IDs server-side.
     // Never trust a price sent by the browser.
     const lineItems: Array<{
