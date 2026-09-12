@@ -41,6 +41,49 @@ async function paypalToken(base: string, clientId: string, secret: string) {
   return payload.access_token as string;
 }
 
+// Una venta que llega y nadie ve es casi peor que no venderla. El aviso
+// nunca puede tumbar el cobro, así que va entero dentro de un try.
+async function avisar(datos: Record<string, unknown>) {
+  try {
+    await fetch(`${SUPABASE_URL}/functions/v1/send-telegram-order`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${SERVICE_ROLE_KEY}`,
+      },
+      body: JSON.stringify({ type: "sale", ...datos }),
+    });
+  } catch (error) {
+    console.error("No se pudo avisar por Telegram:", error);
+  }
+}
+
+function direccionLegible(a: Record<string, any>) {
+  return [
+    a.address_line_1,
+    a.address_line_2,
+    a.admin_area_2,
+    a.admin_area_1,
+    a.postal_code,
+    a.country_code,
+  ].filter(Boolean).join(", ");
+}
+
+// Los nombres de país que devuelve Printful en sus errores vienen en
+// inglés; para el comprador basta con saber que no llegamos allí.
+function recipienteParaPrintful(nombre: string | null, a: Record<string, any>, email?: string) {
+  return {
+    name: nombre,
+    address1: a.address_line_1,
+    address2: a.address_line_2 ?? undefined,
+    city: a.admin_area_2,
+    state_code: a.admin_area_1 ?? undefined,
+    country_code: a.country_code,
+    zip: a.postal_code,
+    email: email ?? undefined,
+  };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: CORS });
@@ -91,7 +134,120 @@ Deno.serve(async (req: Request) => {
 
     const base = paypalBase(env);
     const token = await paypalToken(base, clientId, secret);
+    const esReal = env !== "sandbox";
 
+    const articulos = (order.order_items ?? []).map((oi: any) => ({
+      name: oi.product_name,
+      size: oi.size,
+      quantity: oi.quantity,
+    }));
+
+    // ------------------------------------------------------------------
+    // 1. Leer la orden aprobada SIN cobrarla todavía.
+    //
+    // Hasta aquí el comprador ha dado su visto bueno en PayPal, pero el
+    // dinero sigue en su cuenta. Es el único momento en que aún podemos
+    // echarnos atrás sin tener que devolver nada.
+    // ------------------------------------------------------------------
+    const detalleResponse = await fetch(`${base}/v2/checkout/orders/${paypalOrderId}`, {
+      headers: { "Authorization": `Bearer ${token}` },
+    });
+    const detalle = await detalleResponse.json().catch(() => ({}));
+
+    if (!detalleResponse.ok) {
+      throw new Error(`No se pudo leer la orden en PayPal: ${detalle?.message ?? detalleResponse.status}`);
+    }
+
+    const unidad = detalle.purchase_units?.[0];
+    const payer = detalle.payer ?? {};
+    const envio = unidad?.shipping ?? {};
+    const direccion = envio.address ?? {};
+
+    const nombre = envio.name?.full_name
+      ?? [payer.name?.given_name, payer.name?.surname].filter(Boolean).join(" ")
+      ?? null;
+
+    if (!direccion.address_line_1 || !direccion.country_code) {
+      await supabase.from("orders").update({
+        status: "cancelled",
+        customer_name: nombre,
+        customer_email: payer.email_address ?? null,
+        customer_message: "PayPal no devolvió dirección de envío. No se cobró nada.",
+      }).eq("id", order.id);
+
+      await avisar({
+        outcome: "rechazada",
+        orderId: order.id,
+        total: order.total_amount,
+        currency: order.currency,
+        items: articulos,
+        customerName: nombre,
+        customerEmail: payer.email_address ?? null,
+        detail: "PayPal no devolvió dirección de envío",
+      });
+
+      return reply({
+        error: "PayPal no nos ha dado una dirección de envío, así que no hemos cobrado nada. Revisa la dirección de tu cuenta de PayPal e inténtalo otra vez.",
+      }, 400);
+    }
+
+    // ------------------------------------------------------------------
+    // 2. Preguntar a Printful si puede llegar allí.
+    //
+    // 'estimate-costs' no crea nada ni cuesta nada: solo responde. Si dice
+    // que no, el comprador se entera ahora y con el dinero intacto, en
+    // lugar de descubrirlo cuando ya se le ha cobrado.
+    // ------------------------------------------------------------------
+    const items = (order.order_items ?? []).map((oi: any) => ({
+      sync_variant_id: oi.printful_sync_variant_id,
+      quantity: oi.quantity,
+    }));
+
+    const estimacion = await fetch("https://api.printful.com/orders/estimate-costs", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${printfulKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        recipient: recipienteParaPrintful(nombre, direccion, payer.email_address),
+        items,
+      }),
+    });
+
+    if (!estimacion.ok) {
+      const fallo = await estimacion.json().catch(() => ({}));
+      const motivo = fallo?.error?.message ?? fallo?.result ?? `Printful respondió ${estimacion.status}`;
+
+      await supabase.from("orders").update({
+        status: "cancelled",
+        customer_name: nombre,
+        customer_email: payer.email_address ?? null,
+        shipping_address: { name: nombre, ...direccion },
+        customer_message: `No enviable, no se cobró: ${motivo}`,
+      }).eq("id", order.id);
+
+      await avisar({
+        outcome: "rechazada",
+        orderId: order.id,
+        total: order.total_amount,
+        currency: order.currency,
+        items: articulos,
+        customerName: nombre,
+        customerEmail: payer.email_address ?? null,
+        address: direccionLegible(direccion),
+        detail: motivo,
+      });
+
+      return reply({
+        error: `No podemos enviar a esa dirección: ${motivo} No te hemos cobrado nada.`,
+        noEnviable: true,
+      }, 400);
+    }
+
+    // ------------------------------------------------------------------
+    // 3. Ahora sí: cobrar.
+    // ------------------------------------------------------------------
     const captureResponse = await fetch(`${base}/v2/checkout/orders/${paypalOrderId}/capture`, {
       method: "POST",
       headers: {
@@ -111,8 +267,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const unit = captured.purchase_units?.[0];
-    const capture = unit?.payments?.captures?.[0];
+    const capture = captured.purchase_units?.[0]?.payments?.captures?.[0];
     const paid = Number(capture?.amount?.value);
     const paidCurrency = String(capture?.amount?.currency_code ?? "").toUpperCase();
     const expected = Number(order.total_amount);
@@ -122,40 +277,32 @@ Deno.serve(async (req: Request) => {
     // cobro pero no se fabrica nada, y queda a la vista en el panel.
     if (!Number.isFinite(paid) || Math.abs(paid - expected) > 0.009 ||
         paidCurrency !== String(order.currency ?? "").toUpperCase()) {
+      const motivo = `PayPal cobró ${paid} ${paidCurrency} y el pedido era ${expected} ${order.currency}`;
+
       await supabase.from("orders").update({
         status: "processing",
         payment_reference: capture?.id ?? paypalOrderId,
-        customer_message: `REVISAR: PayPal cobró ${paid} ${paidCurrency} y el pedido era ${expected} ${order.currency}`,
+        customer_message: `REVISAR: ${motivo}`,
       }).eq("id", order.id);
+
+      await avisar({
+        outcome: "problema",
+        orderId: order.id,
+        total: paid,
+        currency: paidCurrency || order.currency,
+        items: articulos,
+        customerName: nombre,
+        customerEmail: payer.email_address ?? null,
+        address: direccionLegible(direccion),
+        detail: `Importe descuadrado. ${motivo}. No se ha encargado nada a Printful.`,
+      });
 
       throw new Error("El importe cobrado no coincide con el del pedido. Revísalo en el panel.");
     }
 
-    const payer = captured.payer ?? {};
-    const shipping = unit?.shipping ?? {};
-    const address = shipping.address ?? {};
-
-    const nombre = shipping.name?.full_name
-      ?? [payer.name?.given_name, payer.name?.surname].filter(Boolean).join(" ")
-      ?? null;
-
-    if (!address.address_line_1 || !address.country_code) {
-      // Pagado pero sin dirección utilizable: no se puede fabricar.
-      await supabase.from("orders").update({
-        status: "processing",
-        payment_reference: capture?.id ?? paypalOrderId,
-        customer_name: nombre,
-        customer_email: payer.email_address ?? null,
-        customer_message: "REVISAR: PayPal no devolvió dirección de envío",
-      }).eq("id", order.id);
-
-      throw new Error("PayPal no devolvió una dirección de envío. Revísalo en el panel.");
-    }
-
-    // En sandbox no se fabrica nada: el pedido entra en Printful como
-    // borrador, igual que hacen las pruebas de Stripe.
-    const esReal = env !== "sandbox";
-
+    // ------------------------------------------------------------------
+    // 4. Encargar la prenda.
+    // ------------------------------------------------------------------
     const printfulResponse = await fetch("https://api.printful.com/orders", {
       method: "POST",
       headers: {
@@ -163,20 +310,8 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        recipient: {
-          name: nombre,
-          address1: address.address_line_1,
-          address2: address.address_line_2 ?? undefined,
-          city: address.admin_area_2,
-          state_code: address.admin_area_1 ?? undefined,
-          country_code: address.country_code,
-          zip: address.postal_code,
-          email: payer.email_address ?? undefined,
-        },
-        items: (order.order_items ?? []).map((oi: any) => ({
-          sync_variant_id: oi.printful_sync_variant_id,
-          quantity: oi.quantity,
-        })),
+        recipient: recipienteParaPrintful(nombre, direccion, payer.email_address),
+        items,
         confirm: esReal,
       }),
     });
@@ -185,23 +320,43 @@ Deno.serve(async (req: Request) => {
 
     // El dinero ya está cobrado pase lo que pase, así que el pedido pasa
     // a 'processing' igualmente. Si Printful falla, printful_order_id se
-    // queda vacío y se ve en el panel.
+    // queda vacío y el aviso lo dice.
     const update: Record<string, unknown> = {
       status: "processing",
       payment_reference: capture?.id ?? paypalOrderId,
       livemode: esReal,
       customer_name: nombre,
       customer_email: payer.email_address ?? null,
-      shipping_address: { name: nombre, ...address },
+      shipping_address: { name: nombre, ...direccion },
     };
 
     if (printfulResponse.ok) {
       update.printful_order_id = printfulResult.result?.id;
     } else {
       console.error("Printful error:", JSON.stringify(printfulResult));
+      update.customer_message = `REVISAR: cobrado, pero Printful falló: ${
+        printfulResult?.error?.message ?? printfulResponse.status
+      }`;
     }
 
     await supabase.from("orders").update(update).eq("id", order.id);
+
+    await avisar({
+      outcome: printfulResponse.ok ? "cobrada" : "problema",
+      orderId: order.id,
+      total: paid,
+      currency: paidCurrency,
+      items: articulos,
+      customerName: nombre,
+      customerEmail: payer.email_address ?? null,
+      address: direccionLegible(direccion),
+      printfulOrderId: printfulResponse.ok ? printfulResult.result?.id : null,
+      detail: printfulResponse.ok
+        ? (esReal ? undefined : "Modo sandbox: el pedido entró como borrador.")
+        : `Cobrado, pero Printful no aceptó el pedido: ${
+          printfulResult?.error?.message ?? printfulResponse.status
+        }. Hay que encargarlo a mano.`,
+    });
 
     if (!printfulResponse.ok) {
       throw new Error(

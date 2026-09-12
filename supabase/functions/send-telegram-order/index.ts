@@ -27,7 +27,24 @@ interface ContactData {
     message: string;
 }
 
-type Payload = OrderData | ContactData;
+// Las ventas cobradas en la web no pasan por el formulario, así que no
+// tienen ni nombre escrito a mano ni teléfono: los datos los pone la
+// pasarela. Y el importe puede no ser en dólares.
+interface SaleData {
+    type: "sale";
+    outcome: "cobrada" | "problema" | "rechazada";
+    orderId: string;
+    total: number;
+    currency: string;
+    items: Array<{ name: string; size?: string; quantity: number }>;
+    customerName?: string;
+    customerEmail?: string;
+    address?: string;
+    printfulOrderId?: number | string | null;
+    detail?: string;
+}
+
+type Payload = OrderData | ContactData | SaleData;
 
 // Todo lo que escribe el visitante pasa por aquí antes de entrar en el
 // mensaje. Sin esto, un nombre con < o & rompe el analizador de Telegram
@@ -56,6 +73,64 @@ function buildOrderMessage(d: OrderData): string {
         "",
         `💰 <b>Total: $${Number(d.total ?? 0).toFixed(2)}</b>`,
     ].join("\n");
+}
+
+const SIMBOLOS: Record<string, string> = { EUR: "€", USD: "$", GBP: "£" };
+
+function importe(valor: unknown, moneda: string): string {
+    const n = Number(valor ?? 0).toFixed(2);
+    const simbolo = SIMBOLOS[String(moneda).toUpperCase()];
+    return simbolo ? `${simbolo}${n}` : `${n} ${String(moneda).toUpperCase()}`;
+}
+
+function buildSaleMessage(d: SaleData): string {
+    const lineas = (d.items ?? []).map((item) =>
+        `• ${esc(item.name)}${item.size ? ` — talla ${esc(item.size)}` : ""} x${item.quantity}`
+    ).join("\n");
+
+    // El encabezado es lo único que se ve en la notificación del móvil,
+    // así que ahí va lo que decide si hay que levantarse a mirar.
+    const cabecera = d.outcome === "cobrada"
+        ? "💸 <b>VENTA COBRADA — Divina Providentia</b>"
+        : d.outcome === "problema"
+        ? "⚠️ <b>VENTA COBRADA CON PROBLEMA — REVISAR</b>"
+        : "🚫 <b>COMPRA RECHAZADA (no se cobró nada)</b>";
+
+    const cuerpo = [
+        cabecera,
+        "",
+        `💰 <b>Importe:</b> ${importe(d.total, d.currency)}`,
+        "",
+        "📦 <b>Productos:</b>",
+        lineas || "—",
+    ];
+
+    if (d.customerName || d.customerEmail) {
+        cuerpo.push(
+            "",
+            `👤 <b>Cliente:</b> ${esc(d.customerName) || "—"}`,
+            `📧 <b>Correo:</b> ${esc(d.customerEmail) || "—"}`,
+        );
+    }
+
+    if (d.address) cuerpo.push("", `📍 <b>Envío:</b> ${esc(d.address)}`);
+
+    if (d.outcome === "cobrada") {
+        cuerpo.push(
+            "",
+            d.printfulOrderId
+                ? `🏭 <b>Printful:</b> pedido ${esc(d.printfulOrderId)} creado`
+                : "🏭 <b>Printful:</b> sin pedido — revísalo",
+        );
+    }
+
+    // Cuando algo va mal, el motivo va al final y sin adornos: es lo que
+    // hay que leer entero.
+    if (d.detail) cuerpo.push("", `🔎 <b>Detalle:</b> ${esc(d.detail)}`);
+
+    cuerpo.push("", `<i>Pedido ${esc(String(d.orderId).slice(0, 8).toUpperCase())} · panel de admin</i>`);
+
+    return cuerpo.join("\n");
 }
 
 function buildContactMessage(d: ContactData): string {
@@ -98,6 +173,8 @@ Deno.serve(async (req: Request) => {
         // actualice el resto.
         const message = payload.type === "contact"
             ? buildContactMessage(payload)
+            : payload.type === "sale"
+            ? buildSaleMessage(payload)
             : buildOrderMessage(payload as OrderData);
 
         const telegramResponse = await fetch(

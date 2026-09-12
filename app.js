@@ -1283,6 +1283,16 @@ async function renderPaypalButton() {
 
                 if (!response.ok) {
                     console.error('Fallo al cerrar el pago de PayPal:', resultado);
+
+                    // Hay dos fracasos muy distintos y al cliente le importa
+                    // cuál de los dos es: si no se puede enviar a su país no
+                    // se le ha cobrado nada y su cesta sigue intacta, así que
+                    // no hay que alarmarle ni pedirle que escriba a nadie.
+                    if (resultado.noEnviable) {
+                        alert(resultado.error);
+                        return;
+                    }
+
                     alert(resultado.error
                         || 'Tu pago se ha hecho, pero no pudimos cerrar el pedido. Escríbenos y lo resolvemos.');
                     return;
