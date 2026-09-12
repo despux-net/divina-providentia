@@ -31,6 +31,10 @@ interface CheckoutRequest {
   // button. Anything else (or nothing) shows every method enabled in the
   // Stripe Dashboard, with card first.
   paymentMethod?: string;
+  // true asks for a session that renders inside our own page instead of
+  // sending the buyer to checkout.stripe.com. Needs the publishable key
+  // in the Vault; without it we quietly fall back to the hosted page.
+  embedded?: boolean;
 }
 
 // Countries Divina Providentia currently ships to. Add/remove as needed.
@@ -171,6 +175,15 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // Pública por definición: viaja al navegador para arrancar Stripe.js.
+    // Si no está guardada, el pago embebido no puede montarse y se sirve
+    // la pasarela de siempre.
+    const { data: publishableKey } = await supabase.rpc("get_secret", {
+      secret_name: "STRIPE_PUBLISHABLE_KEY",
+    });
+
+    const embedded = body.embedded === true && !!publishableKey;
+
     const siteUrl = Deno.env.get("SITE_URL") ?? "https://divinaprovidentia.com";
 
     // 3. Create the Stripe Checkout Session via the REST API (form-encoded,
@@ -178,14 +191,25 @@ Deno.serve(async (req: Request) => {
     // arrays). Checkout is what collects the email, the name, the phone and
     // the shipping address -- asking for them again on our own page would
     // just be the same form twice.
+    const returnUrl = `${siteUrl}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`;
+
     const formParts: string[] = [
       "mode=payment",
       `client_reference_id=${encodeURIComponent(String(order.id))}`,
       `metadata[order_id]=${encodeURIComponent(String(order.id))}`,
       "phone_number_collection[enabled]=true",
-      `success_url=${encodeURIComponent(`${siteUrl}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`)}`,
-      `cancel_url=${encodeURIComponent(`${siteUrl}/?checkout=cancel`)}`,
     ];
+
+    if (embedded) {
+      // Embebida: la pasarela se dibuja dentro de divinaprovidentia.com.
+      // Aquí no hay cancel_url; cancelar es cerrar la ventanita, y de eso
+      // se encarga el navegador.
+      formParts.push("ui_mode=embedded_page");
+      formParts.push(`return_url=${encodeURIComponent(returnUrl)}`);
+    } else {
+      formParts.push(`success_url=${encodeURIComponent(returnUrl)}`);
+      formParts.push(`cancel_url=${encodeURIComponent(`${siteUrl}/?checkout=cancel`)}`);
+    }
 
     if (body.customer?.email) {
       formParts.push(`customer_email=${encodeURIComponent(body.customer.email)}`);
@@ -237,9 +261,16 @@ Deno.serve(async (req: Request) => {
       .update({ payment_reference: session.id })
       .eq("id", order.id);
 
-    return new Response(JSON.stringify({ url: session.url, orderId: order.id }), {
-      headers: { ...CORS, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        mode: embedded ? "embedded" : "hosted",
+        url: session.url ?? null,
+        clientSecret: session.client_secret ?? null,
+        publishableKey: embedded ? publishableKey : null,
+        orderId: order.id,
+      }),
+      { headers: { ...CORS, "Content-Type": "application/json" } },
+    );
   } catch (error) {
     console.error("create-checkout-session error:", error);
     return new Response(

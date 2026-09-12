@@ -659,6 +659,7 @@ function initializeEventListeners() {
     document.getElementById('cartOverlay')?.addEventListener('click', closeCart);
 
     document.getElementById('checkoutBtn')?.addEventListener('click', openCheckout);
+    document.getElementById('closePayBtn')?.addEventListener('click', closeEmbeddedCheckout);
     document.getElementById('payCardBtn')?.addEventListener('click', (e) => payNow(null, e.currentTarget));
     document.getElementById('payPaypalBtn')?.addEventListener('click', (e) => payNow('paypal', e.currentTarget));
     document.getElementById('closeCheckoutBtn')?.addEventListener('click', closeCheckout);
@@ -681,6 +682,7 @@ function initializeEventListeners() {
         if (e.key === 'Escape') {
             closeCart();
             closeCheckout();
+            closeEmbeddedCheckout();
         }
     });
 }
@@ -983,6 +985,12 @@ const PENDING_ORDER_KEY = 'divinaPendingOrder';
 // así que de paso recoge el correo, el nombre y el teléfono. Pedirlo
 // antes era rellenar el mismo formulario dos veces.
 async function startStripeCheckout(paymentMethod) {
+    // Con Stripe.js cargado, la pasarela se dibuja aquí dentro y el
+    // cliente no sale del sitio. Si no ha cargado —bloqueador, red mala—
+    // se pide la pasarela de siempre y se redirige: es preferible cobrar
+    // en otra página que no cobrar.
+    const puedeEmbeber = typeof window.Stripe === 'function';
+
     const response = await fetch(`${window.SUPABASE_URL}/functions/v1/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -992,13 +1000,14 @@ async function startStripeCheckout(paymentMethod) {
                 size: item.size,
                 quantity: item.quantity
             })),
-            paymentMethod: paymentMethod || undefined
+            paymentMethod: paymentMethod || undefined,
+            embedded: puedeEmbeber
         })
     });
 
     const data = await response.json().catch(() => ({}));
 
-    if (!response.ok || !data.url) {
+    if (!response.ok) {
         throw new Error(data.error || 'No se pudo abrir la pasarela de pago.');
     }
 
@@ -1006,9 +1015,76 @@ async function startStripeCheckout(paymentMethod) {
         localStorage.setItem(PENDING_ORDER_KEY, String(data.orderId));
     } catch (e) { /* almacenamiento bloqueado: solo se pierde el número */ }
 
+    if (data.mode === 'embedded' && data.clientSecret && data.publishableKey) {
+        await openEmbeddedCheckout(data);
+        return;
+    }
+
+    if (!data.url) {
+        throw new Error('No se pudo abrir la pasarela de pago.');
+    }
+
     // La cesta no se vacía aquí: si el cliente se echa atrás en Stripe,
     // tiene que encontrarla intacta al volver.
     window.location.href = data.url;
+}
+
+// La pasarela montada dentro de la página. Se guarda para poder
+// desmontarla al cerrar: dejar dos vivas a la vez rompe Stripe.js.
+let pasarelaEmbebida = null;
+
+async function openEmbeddedCheckout({ clientSecret, publishableKey }) {
+    if (pasarelaEmbebida) {
+        pasarelaEmbebida.destroy();
+        pasarelaEmbebida = null;
+    }
+
+    const stripe = window.Stripe(publishableKey);
+
+    // Stripe pide una función que le dé el secreto, no el secreto suelto.
+    // La sesión ya está creada, así que solo hay que devolverlo.
+    const opciones = { fetchClientSecret: async () => clientSecret };
+
+    // Stripe rebautizó este método. Se prueba el nombre nuevo y se deja el
+    // viejo por si el navegador tiene cacheada una versión anterior.
+    pasarelaEmbebida = typeof stripe.createEmbeddedCheckoutPage === 'function'
+        ? await stripe.createEmbeddedCheckoutPage(opciones)
+        : await stripe.initEmbeddedCheckout(opciones);
+
+    closeCart();
+    document.getElementById('payOverlay')?.classList.add('open');
+    document.getElementById('payModal')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // La ventanita entra con una transición. Montar a mitad de camino
+    // hace que Stripe mida un hueco que todavía no existe y deje el marco
+    // plegado, así que se espera a que esté abierta del todo.
+    await new Promise(listo => setTimeout(listo, 340));
+
+    pasarelaEmbebida.mount('#payEmbed');
+}
+
+// Cerrar es cancelar: el pedido se queda en 'pending' sin cobrar, y la
+// cesta intacta para volver a intentarlo.
+function closeEmbeddedCheckout() {
+    if (pasarelaEmbebida) {
+        pasarelaEmbebida.destroy();
+        pasarelaEmbebida = null;
+    }
+
+    document.getElementById('payOverlay')?.classList.remove('open');
+    document.getElementById('payModal')?.classList.remove('open');
+    document.body.style.overflow = '';
+    resetPayButtons();
+}
+
+// Los botones se apagan mientras se abre la pasarela. Como la página ya
+// no se recarga, hay que devolverlos a su sitio a mano.
+function resetPayButtons() {
+    document.querySelectorAll('#payButtons .checkout-btn').forEach(boton => {
+        boton.disabled = false;
+        if (boton.dataset.label) boton.textContent = boton.dataset.label;
+    });
 }
 
 // Los dos botones de la cesta. 'paypal' lleva a la pasarela con PayPal
@@ -1024,9 +1100,10 @@ async function payNow(paymentMethod, button) {
 
     if (!await requireAccountOrPrompt()) return;
 
-    const all = document.querySelectorAll('#payButtons .checkout-btn');
-    const label = button.textContent;
-    all.forEach(b => { b.disabled = true; });
+    document.querySelectorAll('#payButtons .checkout-btn').forEach(b => {
+        if (!b.dataset.label) b.dataset.label = b.textContent;
+        b.disabled = true;
+    });
     button.textContent = 'Abriendo el pago…';
 
     try {
@@ -1034,8 +1111,7 @@ async function payNow(paymentMethod, button) {
     } catch (error) {
         console.error('No se pudo iniciar el pago:', error);
         alert(error.message || 'No se pudo abrir la pasarela de pago. Inténtalo de nuevo.');
-        all.forEach(b => { b.disabled = false; });
-        button.textContent = label;
+        resetPayButtons();
     }
 }
 

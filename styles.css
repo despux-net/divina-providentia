@@ -1323,6 +1323,20 @@ button {
     color: var(--white);
 }
 
+/* La pasarela dibujada dentro de la página. Stripe la sirve en un marco
+   que se ajusta solo a lo alto: aquí solo hay que darle sitio y aire. */
+.pay-modal {
+    width: min(600px, calc(100% - 32px));
+}
+
+/* El sitio se reserva antes de montar: si el hueco nace a cero, Stripe
+   mide cero y el marco se queda plegado para siempre. Y de paso no se ve
+   una caja vacía mientras carga. */
+.pay-embed {
+    padding: var(--sp-4);
+    min-height: 420px;
+}
+
 .pay-note {
     margin: var(--sp-2) 0 0;
     color: var(--grey);

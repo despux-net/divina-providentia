@@ -18,9 +18,12 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=17">
+    <link rel="stylesheet" href="styles.css?v=19">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Dibuja la pasarela dentro de esta misma página. Si no carga, el
+         pago sigue funcionando: se abre la pasarela de Stripe como antes. -->
+    <script src="https://js.stripe.com/dahlia/stripe.js"></script>
     <script src="theme.js?v=2"></script>
     <script>
         // El tema guardado se aplica antes de pintar, desde la copia que
@@ -158,6 +161,16 @@
         </div>
     </aside>
 
+    <!-- ============ PAGO EN LA PROPIA PÁGINA ============ -->
+    <div class="checkout-overlay" id="payOverlay"></div>
+    <div class="checkout-modal pay-modal" id="payModal" role="dialog" aria-label="Pago seguro">
+        <div class="checkout-header">
+            <h2>Pago seguro</h2>
+            <button class="close-checkout-btn" id="closePayBtn" aria-label="Cerrar">&times;</button>
+        </div>
+        <div class="pay-embed" id="payEmbed"></div>
+    </div>
+
     <!-- ============ CHECKOUT ============ -->
     <div class="checkout-overlay" id="checkoutOverlay"></div>
     <div class="checkout-modal" id="checkoutModal" role="dialog" aria-label="Confirmar pedido">
@@ -249,7 +262,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=10"></script>
     <script src="footer.js?v=1"></script>
-    <script src="app.js?v=15"></script>
+    <script src="app.js?v=18"></script>
     <script src="producto.js?v=3"></script>
 
     <div id="google_translate_element" style="display:none"></div>
