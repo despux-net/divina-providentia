@@ -1346,7 +1346,7 @@ function resetTheme() {
 async function loadSettings() {
     const { data, error } = await supabaseClient
         .from('site_settings')
-        .select('require_account')
+        .select('require_account, online_payment')
         .eq('id', 1)
         .maybeSingle();
 
@@ -1354,19 +1354,59 @@ async function loadSettings() {
         $('settingsError').textContent =
             'No se pudo leer la configuración. ¿Has ejecutado la última versión del SQL?';
         $('requireAccount').disabled = true;
+        $('onlinePayment').disabled = true;
         console.error(error);
         return;
     }
 
     $('requireAccount').disabled = false;
     $('requireAccount').checked = !!(data && data.require_account);
+
+    $('onlinePayment').disabled = false;
+    $('onlinePayment').checked = !(data && data.online_payment === false);
+
     renderSettingHint();
 }
 
 function renderSettingHint() {
+    $('onlinePaymentHint').textContent = $('onlinePayment').checked
+        ? 'Encendido: las prendas bajo demanda se pagan en la web con tarjeta o PayPal, y Printful las fabrica y envía solo. Necesita las claves de Stripe puestas.'
+        : 'Apagado: nadie paga en la web. Los pedidos te llegan por Telegram con la dirección de envío, y el cobro y el pedido en Printful los haces tú a mano.';
+
     $('requireAccountHint').textContent = $('requireAccount').checked
         ? 'Encendido: para terminar la compra hay que iniciar sesión. A quien no tenga cuenta se le pedirá que se registre.'
         : 'Apagado: cualquiera puede comprar sin registrarse. Solo se le piden nombre, apellidos, correo y teléfono.';
+}
+
+async function saveOnlinePayment() {
+    const input = $('onlinePayment');
+    const value = input.checked;
+
+    input.disabled = true;
+    $('settingsError').textContent = '';
+    renderSettingHint();
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .update({ online_payment: value })
+        .eq('id', 1)
+        .select();
+
+    input.disabled = false;
+
+    if (error || !data || data.length === 0) {
+        // Se deja el interruptor como estaba de verdad, para que no
+        // parezca guardado algo que no lo está.
+        input.checked = !value;
+        renderSettingHint();
+        $('settingsError').textContent = 'No se pudo guardar el cambio. Vuelve a intentarlo.';
+        console.error(error);
+        return;
+    }
+
+    toast(value
+        ? 'Cobro en línea encendido: se paga en la web'
+        : 'Cobro en línea apagado: los pedidos te llegan y cobras tú');
 }
 
 async function saveRequireAccount() {
@@ -1645,6 +1685,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ajustes
     $('requireAccount').addEventListener('change', saveRequireAccount);
+    $('onlinePayment').addEventListener('change', saveOnlinePayment);
 
     // Apariencia
     $('themeControls').addEventListener('input', (e) => {

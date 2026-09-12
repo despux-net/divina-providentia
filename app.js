@@ -246,14 +246,22 @@ function displayProducts() {
 // La imagen la elige el dueño desde el panel. Si no hay ninguna, la
 // portada se queda como estaba: fondo blanco y rótulo en negro.
 // Ajustes que el dueño controla desde el panel.
-const siteSettings = { requireAccount: false };
+const siteSettings = { requireAccount: false, onlinePayment: true };
+
+// Con el cobro en línea apagado la tienda entera vuelve al trato
+// directo: el cliente deja su pedido, llega el aviso y el cobro se
+// arregla a mano. Es lo que sostiene la tienda mientras no haya
+// pasarela, y el servidor lo comprueba también por su cuenta.
+function onlinePaymentOn() {
+    return siteSettings.onlinePayment !== false;
+}
 
 async function loadSiteSettings() {
     if (!window.supabaseClient) return;
     try {
         let { data, error } = await window.supabaseClient
             .from('site_settings')
-            .select('require_account, theme, footer')
+            .select('require_account, online_payment, theme, footer')
             .eq('id', 1)
             .maybeSingle();
 
@@ -263,13 +271,14 @@ async function loadSiteSettings() {
         if (error) {
             ({ data, error } = await window.supabaseClient
                 .from('site_settings')
-                .select('require_account, theme')
+                .select('require_account, online_payment, theme')
                 .eq('id', 1)
                 .maybeSingle());
         }
 
         if (!error && data) {
             siteSettings.requireAccount = !!data.require_account;
+            siteSettings.onlinePayment = data.online_payment !== false;
 
             // Los textos del pie. Si no hay nada guardado se deja el HTML
             // tal cual, que ya trae escritos los de fábrica.
@@ -695,10 +704,14 @@ function initializeEventListeners() {
 // Stripe, o toda por el trato de siempre. Mezclar las dos deja un pedido
 // a medio cobrar, así que se avisa antes de meterlo.
 function cartIsPrintOnDemand() {
+    if (!onlinePaymentOn()) return false;
     return state.cart.length > 0 && state.cart.every(item => item.fulfillment === 'printful');
 }
 
+// Apagado el cobro en línea no hay dos caminos, así que tampoco hay
+// mezcla que impedir: todo se cierra igual.
 function cartHasMix() {
+    if (!onlinePaymentOn()) return false;
     return state.cart.some(item => item.fulfillment === 'printful')
         && state.cart.some(item => item.fulfillment !== 'printful');
 }
@@ -723,7 +736,7 @@ function addToCart(productId, size) {
 
     // Los artículos bajo demanda se pagan en línea y el resto se cierran
     // por mensaje: no caben en el mismo pedido.
-    const mixes = state.cart.some(item =>
+    const mixes = onlinePaymentOn() && state.cart.some(item =>
         (item.fulfillment === 'printful') !== isPrintOnDemand(product));
     if (!existing && mixes) {
         alert(isPrintOnDemand(product)
@@ -957,6 +970,24 @@ async function openCheckout() {
     </div>`).join('');
     }
     if (orderTotal) orderTotal.textContent = money(totalPrice, currency);
+
+    // Sin pasarela nadie recoge la dirección de envío, y para fabricar
+    // la prenda hace falta. Se pide aquí, y se vuelve obligatoria.
+    const pideDireccion = !onlinePaymentOn()
+        && state.cart.some(item => item.fulfillment === 'printful');
+    const etiqueta = document.querySelector('label[for="customerMessage"]');
+    const mensaje = document.getElementById('customerMessage');
+    if (etiqueta) {
+        etiqueta.textContent = pideDireccion
+            ? 'Dirección de envío completa *'
+            : 'Mensaje (opcional)';
+    }
+    if (mensaje) {
+        mensaje.required = pideDireccion;
+        mensaje.placeholder = pideDireccion
+            ? 'Calle y número, código postal, ciudad y país'
+            : 'Dirección de envío, instrucciones especiales…';
+    }
 
     document.getElementById('checkoutModal')?.classList.add('open');
     document.getElementById('checkoutOverlay')?.classList.add('open');
