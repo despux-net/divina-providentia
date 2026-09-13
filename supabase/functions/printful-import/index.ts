@@ -192,7 +192,7 @@ Deno.serve(async (req: Request) => {
             currency,
             sizes,
             images,
-            category: typeof body.category === "string" && body.category ? body.category : "vestments",
+            category: typeof body.category === "string" && body.category ? body.category : "tees",
             fulfillment: "printful",
             available: true,
             published: false,

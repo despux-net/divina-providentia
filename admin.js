@@ -19,6 +19,11 @@ const ORDER_STATUSES = {
 };
 
 const CATEGORY_NAMES = {
+    caps: 'Gorras',
+    tees: 'Franelas',
+    hoodies: 'Suéteres',
+
+    // Claves de antes, por si asoma algún producto sin migrar.
     vestments: 'Prendas',
     vestiment: 'Prendas',
     headwear: 'Gorras',
@@ -514,7 +519,7 @@ function openProductForm(product) {
     $('pName').value = product ? product.name || '' : '';
     $('pPrice').value = product ? product.price ?? '' : '';
     $('pDescription').value = product ? product.description || '' : '';
-    $('pCategory').value = product ? (product.category || 'vestments') : 'vestments';
+    $('pCategory').value = product ? (product.category || 'tees') : 'tees';
     $('pSizes').value = product ? sizesOf(product).join(', ') : '';
     $('pPublished').checked = product ? !!product.published : false;
     $('pAvailable').checked = product ? !!product.available : true;

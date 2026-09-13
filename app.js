@@ -509,9 +509,16 @@ function escapeHtml(str) {
 
 function getCategoryName(category) {
     const names = {
+        caps: 'Caps',
+        tees: 'T-Shirts',
+        hoodies: 'Hoodies',
+
+        // Claves de antes. Ya no se asigna ninguna, pero si quedara un
+        // producto viejo o una importacion las trajera, mejor que salga un
+        // nombre legible que la clave en crudo.
         vestments: 'Garments',
         vestiment: 'Garments',
-        headwear: 'Headwear',
+        headwear: 'Caps',
         accessories: 'Accessories',
         prints: 'Prints'
     };
