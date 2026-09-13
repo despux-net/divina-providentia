@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
     const body: CheckoutRequest = await req.json();
 
     if (!body.items?.length) {
-      throw new Error("El carrito está vacío");
+      throw new Error("Your cart is empty");
     }
 
     // El interruptor se comprueba aquí, no solo en el navegador. Si no,
@@ -71,7 +71,7 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (ajustes?.online_payment === false) {
-      throw new Error("El cobro con Stripe está apagado");
+      throw new Error("Card payments are currently unavailable");
     }
 
     // Look up authoritative prices + Printful variant IDs server-side.
@@ -103,7 +103,7 @@ Deno.serve(async (req: Request) => {
 
       const product = (variant as any).products;
       if (!product?.published || !product?.available) {
-        throw new Error(`El producto "${product?.name ?? item.productId}" no está disponible`);
+        throw new Error(`"${product?.name ?? item.productId}" is no longer available`);
       }
 
       // Checkout only accepts absolute URLs, and only the first image.

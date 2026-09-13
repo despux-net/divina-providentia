@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.isUserValidated = profile?.is_validated;
 
         if (sessionStorage.getItem('showLoginNotification') === 'true') {
-            setTimeout(() => showNotification(`${displayName} ya se encuentra en linea`), 500);
+            setTimeout(() => showNotification(`${displayName} is now signed in`), 500);
             sessionStorage.removeItem('showLoginNotification');
         }
 

@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
 
     if (!body.items?.length) {
-      throw new Error("El carrito está vacío");
+      throw new Error("Your cart is empty");
     }
 
     const { data: settings } = await supabase
@@ -65,7 +65,7 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (settings?.paypal_payment !== true) {
-      throw new Error("El cobro con PayPal está apagado");
+      throw new Error("PayPal payments are currently unavailable");
     }
 
     // Los precios se leen de la base, nunca del navegador. Es la misma
@@ -90,13 +90,13 @@ Deno.serve(async (req: Request) => {
 
       if (error || !variant) {
         throw new Error(
-          `El producto ${item.productId} (talla ${item.size}) no está disponible para compra automática`,
+          `Item ${item.productId} (size ${item.size}) is not available for online purchase`,
         );
       }
 
       const product = (variant as any).products;
       if (!product?.published || !product?.available) {
-        throw new Error(`El producto "${product?.name ?? item.productId}" no está disponible`);
+        throw new Error(`"${product?.name ?? item.productId}" is no longer available`);
       }
 
       lineItems.push({
@@ -112,7 +112,7 @@ Deno.serve(async (req: Request) => {
 
     const currencies = [...new Set(lineItems.map((li) => li.currency))];
     if (currencies.length > 1) {
-      throw new Error("No se puede cobrar un pedido con varias monedas");
+      throw new Error("An order cannot mix currencies");
     }
     const currency = currencies[0];
 

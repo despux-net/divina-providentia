@@ -96,7 +96,7 @@ Deno.serve(async (req: Request) => {
     const paypalOrderId = String(body.paypalOrderId ?? "").trim();
 
     if (!paypalOrderId) {
-      throw new Error("Falta el identificador de la orden de PayPal");
+      throw new Error("The PayPal order reference is missing");
     }
 
     const { data: order, error: orderError } = await supabase
@@ -106,7 +106,7 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (orderError || !order) {
-      throw new Error("No se encontró el pedido asociado a ese pago");
+      throw new Error("We could not find the order for that payment");
     }
 
     // El navegador puede llamar dos veces (una recarga, un doble clic).
@@ -172,7 +172,7 @@ Deno.serve(async (req: Request) => {
         status: "cancelled",
         customer_name: nombre,
         customer_email: payer.email_address ?? null,
-        customer_message: "PayPal no devolvió dirección de envío. No se cobró nada.",
+        customer_message: "PayPal returned no shipping address. Nothing was charged.",
       }).eq("id", order.id);
 
       await avisar({
@@ -187,7 +187,7 @@ Deno.serve(async (req: Request) => {
       });
 
       return reply({
-        error: "PayPal no nos ha dado una dirección de envío, así que no hemos cobrado nada. Revisa la dirección de tu cuenta de PayPal e inténtalo otra vez.",
+        error: "PayPal did not give us a shipping address, so nothing has been charged. Check the address on your PayPal account and try again.",
       }, 400);
     }
 
@@ -224,7 +224,7 @@ Deno.serve(async (req: Request) => {
         customer_name: nombre,
         customer_email: payer.email_address ?? null,
         shipping_address: { name: nombre, ...direccion },
-        customer_message: `No enviable, no se cobró: ${motivo}`,
+        customer_message: `Not shippable, nothing charged: ${motivo}`,
       }).eq("id", order.id);
 
       await avisar({
@@ -240,7 +240,7 @@ Deno.serve(async (req: Request) => {
       });
 
       return reply({
-        error: `No podemos enviar a esa dirección: ${motivo} No te hemos cobrado nada.`,
+        error: `We cannot ship to that address: ${motivo} You have not been charged.`,
         noEnviable: true,
       }, 400);
     }
@@ -297,7 +297,7 @@ Deno.serve(async (req: Request) => {
         detail: `Importe descuadrado. ${motivo}. No se ha encargado nada a Printful.`,
       });
 
-      throw new Error("El importe cobrado no coincide con el del pedido. Revísalo en el panel.");
+      throw new Error("The amount charged does not match the order. Check it in the admin panel.");
     }
 
     // ------------------------------------------------------------------

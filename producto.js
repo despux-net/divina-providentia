@@ -21,7 +21,7 @@ function pdpParamId() {
 function pdpFail(message) {
     document.getElementById('pdpStatus').innerHTML = `
         <p>${escapeHtml(message)}</p>
-        <p><a class="hero-link" href="index.html#tienda">Volver a la tienda</a></p>`;
+        <p><a class="hero-link" href="index.html#tienda">Back to the shop</a></p>`;
 }
 
 async function initProductPage() {
@@ -52,6 +52,16 @@ async function initProductPage() {
     pdp.color = colors.length ? colors[0].name : null;
 
     document.title = `${product.name} | Divina Providentia`;
+
+    // Cada producto es una direccion distinta, asi que el canonico no puede
+    // estar escrito en el HTML: se pone aqui, ya con el identificador.
+    let canonico = document.querySelector('link[rel="canonical"]');
+    if (!canonico) {
+        canonico = document.createElement('link');
+        canonico.rel = 'canonical';
+        document.head.appendChild(canonico);
+    }
+    canonico.href = `https://divinaprovidentia.com/producto.html?id=${encodeURIComponent(product.id)}`;
     renderPDP();
     renderRelated();
 }
@@ -185,7 +195,7 @@ function bindPDP() {
     if (add && !add.disabled) {
         add.addEventListener('click', () => {
             if (!pdp.size) {
-                if (hint) hint.textContent = 'Elige una talla para continuar';
+                if (hint) hint.textContent = 'Choose a size to continue';
                 document.querySelector('.pdp-sizes')?.classList.add('needs-choice');
                 return;
             }

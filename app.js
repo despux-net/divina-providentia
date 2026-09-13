@@ -110,7 +110,7 @@ function sortProducts(list, mode) {
     const out = list.slice();
     if (mode === 'price-asc') out.sort((a, b) => a.price - b.price);
     else if (mode === 'price-desc') out.sort((a, b) => b.price - a.price);
-    else if (mode === 'name') out.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+    else if (mode === 'name') out.sort((a, b) => a.name.localeCompare(b.name, 'en'));
     else out.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
     return out;
 }
@@ -567,7 +567,7 @@ function expandProductCard(product) {
                 <div class="product-expand-image-wrap" id="expandImageWrap">
                     <img src="${product.image_url}" alt="${escapeHtml(product.name)}" class="product-expand-img" id="expandImg" draggable="false">
                     <div class="magnifier-lens" id="magnifierLens" aria-hidden="true"></div>
-                    <div class="magnifier-hint">Pasa el cursor para ampliar</div>
+                    <div class="magnifier-hint">Hover to zoom</div>
                 </div>
 
                 <div class="product-expand-info">
@@ -613,7 +613,7 @@ function expandProductCard(product) {
     if (addBtn && canBuy) {
         addBtn.addEventListener('click', () => {
             if (!chosenSize) {
-                if (hint) hint.textContent = 'Elige una talla para continuar';
+                if (hint) hint.textContent = 'Choose a size to continue';
                 panel.querySelector('.size-picker')?.classList.add('needs-choice');
                 return;
             }
@@ -773,7 +773,7 @@ function addToCart(productId, size) {
 
     // No se deja meter en la cesta más de lo que hay en el almacén.
     if (capped && wanted > available) {
-        alert(`Solo quedan ${available} unidades de "${product.name}"${size ? ` en talla ${size}` : ''}.`);
+        alert(`Only ${available} left of "${product.name}"${size ? ` in size ${size}` : ''}.`);
         return;
     }
 
