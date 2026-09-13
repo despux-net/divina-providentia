@@ -2796,3 +2796,14 @@ font font {
 @media (max-width: 620px) {
     .maps-modal .cartography-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* El escudo encabezando el bloque de identidad. Pequeno y en gris para no
+   romper el blanco y negro: quitando el filtro vuelve a su color. */
+.feature-seal {
+    display: block;
+    width: 52px;
+    height: auto;
+    margin: 0 0 var(--sp-4);
+    filter: grayscale(1) contrast(1.05);
+    opacity: 0.8;
+}
