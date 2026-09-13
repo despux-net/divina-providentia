@@ -2444,3 +2444,342 @@ font font {
 .related .product-card {
     cursor: pointer;
 }
+
+/* ==========================================================================
+   BLOQUES DE PORTADA
+   Franjas a todo el ancho que alternan claro y oscuro. Cada una lleva una
+   sola idea: titular grande a un lado, imagen grande al otro. Todo sale de
+   los tokens de arriba, así que el editor de Apariencia sigue mandando.
+   ========================================================================== */
+
+.feature {
+    position: relative;
+    overflow: hidden;
+    padding: var(--sp-9) var(--pad-x);
+}
+
+.feature-light { background: var(--white); color: var(--black); }
+.feature-dark  { background: var(--black); color: var(--white); }
+
+.feature-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--sp-8);
+    align-items: center;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* La imagen cambia de lado en el bloque oscuro: es lo que da el ritmo de
+   zigzag al bajar por la página. */
+.feature-reverse .feature-text  { order: 2; }
+.feature-reverse .feature-media { order: 1; }
+
+.feature-eyebrow {
+    margin: 0 0 var(--sp-4);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+.feature-dark .feature-eyebrow { color: var(--grey-light); }
+
+.feature-title {
+    margin: 0 0 var(--sp-5);
+    font-family: var(--font-head);
+    font-weight: var(--weight-head);
+    font-size: var(--fs-h1);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+}
+
+.feature-body {
+    margin: 0 0 var(--sp-4);
+    max-width: 46ch;
+    font-size: var(--fs-lead);
+    line-height: 1.65;
+}
+
+.feature-dark .feature-body { color: var(--grey-light); }
+
+/* El botón es una caja pequeña y dura: sin radios, sin sombra, sin relleno
+   de más. Es el único elemento que se permite invertirse al pasar por
+   encima. */
+.feature-cta {
+    display: inline-block;
+    margin-top: var(--sp-3);
+    padding: var(--sp-3) var(--sp-5);
+    background: var(--black);
+    color: var(--white);
+    border: 1px solid var(--black);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track-wide);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.feature-cta:hover,
+.feature-cta:focus-visible {
+    background: transparent;
+    color: var(--black);
+}
+
+.feature-cta-light {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+.feature-cta-light:hover,
+.feature-cta-light:focus-visible {
+    background: transparent;
+    color: var(--white);
+}
+
+.feature-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* El perfil del logo, muy tenue y pegado al borde: acompaña, no compite.
+   Lleva aria-hidden en el HTML porque no aporta nada a quien no lo ve. */
+.feature-watermark {
+    position: absolute;
+    right: -4%;
+    bottom: -10%;
+    width: clamp(180px, 26vw, 420px);
+    opacity: 0.09;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ==========================================================================
+   PESTAÑAS DESTACADAS
+   ========================================================================== */
+
+.showcase { padding: var(--section-y) var(--pad-x); }
+
+.showcase-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-5);
+    max-width: 1280px;
+    margin: 0 auto var(--sp-7);
+    border-bottom: 1px solid var(--grey-light);
+}
+
+.showcase-tab {
+    padding: 0 0 var(--sp-3);
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--grey);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.showcase-tab:hover { color: var(--black); }
+
+.showcase-tab.is-active {
+    color: var(--black);
+    border-bottom-color: var(--black);
+}
+
+.showcase-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: var(--sp-8);
+    align-items: center;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* Sin esto el atributo hidden no oculta nada: el display de la regla de
+   arriba gana al del navegador. Ya nos mordió con los botones de pago. */
+.showcase-panel[hidden] { display: none; }
+
+.showcase-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.showcase-copy h3 {
+    margin: 0 0 var(--sp-4);
+    font-size: var(--fs-h2);
+    font-weight: var(--weight-head);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+}
+
+.showcase-copy p {
+    margin: 0 0 var(--sp-4);
+    max-width: 44ch;
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--grey);
+}
+
+.showcase-price {
+    font-size: var(--fs-lead);
+    color: var(--black) !important;
+}
+
+/* ==========================================================================
+   SELLOS
+   ========================================================================== */
+
+.marks {
+    padding: var(--sp-7) var(--pad-x);
+    border-top: 1px solid var(--grey-light);
+    border-bottom: 1px solid var(--grey-light);
+}
+
+.marks-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-6);
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.mark { display: grid; gap: var(--sp-2); }
+
+.mark strong {
+    font-size: var(--fs-lead);
+    font-weight: var(--weight-head);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+}
+
+.mark span {
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+/* ==========================================================================
+   TEXTO SEO
+   El bloque largo que Google necesita y que el visitante puede saltarse.
+   Por eso va al final, en gris y a cuerpo pequeño: está ahí, pero no grita.
+   ========================================================================== */
+
+.seo-block {
+    padding: var(--sp-9) var(--pad-x);
+    background: var(--grey-bg);
+}
+
+.seo-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* El escudo en gris para no romper el blanco y negro del resto. Quitando
+   la línea del filtro vuelve a su color original. */
+.seo-seal {
+    width: 56px;
+    height: auto;
+    margin: 0 auto var(--sp-5);
+    display: block;
+    filter: grayscale(1) contrast(1.05);
+    opacity: 0.75;
+}
+
+.seo-title {
+    margin: 0 0 var(--sp-6);
+    font-size: var(--fs-h2);
+    font-weight: var(--weight-head);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    line-height: 1.25;
+}
+
+.seo-copy {
+    text-align: left;
+    columns: 2;
+    column-gap: var(--sp-8);
+}
+
+.seo-copy p {
+    margin: 0 0 var(--sp-4);
+    font-size: var(--fs-small);
+    line-height: 1.75;
+    color: var(--grey);
+    break-inside: avoid;
+}
+
+.seo-copy a {
+    color: var(--black);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* ==========================================================================
+   ENTRADA AL HACER SCROLL
+   ========================================================================== */
+
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: opacity, transform;
+}
+
+[data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Quien pide menos movimiento lo ve todo quieto y visible desde el principio.
+   Sin este bloque, si el observador fallara, la página quedaría en blanco. */
+@media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ==========================================================================
+   MÓVIL Y TABLET PARA LOS BLOQUES NUEVOS
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    .feature { padding: var(--sp-8) var(--pad-x); }
+
+    .feature-inner,
+    .showcase-panel {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--sp-6);
+    }
+
+    /* En una sola columna la imagen va siempre debajo del texto: alternar
+       el orden solo se lee como zigzag cuando hay dos columnas. */
+    .feature-reverse .feature-text  { order: 1; }
+    .feature-reverse .feature-media { order: 2; }
+
+    .feature-watermark { width: 190px; opacity: 0.07; }
+
+    .marks-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); }
+
+    .seo-block { padding: var(--sp-8) var(--pad-x); }
+    .seo-copy { columns: 1; }
+}
+
+@media (max-width: 520px) {
+    .marks-row { grid-template-columns: minmax(0, 1fr); }
+    .showcase-tabs { gap: var(--sp-4); }
+}

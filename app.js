@@ -30,6 +30,8 @@ async function initializeApp() {
     loadCartFromStorage();
     handleCheckoutReturn();
     loadHeroImage();
+    initReveal();
+    initShowcaseTabs();
     await loadSiteSettings();
     await loadProducts();
     await loadLookbookImages();
@@ -101,6 +103,35 @@ async function loadProducts() {
     buildFilterOptions();
     displayProducts();
     syncCartWithCatalog();
+    fillFeaturedProduct();
+}
+
+// La pestaña Shop enseña una prenda de verdad, con su precio de verdad. Si
+// el catálogo está vacío el bloque entero sobra: enseñar una ficha hueca es
+// peor que no enseñar nada.
+function fillFeaturedProduct() {
+    const panel = document.querySelector('[data-panel="shop"]');
+    if (!panel) return;
+
+    const destacado = state.products.find(p => isPurchasable(p) && productImages(p).length);
+    if (!destacado) {
+        const boton = document.getElementById('tab-shop');
+        if (boton) boton.hidden = true;
+        panel.hidden = true;
+        return;
+    }
+
+    const img = panel.querySelector('[data-featured-product]');
+    if (img) {
+        img.src = productImages(destacado)[0];
+        img.alt = destacado.name;
+    }
+
+    const nombre = panel.querySelector('[data-featured-name]');
+    if (nombre) nombre.textContent = destacado.name;
+
+    const precio = panel.querySelector('[data-featured-price]');
+    if (precio) precio.textContent = money(destacado.price, destacado.currency);
 }
 
 function sortProducts(list, mode) {
@@ -1489,6 +1520,88 @@ async function loadLookbookImages() {
         </div>`).join('');
 
     container.innerHTML = `<div class="carousel-track">${slides}</div>`;
+
+    fillLookbookSlots(data);
+}
+
+// Los bloques de portada piden una foto del lookbook, pero no saben cuál:
+// se les da la que toque por orden, y si no hay tantas se reutiliza la
+// primera. Un hueco sin src deja un icono de imagen rota, así que el <img>
+// se retira entero antes que enseñar eso.
+function fillLookbookSlots(images) {
+    document.querySelectorAll('[data-lookbook-slot]').forEach(img => {
+        const indice = parseInt(img.dataset.lookbookSlot, 10) || 0;
+        const elegida = images[indice] || images[0];
+        if (!elegida) {
+            img.remove();
+            return;
+        }
+        img.src = elegida.image_url;
+    });
+}
+
+// ===================================
+// BLOQUES DE PORTADA
+// ===================================
+
+// Los bloques entran con un desvanecido y un empujón hacia arriba. El CSS
+// los deja invisibles de salida, así que si el navegador no trae
+// IntersectionObserver hay que encenderlos a mano: una página en blanco es
+// mucho peor que una página sin animación.
+function initReveal() {
+    const bloques = document.querySelectorAll('[data-reveal]');
+    if (!bloques.length) return;
+
+    const mostrar = el => el.classList.add('is-visible');
+
+    if (!('IntersectionObserver' in window)) {
+        bloques.forEach(mostrar);
+        return;
+    }
+
+    const observador = new IntersectionObserver((entradas, obs) => {
+        entradas.forEach(entrada => {
+            if (!entrada.isIntersecting) return;
+            mostrar(entrada.target);
+            // Una vez visto se deja de vigilar: el bloque no vuelve a
+            // desaparecer al subir, que marea.
+            obs.unobserve(entrada.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+    bloques.forEach(bloque => observador.observe(bloque));
+}
+
+function initShowcaseTabs() {
+    const pestanas = document.querySelectorAll('.showcase-tab');
+    if (!pestanas.length) return;
+
+    const abrir = nombre => {
+        pestanas.forEach(p => {
+            const activa = p.dataset.tab === nombre;
+            p.classList.toggle('is-active', activa);
+            p.setAttribute('aria-selected', String(activa));
+        });
+        document.querySelectorAll('.showcase-panel').forEach(panel => {
+            const activo = panel.dataset.panel === nombre;
+            panel.hidden = !activo;
+            panel.classList.toggle('is-active', activo);
+        });
+    };
+
+    pestanas.forEach(p => p.addEventListener('click', () => abrir(p.dataset.tab)));
+
+    // Flechas entre pestañas, que es lo que espera quien navega con teclado.
+    pestanas.forEach((p, i) => {
+        p.addEventListener('keydown', e => {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+            e.preventDefault();
+            const paso = e.key === 'ArrowRight' ? 1 : -1;
+            const siguiente = pestanas[(i + paso + pestanas.length) % pestanas.length];
+            siguiente.focus();
+            abrir(siguiente.dataset.tab);
+        });
+    });
 }
 
 // ===================================

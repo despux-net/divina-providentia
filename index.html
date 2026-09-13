@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=23">
+    <link rel="stylesheet" href="styles.css?v=24">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Dibuja la pasarela dentro de esta misma página. Si no carga, el
@@ -33,6 +33,62 @@
             var t = localStorage.getItem('dpTheme');
             if (t) window.DPTheme.apply(JSON.parse(t));
         } catch (e) { /* sin copia local: se usan los valores de fábrica */ }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://divinaprovidentia.com/#organization",
+          "name": "Divina Providentia",
+          "url": "https://divinaprovidentia.com",
+          "logo": "https://divinaprovidentia.com/seal.png",
+          "foundingDate": "2025",
+          "slogan": "We are not a brand, we are a trench.",
+          "description": "Historical gigapixel map archive and permanent clothing collection.",
+          "sameAs": ["https://www.instagram.com/providentiadivina/"]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://divinaprovidentia.com/#website",
+          "url": "https://divinaprovidentia.com",
+          "name": "Divina Providentia",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://divinaprovidentia.com/#organization" }
+        },
+        {
+          "@type": "Collection",
+          "@id": "https://divinaprovidentia.com/#maplibrary",
+          "name": "Map Library",
+          "description": "Large-format historical charts digitised at gigapixel resolution and free to explore.",
+          "isPartOf": { "@id": "https://divinaprovidentia.com/#website" },
+          "hasPart": [
+            {
+              "@type": "CreativeWork",
+              "name": "The Scroll of Adam",
+              "url": "https://divinaprovidentia.com/adan.html",
+              "description": "Nineteenth-century chart of universal history, digitised at 20000 x 2131 pixels and free to explore.",
+              "isAccessibleForFree": true
+            },
+            {
+              "@type": "CreativeWork",
+              "name": "Roman Empire",
+              "url": "https://divinaprovidentia.com/romano.html",
+              "description": "Engraved historical chart, digitised at 8393 x 12890 pixels and free to explore.",
+              "isAccessibleForFree": true
+            },
+            {
+              "@type": "CreativeWork",
+              "name": "Terra",
+              "url": "https://divinaprovidentia.com/terra.html",
+              "description": "Large-format historical chart, digitised at 8349 x 11158 pixels and free to explore.",
+              "isAccessibleForFree": true
+            }
+          ]
+        }
+      ]
+    }
     </script>
 </head>
 
@@ -82,6 +138,52 @@
             </div>
         </div>
     </header>
+
+    <!-- ============ ROPA x HISTORIA ============ -->
+    <section class="feature feature-light" data-reveal>
+        <div class="feature-inner">
+            <div class="feature-text">
+                <p class="feature-eyebrow">Permanent collection</p>
+                <h2 class="feature-title">Clothing as a record,<br>not a trend</h2>
+                <p class="feature-body">
+                    Every garment we make is a marker — proof that something existed and
+                    still matters. The same obsession that drives us to preserve
+                    century-old charts at gigapixel resolution goes into a single tee:
+                    identity you can wear, built to outlast the season it was made in.
+                </p>
+                <a class="feature-cta" href="#tienda">Shop the collection</a>
+            </div>
+            <div class="feature-media">
+                <img data-lookbook-slot alt="Divina Providentia permanent collection" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ ARCHIVAL CRAFTSMANSHIP ============ -->
+    <section class="feature feature-dark" data-reveal>
+        <img class="feature-watermark" src="figure.png" alt="" aria-hidden="true" loading="lazy">
+        <div class="feature-inner feature-reverse">
+            <div class="feature-text">
+                <p class="feature-eyebrow">Archival craftsmanship</p>
+                <h2 class="feature-title">244 megapixels,<br>one tile at a time</h2>
+                <p class="feature-body">
+                    A gigapixel map is not a photograph. Each volume in our Map Library is
+                    captured, stitched and cut into thousands of tiles across every zoom
+                    level, so a sheet drawn a century and a half ago can be read down to the
+                    grain of the paper — the pen strokes, the corrections, the names of
+                    places that no longer exist.
+                </p>
+                <p class="feature-body">
+                    Nothing is invented and nothing is upscaled. What you zoom into was
+                    always there.
+                </p>
+                <a class="feature-cta feature-cta-light" href="#coleccion">Enter the Map Library</a>
+            </div>
+            <div class="feature-media">
+                <img src="ADAM%20AND%20EVA.jpg" alt="Detail of a 19th-century universal history chart" loading="lazy">
+            </div>
+        </div>
+    </section>
 
     <!-- ============ TIENDA ============ -->
     <section class="products" id="tienda">
@@ -181,6 +283,108 @@
                     </div>
                 </a>
             </article>
+        </div>
+    </section>
+
+    <!-- ============ PESTAÑAS ============ -->
+    <section class="showcase" data-reveal>
+        <div class="section-head">
+            <h2>Three ways in</h2>
+            <span class="section-meta">Wear it, see it, explore it</span>
+        </div>
+
+        <div class="showcase-tabs" role="tablist" aria-label="Featured">
+            <button class="showcase-tab is-active" role="tab" aria-selected="true"
+                    aria-controls="panel-shop" id="tab-shop" data-tab="shop">Shop</button>
+            <button class="showcase-tab" role="tab" aria-selected="false"
+                    aria-controls="panel-lookbook" id="tab-lookbook" data-tab="lookbook">Lookbook</button>
+            <button class="showcase-tab" role="tab" aria-selected="false"
+                    aria-controls="panel-maps" id="tab-maps" data-tab="maps">Map Library</button>
+        </div>
+
+        <div class="showcase-panel is-active" role="tabpanel" id="panel-shop" aria-labelledby="tab-shop" data-panel="shop">
+            <div class="showcase-media"><img data-featured-product alt="" loading="lazy"></div>
+            <div class="showcase-copy">
+                <h3 data-featured-name>The permanent collection</h3>
+                <p>Made to order, one at a time. No overproduction, no dead stock, no season
+                   that expires. Seven sizes, shipped worldwide.</p>
+                <p class="showcase-price" data-featured-price></p>
+                <a class="feature-cta" href="#tienda">See the collection</a>
+            </div>
+        </div>
+
+        <div class="showcase-panel" role="tabpanel" id="panel-lookbook" aria-labelledby="tab-lookbook" data-panel="lookbook" hidden>
+            <div class="showcase-media"><img data-lookbook-slot="1" alt="Lookbook" loading="lazy"></div>
+            <div class="showcase-copy">
+                <h3>The lookbook</h3>
+                <p>The collection photographed as it is worn — no studio gloss, no styling
+                   that would not survive a real day.</p>
+                <a class="feature-cta" href="#lookbook">Open the lookbook</a>
+            </div>
+        </div>
+
+        <div class="showcase-panel" role="tabpanel" id="panel-maps" aria-labelledby="tab-maps" data-panel="maps" hidden>
+            <div class="showcase-media"><img src="16242000t.jpg" alt="Historical chart from the Map Library" loading="lazy"></div>
+            <div class="showcase-copy">
+                <h3>The Map Library</h3>
+                <p>Three large-format historical charts digitised in gigapixel detail and
+                   free to explore — 244 megapixels you can zoom into until the paper grain
+                   shows.</p>
+                <a class="feature-cta" href="#coleccion">Explore the archive</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SELLOS ============ -->
+    <section class="marks" data-reveal aria-label="What to expect">
+        <div class="marks-row">
+            <div class="mark"><strong>244 MP</strong><span>archived and free to explore</span></div>
+            <div class="mark"><strong>Made to order</strong><span>nothing is overproduced</span></div>
+            <div class="mark"><strong>Worldwide</strong><span>shipping from EU and US</span></div>
+            <div class="mark"><strong>Secure checkout</strong><span>card and PayPal</span></div>
+        </div>
+    </section>
+
+    <!-- ============ TEXTO SEO ============ -->
+    <section class="seo-block" data-reveal>
+        <div class="seo-inner">
+            <img class="seo-seal" src="seal.png" alt="Divina Providentia coat of arms" loading="lazy">
+            <h2 class="seo-title">Historical Maps, Identity Wear &amp; Archival Design Since 2025</h2>
+
+            <div class="seo-copy">
+                <p>
+                    Divina Providentia is not a brand — it is a trench. We work at the
+                    intersection of cartography, memory and identity, where garments and
+                    gigapixel historical maps carry the same weight: proof that something
+                    existed, and still matters.
+                </p>
+                <p>
+                    Our Map Library preserves large-format historical charts in immersive,
+                    gigapixel resolution. <a href="adan.html">The Scroll of Adam</a> unrolls a
+                    nineteenth-century chart of universal history across twenty thousand
+                    pixels, opening at Creation and running forward through the generations.
+                    Two further volumes, <a href="romano.html">Roman Empire</a> and
+                    <a href="terra.html">Terra</a>, add another two hundred megapixels of
+                    engraved detail. Every volume is built for explorers, historians,
+                    collectors and anyone drawn to antique charts, genealogy research and
+                    historical cartography — and every one of them is free to read, down to
+                    the grain of the paper.
+                </p>
+                <p>
+                    Alongside the archive, our permanent clothing collection translates that
+                    same obsession with history and identity into wearable form. Each piece of
+                    streetwear is made to order rather than mass-produced, designed as a
+                    marker of individuality for people who treat clothing as a personal record
+                    instead of a passing trend. Unisex fits, seven sizes, printed and shipped
+                    worldwide.
+                </p>
+                <p>
+                    Whether you came here for high-resolution historical map archives, vintage
+                    cartography, genealogy and family-history research, or identity-driven
+                    apparel, Divina Providentia connects the past you inherit with the
+                    identity you build today.
+                </p>
+            </div>
         </div>
     </section>
 
@@ -368,7 +572,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=11"></script>
     <script src="footer.js?v=2"></script>
-    <script src="app.js?v=25"></script>
+    <script src="app.js?v=26"></script>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
