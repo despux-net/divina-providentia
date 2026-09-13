@@ -179,6 +179,15 @@ function bindPDP() {
             pdp.color = btn.dataset.color;
             document.getElementById('pdpColorName').textContent = pdp.color;
             document.querySelectorAll('.pdp-color').forEach(b => b.classList.toggle('is-active', b === btn));
+
+            // Cambiar el color sin cambiar la foto deja al comprador
+            // eligiendo a ciegas: cada color trae su propio mockup.
+            const elegido = productColors(pdp.product).find(c => c.name === pdp.color);
+            const principal = document.querySelector('#pdpMain img');
+            if (elegido && elegido.image && principal) {
+                principal.src = elegido.image;
+                principal.alt = `${pdp.product.name} — ${pdp.color}`;
+            }
         });
     });
 
@@ -199,7 +208,7 @@ function bindPDP() {
                 document.querySelector('.pdp-sizes')?.classList.add('needs-choice');
                 return;
             }
-            addToCart(pdp.product.id, pdp.size);
+            addToCart(pdp.product.id, pdp.size, pdp.color);
         });
     }
 }
@@ -286,7 +295,7 @@ function renderRelated() {
         const imgs = productImages(p);
         const colors = productColors(p);
         const meta = colors.length > 1
-            ? `${colors.length} colores`
+            ? `${colors.length} colours`
             : (productSizes(p).length > 1 ? `${productSizes(p).length} tallas` : '');
 
         return `

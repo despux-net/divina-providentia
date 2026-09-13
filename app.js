@@ -169,13 +169,16 @@ function displayProducts() {
         // Con tallas hay que elegir una, así que el botón lleva a la
         // ficha en lugar de añadir a ciegas.
         const href = `producto.html?id=${encodeURIComponent(product.id)}`;
-        const action = hasSizes
+        // Con tallas o con colores hay algo que elegir, y eso se elige en
+        // la ficha: anadir a ciegas desde la rejilla mandaria un color al
+        // azar.
+        const action = (hasSizes || colors.length > 1)
             ? `location.href='${href}'`
             : `addToCart('${product.id}')`;
 
         // Metadatos breves: colores si los hay, si no las tallas.
         let meta = '';
-        if (colors.length > 1) meta = `${colors.length} colores`;
+        if (colors.length > 1) meta = `${colors.length} colours`;
         else if (colors.length === 1) meta = escapeHtml(colors[0].name);
         else if (hasSizes) {
             const sizes = productSizes(product);
@@ -443,8 +446,11 @@ function isPurchasable(product) {
 }
 
 // Clave de línea de carrito: el mismo producto en dos tallas son dos líneas.
-function lineKey(productId, size) {
-    return `${productId}::${size || SINGLE_SIZE}`;
+// La misma prenda en dos colores son dos lineas distintas de la cesta,
+// igual que dos tallas. Sin el color en la clave, anadir la blanca sumaria
+// una unidad a la gris.
+function lineKey(productId, size, color) {
+    return `${productId}::${size || SINGLE_SIZE}::${color || ''}`;
 }
 
 // ===================================
@@ -767,12 +773,18 @@ function cartHasMix() {
         && state.cart.some(item => item.fulfillment !== 'printful');
 }
 
-function addToCart(productId, size) {
+function addToCart(productId, size, color) {
     const product = state.products.find(p => p.id == productId);
     if (!product) return;
 
     const chosen = size || SINGLE_SIZE;
-    const key = lineKey(productId, chosen);
+
+    // Si la prenda se ofrece en varios colores hay que llevar uno; cuando
+    // no llega ninguno se toma el primero, que es el que ensena la ficha.
+    const disponibles = productColors(product);
+    const tono = color || (disponibles.length ? disponibles[0].name : '');
+
+    const key = lineKey(productId, chosen, tono);
     const available = stockOf(product, chosen);
     const capped = totalStock(product) !== null;
 
@@ -803,11 +815,13 @@ function addToCart(productId, size) {
             key,
             id: product.id,
             size: chosen,
+            color: tono,
             name: product.name,
             price: product.price,
             currency: product.currency,
             fulfillment: product.fulfillment,
-            image_url: productImages(product)[0] || product.image_url,
+            image_url: (disponibles.find(c => c.name === tono) || {}).image
+                || productImages(product)[0] || product.image_url,
             quantity: 1
         });
     }
@@ -833,7 +847,16 @@ function syncCartWithCatalog() {
         item.price = product.price;
         item.currency = product.currency;
         item.fulfillment = product.fulfillment;
-        item.image_url = productImages(product)[0] || product.image_url;
+
+        // La foto de la linea es la del color elegido cuando lo hay: si se
+        // cogiera siempre la primera del producto, una cesta con la gris y
+        // la blanca ensenaria dos veces la misma prenda.
+        const tono = item.color
+            ? productColors(product).find(c => c.name === item.color)
+            : null;
+        item.image_url = (tono && tono.image)
+            || productImages(product)[0]
+            || product.image_url;
         return true;
     });
 
@@ -919,6 +942,7 @@ function updateCart() {
         <div class="cart-item-details">
           <div class="cart-item-name">${escapeHtml(item.name)}</div>
           ${item.size && item.size !== SINGLE_SIZE ? `<div class="cart-item-size">Size ${escapeHtml(item.size)}</div>` : ''}
+          ${item.color ? `<div class="cart-item-size">${escapeHtml(item.color)}</div>` : ''}
           <div class="cart-item-price">${money(item.price, item.currency)}</div>
           <div class="cart-item-controls">
             <button class="quantity-btn" onclick="updateQuantity('${item.key}', -1)" aria-label="Remove one">−</button>
@@ -1088,6 +1112,7 @@ async function startStripeCheckout(paymentMethod) {
             items: state.cart.map(item => ({
                 productId: item.id,
                 size: item.size,
+                color: item.color || '',
                 quantity: item.quantity
             })),
             paymentMethod: paymentMethod || undefined,
@@ -1274,6 +1299,7 @@ async function renderPaypalButton() {
                         items: state.cart.map(item => ({
                             productId: item.id,
                             size: item.size,
+                            color: item.color || '',
                             quantity: item.quantity
                         }))
                     })

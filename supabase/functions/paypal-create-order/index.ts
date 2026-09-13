@@ -81,11 +81,15 @@ Deno.serve(async (req: Request) => {
     }> = [];
 
     for (const item of body.items) {
+      // El color forma parte de la variante igual que la talla. Sin
+      // filtrarlo, un producto de dos colores devuelve dos filas y la
+      // consulta falla; y si no fallara, se cobraria un color al azar.
       const { data: variant, error } = await supabase
         .from("product_printful_variants")
-        .select("printful_sync_variant_id, price_cents, currency, products(id, name, published, available)")
+        .select("printful_sync_variant_id, price_cents, currency, color, products(id, name, published, available)")
         .eq("product_id", item.productId)
         .eq("size", item.size)
+        .eq("color", String(item.color ?? "").trim())
         .single();
 
       if (error || !variant) {

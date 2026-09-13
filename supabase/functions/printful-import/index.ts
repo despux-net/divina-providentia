@@ -119,24 +119,50 @@ Deno.serve(async (req: Request) => {
         throw new Error("Ese producto de Printful no tiene variantes sincronizadas");
       }
 
-      // Una fila por talla. Si el producto tiene varios colores, la misma
-      // talla aparece repetida: la tienda todavía no sabe vender colores
-      // bajo demanda, así que se queda la primera y se avisa de cuáles
-      // han quedado fuera.
-      const bySize = new Map<string, any>();
-      const skipped: string[] = [];
+      // Una fila por variante, que en Printful es talla Y color. Antes se
+      // guardaba solo una por talla y la mitad de un producto de dos
+      // colores desaparecía sin que nadie se enterara.
+      const variants = allVariants;
+      const sizes = [...new Set(allVariants.map((v) => v.size || SINGLE_SIZE))];
 
-      for (const variant of allVariants) {
-        const size = variant.size || SINGLE_SIZE;
-        if (bySize.has(size)) {
-          skipped.push(variant.name ?? `variante ${variant.id}`);
-          continue;
+      const colorNames = [
+        ...new Set(
+          allVariants.map((v) => String(v.color ?? "").trim()).filter(Boolean),
+        ),
+      ];
+
+      // El nombre del color viene en la variante sincronizada, pero el
+      // hexadecimal para pintar la muestra solo está en el catálogo. Se
+      // pide una vez por color, no una por variante.
+      const colors: Array<{ name: string; hex: string; image: string }> = [];
+
+      for (const name of colorNames) {
+        const muestra = allVariants.find(
+          (v) => String(v.color ?? "").trim() === name,
+        );
+
+        let hex = "";
+        const catalogueId = muestra?.variant_id ?? muestra?.product?.variant_id;
+        if (catalogueId) {
+          try {
+            const cat = await printful(`/products/variant/${catalogueId}`, key);
+            hex = String(cat?.variant?.color_code ?? "");
+          } catch (_) {
+            // Sin hexadecimal la muestra sale gris. Es un detalle visual:
+            // no vale la pena tumbar la importación entera por él.
+          }
         }
-        bySize.set(size, variant);
-      }
 
-      const variants = [...bySize.values()];
-      const sizes = [...bySize.keys()];
+        const preview = (muestra?.files ?? []).find(
+          (f: any) => f?.type === "preview" && f.preview_url,
+        );
+
+        colors.push({
+          name,
+          hex: hex || "#d9d9d9",
+          image: preview?.preview_url ?? muestra?.product?.image ?? "",
+        });
+      }
 
       const currencies = [
         ...new Set(variants.map((v) => String(v.currency || "EUR").toUpperCase())),
@@ -191,6 +217,7 @@ Deno.serve(async (req: Request) => {
             price,
             currency,
             sizes,
+            colors,
             images,
             category: typeof body.category === "string" && body.category ? body.category : "tees",
             fulfillment: "printful",
@@ -213,6 +240,7 @@ Deno.serve(async (req: Request) => {
           price,
           currency,
           sizes,
+          colors,
           fulfillment: "printful",
           updated_at: new Date().toISOString(),
         };
@@ -230,6 +258,7 @@ Deno.serve(async (req: Request) => {
         variants.map((variant) => ({
           product_id: productId,
           size: variant.size || SINGLE_SIZE,
+          color: String(variant.color ?? "").trim(),
           printful_sync_variant_id: variant.id,
           printful_sync_product_id: syncProductId,
           price_cents: Math.round(Number(variant.retail_price) * 100),
@@ -238,7 +267,7 @@ Deno.serve(async (req: Request) => {
       );
 
       if (variantError) {
-        throw new Error(`No se pudieron guardar las tallas: ${variantError.message}`);
+        throw new Error(`No se pudieron guardar las variantes: ${variantError.message}`);
       }
 
       return reply({
@@ -248,8 +277,9 @@ Deno.serve(async (req: Request) => {
         price,
         currency,
         sizes,
+        colors: colors.map((c) => c.name),
+        variants: variants.length,
         images: images.length,
-        skipped,
       });
     }
 
