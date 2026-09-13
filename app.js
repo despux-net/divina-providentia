@@ -1533,6 +1533,7 @@ async function loadLookbookImages() {
 
     container.innerHTML = `<div class="carousel-track">${slides}</div>`;
 
+    initLookbookCarousel(container);
     fillLookbookSlots(data);
 }
 
@@ -1725,6 +1726,118 @@ function initShowcaseTabs() {
             abrir(siguiente.dataset.tab);
         });
     });
+}
+
+// El carril lleva la serie dos veces seguidas, así que la mitad del
+// ancho es una vuelta entera. Cuando el desplazamiento pasa de esa mitad
+// se le resta: el salto cae en un punto idéntico al que se veía, y no se
+// nota.
+function initLookbookCarousel(container) {
+    const track = container.querySelector('.carousel-track');
+    if (!track) return;
+
+    const vuelta = () => track.scrollWidth / 2;
+
+    // Con dos fotos no hay nada que desplazar y las flechas sobran.
+    if (vuelta() <= container.clientWidth) return;
+
+    const prev = document.getElementById('lookbookPrev');
+    const next = document.getElementById('lookbookNext');
+    if (prev) prev.hidden = false;
+    if (next) next.hidden = false;
+
+    // Se conserva el ritmo que tenía la animación de CSS: una vuelta cada
+    // 55 segundos, salgan las fotos que salgan.
+    const PX_POR_SEG = () => vuelta() / 55;
+
+    let pausadoPor = 0;              // contador: 0 = en marcha
+    let reanudar = null;
+    let ultimo = 0;
+
+    const pausar = () => { pausadoPor++; };
+    const soltar = () => { pausadoPor = Math.max(0, pausadoPor - 1); };
+
+    // Tras tocar o arrastrar se espera un poco: si volviera a moverse solo
+    // al instante, parecería que pelea con el dedo.
+    const soltarConCalma = () => {
+        clearTimeout(reanudar);
+        reanudar = setTimeout(soltar, 2500);
+    };
+
+    function ajustarVuelta() {
+        const media = vuelta();
+        if (container.scrollLeft >= media) container.scrollLeft -= media;
+        else if (container.scrollLeft <= 0) container.scrollLeft += media;
+        pos = container.scrollLeft;
+    }
+
+    // El avance se lleva aparte en coma flotante. Sumarlo directamente
+    // sobre scrollLeft no funciona: el navegador lo redondea, y medio
+    // pixel por fotograma se pierde entero en cada vuelta. El carrusel
+    // avanzaba un pixel cada nueve segundos por esto.
+    let pos = container.scrollLeft;
+
+    function paso(ahora) {
+        if (ultimo && !pausadoPor) {
+            // Si la posicion real se ha ido de donde la dejamos, es que la
+            // movio alguien: el dedo, la rueda o una flecha. Se acepta su
+            // posicion y se sigue desde ahi.
+            if (Math.abs(container.scrollLeft - pos) > 2) pos = container.scrollLeft;
+
+            const dt = Math.min(ahora - ultimo, 100) / 1000;
+            pos += PX_POR_SEG() * dt;
+            if (pos >= vuelta()) pos -= vuelta();
+            container.scrollLeft = pos;
+        }
+        ultimo = ahora;
+        requestAnimationFrame(paso);
+    }
+
+    // Quien pide menos movimiento no recibe carrusel automático, pero sí
+    // las flechas y el swipe: apagarlo entero le dejaría sin ver las fotos.
+    const quietoQuieto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!quietoQuieto.matches) requestAnimationFrame(paso);
+
+    // El ratón encima para el paso. En una pantalla táctil esto no aplica:
+    // ahí un toque dejaba el :hover pegado y el carrusel congelado para
+    // siempre, que es justo el fallo que tenía.
+    if (window.matchMedia('(hover: hover)').matches) {
+        container.addEventListener('mouseenter', pausar);
+        container.addEventListener('mouseleave', soltar);
+    }
+
+    container.addEventListener('touchstart', pausar, { passive: true });
+    container.addEventListener('touchend', soltarConCalma, { passive: true });
+    container.addEventListener('touchcancel', soltarConCalma, { passive: true });
+
+    // Rueda o barra: también cuenta como que alguien está mirando algo.
+    container.addEventListener('wheel', () => {
+        pausar();
+        soltarConCalma();
+    }, { passive: true });
+
+    function empujar(sentido) {
+        const media = vuelta();
+        // Antes de retroceder desde el principio se salta una vuelta
+        // adelante: si no, el desplazamiento choca contra el cero.
+        if (sentido < 0 && container.scrollLeft < container.clientWidth) {
+            container.scrollLeft += media;
+        }
+        pausar();
+        soltarConCalma();
+        container.scrollBy({ left: sentido * container.clientWidth * 0.8, behavior: 'smooth' });
+    }
+
+    if (prev) prev.addEventListener('click', () => empujar(-1));
+    if (next) next.addEventListener('click', () => empujar(1));
+
+    // Si el dedo se pasa de largo, se recoloca cuando el desplazamiento
+    // termina de asentarse.
+    let asentar;
+    container.addEventListener('scroll', () => {
+        clearTimeout(asentar);
+        asentar = setTimeout(ajustarVuelta, 120);
+    }, { passive: true });
 }
 
 // ===================================

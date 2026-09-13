@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=26">
+    <link rel="stylesheet" href="styles.css?v=27">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Dibuja la pasarela dentro de esta misma página. Si no carga, el
@@ -228,8 +228,14 @@
             <h2>Lookbook</h2>
             <span class="section-meta">Campaign</span>
         </div>
-        <div class="carousel-container" id="lookbookCarousel">
-            <div class="loading-spinner"><p>Loading…</p></div>
+        <div class="carousel-frame">
+            <div class="carousel-container" id="lookbookCarousel">
+                <div class="loading-spinner"><p>Loading…</p></div>
+            </div>
+            <button class="carousel-arrow carousel-prev" id="lookbookPrev"
+                    type="button" aria-label="Previous photos" hidden>&#8249;</button>
+            <button class="carousel-arrow carousel-next" id="lookbookNext"
+                    type="button" aria-label="Next photos" hidden>&#8250;</button>
         </div>
     </section>
 
@@ -581,7 +587,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=11"></script>
     <script src="footer.js?v=2"></script>
-    <script src="app.js?v=28"></script>
+    <script src="app.js?v=29"></script>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();

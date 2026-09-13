@@ -827,30 +827,66 @@ button {
     border-top: 1px solid var(--black);
 }
 
+/* El marco no se desplaza: sujeta las flechas quietas mientras las fotos
+   pasan por debajo. */
+.carousel-frame {
+    position: relative;
+}
+
+/* Antes esto era una animación de CSS sobre el carril. Ahora es un
+   contenedor que se desplaza de verdad, y eso da el swipe del móvil sin
+   escribir una línea para ello. La barra se esconde: el movimiento ya se
+   entiende solo. */
 .carousel-container {
     position: relative;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     border-top: 1px solid var(--black);
     border-bottom: 1px solid var(--black);
     background: var(--white);
 }
 
+.carousel-container::-webkit-scrollbar { display: none; }
+
 .carousel-track {
     display: flex;
     width: max-content;
-    animation: lookbook-scroll 55s linear infinite;
 }
 
-.carousel-container:hover .carousel-track {
-    animation-play-state: paused;
+/* Las flechas son la misma caja negra que el resto de botones del sitio.
+   Solo salen donde hay ratón: en un móvil estorban y ya está el dedo. */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: none;
+    width: 44px;
+    height: 64px;
+    padding: 0;
+    background: var(--black);
+    color: var(--white);
+    border: 0;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.2s ease;
 }
 
-@keyframes lookbook-scroll {
-    to { transform: translateX(-50%); }
-}
+.carousel-arrow:hover,
+.carousel-arrow:focus-visible { opacity: 1; }
 
-@media (prefers-reduced-motion: reduce) {
-    .carousel-track { animation: none; }
+.carousel-prev { left: 0; }
+.carousel-next { right: 0; }
+
+.carousel-arrow[hidden] { display: none; }
+
+@media (hover: hover) and (min-width: 900px) {
+    .carousel-arrow:not([hidden]) { display: block; }
 }
 
 .carousel-slide {
