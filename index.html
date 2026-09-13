@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=24">
+    <link rel="stylesheet" href="styles.css?v=25">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Dibuja la pasarela dentro de esta misma página. Si no carga, el
@@ -140,27 +140,29 @@
     </header>
 
     <!-- ============ ROPA x HISTORIA ============ -->
-    <section class="feature feature-light" data-reveal>
+    <section class="feature feature-light" data-reveal data-section="feature">
         <div class="feature-inner">
             <div class="feature-text">
-                <p class="feature-eyebrow">Permanent collection</p>
-                <h2 class="feature-title">Clothing as a record,<br>not a trend</h2>
-                <p class="feature-body">
-                    Every garment we make is a marker — proof that something existed and
-                    still matters. The same obsession that drives us to preserve
-                    century-old charts at gigapixel resolution goes into a single tee:
-                    identity you can wear, built to outlast the season it was made in.
-                </p>
-                <a class="feature-cta" href="#tienda">Shop the collection</a>
+                <p class="feature-eyebrow" data-feature="eyebrow">Permanent collection</p>
+                <h2 class="feature-title" data-feature="title">Clothing as a record,<br>not a trend</h2>
+                <div class="feature-body" data-feature="body">
+                    <p>
+                        Every garment we make is a marker — proof that something existed and
+                        still matters. The same obsession that drives us to preserve
+                        century-old charts at gigapixel resolution goes into a single tee:
+                        identity you can wear, built to outlast the season it was made in.
+                    </p>
+                </div>
+                <a class="feature-cta" data-feature="cta" href="#tienda">Shop the collection</a>
             </div>
             <div class="feature-media">
-                <img data-lookbook-slot alt="Divina Providentia permanent collection" loading="lazy">
+                <img data-feature="image" data-lookbook-slot alt="Divina Providentia permanent collection" loading="lazy">
             </div>
         </div>
     </section>
 
     <!-- ============ ARCHIVAL CRAFTSMANSHIP ============ -->
-    <section class="feature feature-dark" data-reveal>
+    <section class="feature feature-dark" data-reveal data-section="craft">
         <img class="feature-watermark" src="figure.png" alt="" aria-hidden="true" loading="lazy">
         <div class="feature-inner feature-reverse">
             <div class="feature-text">
@@ -186,7 +188,7 @@
     </section>
 
     <!-- ============ TIENDA ============ -->
-    <section class="products" id="tienda">
+    <section class="products" id="tienda" data-section="shop">
         <div class="section-head">
             <h2>Shop</h2>
             <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -221,7 +223,7 @@
     </section>
 
     <!-- ============ LOOKBOOK ============ -->
-    <section class="lookbook-section" id="lookbook">
+    <section class="lookbook-section" id="lookbook" data-section="lookbook">
         <div class="section-head">
             <h2>Lookbook</h2>
             <span class="section-meta">Campaign</span>
@@ -232,7 +234,7 @@
     </section>
 
     <!-- ============ CARTOTECA ============ -->
-    <section class="cartography-section" id="coleccion">
+    <section class="cartography-section" id="coleccion" data-section="maps">
         <div class="section-head">
             <h2>Map Library</h2>
             <span class="section-meta">Historical maps in gigapixel</span>
@@ -287,7 +289,7 @@
     </section>
 
     <!-- ============ PESTAÑAS ============ -->
-    <section class="showcase" data-reveal>
+    <section class="showcase" data-reveal data-section="showcase">
         <div class="section-head">
             <h2>Three ways in</h2>
             <span class="section-meta">Wear it, see it, explore it</span>
@@ -336,7 +338,7 @@
     </section>
 
     <!-- ============ SELLOS ============ -->
-    <section class="marks" data-reveal aria-label="What to expect">
+    <section class="marks" data-reveal data-section="marks" aria-label="What to expect">
         <div class="marks-row">
             <div class="mark"><strong>244 MP</strong><span>archived and free to explore</span></div>
             <div class="mark"><strong>Made to order</strong><span>nothing is overproduced</span></div>
@@ -346,7 +348,7 @@
     </section>
 
     <!-- ============ TEXTO SEO ============ -->
-    <section class="seo-block" data-reveal>
+    <section class="seo-block" data-reveal data-section="seo">
         <div class="seo-inner">
             <img class="seo-seal" src="seal.png" alt="Divina Providentia coat of arms" loading="lazy">
             <h2 class="seo-title">Historical Maps, Identity Wear &amp; Archival Design Since 2025</h2>
@@ -572,7 +574,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=11"></script>
     <script src="footer.js?v=2"></script>
-    <script src="app.js?v=26"></script>
+    <script src="app.js?v=27"></script>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();

@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Administración | Divina Providentia</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="admin.css?v=5">
+    <link rel="stylesheet" href="admin.css?v=6">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -144,6 +144,96 @@
                         <p class="hint" id="heroStatus"></p>
                     </div>
                 </div>
+
+                <!-- ---- BLOQUE DESTACADO ---- -->
+                <div class="section-bar" style="margin-top:36px">
+                    <h2>Bloque destacado</h2>
+                    <div class="appearance-actions">
+                        <span class="dirty-flag" id="featureDirty" hidden>Sin guardar</span>
+                        <button class="btn" id="featureResetBtn">Restablecer</button>
+                        <button class="btn btn-primary" id="featureSaveBtn">Guardar</button>
+                    </div>
+                </div>
+
+                <p class="form-error" id="featureError" role="alert"></p>
+
+                <p class="hint" style="margin-bottom:18px">
+                    Es la primera franja después de la portada, la del titular grande con
+                    una foto al lado. Si dejas un campo vacío se usa el texto de fábrica.
+                </p>
+
+                <div class="footer-editor">
+                    <fieldset class="group">
+                        <legend>Textos</legend>
+                        <label class="field">
+                            <span>Antetítulo <small>la línea pequeña de arriba</small></span>
+                            <input type="text" data-feature-field="eyebrow" maxlength="60">
+                        </label>
+                        <label class="field">
+                            <span>Titular <small>cada salto de línea se respeta</small></span>
+                            <textarea data-feature-field="title" rows="2" maxlength="120"></textarea>
+                        </label>
+                        <label class="field">
+                            <span>Texto <small>deja una línea en blanco para separar párrafos</small></span>
+                            <textarea data-feature-field="body" rows="6" maxlength="1200"></textarea>
+                        </label>
+                    </fieldset>
+
+                    <fieldset class="group">
+                        <legend>Botón</legend>
+                        <label class="field">
+                            <span>Texto del botón <small>vacío = sin botón</small></span>
+                            <input type="text" data-feature-field="ctaLabel" maxlength="40">
+                        </label>
+                        <label class="field">
+                            <span>Enlace</span>
+                            <input type="text" data-feature-field="ctaHref" maxlength="300"
+                                   placeholder="#tienda">
+                        </label>
+                    </fieldset>
+
+                    <fieldset class="group">
+                        <legend>Imagen</legend>
+                        <div class="hero-editor">
+                            <div class="hero-preview" id="featurePreview">
+                                <div class="hero-preview-empty">La del lookbook</div>
+                            </div>
+                            <div class="hero-editor-actions">
+                                <input type="file" id="featureFile" accept="image/*" hidden>
+                                <button type="button" class="btn btn-primary" id="featureUploadBtn">Subir imagen…</button>
+                                <button type="button" class="btn btn-danger" id="featureRemoveBtn">Quitar imagen</button>
+                                <p class="hint" id="featureImageStatus"></p>
+                                <small class="hint">
+                                    Sin imagen propia se usa la primera del lookbook, que es lo
+                                    que se ve ahora. Se guarda al subirla, sin darle a Guardar.
+                                </small>
+                            </div>
+                        </div>
+                        <label class="field">
+                            <span>Texto alternativo <small>lo que lee quien no ve la foto</small></span>
+                            <input type="text" data-feature-field="imageAlt" maxlength="140">
+                        </label>
+                    </fieldset>
+                </div>
+
+                <!-- ---- ORDEN DE LAS SECCIONES ---- -->
+                <div class="section-bar" style="margin-top:36px">
+                    <h2>Orden de las secciones</h2>
+                    <div class="appearance-actions">
+                        <span class="dirty-flag" id="sectionsDirty" hidden>Sin guardar</span>
+                        <button class="btn" id="sectionsResetBtn">Restablecer</button>
+                        <button class="btn btn-primary" id="sectionsSaveBtn">Guardar</button>
+                    </div>
+                </div>
+
+                <p class="form-error" id="sectionsError" role="alert"></p>
+
+                <p class="hint" style="margin-bottom:18px">
+                    El orden en que se ven las franjas de la portada, de arriba abajo. La
+                    barra del menú y el pie de página no se mueven.
+                </p>
+
+                <ul class="order-list" id="sectionsList"></ul>
             </section>
 
             <!-- ---------------- PIE DE PÁGINA ---------------- -->
@@ -557,7 +647,7 @@
     <script src="supabase-config.js"></script>
     <script src="theme.js?v=2"></script>
     <script src="footer.js?v=1"></script>
-    <script src="admin.js?v=9"></script>
+    <script src="admin.js?v=10"></script>
 </body>
 
 </html>

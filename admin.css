@@ -1594,3 +1594,54 @@ small.hint {
     border: 1px solid var(--warn);
     padding: 2px 6px;
 }
+
+/* ==========================================================================
+   ORDEN DE LAS SECCIONES DE LA PORTADA
+   ========================================================================== */
+
+.order-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    max-width: 640px;
+}
+
+.order-item {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--line, #e4e4e4);
+    background: #fff;
+}
+
+/* El numero de posicion es lo que hace que se lea como una lista ordenada
+   y no como cuatro cajas sueltas. */
+.order-pos {
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    color: #767676;
+    text-align: center;
+}
+
+.order-text { display: grid; gap: 2px; min-width: 0; }
+.order-text strong { font-size: 13px; font-weight: 600; }
+.order-text small { font-size: 11px; color: #767676; }
+
+.order-actions { display: flex; gap: 4px; }
+
+.order-actions .btn {
+    padding: 4px 10px;
+    line-height: 1.2;
+    font-size: 14px;
+}
+
+.order-actions .btn[disabled] { opacity: 0.3; cursor: default; }
+
+@media (max-width: 520px) {
+    .order-item { grid-template-columns: 24px 1fr; }
+    .order-actions { grid-column: 1 / -1; justify-content: flex-end; }
+}

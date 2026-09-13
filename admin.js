@@ -998,7 +998,7 @@ async function removeLookbook(id) {
 async function loadHero() {
     const { data, error } = await supabaseClient
         .from('site_settings')
-        .select('hero_image')
+        .select('hero_image, home_feature, home_order')
         .eq('id', 1)
         .maybeSingle();
 
@@ -1010,7 +1010,261 @@ async function loadHero() {
     }
 
     state.heroImage = data ? data.hero_image : null;
+    state.feature = normalizeFeature(data ? data.home_feature : null);
+    state.featureSaved = JSON.stringify(state.feature);
+    state.sectionOrder = normalizeOrder(data ? data.home_order : null);
+    state.sectionOrderSaved = JSON.stringify(state.sectionOrder);
+
     renderHero();
+    renderFeature();
+    renderOrder();
+}
+
+
+// ===================================================================
+// BLOQUE DESTACADO Y ORDEN DE SECCIONES
+//
+// Las dos cosas viven en site_settings y las dos admiten estar vacías:
+// mientras nadie toque nada, la portada usa lo que trae escrito el HTML.
+// ===================================================================
+
+const FEATURE_FIELDS = ['eyebrow', 'title', 'body', 'ctaLabel', 'ctaHref', 'imageAlt'];
+
+// Las claves tienen que coincidir con los data-section del HTML de la
+// portada. Si mañana se añade una sección nueva, va aquí y aparece sola en
+// la lista del panel.
+const SECTIONS = [
+    { key: 'feature',  label: 'Bloque destacado',        hint: 'El titular grande con foto' },
+    { key: 'craft',    label: 'Archival craftsmanship',  hint: 'La franja negra de los mapas' },
+    { key: 'shop',     label: 'Tienda',                  hint: 'La rejilla de productos' },
+    { key: 'lookbook', label: 'Lookbook',                hint: 'El carrusel de fotos' },
+    { key: 'maps',     label: 'Map Library',             hint: 'Las tres fichas de mapas' },
+    { key: 'showcase', label: 'Pestañas',                hint: 'Shop / Lookbook / Map Library' },
+    { key: 'marks',    label: 'Sellos',                  hint: 'La fila de cuatro datos' },
+    { key: 'seo',      label: 'Texto largo',             hint: 'El bloque gris para Google' }
+];
+
+const ORDER_DEFAULT = SECTIONS.map(s => s.key);
+
+function normalizeFeature(raw) {
+    const f = raw && typeof raw === 'object' ? raw : {};
+    const out = {};
+    FEATURE_FIELDS.forEach(k => {
+        out[k] = typeof f[k] === 'string' ? f[k] : '';
+    });
+    out.image = typeof f.image === 'string' ? f.image : null;
+    return out;
+}
+
+// Se aceptan solo claves conocidas y sin repetir, y al final se añade lo
+// que falte. Así una lista guardada hace meses sigue valiendo aunque
+// entretanto se hayan añadido secciones nuevas.
+function normalizeOrder(raw) {
+    const lista = Array.isArray(raw) ? raw : [];
+    const vistas = [];
+    lista.forEach(k => {
+        if (ORDER_DEFAULT.includes(k) && !vistas.includes(k)) vistas.push(k);
+    });
+    ORDER_DEFAULT.forEach(k => {
+        if (!vistas.includes(k)) vistas.push(k);
+    });
+    return vistas;
+}
+
+function featureDirty() {
+    return JSON.stringify(state.feature) !== state.featureSaved;
+}
+
+function sectionsDirty() {
+    return JSON.stringify(state.sectionOrder) !== state.sectionOrderSaved;
+}
+
+function renderFeature() {
+    document.querySelectorAll('[data-feature-field]').forEach(input => {
+        input.value = state.feature[input.dataset.featureField] || '';
+    });
+
+    const preview = $('featurePreview');
+    if (state.feature.image) {
+        preview.innerHTML = `<img src="${escapeHtml(state.feature.image)}" alt="">`;
+        $('featureRemoveBtn').hidden = false;
+    } else {
+        preview.innerHTML = '<div class="hero-preview-empty">La del lookbook</div>';
+        $('featureRemoveBtn').hidden = true;
+    }
+
+    $('featureDirty').hidden = !featureDirty();
+}
+
+function renderOrder() {
+    const lista = $('sectionsList');
+
+    lista.innerHTML = state.sectionOrder.map((clave, i) => {
+        const s = SECTIONS.find(x => x.key === clave);
+        if (!s) return '';
+        return `
+        <li class="order-item">
+            <span class="order-pos">${i + 1}</span>
+            <span class="order-text">
+                <strong>${escapeHtml(s.label)}</strong>
+                <small>${escapeHtml(s.hint)}</small>
+            </span>
+            <span class="order-actions">
+                <button type="button" class="btn btn-ghost" data-move="up" data-key="${escapeHtml(clave)}"
+                        ${i === 0 ? 'disabled' : ''} aria-label="Subir ${escapeHtml(s.label)}">↑</button>
+                <button type="button" class="btn btn-ghost" data-move="down" data-key="${escapeHtml(clave)}"
+                        ${i === state.sectionOrder.length - 1 ? 'disabled' : ''} aria-label="Bajar ${escapeHtml(s.label)}">↓</button>
+            </span>
+        </li>`;
+    }).join('');
+
+    $('sectionsDirty').hidden = !sectionsDirty();
+}
+
+function moveSection(clave, direccion) {
+    const i = state.sectionOrder.indexOf(clave);
+    const j = direccion === 'up' ? i - 1 : i + 1;
+    if (i < 0 || j < 0 || j >= state.sectionOrder.length) return;
+
+    const copia = state.sectionOrder.slice();
+    copia[i] = copia[j];
+    copia[j] = clave;
+    state.sectionOrder = copia;
+    renderOrder();
+}
+
+async function saveFeature() {
+    const btn = $('featureSaveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Guardando…';
+    $('featureError').textContent = '';
+
+    // Todo vacío se guarda como null: es la forma de decir «vuelve a los
+    // textos de fábrica» sin una casilla aparte para eso.
+    const limpio = {};
+    FEATURE_FIELDS.forEach(k => {
+        const v = (state.feature[k] || '').trim();
+        if (v) limpio[k] = v;
+    });
+    if (state.feature.image) limpio.image = state.feature.image;
+
+    const valor = Object.keys(limpio).length ? limpio : null;
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .update({ home_feature: valor })
+        .eq('id', 1)
+        .select();
+
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+
+    if (error || !data || !data.length) {
+        $('featureError').textContent = 'No se pudo guardar. Vuelve a intentarlo.';
+        console.error(error);
+        return;
+    }
+
+    state.feature = normalizeFeature(valor);
+    state.featureSaved = JSON.stringify(state.feature);
+    renderFeature();
+    toast('Bloque destacado guardado');
+}
+
+async function saveSectionOrder() {
+    const btn = $('sectionsSaveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Guardando…';
+    $('sectionsError').textContent = '';
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .update({ home_order: state.sectionOrder })
+        .eq('id', 1)
+        .select();
+
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+
+    if (error || !data || !data.length) {
+        $('sectionsError').textContent = 'No se pudo guardar el orden. Vuelve a intentarlo.';
+        console.error(error);
+        return;
+    }
+
+    state.sectionOrderSaved = JSON.stringify(state.sectionOrder);
+    renderOrder();
+    toast('Orden de la portada guardado');
+}
+
+async function uploadFeatureImage(file) {
+    const btn = $('featureUploadBtn');
+    btn.disabled = true;
+    btn.textContent = 'Subiendo…';
+    $('featureImageStatus').textContent = '';
+
+    try {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const filename = `feature-${Date.now()}.${ext}`;
+
+        const { error: upErr } = await supabaseClient.storage
+            .from(LOOKBOOK_BUCKET)
+            .upload(filename, file, { cacheControl: '3600', upsert: false });
+        if (upErr) throw upErr;
+
+        state.feature.image =
+            `${window.SUPABASE_URL}/storage/v1/object/public/${LOOKBOOK_BUCKET}/${filename}`;
+
+        // La imagen se guarda sola. Dejarla pendiente de un botón Guardar
+        // sería una forma barata de perderla.
+        await saveFeature();
+    } catch (err) {
+        console.error(err);
+        $('featureImageStatus').textContent = err.message || 'No se pudo subir la imagen.';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Subir imagen…';
+        $('featureFile').value = '';
+    }
+}
+
+async function removeFeatureImage() {
+    if (!confirm('¿Quitar la imagen? Volverá a usarse la primera del lookbook.')) return;
+    state.feature.image = null;
+    await saveFeature();
+}
+
+function initFeatureAndOrder() {
+    document.querySelectorAll('[data-feature-field]').forEach(input => {
+        input.addEventListener('input', () => {
+            state.feature[input.dataset.featureField] = input.value;
+            $('featureDirty').hidden = !featureDirty();
+        });
+    });
+
+    $('featureSaveBtn').addEventListener('click', saveFeature);
+    $('featureResetBtn').addEventListener('click', () => {
+        state.feature = normalizeFeature(JSON.parse(state.featureSaved));
+        renderFeature();
+    });
+
+    $('featureUploadBtn').addEventListener('click', () => $('featureFile').click());
+    $('featureFile').addEventListener('change', e => {
+        if (e.target.files && e.target.files[0]) uploadFeatureImage(e.target.files[0]);
+    });
+    $('featureRemoveBtn').addEventListener('click', removeFeatureImage);
+
+    $('sectionsList').addEventListener('click', e => {
+        const btn = e.target.closest('[data-move]');
+        if (!btn) return;
+        moveSection(btn.dataset.key, btn.dataset.move);
+    });
+
+    $('sectionsSaveBtn').addEventListener('click', saveSectionOrder);
+    $('sectionsResetBtn').addEventListener('click', () => {
+        state.sectionOrder = JSON.parse(state.sectionOrderSaved);
+        renderOrder();
+    });
 }
 
 function renderHero() {
@@ -1743,6 +1997,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Portada
+    initFeatureAndOrder();
     $('heroUploadBtn').addEventListener('click', () => $('heroFile').click());
     $('heroFile').addEventListener('change', (e) => {
         const file = e.target.files && e.target.files[0];

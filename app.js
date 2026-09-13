@@ -30,6 +30,7 @@ async function initializeApp() {
     loadCartFromStorage();
     handleCheckoutReturn();
     loadHeroImage();
+    applyHomeOrder(cachedHomeOrder());
     initReveal();
     initShowcaseTabs();
     await loadSiteSettings();
@@ -309,7 +310,7 @@ async function loadSiteSettings() {
     try {
         let { data, error } = await window.supabaseClient
             .from('site_settings')
-            .select('require_account, online_payment, paypal_payment, paypal_client_id, theme, footer')
+            .select('require_account, online_payment, paypal_payment, paypal_client_id, theme, footer, home_feature, home_order')
             .eq('id', 1)
             .maybeSingle();
 
@@ -319,7 +320,7 @@ async function loadSiteSettings() {
         if (error) {
             ({ data, error } = await window.supabaseClient
                 .from('site_settings')
-                .select('require_account, online_payment, paypal_payment, paypal_client_id, theme')
+                .select('require_account, online_payment, paypal_payment, paypal_client_id, theme, home_feature, home_order')
                 .eq('id', 1)
                 .maybeSingle());
         }
@@ -329,6 +330,17 @@ async function loadSiteSettings() {
             siteSettings.onlinePayment = data.online_payment !== false;
             siteSettings.paypalPayment = data.paypal_payment === true;
             siteSettings.paypalClientId = data.paypal_client_id || null;
+
+            // La portada se recoloca antes de que el visitante llegue a
+            // verla: si esto corriera más tarde, vería las secciones dar un
+            // salto delante de sus ojos.
+            // Sin orden guardado se recoloca al de fábrica a propósito: puede
+            // que la copia local del navegador tenga uno viejo aplicado ya.
+            applyHomeOrder(Array.isArray(data.home_order) && data.home_order.length
+                ? data.home_order
+                : HOME_ORDER_DEFAULT);
+            applyHomeFeature(data.home_feature);
+            rememberHomeOrder(data.home_order);
 
             // Los textos del pie. Si no hay nada guardado se deja el HTML
             // tal cual, que ya trae escritos los de fábrica.
@@ -1538,6 +1550,117 @@ function fillLookbookSlots(images) {
         }
         img.src = elegida.image_url;
     });
+}
+
+// ===================================
+// PORTADA CONFIGURABLE
+// ===================================
+
+// El orden llega del panel como una lista de claves. Se mueven los nodos
+// que existan y en el orden pedido; lo que el panel no mencione se queda
+// donde estaba. Así una clave vieja o una sección retirada del HTML no
+// dejan la portada coja.
+// El orden llega por red, y recolocar la portada después de pintarla se
+// ve como un salto. Se guarda una copia en el navegador y se aplica antes
+// de que llegue la respuesta: quien repite visita no ve el brinco.
+const HOME_ORDER_KEY = 'divinaHomeOrder';
+
+// El orden de fábrica, el mismo que trae escrito el HTML. Hace falta
+// tenerlo aquí para poder deshacer una copia local cuando el panel vuelve
+// al orden por defecto.
+const HOME_ORDER_DEFAULT = [
+    'feature', 'craft', 'shop', 'lookbook', 'maps', 'showcase', 'marks', 'seo'
+];
+
+function cachedHomeOrder() {
+    try {
+        const guardado = localStorage.getItem(HOME_ORDER_KEY);
+        return guardado ? JSON.parse(guardado) : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function rememberHomeOrder(orden) {
+    try {
+        if (Array.isArray(orden) && orden.length) {
+            localStorage.setItem(HOME_ORDER_KEY, JSON.stringify(orden));
+        } else {
+            localStorage.removeItem(HOME_ORDER_KEY);
+        }
+    } catch (e) { /* almacenamiento bloqueado: solo se pierde el atajo */ }
+}
+
+function applyHomeOrder(orden) {
+    if (!Array.isArray(orden) || !orden.length) return;
+
+    const footer = document.querySelector('footer.footer');
+    if (!footer) return;
+
+    orden.forEach(clave => {
+        const seccion = document.querySelector(`[data-section="${CSS.escape(String(clave))}"]`);
+        // Reinsertar delante del pie, uno detrás de otro, deja la lista
+        // en el orden exacto en que se recorre.
+        if (seccion) footer.parentNode.insertBefore(seccion, footer);
+    });
+}
+
+// Convierte el texto del panel en párrafos: una línea en blanco separa
+// uno de otro. Escapar aquí es obligatorio, porque esto es texto que
+// alguien escribió en un formulario y acaba dentro del HTML.
+function paragraphsFrom(texto) {
+    return String(texto)
+        .split(/\n\s*\n/)
+        .map(p => p.trim())
+        .filter(Boolean)
+        .map(p => `<p>${escapeHtml(p).replace(/\n/g, '<br>')}</p>`)
+        .join('');
+}
+
+function applyHomeFeature(feature) {
+    if (!feature || typeof feature !== 'object') return;
+
+    const bloque = document.querySelector('[data-section="feature"]');
+    if (!bloque) return;
+
+    const texto = (clave, valor) => {
+        const el = bloque.querySelector(`[data-feature="${clave}"]`);
+        if (!el || !valor) return;
+        el.textContent = valor;
+    };
+
+    texto('eyebrow', feature.eyebrow);
+
+    // El titular admite salto de línea, que es la mitad de su fuerza en
+    // este bloque, así que va por innerHTML con el texto ya escapado.
+    const titulo = bloque.querySelector('[data-feature="title"]');
+    if (titulo && feature.title) {
+        titulo.innerHTML = escapeHtml(feature.title).replace(/\n/g, '<br>');
+    }
+
+    const cuerpo = bloque.querySelector('[data-feature="body"]');
+    if (cuerpo && feature.body) {
+        const html = paragraphsFrom(feature.body);
+        if (html) cuerpo.innerHTML = html;
+    }
+
+    const cta = bloque.querySelector('[data-feature="cta"]');
+    if (cta) {
+        if (feature.ctaLabel) cta.textContent = feature.ctaLabel;
+        if (feature.ctaHref) cta.href = feature.ctaHref;
+        // Un botón sin texto es un rectángulo negro sin sentido: mejor no
+        // enseñarlo.
+        cta.hidden = !cta.textContent.trim();
+    }
+
+    const img = bloque.querySelector('[data-feature="image"]');
+    if (img && feature.image) {
+        img.src = feature.image;
+        if (feature.imageAlt) img.alt = feature.imageAlt;
+        // Con foto propia ya no hace falta que el lookbook le ponga una.
+        delete img.dataset.lookbookSlot;
+        img.removeAttribute('data-lookbook-slot');
+    }
 }
 
 // ===================================

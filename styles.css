@@ -2502,6 +2502,12 @@ font font {
     line-height: 1.65;
 }
 
+/* El cuerpo del bloque destacado se edita desde el panel, así que puede
+   venir con varios párrafos o con uno solo. Vale como <p> suelto y como
+   contenedor de <p>. */
+.feature-body p { margin: 0 0 var(--sp-4); }
+.feature-body p:last-child { margin-bottom: 0; }
+
 .feature-dark .feature-body { color: var(--grey-light); }
 
 /* El botón es una caja pequeña y dura: sin radios, sin sombra, sin relleno
