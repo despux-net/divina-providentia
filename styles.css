@@ -976,8 +976,11 @@ button {
    PIE
    ========================================================================== */
 
+/* El pie ya no se separa con una línea: lo separa el propio fondo. Al
+   compartir gris con el bloque de texto de arriba, los dos se leen como
+   una sola zona de información al final de la página. */
 .footer {
-    border-top: 1px solid var(--black);
+    background: var(--grey-bg);
     padding-top: var(--sp-7);
 }
 
