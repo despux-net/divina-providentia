@@ -1492,6 +1492,11 @@ function fillFontSelects() {
         .join('');
     $('fontHead').innerHTML = options;
     $('fontBody').innerHTML = options;
+
+    // El título de portada puede no elegir nada y seguir a los demás
+    // títulos, así que lleva una opción vacía delante.
+    $('fontHeroTitle').innerHTML =
+        '<option value="">La misma que los títulos</option>' + options;
 }
 
 // Vuelca el borrador en los controles y en la vista previa.
@@ -1501,7 +1506,7 @@ function renderTheme() {
 
     document.querySelectorAll('[data-theme]').forEach(input => {
         const key = input.dataset.theme;
-        if (key === 'colNavText') return;   // tiene su propio apartado, abajo
+        if (key === 'colNavText' || key === 'colHeroTitle') return;   // tienen su propio apartado, abajo
         if (input.value !== String(t[key])) input.value = t[key];
     });
 
@@ -1512,6 +1517,13 @@ function renderTheme() {
     $('navTextAuto').checked = navTextAuto;
     $('colNavText').disabled = navTextAuto;
     $('colNavText').value = t.colNavText || t.colText;
+
+    // Igual con el título de portada: vacío significa que lo decide el
+    // fondo, y el selector solo enseña apagado lo que se ve ahora.
+    const heroColorAuto = !t.colHeroTitle;
+    $('heroTitleColorAuto').checked = heroColorAuto;
+    $('colHeroTitle').disabled = heroColorAuto;
+    $('colHeroTitle').value = t.colHeroTitle || (state.heroImage ? '#ffffff' : t.colText);
 
     document.querySelectorAll('[data-out]').forEach(out => {
         const v = t[out.dataset.out];
@@ -2023,6 +2035,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Los desplegables de tipografía y los colores son texto; el
         // resto son números.
         state.theme[key] = /^(font|col)/.test(key) ? raw : Number(raw);
+        renderTheme();
+    });
+
+    $('heroTitleColorAuto').addEventListener('change', (e) => {
+        state.theme.colHeroTitle = e.target.checked
+            ? ''
+            : (state.heroImage ? '#ffffff' : (state.theme.colText || DPTheme.DEFAULTS.colText));
         renderTheme();
     });
 

@@ -33,6 +33,7 @@ async function initializeApp() {
     applyHomeOrder(cachedHomeOrder());
     initReveal();
     initMapsModal();
+    initHeroTitleFit();
     await loadSiteSettings();
     await loadProducts();
     await loadLookbookImages();
@@ -1528,6 +1529,62 @@ function fillLookbookSlots(images) {
             return;
         }
         img.src = elegida.image_url;
+    });
+}
+
+// ===================================
+// TITULO DE PORTADA
+// ===================================
+
+// El titulo va en una sola linea, y su tamano lo elige el dueno desde el
+// panel. Las dos cosas juntas se pelean: basta una pantalla estrecha o una
+// escala alta para que el texto se salga por los lados. En vez de dejar
+// que rompa, se mide y se encoge hasta que cabe.
+function fitHeroTitle() {
+    const titulo = document.querySelector('.hero-title');
+    if (!titulo) return;
+
+    // Se suelta el tamano anterior para volver a medir contra el que pide
+    // el tema; si no, cada pasada encogeria sobre lo ya encogido.
+    titulo.style.fontSize = '';
+
+    // El ancho disponible NO es el del propio titulo. La portada es un
+    // flex centrado, asi que el titulo se ajusta a su texto y crece con
+    // el: medido contra si mismo nunca se sale, ni cuando desborda la
+    // pantalla por los dos lados. Hay que medir contra la caja de fuera.
+    const hero = titulo.closest('.hero');
+    const caja = titulo.closest('.hero-inner') || hero;
+    if (!hero || !caja) return;
+
+    const estilos = getComputedStyle(caja);
+    const relleno = parseFloat(estilos.paddingLeft) + parseFloat(estilos.paddingRight);
+    const disponible = hero.clientWidth - relleno;
+    const necesario = titulo.scrollWidth;
+    if (!disponible || !necesario || necesario <= disponible) return;
+
+    const actual = parseFloat(getComputedStyle(titulo).fontSize);
+    if (!actual) return;
+
+    // El 0.99 deja un pelo de aire: medir al milimetro deja a veces el
+    // ultimo caracter rozando el borde.
+    titulo.style.fontSize = (actual * (disponible / necesario) * 0.99).toFixed(2) + 'px';
+}
+
+function initHeroTitleFit() {
+    if (!document.querySelector('.hero-title')) return;
+
+    fitHeroTitle();
+
+    // Una tipografia de Google entra despues de la primera medida y cambia
+    // el ancho del texto, asi que hay que volver a medir cuando llegue.
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(fitHeroTitle).catch(() => {});
+    }
+
+    let espera;
+    window.addEventListener('resize', () => {
+        clearTimeout(espera);
+        espera = setTimeout(fitHeroTitle, 150);
     });
 }
 

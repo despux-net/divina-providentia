@@ -46,6 +46,9 @@
         fontHead: 'helvetica',
         weightHead: 600,
 
+        // Vacío quiere decir «la misma que los demás títulos».
+        fontHeroTitle: '',
+
         fsBody: 13,
         navH: 52,
         navTitleScale: 1,
@@ -68,7 +71,11 @@
         // Vacío quiere decir «el mismo color que el resto del texto».
         // Así la cabecera acompaña al tema sin tener que retocarla
         // cada vez que se cambia el color general.
-        colNavText: ''
+        colNavText: '',
+
+        // Vacío quiere decir «el que le toque»: negro sobre fondo liso,
+        // blanco cuando hay foto de portada detrás.
+        colHeroTitle: ''
     };
 
     function clamp(n, min, max, fallback) {
@@ -83,6 +90,7 @@
         return {
             fontBody: FONTS[t.fontBody] ? t.fontBody : DEFAULTS.fontBody,
             fontHead: FONTS[t.fontHead] ? t.fontHead : DEFAULTS.fontHead,
+            fontHeroTitle: FONTS[t.fontHeroTitle] ? t.fontHeroTitle : '',
             weightHead: clamp(t.weightHead, 300, 900, DEFAULTS.weightHead),
 
             fsBody: clamp(t.fsBody, 11, 20, DEFAULTS.fsBody),
@@ -103,7 +111,8 @@
             colGrey: t.colGrey || DEFAULTS.colGrey,
             colLine: t.colLine || DEFAULTS.colLine,
             colSoft: t.colSoft || DEFAULTS.colSoft,
-            colNavText: t.colNavText || ''
+            colNavText: t.colNavText || '',
+            colHeroTitle: t.colHeroTitle || ''
         };
     }
 
@@ -135,6 +144,7 @@
 
         ensureFont(t.fontBody, doc);
         ensureFont(t.fontHead, doc);
+        if (t.fontHeroTitle) ensureFont(t.fontHeroTitle, doc);
 
         const set = (name, value) => root.style.setProperty(name, value);
 
@@ -181,6 +191,21 @@
         set('--grey-bg', t.colSoft);
 
         set('--nav-text', t.colNavText || t.colText);
+
+        // Estas dos se quitan en lugar de fijarse cuando no hay elección:
+        // así el valor de reserva del CSS vuelve a mandar, que es lo que
+        // hace que el título siga poniéndose blanco sobre una foto.
+        if (t.fontHeroTitle) {
+            set('--font-hero-title', FONTS[t.fontHeroTitle].stack);
+        } else {
+            root.style.removeProperty('--font-hero-title');
+        }
+
+        if (t.colHeroTitle) {
+            set('--hero-title-color', t.colHeroTitle);
+        } else {
+            root.style.removeProperty('--hero-title-color');
+        }
 
         return t;
     }

@@ -333,6 +333,10 @@
                                 <select data-theme="fontHead" id="fontHead"></select>
                             </label>
                             <label class="field">
+                                <span>Título de portada <small>el rótulo grande de la primera pantalla</small></span>
+                                <select data-theme="fontHeroTitle" id="fontHeroTitle"></select>
+                            </label>
+                            <label class="field">
                                 <span>Texto</span>
                                 <select data-theme="fontBody" id="fontBody"></select>
                             </label>
@@ -360,6 +364,7 @@
                             <label class="field">
                                 <span>Título de portada <b data-out="heroTitleScale"></b>×</span>
                                 <input type="range" data-theme="heroTitleScale" min="0.4" max="2" step="0.05">
+                                <small class="hint">Va siempre en una línea: si no cupiera, se encoge solo.</small>
                             </label>
                             <label class="field">
                                 <span>Títulos de sección <b data-out="sectionTitleScale"></b>×</span>
@@ -412,6 +417,14 @@
                             <label class="field check-field">
                                 <input type="checkbox" id="navTextAuto">
                                 <span>Que la cabecera use el color de texto general</span>
+                            </label>
+                            <label class="field color-field">
+                                <span>Título de portada</span>
+                                <input type="color" data-theme="colHeroTitle" id="colHeroTitle">
+                            </label>
+                            <label class="field check-field">
+                                <input type="checkbox" id="heroTitleColorAuto">
+                                <span>Automático: negro sobre fondo liso, blanco sobre la foto</span>
                             </label>
                             <label class="field color-field">
                                 <span>Texto secundario</span>
@@ -646,7 +659,7 @@
     <script src="supabase-config.js"></script>
     <script src="theme.js?v=2"></script>
     <script src="footer.js?v=1"></script>
-    <script src="admin.js?v=11"></script>
+    <script src="admin.js?v=12"></script>
 </body>
 
 </html>

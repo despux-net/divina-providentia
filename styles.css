@@ -357,12 +357,19 @@ button {
 }
 
 .hero-title {
-    font-family: var(--font-head);
+    /* Sin familia ni color propios elegidos en el panel, se comporta
+       como antes: la tipografía de los títulos y el color heredado. */
+    font-family: var(--font-hero-title, var(--font-head));
     font-size: var(--hero-title-size);
     font-weight: var(--weight-head);
+    color: var(--hero-title-color, inherit);
     line-height: .92;
     letter-spacing: 0.02em;
     margin: 0 0 var(--sp-5);
+
+    /* Una sola línea, pase lo que pase. Si no cupiera, el ajuste del
+       script lo encoge hasta que quepa en lugar de partirlo. */
+    white-space: nowrap;
 }
 
 .hero-sub {
@@ -1837,7 +1844,7 @@ font font {
 }
 
 .hero.has-image .hero-title {
-    color: var(--white);
+    color: var(--hero-title-color, var(--white));
 }
 
 .hero.has-image .hero-sub {
