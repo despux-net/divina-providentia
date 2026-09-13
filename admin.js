@@ -1038,7 +1038,6 @@ const SECTIONS = [
     { key: 'craft',    label: 'Archival craftsmanship',  hint: 'La franja negra de los mapas' },
     { key: 'shop',     label: 'Tienda',                  hint: 'La rejilla de productos' },
     { key: 'lookbook', label: 'Lookbook',                hint: 'El carrusel de fotos' },
-    { key: 'maps',     label: 'Map Library',             hint: 'Las tres fichas de mapas' },
     { key: 'marks',    label: 'Sellos',                  hint: 'La fila de cuatro datos' },
     { key: 'seo',      label: 'Texto largo',             hint: 'El bloque gris para Google' }
 ];

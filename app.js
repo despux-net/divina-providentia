@@ -32,6 +32,7 @@ async function initializeApp() {
     loadHeroImage();
     applyHomeOrder(cachedHomeOrder());
     initReveal();
+    initMapsModal();
     await loadSiteSettings();
     await loadProducts();
     await loadLookbookImages();
@@ -1524,6 +1525,52 @@ function fillLookbookSlots(images) {
 }
 
 // ===================================
+// CARTOTECA EN VENTANA
+// ===================================
+
+// La cartoteca ya no es una franja de la pagina, asi que el ancla
+// #coleccion no lleva a ninguna parte. En vez de repartir un manejador por
+// cada sitio que la enlaza (el menu, el pie, el boton del bloque negro, el
+// texto largo), se escucha en el documento: cualquier enlace a #coleccion
+// abre la ventana, incluidos los que se pinten mas tarde.
+function initMapsModal() {
+    const modal = document.getElementById('mapsModal');
+    const overlay = document.getElementById('mapsOverlay');
+    if (!modal || !overlay) return;
+
+    const cerrar = () => {
+        modal.classList.remove('open');
+        overlay.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    };
+
+    const abrir = () => {
+        modal.classList.add('open');
+        overlay.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        // El foco entra en la ventana para que quien navegue con teclado no
+        // se quede tecleando en la pagina de detras.
+        document.getElementById('closeMapsBtn')?.focus();
+    };
+
+    document.addEventListener('click', e => {
+        const enlace = e.target.closest('a[href="#coleccion"], a[href$="index.html#coleccion"]');
+        if (!enlace) return;
+        e.preventDefault();
+        abrir();
+    });
+
+    document.getElementById('closeMapsBtn')?.addEventListener('click', cerrar);
+    overlay.addEventListener('click', cerrar);
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) cerrar();
+    });
+}
+
+// ===================================
 // PORTADA CONFIGURABLE
 // ===================================
 
@@ -1540,7 +1587,7 @@ const HOME_ORDER_KEY = 'divinaHomeOrder';
 // tenerlo aquí para poder deshacer una copia local cuando el panel vuelve
 // al orden por defecto.
 const HOME_ORDER_DEFAULT = [
-    'feature', 'craft', 'shop', 'lookbook', 'maps', 'marks', 'seo'
+    'feature', 'craft', 'shop', 'lookbook', 'marks', 'seo'
 ];
 
 function cachedHomeOrder() {

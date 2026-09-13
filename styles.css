@@ -2749,3 +2749,43 @@ font font {
 @media (max-width: 520px) {
     .marks-row { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ==========================================================================
+   CARTOTECA EN VENTANA
+   Las fichas son las mismas de antes; solo cambia el sitio donde viven.
+   ========================================================================== */
+
+.maps-modal {
+    width: min(1080px, calc(100% - 32px));
+    background: var(--white);
+    border: 1px solid var(--black);
+}
+
+.maps-modal-body {
+    padding: var(--sp-5);
+}
+
+.maps-modal-hint {
+    margin: 0 0 var(--sp-5);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--track);
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+/* Dentro de la ventana caben tres en fila en pantalla grande, y van
+   bajando solas al estrecharse. */
+.maps-modal .cartography-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-5);
+    padding: 0;
+}
+
+@media (max-width: 900px) {
+    .maps-modal .cartography-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+    .maps-modal .cartography-grid { grid-template-columns: minmax(0, 1fr); }
+}

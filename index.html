@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="stylesheet" href="styles.css?v=28">
+    <link rel="stylesheet" href="styles.css?v=29">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Dibuja la pasarela dentro de esta misma página. Si no carga, el
@@ -239,61 +239,6 @@
         </div>
     </section>
 
-    <!-- ============ CARTOTECA ============ -->
-    <section class="cartography-section" id="coleccion" data-section="maps">
-        <div class="section-head">
-            <h2>Map Library</h2>
-            <span class="section-meta">Historical maps in gigapixel</span>
-        </div>
-
-        <div class="cartography-grid">
-            <article class="map-card">
-                <a class="map-card-link" href="adan.html">
-                    <div class="map-image-container">
-                        <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="ADAM%20AND%20EVA.jpg" alt="The Scroll of Adam" class="map-card-image" loading="lazy">
-                    </div>
-                    <div class="map-card-content">
-                        <h3 class="map-card-title">The Scroll of Adam</h3>
-                        <p class="map-card-author">Antediluvian patriarchs · 19th c.</p>
-                        <p class="map-card-desc">A genealogical tree of the world from Creation according to the sacred chronicles. Rebuilt from 160 megapixels.</p>
-                        <span class="open-map-btn">Explore volume</span>
-                    </div>
-                </a>
-            </article>
-
-            <article class="map-card">
-                <a class="map-card-link" href="romano.html">
-                    <div class="map-image-container">
-                        <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="16242000t.jpg" alt="Roman Empire" class="map-card-image" loading="lazy">
-                    </div>
-                    <div class="map-card-content">
-                        <h3 class="map-card-title">Roman Empire</h3>
-                        <p class="map-card-author">The Roman world at its greatest extent</p>
-                        <p class="map-card-desc">108 megapixels documenting the provinces, routes, cities and roads of the Empire at its height.</p>
-                        <span class="open-map-btn">Explore volume</span>
-                    </div>
-                </a>
-            </article>
-
-            <article class="map-card">
-                <a class="map-card-link" href="terra.html">
-                    <div class="map-image-container">
-                        <span class="map-badge-hd">Gigapixel HD</span>
-                        <img src="TERRAt.jpg" alt="Terra, Urbano Monte 1587" class="map-card-image" loading="lazy">
-                    </div>
-                    <div class="map-card-content">
-                        <h3 class="map-card-title">Terra (1587)</h3>
-                        <p class="map-card-author">Urbano Monte's monumental planisphere</p>
-                        <p class="map-card-desc">The largest world map of the 16th century, assembled from 60 original manuscript sheets in polar projection.</p>
-                        <span class="open-map-btn">Explore volume</span>
-                    </div>
-                </a>
-            </article>
-        </div>
-    </section>
-
     <!-- ============ SELLOS ============ -->
     <section class="marks" data-reveal data-section="marks" aria-label="What to expect">
         <div class="marks-row">
@@ -398,6 +343,65 @@
             <p data-footer="rights">All rights reserved</p>
         </div>
     </footer>
+
+    <!-- ============ CARTOTECA (VENTANA) ============ -->
+    <div class="checkout-overlay" id="mapsOverlay"></div>
+    <div class="checkout-modal maps-modal" id="mapsModal" role="dialog"
+         aria-modal="true" aria-label="Map Library" aria-hidden="true">
+        <div class="checkout-header">
+            <h2>Map Library</h2>
+            <button class="close-checkout-btn" id="closeMapsBtn" aria-label="Close">&times;</button>
+        </div>
+        <div class="maps-modal-body">
+            <p class="maps-modal-hint">Historical charts digitised in gigapixel detail. Free to explore.</p>
+        <div class="cartography-grid">
+            <article class="map-card">
+                <a class="map-card-link" href="adan.html">
+                    <div class="map-image-container">
+                        <span class="map-badge-hd">Gigapixel HD</span>
+                        <img src="ADAM%20AND%20EVA.jpg" alt="The Scroll of Adam" class="map-card-image" loading="lazy">
+                    </div>
+                    <div class="map-card-content">
+                        <h3 class="map-card-title">The Scroll of Adam</h3>
+                        <p class="map-card-author">Antediluvian patriarchs · 19th c.</p>
+                        <p class="map-card-desc">A genealogical tree of the world from Creation according to the sacred chronicles. Rebuilt from 160 megapixels.</p>
+                        <span class="open-map-btn">Explore volume</span>
+                    </div>
+                </a>
+            </article>
+
+            <article class="map-card">
+                <a class="map-card-link" href="romano.html">
+                    <div class="map-image-container">
+                        <span class="map-badge-hd">Gigapixel HD</span>
+                        <img src="16242000t.jpg" alt="Roman Empire" class="map-card-image" loading="lazy">
+                    </div>
+                    <div class="map-card-content">
+                        <h3 class="map-card-title">Roman Empire</h3>
+                        <p class="map-card-author">The Roman world at its greatest extent</p>
+                        <p class="map-card-desc">108 megapixels documenting the provinces, routes, cities and roads of the Empire at its height.</p>
+                        <span class="open-map-btn">Explore volume</span>
+                    </div>
+                </a>
+            </article>
+
+            <article class="map-card">
+                <a class="map-card-link" href="terra.html">
+                    <div class="map-image-container">
+                        <span class="map-badge-hd">Gigapixel HD</span>
+                        <img src="TERRAt.jpg" alt="Terra, Urbano Monte 1587" class="map-card-image" loading="lazy">
+                    </div>
+                    <div class="map-card-content">
+                        <h3 class="map-card-title">Terra (1587)</h3>
+                        <p class="map-card-author">Urbano Monte's monumental planisphere</p>
+                        <p class="map-card-desc">The largest world map of the 16th century, assembled from 60 original manuscript sheets in polar projection.</p>
+                        <span class="open-map-btn">Explore volume</span>
+                    </div>
+                </a>
+            </article>
+        </div>
+        </div>
+    </div>
 
     <!-- ============ CARRITO ============ -->
     <div class="cart-overlay" id="cartOverlay"></div>
@@ -538,7 +542,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js?v=11"></script>
     <script src="footer.js?v=2"></script>
-    <script src="app.js?v=30"></script>
+    <script src="app.js?v=31"></script>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
