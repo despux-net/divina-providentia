@@ -29,6 +29,7 @@ async function initializeApp() {
     rememberCheckoutForm();
     loadCartFromStorage();
     handleCheckoutReturn();
+    recuperarPagoPendiente();
     loadHeroImage();
     applyHomeOrder(cachedHomeOrder());
     initReveal();
@@ -1098,6 +1099,26 @@ function closeCheckout() {
 // webhook, en el servidor.
 const PENDING_ORDER_KEY = 'divinaPendingOrder';
 
+// El identificador de la orden en PayPal, guardado desde que se manda al
+// comprador a pagar hasta que el cobro se cierra. Es lo que permite
+// recuperar un pago aprobado cuya ventana se cerro por el camino.
+const PENDING_PAYPAL_KEY = 'divinaPendingPaypal';
+
+function recordarPaypal(paypalOrderId) {
+    try {
+        if (paypalOrderId) localStorage.setItem(PENDING_PAYPAL_KEY, String(paypalOrderId));
+        else localStorage.removeItem(PENDING_PAYPAL_KEY);
+    } catch (e) { /* almacenamiento bloqueado: se pierde la red de seguridad */ }
+}
+
+function paypalPendiente() {
+    try {
+        return localStorage.getItem(PENDING_PAYPAL_KEY) || '';
+    } catch (e) {
+        return '';
+    }
+}
+
 // Pide al servidor una sesión de pago y manda allí al cliente. Los
 // precios, las tallas y las variantes de Printful los vuelve a comprobar
 // la Edge Function contra la base de datos: lo que diga el navegador no
@@ -1323,6 +1344,8 @@ async function renderPaypalButton() {
                     localStorage.setItem(PENDING_ORDER_KEY, String(data.orderId));
                 } catch (e) { /* almacenamiento bloqueado */ }
 
+                recordarPaypal(data.paypalOrderId);
+
                 return data.paypalOrderId;
             },
 
@@ -1355,6 +1378,8 @@ async function renderPaypalButton() {
                     return;
                 }
 
+                recordarPaypal(null);
+
                 let referencia = '';
                 try {
                     referencia = localStorage.getItem(PENDING_ORDER_KEY) || '';
@@ -1373,6 +1398,9 @@ async function renderPaypalButton() {
             },
 
             onCancel: () => {
+                // Cancelar es una decision, no un accidente: se olvida la
+                // orden para que la red de seguridad no la reviva.
+                recordarPaypal(null);
                 if (typeof showNotification === 'function') {
                     showNotification('Payment cancelled. Your cart is unchanged.');
                 }
@@ -1565,6 +1593,57 @@ function fillLookbookSlots(images) {
         }
         img.src = elegida.image_url;
     });
+}
+
+// Si quedo una orden de PayPal a medias, se intenta cerrarla al volver.
+// PayPal solo permite capturar lo que el comprador ya aprobo: si se echo
+// atras o la orden caduco, esto falla sin consecuencias y se olvida.
+async function recuperarPagoPendiente() {
+    const paypalOrderId = paypalPendiente();
+    if (!paypalOrderId) return;
+
+    let respuesta;
+    try {
+        respuesta = await fetch(`${window.SUPABASE_URL}/functions/v1/paypal-capture-order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paypalOrderId })
+        });
+    } catch (error) {
+        // Sin conexion no se toca nada: se reintenta la proxima vez.
+        console.warn('No se pudo comprobar el pago pendiente:', error);
+        return;
+    }
+
+    const resultado = await respuesta.json().catch(() => ({}));
+
+    if (!respuesta.ok) {
+        // Lo mas comun es que el comprador se echara atras. No se le dice
+        // nada: no ha pasado nada y su cesta sigue donde estaba.
+        console.warn('Pago pendiente no recuperable:', resultado);
+        recordarPaypal(null);
+        return;
+    }
+
+    recordarPaypal(null);
+
+    // Si ya se habia procesado, no hay novedad que anunciar.
+    if (resultado.yaProcesado) return;
+
+    let referencia = '';
+    try {
+        referencia = localStorage.getItem(PENDING_ORDER_KEY) || '';
+        localStorage.removeItem(PENDING_ORDER_KEY);
+    } catch (e) { /* almacenamiento bloqueado */ }
+
+    state.cart = [];
+    saveCartToStorage();
+    updateCart();
+
+    showSuccessMessage(referencia ? referencia.slice(0, 8).toUpperCase() : '', true);
+    document.getElementById('checkoutModal')?.classList.add('open');
+    document.getElementById('checkoutOverlay')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
 
 // ===================================
