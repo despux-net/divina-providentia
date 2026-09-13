@@ -1698,8 +1698,10 @@ button {
         display: none;
     }
 
+    /* En móvil se oculta la palabra del botón y se rehace aquí, para que
+       quepa junto al contador. Es texto visible aunque viva en el CSS. */
     .cart-count::before {
-        content: "Carrito (";
+        content: "Cart (";
     }
 
     .nav-logo {
