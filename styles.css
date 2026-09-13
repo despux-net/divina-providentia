@@ -2604,83 +2604,6 @@ font font {
 }
 
 /* ==========================================================================
-   PESTAÑAS DESTACADAS
-   ========================================================================== */
-
-.showcase { padding: var(--section-y) var(--pad-x); }
-
-.showcase-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-5);
-    max-width: 1280px;
-    margin: 0 auto var(--sp-7);
-    border-bottom: 1px solid var(--grey-light);
-}
-
-.showcase-tab {
-    padding: 0 0 var(--sp-3);
-    background: none;
-    border: 0;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    font-family: inherit;
-    font-size: var(--fs-small);
-    letter-spacing: var(--track);
-    text-transform: uppercase;
-    color: var(--grey);
-    cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.showcase-tab:hover { color: var(--black); }
-
-.showcase-tab.is-active {
-    color: var(--black);
-    border-bottom-color: var(--black);
-}
-
-.showcase-panel {
-    display: grid;
-    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    gap: var(--sp-8);
-    align-items: center;
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-/* Sin esto el atributo hidden no oculta nada: el display de la regla de
-   arriba gana al del navegador. Ya nos mordió con los botones de pago. */
-.showcase-panel[hidden] { display: none; }
-
-.showcase-media img {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-.showcase-copy h3 {
-    margin: 0 0 var(--sp-4);
-    font-size: var(--fs-h2);
-    font-weight: var(--weight-head);
-    letter-spacing: var(--track);
-    text-transform: uppercase;
-}
-
-.showcase-copy p {
-    margin: 0 0 var(--sp-4);
-    max-width: 44ch;
-    font-size: var(--fs-body);
-    line-height: 1.7;
-    color: var(--grey);
-}
-
-.showcase-price {
-    font-size: var(--fs-lead);
-    color: var(--black) !important;
-}
-
-/* ==========================================================================
    SELLOS
    ========================================================================== */
 
@@ -2805,8 +2728,7 @@ font font {
 @media (max-width: 900px) {
     .feature { padding: var(--sp-8) var(--pad-x); }
 
-    .feature-inner,
-    .showcase-panel {
+    .feature-inner {
         grid-template-columns: minmax(0, 1fr);
         gap: var(--sp-6);
     }
@@ -2826,5 +2748,4 @@ font font {
 
 @media (max-width: 520px) {
     .marks-row { grid-template-columns: minmax(0, 1fr); }
-    .showcase-tabs { gap: var(--sp-4); }
 }

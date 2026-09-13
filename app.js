@@ -32,7 +32,6 @@ async function initializeApp() {
     loadHeroImage();
     applyHomeOrder(cachedHomeOrder());
     initReveal();
-    initShowcaseTabs();
     await loadSiteSettings();
     await loadProducts();
     await loadLookbookImages();
@@ -104,35 +103,6 @@ async function loadProducts() {
     buildFilterOptions();
     displayProducts();
     syncCartWithCatalog();
-    fillFeaturedProduct();
-}
-
-// La pestaña Shop enseña una prenda de verdad, con su precio de verdad. Si
-// el catálogo está vacío el bloque entero sobra: enseñar una ficha hueca es
-// peor que no enseñar nada.
-function fillFeaturedProduct() {
-    const panel = document.querySelector('[data-panel="shop"]');
-    if (!panel) return;
-
-    const destacado = state.products.find(p => isPurchasable(p) && productImages(p).length);
-    if (!destacado) {
-        const boton = document.getElementById('tab-shop');
-        if (boton) boton.hidden = true;
-        panel.hidden = true;
-        return;
-    }
-
-    const img = panel.querySelector('[data-featured-product]');
-    if (img) {
-        img.src = productImages(destacado)[0];
-        img.alt = destacado.name;
-    }
-
-    const nombre = panel.querySelector('[data-featured-name]');
-    if (nombre) nombre.textContent = destacado.name;
-
-    const precio = panel.querySelector('[data-featured-price]');
-    if (precio) precio.textContent = money(destacado.price, destacado.currency);
 }
 
 function sortProducts(list, mode) {
@@ -1570,7 +1540,7 @@ const HOME_ORDER_KEY = 'divinaHomeOrder';
 // tenerlo aquí para poder deshacer una copia local cuando el panel vuelve
 // al orden por defecto.
 const HOME_ORDER_DEFAULT = [
-    'feature', 'craft', 'shop', 'lookbook', 'maps', 'showcase', 'marks', 'seo'
+    'feature', 'craft', 'shop', 'lookbook', 'maps', 'marks', 'seo'
 ];
 
 function cachedHomeOrder() {
@@ -1694,38 +1664,6 @@ function initReveal() {
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
 
     bloques.forEach(bloque => observador.observe(bloque));
-}
-
-function initShowcaseTabs() {
-    const pestanas = document.querySelectorAll('.showcase-tab');
-    if (!pestanas.length) return;
-
-    const abrir = nombre => {
-        pestanas.forEach(p => {
-            const activa = p.dataset.tab === nombre;
-            p.classList.toggle('is-active', activa);
-            p.setAttribute('aria-selected', String(activa));
-        });
-        document.querySelectorAll('.showcase-panel').forEach(panel => {
-            const activo = panel.dataset.panel === nombre;
-            panel.hidden = !activo;
-            panel.classList.toggle('is-active', activo);
-        });
-    };
-
-    pestanas.forEach(p => p.addEventListener('click', () => abrir(p.dataset.tab)));
-
-    // Flechas entre pestañas, que es lo que espera quien navega con teclado.
-    pestanas.forEach((p, i) => {
-        p.addEventListener('keydown', e => {
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-            e.preventDefault();
-            const paso = e.key === 'ArrowRight' ? 1 : -1;
-            const siguiente = pestanas[(i + paso + pestanas.length) % pestanas.length];
-            siguiente.focus();
-            abrir(siguiente.dataset.tab);
-        });
-    });
 }
 
 // El carril lleva la serie dos veces seguidas, así que la mitad del
