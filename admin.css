@@ -1645,3 +1645,19 @@ small.hint {
     .order-item { grid-template-columns: 24px 1fr; }
     .order-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
+
+/* Colores de un producto de Printful: se ven, no se editan. */
+.color-row.is-locked {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+}
+
+.color-row.is-locked .color-dot {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--line, #e4e4e4);
+    flex: 0 0 auto;
+}

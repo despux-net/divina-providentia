@@ -848,11 +848,20 @@ function syncCartWithCatalog() {
         item.currency = product.currency;
         item.fulfillment = product.fulfillment;
 
+        // Cestas guardadas antes de que existieran los colores: no llevan
+        // ninguno, y la pasarela ya no encontraria su variante. Se les
+        // pone el primero del producto y se rehace la clave de linea.
+        const paleta = productColors(product);
+        if (!item.color && paleta.length) {
+            item.color = paleta[0].name;
+            item.key = lineKey(item.id, item.size, item.color);
+        }
+
         // La foto de la linea es la del color elegido cuando lo hay: si se
         // cogiera siempre la primera del producto, una cesta con la gris y
         // la blanca ensenaria dos veces la misma prenda.
         const tono = item.color
-            ? productColors(product).find(c => c.name === item.color)
+            ? paleta.find(c => c.name === item.color)
             : null;
         item.image_url = (tono && tono.image)
             || productImages(product)[0]

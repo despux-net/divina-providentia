@@ -471,6 +471,24 @@ async function addGalleryFiles(files) {
 function renderColors() {
     const wrap = $('pColors');
 
+    // En lo que fabrica Printful los colores son un reflejo suyo, igual
+    // que el precio y las tallas. Y ademas el nombre es lo que enlaza cada
+    // color con su variante: renombrarlo aqui dejaria la prenda sin poder
+    // comprarse.
+    const bloqueado = !!state.colorsLocked;
+    $('pAddColorBtn').hidden = bloqueado;
+
+    if (bloqueado) {
+        wrap.innerHTML = state.colors.length
+            ? state.colors.map(c => `
+        <div class="color-row is-locked">
+            <span class="color-dot" style="background:${escapeHtml(c.hex || '#000000')}"></span>
+            <span>${escapeHtml(c.name || '')}</span>
+        </div>`).join('')
+            : '<p class="hint">Este producto no tiene colores en Printful.</p>';
+        return;
+    }
+
     wrap.innerHTML = state.colors.map((c, i) => `
         <div class="color-row">
             <input type="color" data-chex="${i}" value="${escapeHtml(c.hex || '#000000')}"
@@ -531,8 +549,15 @@ function openProductForm(product) {
 
     state.gallery = galleryOf(product);
     state.colors = product && Array.isArray(product.colors)
-        ? product.colors.map(c => ({ name: c.name || '', hex: c.hex || '#000000' }))
+        ? product.colors.map(c => ({
+            name: c.name || '',
+            hex: c.hex || '#000000',
+            // No se edita en ningun sitio, pero si no se arrastra aqui,
+            // guardar el producto se lleva por delante la foto del color.
+            image: c.image || ''
+        }))
         : [];
+    state.colorsLocked = isPrintOnDemand(product);
     renderGallery();
     renderColors();
 
@@ -762,7 +787,11 @@ async function saveProduct(e) {
             image: state.gallery[0] || null,
             colors: state.colors
                 .filter(c => c.name && c.name.trim())
-                .map(c => ({ name: c.name.trim(), hex: c.hex || '#000000' })),
+                .map(c => {
+                    const color = { name: c.name.trim(), hex: c.hex || '#000000' };
+                    if (c.image) color.image = c.image;
+                    return color;
+                }),
             material: $('pMaterial').value.trim() || null,
             care: $('pCare').value.trim() || null,
             published: $('pPublished').checked,
