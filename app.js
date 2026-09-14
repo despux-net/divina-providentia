@@ -189,8 +189,8 @@ function displayProducts() {
         return `
     <article class="product-card ${!canBuy ? 'sold-out' : ''}" data-product-id="${product.id}" data-href="${href}" role="button" tabindex="0" aria-label="View ${escapeHtml(product.name)}">
       <div class="product-image-container">
-        <img src="${escapeHtml(imgs[0])}" alt="${escapeHtml(product.name)}" loading="lazy" class="product-image-bg">
-        ${imgs[1] ? `<img src="${escapeHtml(imgs[1])}" alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
+        <img ${thumbAttrs(imgs[0], [480, 900], CARD_SIZES)} alt="${escapeHtml(product.name)}" loading="lazy" class="product-image-bg">
+        ${imgs[1] ? `<img ${thumbAttrs(imgs[1], [480, 900], CARD_SIZES)} alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
         ${!canBuy ? '<div class="product-status-badge">Sold out</div>' : ''}
 
         <button class="wish-btn${wished ? ' is-active' : ''}" data-wish="${product.id}"
@@ -467,6 +467,43 @@ function productImages(product) {
         ? f
         : `${window.SUPABASE_URL}/storage/v1/object/public/products/${f}`);
 }
+
+// Las fotos del bucket pesan varios MB. Supabase las sirve redimensionadas,
+// y en WebP si el navegador lo acepta, con solo cambiar /object/ por
+// /render/image/: la original sigue intacta para la ficha de producto.
+const STORAGE_OBJECT = '/storage/v1/object/public/';
+const CARD_SIZES = '(max-width: 700px) 50vw, 25vw';
+
+function productThumb(url, width) {
+    if (!url || !url.includes(STORAGE_OBJECT)) return url;
+    return url.replace(STORAGE_OBJECT, '/storage/v1/render/image/public/')
+        + `?width=${width}&quality=75&resize=contain`;
+}
+
+// Atributos de un <img> ligero. Si la version reducida fallara, onerror
+// vuelve a la original: tarda mas, pero nunca queda un hueco roto.
+function thumbAttrs(url, widths, sizes) {
+    const safe = escapeHtml(url || '');
+    if (!url || !url.includes(STORAGE_OBJECT)) return `src="${safe}"`;
+
+    const srcset = widths.map(w => `${escapeHtml(productThumb(url, w))} ${w}w`).join(', ');
+    return `src="${escapeHtml(productThumb(url, widths[0]))}"`
+        + (widths.length > 1 ? ` srcset="${srcset}" sizes="${sizes}"` : '')
+        + ` data-full="${safe}"`
+        + ` onerror="this.onerror=null;this.removeAttribute('srcset');this.src=this.dataset.full"`;
+}
+
+// Al pasar el raton por una tarjeta se empieza a bajar la foto original en
+// segundo plano: cuando llega el clic, la ficha ya la tiene en cache.
+const originalesPedidas = new Set();
+document.addEventListener('mouseover', event => {
+    const card = event.target.closest && event.target.closest('.product-card');
+    const img = card && card.querySelector('img[data-full]');
+    const full = img && img.dataset.full;
+    if (!full || originalesPedidas.has(full)) return;
+    originalesPedidas.add(full);
+    new Image().src = full;
+});
 
 function productColors(product) {
     return Array.isArray(product.colors) ? product.colors.filter(c => c && c.name) : [];
@@ -947,7 +984,7 @@ function updateCart() {
     cartItems.innerHTML = state.cart.map(item => `
       <div class="cart-item">
         <div class="cart-item-image">
-          ${item.image_url ? `<img src="${item.image_url}" alt="${escapeHtml(item.name)}">` : ''}
+          ${item.image_url ? `<img ${thumbAttrs(item.image_url, [200])} alt="${escapeHtml(item.name)}">` : ''}
         </div>
         <div class="cart-item-details">
           <div class="cart-item-name">${escapeHtml(item.name)}</div>

@@ -92,7 +92,7 @@ function renderPDP() {
         <div class="pdp-body">
             <div class="pdp-gallery">
                 <div class="pdp-main" id="pdpMain">
-                    <img id="pdpMainImg" src="${escapeHtml(imgs[0] || '')}" alt="${escapeHtml(product.name)}">
+                    <img id="pdpMainImg" ${thumbAttrs(imgs[0] || '', [900])} alt="${escapeHtml(product.name)}">
                     <div class="pdp-lens" id="pdpLens" aria-hidden="true"></div>
                     ${!canBuy ? '<div class="product-status-badge">Sold out</div>' : ''}
                 </div>
@@ -102,7 +102,7 @@ function renderPDP() {
                         <button class="pdp-thumb${i === 0 ? ' is-active' : ''}" data-img="${i}"
                                 role="tab" aria-selected="${i === 0}"
                                 aria-label="View photo ${i + 1}">
-                            <img src="${escapeHtml(src)}" alt="" loading="lazy">
+                            <img ${thumbAttrs(src, [200])} alt="" loading="lazy">
                         </button>`).join('')}
                 </div>` : ''}
             </div>
@@ -171,6 +171,18 @@ function bindPDP() {
     const imgs = productImages(pdp.product);
 
     bindZoomLens();
+
+    // La foto principal llega primero en version media, que aparece al
+    // instante, y se cambia sola por la original en cuanto termina de bajar.
+    // Si el cliente ya ha cambiado de foto o de color, no se le pisa.
+    if (main && main.dataset.full) {
+        const preview = main.getAttribute('src');
+        const original = new Image();
+        original.onload = () => {
+            if (main.getAttribute('src') === preview) main.src = main.dataset.full;
+        };
+        original.src = main.dataset.full;
+    }
 
     document.querySelectorAll('.pdp-thumb').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -332,8 +344,8 @@ function renderRelated() {
         return `
         <a class="product-card" href="producto.html?id=${encodeURIComponent(p.id)}">
           <div class="product-image-container">
-            <img src="${escapeHtml(imgs[0])}" alt="${escapeHtml(p.name)}" loading="lazy" class="product-image-bg">
-            ${imgs[1] ? `<img src="${escapeHtml(imgs[1])}" alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
+            <img ${thumbAttrs(imgs[0], [480, 900], CARD_SIZES)} alt="${escapeHtml(p.name)}" loading="lazy" class="product-image-bg">
+            ${imgs[1] ? `<img ${thumbAttrs(imgs[1], [480, 900], CARD_SIZES)} alt="" aria-hidden="true" loading="lazy" class="product-image-bg product-image-alt">` : ''}
             ${!isPurchasable(p) ? '<div class="product-status-badge">Sold out</div>' : ''}
           </div>
           <div class="product-info">
