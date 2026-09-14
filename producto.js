@@ -66,12 +66,21 @@ async function initProductPage() {
     renderRelated();
 }
 
+// Tallas en que existe de verdad el color elegido. No todas las prendas se
+// fabrican en todas las combinaciones: la 3XL gris de las Short Sleeve, por
+// ejemplo, Printful no la hace. Un color sin lista no restringe nada.
+function sizesForColor(product, colorName) {
+    const color = productColors(product).find(c => c.name === colorName);
+    return color && Array.isArray(color.sizes) && color.sizes.length ? color.sizes : null;
+}
+
 function renderPDP() {
     const product = pdp.product;
     const imgs = productImages(product);
     const sizes = productSizes(product);
     const colors = productColors(product);
     const canBuy = isPurchasable(product);
+    const permitidas = sizesForColor(product, pdp.color);
 
     document.getElementById('pdp').innerHTML = `
         <nav class="breadcrumbs pdp-crumbs" aria-label="Breadcrumb">
@@ -92,7 +101,7 @@ function renderPDP() {
                     ${imgs.map((src, i) => `
                         <button class="pdp-thumb${i === 0 ? ' is-active' : ''}" data-img="${i}"
                                 role="tab" aria-selected="${i === 0}"
-                                aria-label="Ver foto ${i + 1}">
+                                aria-label="View photo ${i + 1}">
                             <img src="${escapeHtml(src)}" alt="" loading="lazy">
                         </button>`).join('')}
                 </div>` : ''}
@@ -120,10 +129,11 @@ function renderPDP() {
                     <div class="pdp-sizes">
                         ${sizes.map(size => {
         const left = stockOf(product, size);
-        const out = left <= 0;
+        const sinColor = !!permitidas && !permitidas.includes(size);
+        const out = left <= 0 || sinColor;
         return `<button class="pdp-size${out ? ' out' : ''}${pdp.size === size ? ' is-active' : ''}"
                                         data-size="${escapeHtml(size)}" ${out ? 'disabled' : ''}
-                                        title="${sizeTitle(product, size)}">${escapeHtml(size)}</button>`;
+                                        title="${sinColor ? 'Not available in this color' : sizeTitle(product, size)}">${escapeHtml(size)}</button>`;
     }).join('')}
                     </div>
                     <p class="pdp-hint" id="pdpSizeHint"></p>
@@ -141,13 +151,13 @@ function renderPDP() {
 
                 ${product.material ? `
                 <details class="pdp-details">
-                    <summary>Materiales</summary>
+                    <summary>Materials</summary>
                     <p>${escapeHtml(product.material)}</p>
                 </details>` : ''}
 
                 ${product.care ? `
                 <details class="pdp-details">
-                    <summary>Cuidado</summary>
+                    <summary>Care</summary>
                     <p>${escapeHtml(product.care)}</p>
                 </details>` : ''}
             </div>
@@ -187,6 +197,27 @@ function bindPDP() {
             if (elegido && elegido.image && principal) {
                 principal.src = elegido.image;
                 principal.alt = `${pdp.product.name} — ${pdp.color}`;
+            }
+
+            // Al cambiar de color cambian las tallas que existen. Las que no
+            // se fabrican en este color se apagan, y si la talla elegida era
+            // una de ellas se suelta: dejarla marcada mandaria a pagar una
+            // combinacion que la pasarela va a rechazar.
+            const permitidas = sizesForColor(pdp.product, pdp.color);
+            document.querySelectorAll('.pdp-size').forEach(b => {
+                const sinColor = !!permitidas && !permitidas.includes(b.dataset.size);
+                const agotada = stockOf(pdp.product, b.dataset.size) <= 0;
+                b.disabled = sinColor || agotada;
+                b.classList.toggle('out', sinColor || agotada);
+                b.title = sinColor ? 'Not available in this color' : sizeTitle(pdp.product, b.dataset.size);
+            });
+
+            if (pdp.size && permitidas && !permitidas.includes(pdp.size)) {
+                const perdida = pdp.size;
+                pdp.size = null;
+                document.querySelectorAll('.pdp-size').forEach(b => b.classList.remove('is-active'));
+                const aviso = document.getElementById('pdpSizeHint');
+                if (aviso) aviso.textContent = `${perdida} is not available in ${pdp.color}. Choose another size.`;
             }
         });
     });
@@ -295,8 +326,8 @@ function renderRelated() {
         const imgs = productImages(p);
         const colors = productColors(p);
         const meta = colors.length > 1
-            ? `${colors.length} colours`
-            : (productSizes(p).length > 1 ? `${productSizes(p).length} tallas` : '');
+            ? `${colors.length} colors`
+            : (productSizes(p).length > 1 ? `${productSizes(p).length} sizes` : '');
 
         return `
         <a class="product-card" href="producto.html?id=${encodeURIComponent(p.id)}">

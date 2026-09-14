@@ -179,7 +179,7 @@ function displayProducts() {
 
         // Metadatos breves: colores si los hay, si no las tallas.
         let meta = '';
-        if (colors.length > 1) meta = `${colors.length} colours`;
+        if (colors.length > 1) meta = `${colors.length} colors`;
         else if (colors.length === 1) meta = escapeHtml(colors[0].name);
         else if (hasSizes) {
             const sizes = productSizes(product);
@@ -1536,7 +1536,7 @@ function showSuccessMessage(orderId, paid) {
         ? 'Thank you for your purchase. Your garment goes into production and we will email you the tracking as soon as it leaves the workshop.'
         : 'Thank you for your purchase. We will get in touch with you shortly.'}</p>
       ${orderId ? `<p>Order number: <span class="order-id">${escapeHtml(orderId)}</span></p>` : ''}
-      <button class="cta-button" onclick="closeCheckoutAndReset()" style="margin-top:24px">Seguir comprando</button>
+      <button class="cta-button" onclick="closeCheckoutAndReset()" style="margin-top:24px">Continue shopping</button>
     </div>`;
 }
 
