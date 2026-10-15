@@ -1,0 +1,28 @@
+{
+  "id": 28,
+  "name": "Dad hat",
+  "description": "",
+  "category": "headwear",
+  "hidden": false,
+  "soldOut": false,
+  "images": [
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789324825926-4l81vz.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789324814631-jjwlx8.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789324817943-1zvb7y.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789324821413-hra8v5.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789324823497-ltou8b.png"
+  ],
+  "material": "",
+  "care": "",
+  "info": {
+    "price": 29.9,
+    "currency": "EUR",
+    "sizes": [
+      "One size"
+    ],
+    "colors": [
+      "Stone"
+    ],
+    "fulfillment": "printful"
+  }
+}

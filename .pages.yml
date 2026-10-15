@@ -18,6 +18,98 @@ media:
 content:
 
   # ---------------------------------------------------------------
+  # Cada guardado se sube solo a Supabase (workflow cms-productos.yml),
+  # que es de donde leen la tienda y el cobro. Precio, tallas y colores
+  # los manda Printful: se cambian allí y se traen con el botón.
+  - name: productos
+    label: Productos
+    type: collection
+    path: content/productos
+    format: json
+    operations:
+      create: false
+      rename: false
+      delete: false
+    view:
+      fields: [name, category, hidden, soldOut]
+      primary: name
+      sort: [name, id]
+      default:
+        sort: id
+        order: asc
+    actions:
+      - name: actualizar-printful
+        label: Actualizar desde Printful
+        scope: collection
+        workflow: cms-printful.yml
+        confirm:
+          title: Actualizar desde Printful
+          message: >-
+            Se traen de tu tienda de Printful el precio, las tallas, los colores
+            y las variantes de cada producto. Los productos nuevos aparecen aquí
+            ocultos para que los revises. Tarda uno o dos minutos.
+          button: Actualizar
+    fields:
+      - name: id
+        label: Nº de producto
+        type: number
+        readonly: true
+      - name: name
+        label: Nombre
+        type: string
+        required: true
+        options: { maxlength: 120 }
+      - name: description
+        label: Descripción
+        type: text
+        options: { maxlength: 2000 }
+      - name: hidden
+        label: Ocultar al público
+        type: boolean
+        description: Oculto no sale en la tienda ni se puede comprar.
+      - name: soldOut
+        label: Agotado (sold out)
+        type: boolean
+        description: Se ve en la tienda marcado como agotado y no se puede comprar.
+      - name: images
+        label: Fotos
+        type: image
+        description: >-
+          La primera es la portada en la rejilla de la tienda y la segunda sale
+          al pasar el ratón. Arrastra para reordenar; quita o añade las que quieras.
+        options:
+          multiple: true
+          extensions: [jpg, jpeg, png, webp]
+      - name: category
+        label: Categoría
+        type: select
+        options:
+          values:
+            - { name: tees, label: Franelas }
+            - { name: caps, label: Gorras }
+            - { name: headwear, label: Gorras (dad hat) }
+            - { name: hoodies, label: Suéteres }
+      - name: material
+        label: Materiales
+        type: text
+        options: { maxlength: 600 }
+      - name: care
+        label: Cuidado
+        type: text
+        options: { maxlength: 600 }
+      - name: info
+        label: Datos de Printful (solo lectura)
+        type: object
+        readonly: true
+        description: Cámbialos en Printful y pulsa «Actualizar desde Printful».
+        fields:
+          - { name: price, label: Precio desde, type: number }
+          - { name: currency, label: Moneda, type: string }
+          - { name: sizes, label: Tallas, type: string, list: true }
+          - { name: colors, label: Colores, type: string, list: true }
+          - { name: fulfillment, label: Fabricación, type: string }
+
+  # ---------------------------------------------------------------
   - name: portada
     label: Portada
     type: file

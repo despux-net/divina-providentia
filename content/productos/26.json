@@ -1,0 +1,35 @@
+{
+  "id": 26,
+  "name": "Short Sleeve T-shirt",
+  "description": "",
+  "category": "tees",
+  "hidden": false,
+  "soldOut": false,
+  "images": [
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789297793470-59echy.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789297785616-hwpd4i.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789297788279-jb60rd.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789297790912-73s9fn.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789297792327-3zqh1q.png"
+  ],
+  "material": "",
+  "care": "",
+  "info": {
+    "price": 37.9,
+    "currency": "EUR",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "4XL",
+      "5XL"
+    ],
+    "colors": [
+      "Heather Grey"
+    ],
+    "fulfillment": "printful"
+  }
+}

@@ -1,0 +1,48 @@
+name: Productos de Pages CMS a Supabase
+
+# Cada vez que se guarda un producto en Pages CMS llega un commit a main.
+# La tienda y el cobro leen de Supabase, así que el cambio se sube allí:
+# en unos segundos el nombre, las fotos, el oculto o el agotado ya valen
+# en la web y en la pasarela de pago, sin esperar al despliegue.
+
+on:
+  push:
+    branches: [main]
+    paths: ['content/productos/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Comparte cola con el botón de Printful para que nunca escriban a la vez.
+concurrency:
+  group: cms-productos
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Subir los productos editados
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          # Solo los archivos de este push: así un cambio hecho en el panel
+          # en otro producto no se pisa con lo que hubiera en el archivo.
+          # Lanzado a mano, o en el primer push de la rama, se suben todos.
+          if [ "${{ github.event_name }}" = "push" ] && git cat-file -e "$BEFORE" 2>/dev/null; then
+            mapfile -t archivos < <(git diff --name-only "$BEFORE" "$GITHUB_SHA" -- content/productos)
+            [ ${#archivos[@]} -eq 0 ] && { echo "Nada que subir"; exit 0; }
+            node scripts/cms/productos.mjs sync "${archivos[@]}"
+          else
+            node scripts/cms/productos.mjs sync
+          fi

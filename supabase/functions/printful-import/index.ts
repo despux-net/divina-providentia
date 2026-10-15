@@ -46,12 +46,19 @@ Deno.serve(async (req: Request) => {
     // Esto escribe en el catálogo, así que solo entra el dueño. La sesión
     // la manda el panel; se comprueba contra is_admin(), que es la misma
     // regla que protege el resto de la base.
+    // El botón de Pages CMS no tiene sesión: lo lanza un workflow de GitHub
+    // que se identifica con la clave de servicio, guardada como secreto
+    // del repositorio. Esa clave ya abre la base entera, así que no da más
+    // poder del que tiene quien la posee.
+    const authorization = req.headers.get("Authorization") ?? "";
+    const isService = authorization === `Bearer ${SERVICE_ROLE_KEY}`;
+
     const caller = createClient(SUPABASE_URL, ANON_KEY, {
-      global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+      global: { headers: { Authorization: authorization } },
     });
 
-    const { data: isAdmin } = await caller.rpc("is_admin");
-    if (isAdmin !== true) {
+    const isAdmin = isService || (await caller.rpc("is_admin")).data === true;
+    if (!isAdmin) {
       return reply({ error: "Hay que entrar como administrador para importar de Printful." }, 403);
     }
 

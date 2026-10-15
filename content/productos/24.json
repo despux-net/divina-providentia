@@ -1,0 +1,27 @@
+{
+  "id": 24,
+  "name": "Low-profile baseball cap",
+  "description": "",
+  "category": "caps",
+  "hidden": false,
+  "soldOut": false,
+  "images": [
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789288040895-53lvry.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789288035685-99p0sf.png",
+    "https://files.cdn.printful.com/files/d8a/d8abe2a240cafc8ec017f7ef4c0f3319_preview.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789288039071-koy5cj.png"
+  ],
+  "material": "",
+  "care": "",
+  "info": {
+    "price": 32.9,
+    "currency": "EUR",
+    "sizes": [
+      "One size"
+    ],
+    "colors": [
+      "White"
+    ],
+    "fulfillment": "printful"
+  }
+}

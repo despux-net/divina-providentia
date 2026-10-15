@@ -1,0 +1,32 @@
+{
+  "id": 25,
+  "name": "Unisex Hoodie",
+  "description": "",
+  "category": "hoodies",
+  "hidden": false,
+  "soldOut": false,
+  "images": [
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789293725604-6ol2gm.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789293727237-lxxcbs.png",
+    "https://files.cdn.printful.com/files/07f/07fa2d08ae40cb520a61f7bb725f1940_preview.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789293722746-moo1yl.png"
+  ],
+  "material": "",
+  "care": "",
+  "info": {
+    "price": 59.9,
+    "currency": "EUR",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL"
+    ],
+    "colors": [
+      "Carbon Grey"
+    ],
+    "fulfillment": "printful"
+  }
+}

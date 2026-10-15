@@ -37,7 +37,7 @@ jobs:
       # que se publica, no al repositorio.
       - name: Quitar del despliegue lo que no es la web
         run: |
-          rm -rf supabase .github
+          rm -rf supabase .github scripts content/productos .pages.yml
           rm -f *.bat *.py *.sql test-*.js auto-upload.js carousel-new.js
           rm -f *.md .processed-lookbook.json package*.json
           rm -f debug.html debug-db.html test-products.html

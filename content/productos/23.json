@@ -1,0 +1,35 @@
+{
+  "id": 23,
+  "name": "Unisex Tee",
+  "description": "Unisex Divina Providentia tee, permanent collection.",
+  "category": "tees",
+  "hidden": false,
+  "soldOut": false,
+  "images": [
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789232900552-xpp6yz.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789232887803-xdnljv.png",
+    "https://files.cdn.printful.com/files/3d8/3d8b51aa1c7e762714fddcc689aa5ab4_preview.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789232894267-5hhqiu.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789232891667-4n9lq6.png",
+    "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/products/1789232899390-t4o4g3.png"
+  ],
+  "material": "Algodón (Bella + Canvas 3001)",
+  "care": "",
+  "info": {
+    "price": 29.9,
+    "currency": "EUR",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL"
+    ],
+    "colors": [
+      "Solid White Blend"
+    ],
+    "fulfillment": "printful"
+  }
+}

@@ -1,0 +1,52 @@
+name: Actualizar desde Printful
+
+# El botón «Actualizar desde Printful» de Pages CMS lanza este workflow.
+# Reimporta todos los productos de la tienda de Printful (precio, tallas,
+# colores y variantes) y deja en content/productos un archivo para cada
+# producto nuevo, que entra oculto hasta que lo revises y lo muestres.
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Datos que manda Pages CMS (no se usan)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cms-productos
+  cancel-in-progress: false
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Reimportar Printful y exportar productos
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/cms/productos.mjs printful
+
+      # Un commit hecho con GITHUB_TOKEN no dispara otros workflows, así
+      # que este no vuelve a lanzar la subida a Supabase: no hace falta,
+      # los archivos acaban de salir de allí.
+      - name: Guardar los archivos en el repositorio
+        if: always()
+        run: |
+          git add content/productos
+          if git diff --cached --quiet; then
+            echo "Sin cambios en los archivos de productos"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit -m "content: productos al día con Printful"
+          git push
