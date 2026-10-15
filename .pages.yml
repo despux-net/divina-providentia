@@ -26,6 +26,8 @@ content:
     type: collection
     path: content/productos
     format: json
+    # Sin esto Pages CMS solo busca archivos .md y la lista sale vacía.
+    filename: "{fields.id}.json"
     operations:
       create: false
       rename: false

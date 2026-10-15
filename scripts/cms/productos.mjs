@@ -35,7 +35,8 @@ const STORAGE = `${PROJECT_URL}/storage/v1/object/public/products/`;
 const CATEGORIES = ['tees', 'caps', 'hoodies', 'headwear'];
 
 if (!KEY) {
-    console.error('Falta SUPABASE_SERVICE_ROLE_KEY. Añádelo en Settings → Secrets → Actions del repositorio.');
+    // La línea ::error:: sale en el resumen del run de GitHub, sin abrir el log.
+    console.error('::error title=Falta el secreto SUPABASE_SERVICE_ROLE_KEY::Añádelo en GitHub → Settings → Secrets and variables → Actions (la clave service_role legacy de Supabase, la que empieza por eyJ).');
     process.exit(1);
 }
 
