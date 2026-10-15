@@ -50,7 +50,9 @@ async function api(ruta, opciones = {}) {
         ...opciones,
         headers: {
             apikey: KEY,
-            Authorization: `Bearer ${KEY}`,
+            // Las claves nuevas (sb_secret_…) no son un JWT: van solo en
+            // apikey, y en Authorization el gateway las rechazaría.
+            ...(KEY.startsWith('sb_') ? {} : { Authorization: `Bearer ${KEY}` }),
             'Content-Type': 'application/json',
             ...(opciones.headers || {})
         }

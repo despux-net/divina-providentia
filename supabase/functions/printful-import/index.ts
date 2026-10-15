@@ -35,6 +35,30 @@ async function printful(path: string, key: string) {
   return payload.result;
 }
 
+// ¿Llega una clave de servicio? Puede ser la legacy (eyJ…) o una nueva
+// (sb_secret_…), y no tiene por qué coincidir letra a letra con la que ve
+// esta función. En vez de compararlas se le pregunta a Supabase: la lista
+// de usuarios de Auth solo se la enseña a una clave de servicio. La clave
+// anónima del panel y la sesión del dueño no pasan y siguen por is_admin.
+async function isServiceKey(req: Request): Promise<boolean> {
+  const bearer = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
+  const apikey = req.headers.get("apikey") ?? "";
+
+  for (const token of new Set([bearer, apikey])) {
+    if (!token) continue;
+    if (token === SERVICE_ROLE_KEY) return true;
+
+    const headers: Record<string, string> = { apikey: token };
+    if (!token.startsWith("sb_")) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?per_page=1`, { headers })
+      .catch(() => null);
+    await response?.body?.cancel();
+    if (response?.ok) return true;
+  }
+  return false;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: CORS });
@@ -51,7 +75,7 @@ Deno.serve(async (req: Request) => {
     // del repositorio. Esa clave ya abre la base entera, así que no da más
     // poder del que tiene quien la posee.
     const authorization = req.headers.get("Authorization") ?? "";
-    const isService = authorization === `Bearer ${SERVICE_ROLE_KEY}`;
+    const isService = await isServiceKey(req);
 
     const caller = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: authorization } },
