@@ -176,6 +176,14 @@ async function sync(archivos) {
             });
             if (!filas || !filas.length) throw new Error(`no existe el producto ${id} en Supabase`);
             console.log(`✓ ${archivo}: ${filas[0].name}${entrada.hidden ? ' (oculto)' : ''}${entrada.soldOut ? ' (agotado)' : ''}`);
+
+            // El nombre se lleva también a Printful, para que la tienda y el
+            // panel de Printful digan lo mismo. Es lo único editorial que
+            // Printful guarda de un producto.
+            if (filas[0].fulfillment === 'printful') {
+                const r = await printfulCall({ action: 'rename', productId: id, name: filas[0].name });
+                if (r.changed) console.log(`  ↳ Printful: «${r.before}» → «${r.name}»`);
+            }
         } catch (error) {
             fallos++;
             console.error(`✗ ${archivo}: ${error.message}`);
@@ -206,11 +214,15 @@ async function exportAll() {
 
 // ---------------- printful: reimportar la tienda ----------------
 
-async function printfulImport() {
-    const llamar = body => api('/functions/v1/printful-import', {
+function printfulCall(body) {
+    return api('/functions/v1/printful-import', {
         method: 'POST',
         body: JSON.stringify(body)
     });
+}
+
+async function printfulImport() {
+    const llamar = printfulCall;
 
     const { products } = await llamar({ action: 'list' });
     let fallos = 0;

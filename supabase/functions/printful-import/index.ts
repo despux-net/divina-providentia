@@ -21,9 +21,11 @@ function reply(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
 
-async function printful(path: string, key: string) {
+async function printful(path: string, key: string, init: { method?: string; body?: unknown } = {}) {
   const response = await fetch(`https://api.printful.com${path}`, {
-    headers: { "Authorization": `Bearer ${key}` },
+    method: init.method ?? "GET",
+    headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+    body: init.body === undefined ? undefined : JSON.stringify(init.body),
   });
   const payload = await response.json().catch(() => ({}));
 
@@ -312,6 +314,44 @@ Deno.serve(async (req: Request) => {
         variants: variants.length,
         images: images.length,
       });
+    }
+
+    // -----------------------------------------------------------------
+    // Llevar a Printful el nombre que se puso en Pages CMS
+    // -----------------------------------------------------------------
+    // Es lo único editorial que Printful guarda de un producto: la
+    // descripción, las fotos propias, oculto y agotado no tienen sitio allí.
+    if (body.action === "rename") {
+      const productId = Number(body.productId);
+      const name = String(body.name ?? "").trim();
+      if (!Number.isInteger(productId) || productId <= 0 || !name) {
+        throw new Error("Faltan el producto o el nombre");
+      }
+
+      const { data: link } = await admin
+        .from("product_printful_variants")
+        .select("printful_sync_product_id")
+        .eq("product_id", productId)
+        .limit(1)
+        .maybeSingle();
+
+      // Un producto propio, sin Printful detrás: no hay nada que renombrar.
+      if (!link) return reply({ productId, linked: false, changed: false });
+
+      const syncProductId = link.printful_sync_product_id;
+      const detail = await printful(`/store/products/${syncProductId}`, key);
+      const before = String(detail?.sync_product?.name ?? "");
+
+      if (before === name) {
+        return reply({ productId, linked: true, changed: false, name });
+      }
+
+      await printful(`/store/products/${syncProductId}`, key, {
+        method: "PUT",
+        body: { sync_product: { name } },
+      });
+
+      return reply({ productId, linked: true, changed: true, before, name });
     }
 
     throw new Error("Acción no reconocida");
