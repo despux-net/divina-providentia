@@ -1,0 +1,317 @@
+# ===================================================================
+# DIVINA PROVIDENTIA — PAGES CMS
+#
+# Lo que antes se editaba en las pestañas Portada, Pie de página,
+# Apariencia y Lookbook del panel (admin.html) ahora vive en content/
+# y se edita desde https://app.pagescms.org. Cada guardado es un commit
+# en main, y el workflow de GitHub Pages publica la web sola.
+#
+# Productos, pedidos y cobros siguen en admin.html: necesitan la base
+# de datos (stock, pagos), no un archivo.
+# ===================================================================
+
+media:
+  input: media
+  output: /media
+  categories: [image]
+
+content:
+
+  # ---------------------------------------------------------------
+  - name: portada
+    label: Portada
+    type: file
+    path: content/portada.json
+    format: json
+    fields:
+      - name: heroImage
+        label: Imagen de portada
+        type: image
+        description: >-
+          Fondo de la primera pantalla, detrás del rótulo DIVINA PROVIDENTIA.
+          Vacío = fondo blanco. Mejor apaisada y de 1920 px de ancho o más.
+
+      - name: feature
+        label: Bloque destacado
+        type: object
+        description: La primera franja después de la portada. Un campo vacío usa el texto de fábrica.
+        fields:
+          - name: eyebrow
+            label: Antetítulo
+            type: string
+            description: La línea pequeña de arriba.
+            options: { maxlength: 60 }
+          - name: title
+            label: Titular
+            type: text
+            description: Cada salto de línea se respeta.
+            options: { maxlength: 120 }
+          - name: body
+            label: Texto
+            type: text
+            description: Deja una línea en blanco para separar párrafos.
+            options: { maxlength: 1200 }
+          - name: ctaLabel
+            label: Texto del botón
+            type: string
+            description: Vacío = sin botón.
+            options: { maxlength: 40 }
+          - name: ctaHref
+            label: Enlace del botón
+            type: string
+            description: "Por ejemplo #tienda"
+            options: { maxlength: 300 }
+          - name: image
+            label: Imagen
+            type: image
+            description: Vacía = se usa la primera foto del lookbook.
+          - name: imageAlt
+            label: Texto alternativo
+            type: string
+            description: Lo que lee quien no ve la foto.
+            options: { maxlength: 140 }
+
+      - name: order
+        label: Orden de las secciones
+        type: select
+        list: true
+        description: >-
+          De arriba abajo. Arrastra para reordenar. La barra del menú y el pie
+          no se mueven; una sección que no esté en la lista se queda en su sitio.
+        options:
+          values:
+            - { name: feature, label: Bloque destacado }
+            - { name: craft, label: Bloque oscuro (artesanía) }
+            - { name: shop, label: Tienda }
+            - { name: lookbook, label: Lookbook }
+            - { name: marks, label: Garantías }
+            - { name: seo, label: Texto largo }
+
+  # ---------------------------------------------------------------
+  - name: lookbook
+    label: Lookbook
+    type: file
+    path: content/lookbook.json
+    format: json
+    fields:
+      - name: images
+        label: Fotos del carrusel
+        type: object
+        list: true
+        description: Se muestran en este orden; arrastra para moverlas.
+        fields:
+          - name: image
+            label: Foto
+            type: image
+            required: true
+          - name: alt
+            label: Texto alternativo
+            type: string
+            options: { maxlength: 140 }
+
+  # ---------------------------------------------------------------
+  - name: pie
+    label: Pie de página
+    type: file
+    path: content/pie.json
+    format: json
+    fields:
+      - name: brandTitle
+        label: Título de la marca
+        type: string
+        options: { maxlength: 80 }
+      - name: tagline
+        label: Lema
+        type: text
+        options: { maxlength: 300 }
+      - name: social
+        label: Redes y enlaces
+        type: object
+        list: true
+        description: "El enlace tiene que empezar por https://, mailto: o tel:. Los demás no se muestran."
+        fields:
+          - name: label
+            label: Texto
+            type: string
+            required: true
+            options: { maxlength: 40 }
+          - name: url
+            label: Enlace
+            type: string
+            required: true
+            pattern:
+              regex: "^(https?://|mailto:|tel:).+"
+              message: "Empieza por https://, mailto: o tel:"
+      - name: navTitle
+        label: Título de la columna de navegación
+        type: string
+        options: { maxlength: 40 }
+      - name: contactTitle
+        label: Título de la columna de atención
+        type: string
+        options: { maxlength: 40 }
+      - name: contactLines
+        label: Datos de atención
+        type: string
+        list: true
+        description: Una línea por renglón (teléfono, horario…).
+        options: { maxlength: 120 }
+      - name: formTitle
+        label: Título del formulario
+        type: string
+        options: { maxlength: 40 }
+      - name: rights
+        label: Aviso de derechos
+        type: string
+        description: El año y el nombre de la marca ya van delante, puestos solos.
+        options: { maxlength: 160 }
+
+  # ---------------------------------------------------------------
+  - name: apariencia
+    label: Apariencia
+    type: file
+    path: content/apariencia.json
+    format: json
+    fields:
+      # --- Tipografía ---
+      - name: fontHead
+        label: Tipografía de los títulos
+        type: select
+        options: &fuentes
+          values:
+            - { name: helvetica, label: Helvetica / System }
+            - { name: georgia, label: Georgia }
+            - { name: inter, label: Inter }
+            - { name: archivo, label: Archivo }
+            - { name: archivo-black, label: Archivo Black }
+            - { name: space-grotesk, label: Space Grotesk }
+            - { name: dm-sans, label: DM Sans }
+            - { name: oswald, label: Oswald }
+            - { name: bebas-neue, label: Bebas Neue }
+            - { name: anton, label: Anton }
+            - { name: playfair-display, label: Playfair Display }
+            - { name: cormorant, label: Cormorant Garamond }
+            - { name: libre-baskerville, label: Libre Baskerville }
+            - { name: cinzel, label: Cinzel }
+            - { name: courier-prime, label: Courier Prime }
+            - { name: jetbrains-mono, label: JetBrains Mono }
+      - name: fontHeroTitle
+        label: Tipografía del título de portada
+        type: select
+        description: El rótulo grande de la primera pantalla.
+        options:
+          values:
+            - { name: auto, label: La misma que los títulos }
+            - { name: helvetica, label: Helvetica / System }
+            - { name: georgia, label: Georgia }
+            - { name: inter, label: Inter }
+            - { name: archivo, label: Archivo }
+            - { name: archivo-black, label: Archivo Black }
+            - { name: space-grotesk, label: Space Grotesk }
+            - { name: dm-sans, label: DM Sans }
+            - { name: oswald, label: Oswald }
+            - { name: bebas-neue, label: Bebas Neue }
+            - { name: anton, label: Anton }
+            - { name: playfair-display, label: Playfair Display }
+            - { name: cormorant, label: Cormorant Garamond }
+            - { name: libre-baskerville, label: Libre Baskerville }
+            - { name: cinzel, label: Cinzel }
+            - { name: courier-prime, label: Courier Prime }
+            - { name: jetbrains-mono, label: JetBrains Mono }
+      - name: fontBody
+        label: Tipografía del texto
+        type: select
+        options: *fuentes
+      - name: weightHead
+        label: Grosor de los títulos
+        type: number
+        description: De 300 (fino) a 900 (muy grueso), en saltos de 100.
+        options: { min: 300, max: 900 }
+
+      # --- Tamaños ---
+      - name: fsBody
+        label: Tamaño del texto (px)
+        type: number
+        options: { min: 11, max: 20 }
+      - name: navH
+        label: Alto de la cabecera (px)
+        type: number
+        options: { min: 40, max: 120 }
+      - name: navTitleScale
+        label: Título de la cabecera (×)
+        type: number
+        description: Si lo agrandas mucho, sube también el alto de la cabecera.
+        options: { min: 0.6, max: 3 }
+      - name: heroTitleScale
+        label: Título de portada (×)
+        type: number
+        description: Va siempre en una línea; si no cupiera, se encoge solo.
+        options: { min: 0.4, max: 2 }
+      - name: sectionTitleScale
+        label: Títulos de sección (×)
+        type: number
+        options: { min: 0.6, max: 3 }
+      - name: track
+        label: Separación entre letras (em)
+        type: number
+        options: { min: 0, max: 0.4 }
+      - name: trackWide
+        label: Separación en etiquetas (em)
+        type: number
+        options: { min: 0, max: 0.5 }
+
+      # --- Portada ---
+      - name: heroAlign
+        label: Alineación del título de portada
+        type: select
+        options:
+          values:
+            - { name: left, label: Izquierda }
+            - { name: center, label: Centro }
+            - { name: right, label: Derecha }
+      - name: heroMinH
+        label: Altura de la portada (% de la pantalla)
+        type: number
+        options: { min: 40, max: 100 }
+      - name: heroOverlay
+        label: Oscurecer la imagen de portada
+        type: number
+        description: 0 = nada, 0.85 = casi negra.
+        options: { min: 0, max: 0.85 }
+
+      # --- Colores ---
+      - name: colBg
+        label: Color de fondo
+        type: string
+        description: "Hexadecimal, por ejemplo #ffffff. Con fondo oscuro, aclara también el texto: la web no invierte los colores sola."
+        pattern: &hex
+          regex: "^#[0-9a-fA-F]{6}$"
+          message: "Usa un color hexadecimal como #1a2b3c"
+      - name: colText
+        label: Color del texto y trazos
+        type: string
+        pattern: *hex
+      - name: colNavText
+        label: Color del texto de la cabecera
+        type: string
+        description: Vacío = el mismo que el texto general.
+        pattern: &hexOpcional
+          regex: "^(#[0-9a-fA-F]{6})?$"
+          message: "Déjalo vacío o usa un color hexadecimal como #1a2b3c"
+      - name: colHeroTitle
+        label: Color del título de portada
+        type: string
+        description: Vacío = automático (negro sobre fondo liso, blanco sobre la foto).
+        pattern: *hexOpcional
+      - name: colGrey
+        label: Color del texto secundario
+        type: string
+        pattern: *hex
+      - name: colLine
+        label: Color de las líneas
+        type: string
+        pattern: *hex
+      - name: colSoft
+        label: Color del fondo suave
+        type: string
+        pattern: *hex

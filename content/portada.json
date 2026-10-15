@@ -1,0 +1,13 @@
+{
+  "heroImage": "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/lookbook/hero-1789626962613.jpeg",
+  "feature": {
+    "eyebrow": "Identity, worn",
+    "title": "An emblem,\nnot a logo",
+    "body": "What we put on a garment is a coat of arms, not a brand mark. The cross, the lamb, the gold and silver pales — every one of them carried a meaning centuries before it carried a name, and every one says the same thing: that history is governed, and that what you inherit is worth wearing in the open.\n\nDivine Providence is the conviction that none of it happens by accident. Wear the emblem and you are not advertising a label. You are declaring a lineage — the tradition you come from, and the identity you have decided to keep.",
+    "ctaLabel": "Shop the collection",
+    "ctaHref": "#tienda",
+    "image": "https://nzwtafacdpdgulzcwntx.supabase.co/storage/v1/object/public/lookbook/feature-1789626698169.jpeg",
+    "imageAlt": "Divina Providentia permanent collection"
+  },
+  "order": ["feature", "lookbook", "shop", "seo", "craft", "marks"]
+}

@@ -1661,3 +1661,9 @@ small.hint {
     border: 1px solid var(--line, #e4e4e4);
     flex: 0 0 auto;
 }
+
+/* Enlace a Pages CMS, donde ahora se editan contenido y diseño. */
+a.tab {
+    text-decoration: none;
+    margin-left: auto;
+}

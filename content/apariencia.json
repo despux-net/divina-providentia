@@ -1,0 +1,23 @@
+{
+  "fontHead": "oswald",
+  "fontHeroTitle": "auto",
+  "fontBody": "oswald",
+  "weightHead": 300,
+  "fsBody": 15,
+  "navH": 40,
+  "navTitleScale": 1.1,
+  "heroTitleScale": 0.75,
+  "sectionTitleScale": 1.05,
+  "track": 0.13,
+  "trackWide": 0.34,
+  "heroAlign": "center",
+  "heroMinH": 100,
+  "heroOverlay": 0.27,
+  "colBg": "#ffffff",
+  "colText": "#000000",
+  "colNavText": "",
+  "colHeroTitle": "",
+  "colGrey": "#767676",
+  "colLine": "#e4e4e4",
+  "colSoft": "#f4f4f4"
+}

@@ -1,0 +1,12 @@
+{
+  "brandTitle": "Divina Providentia",
+  "tagline": "In God I Trust",
+  "social": [
+    { "label": "Instagram", "url": "https://www.instagram.com/providentiadivina/" }
+  ],
+  "navTitle": "Navigation",
+  "contactTitle": "Support",
+  "contactLines": ["+1 5555555555", "Mon–Fri · 9:00–18:00"],
+  "formTitle": "Write to us",
+  "rights": "All rights reserved"
+}

@@ -30,14 +30,14 @@ async function initializeApp() {
     loadCartFromStorage();
     handleCheckoutReturn();
     recuperarPagoPendiente();
-    loadHeroImage();
     applyHomeOrder(cachedHomeOrder());
     initReveal();
     initMapsModal();
     initHeroTitleFit();
+    const contenido = loadSiteContent();
     await loadSiteSettings();
     await loadProducts();
-    await loadLookbookImages();
+    await loadLookbookImages(contenido);
 }
 
 // ===================================
@@ -284,60 +284,17 @@ function onlinePaymentOn() {
 async function loadSiteSettings() {
     if (!window.supabaseClient) return;
     try {
-        let { data, error } = await window.supabaseClient
+        const { data, error } = await window.supabaseClient
             .from('site_settings')
-            .select('require_account, online_payment, paypal_payment, paypal_client_id, theme, footer, home_feature, home_order')
+            .select('require_account, online_payment, paypal_payment, paypal_client_id')
             .eq('id', 1)
             .maybeSingle();
-
-        // Mientras no se ejecute el SQL del pie esa columna no existe y
-        // la consulta entera falla. Se reintenta sin ella: sería absurdo
-        // perder el tema y el interruptor de cuenta por unos rótulos.
-        if (error) {
-            ({ data, error } = await window.supabaseClient
-                .from('site_settings')
-                .select('require_account, online_payment, paypal_payment, paypal_client_id, theme, home_feature, home_order')
-                .eq('id', 1)
-                .maybeSingle());
-        }
 
         if (!error && data) {
             siteSettings.requireAccount = !!data.require_account;
             siteSettings.onlinePayment = data.online_payment !== false;
             siteSettings.paypalPayment = data.paypal_payment === true;
             siteSettings.paypalClientId = data.paypal_client_id || null;
-
-            // La portada se recoloca antes de que el visitante llegue a
-            // verla: si esto corriera más tarde, vería las secciones dar un
-            // salto delante de sus ojos.
-            // Sin orden guardado se recoloca al de fábrica a propósito: puede
-            // que la copia local del navegador tenga uno viejo aplicado ya.
-            applyHomeOrder(Array.isArray(data.home_order) && data.home_order.length
-                ? data.home_order
-                : HOME_ORDER_DEFAULT);
-            applyHomeFeature(data.home_feature);
-            rememberHomeOrder(data.home_order);
-
-            // Los textos del pie. Si no hay nada guardado se deja el HTML
-            // tal cual, que ya trae escritos los de fábrica.
-            if (data.footer && window.DPFooter) {
-                window.DPFooter.apply(data.footer);
-            }
-
-            // En la vista previa del panel manda el borrador que el
-            // dueño está tocando, no lo que hay guardado: si se aplicara
-            // aquí, machacaría sus cambios sin avisar.
-            const isPreview = location.search.includes('preview');
-
-            // El tema se guarda también en el navegador para poder
-            // aplicarlo de inmediato en la siguiente visita, antes de
-            // que dé tiempo a consultar la base.
-            if (data.theme && window.DPTheme && !isPreview) {
-                window.DPTheme.apply(data.theme);
-                try {
-                    localStorage.setItem('dpTheme', JSON.stringify(data.theme));
-                } catch (e) { /* almacenamiento lleno o bloqueado */ }
-            }
         }
     } catch (e) {
         // Ante la duda, no se bloquea la compra: el servidor tiene la
@@ -346,30 +303,84 @@ async function loadSiteSettings() {
     }
 }
 
-async function loadHeroImage() {
-    const hero = document.getElementById('inicio');
-    if (!hero || !window.supabaseClient) return;
+// ===================================
+// CONTENIDO EDITABLE (PAGES CMS)
+// ===================================
 
+// Portada, pie, apariencia y lookbook se escriben en Pages CMS, que los
+// guarda como archivos en content/. Cada archivo se lee por separado:
+// si uno falla, el resto de la web sigue aplicándose y lo que falte se
+// queda con lo que ya trae escrito el HTML.
+async function readContent(nombre) {
     try {
-        const { data, error } = await window.supabaseClient
-            .from('site_settings')
-            .select('hero_image')
-            .eq('id', 1)
-            .maybeSingle();
-
-        if (error || !data || !data.hero_image) return;
-
-        // Se precarga antes de aplicarla para que no se vea el salto de
-        // blanco a foto ni un rótulo blanco sobre fondo blanco.
-        const img = new Image();
-        img.onload = () => {
-            hero.style.backgroundImage = `url("${data.hero_image}")`;
-            hero.classList.add('has-image');
-        };
-        img.src = data.hero_image;
+        // no-cache revalida con el servidor: un cambio recién publicado
+        // se ve en la siguiente visita sin esperar a que caduque nada.
+        const respuesta = await fetch(`content/${nombre}.json`, { cache: 'no-cache' });
+        return respuesta.ok ? await respuesta.json() : null;
     } catch (e) {
-        console.warn('No se pudo cargar la portada:', e);
+        console.warn(`No se pudo leer content/${nombre}.json:`, e);
+        return null;
     }
+}
+
+// Devuelve el lookbook para que loadLookbookImages no lo pida dos veces.
+async function loadSiteContent() {
+    const [apariencia, portada, pie, lookbook] = await Promise.all([
+        readContent('apariencia'),
+        readContent('portada'),
+        readContent('pie'),
+        readContent('lookbook')
+    ]);
+
+    // El tema se guarda también en el navegador para poder aplicarlo de
+    // inmediato en la siguiente visita, antes de que llegue el archivo.
+    if (apariencia && window.DPTheme) {
+        window.DPTheme.apply(apariencia);
+        try {
+            localStorage.setItem('dpTheme', JSON.stringify(apariencia));
+        } catch (e) { /* almacenamiento lleno o bloqueado */ }
+        fitHeroTitle();
+    }
+
+    if (pie && window.DPFooter) {
+        window.DPFooter.apply(pie);
+    }
+
+    if (portada) {
+        // Sin orden guardado se recoloca al de fábrica a propósito: puede
+        // que la copia local del navegador tenga uno viejo aplicado ya.
+        const orden = Array.isArray(portada.order) ? portada.order.filter(Boolean) : [];
+        applyHomeOrder(orden.length ? orden : HOME_ORDER_DEFAULT);
+        rememberHomeOrder(orden);
+        applyHomeFeature(portada.feature);
+        applyHeroImage(portada.heroImage);
+    }
+
+    return lookbook;
+}
+
+// Pages CMS guarda las fotos subidas como rutas del sitio (/media/…); las
+// que vienen de antes de la migración siguen siendo URLs completas.
+function contentImageUrl(ruta) {
+    const s = String(ruta || '').trim();
+    if (!s) return '';
+    if (/^https?:\/\//i.test(s)) return s;
+    return s.replace(/^\/+/, '');
+}
+
+function applyHeroImage(ruta) {
+    const hero = document.getElementById('inicio');
+    const url = contentImageUrl(ruta);
+    if (!hero || !url) return;
+
+    // Se precarga antes de aplicarla para que no se vea el salto de
+    // blanco a foto ni un rótulo blanco sobre fondo blanco.
+    const img = new Image();
+    img.onload = () => {
+        hero.style.backgroundImage = `url("${url.replace(/"/g, '%22')}")`;
+        hero.classList.add('has-image');
+    };
+    img.src = url;
 }
 
 // ===================================
@@ -1593,13 +1604,16 @@ function closeCheckoutAndReset() {
 // LOOKBOOK
 // ===================================
 
-async function loadLookbookImages() {
+async function loadLookbookImages(contenido) {
     const container = document.getElementById('lookbookCarousel');
     if (!container) return;
 
-    const { data, error } = await SupabaseAPI.getLookbookImages();
+    const lookbook = await contenido;
+    const data = (lookbook && Array.isArray(lookbook.images) ? lookbook.images : [])
+        .map(item => ({ image_url: contentImageUrl(item && item.image), alt: item && item.alt }))
+        .filter(item => item.image_url);
 
-    if (error || !data || data.length === 0) {
+    if (data.length === 0) {
         container.innerHTML = '<div class="loading-spinner"><p>No images available</p></div>';
         return;
     }
@@ -1607,7 +1621,7 @@ async function loadLookbookImages() {
     // Se duplica la serie para que el desplazamiento sea continuo.
     const slides = [...data, ...data].map((img, index) => `
         <div class="carousel-slide">
-            <img src="${img.image_url}" alt="Lookbook ${(index % data.length) + 1}" loading="lazy">
+            <img src="${escapeHtml(img.image_url)}" alt="${escapeHtml(img.alt || `Lookbook ${(index % data.length) + 1}`)}" loading="lazy">
         </div>`).join('');
 
     container.innerHTML = `<div class="carousel-track">${slides}</div>`;
@@ -1887,8 +1901,8 @@ function applyHomeFeature(feature) {
     }
 
     const img = bloque.querySelector('[data-feature="image"]');
-    if (img && feature.image) {
-        img.src = feature.image;
+    if (img && contentImageUrl(feature.image)) {
+        img.src = contentImageUrl(feature.image);
         if (feature.imageAlt) img.alt = feature.imageAlt;
         // Con foto propia ya no hace falta que el lookbook le ponga una.
         delete img.dataset.lookbookSlot;
