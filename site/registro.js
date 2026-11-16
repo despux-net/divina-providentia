@@ -40,9 +40,6 @@
   };
   $('clave').addEventListener('input', comprobarIguales);
   $('clave2').addEventListener('input', comprobarIguales);
-  $('ver-clave').addEventListener('change', e => {
-    $('clave').type = $('clave2').type = e.target.checked ? 'text' : 'password';
-  });
 
   $('form-registro').addEventListener('submit', async e => {
     e.preventDefault();
@@ -80,7 +77,11 @@
     // Si el correo ya tenía cuenta, Supabase responde «bien» pero sin identidades
     // (para no revelar qué correos existen). Lo decimos sin confirmar nada.
     if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-      return DP.mensaje(msg, 'Si ese correo ya tiene cuenta, entra con tu contraseña o recupérala desde «Entrar».');
+      // El correo pasa a «Entrar» por sessionStorage, no por la URL (quedaría en el historial).
+      try { sessionStorage.setItem('dp_email', email); } catch { /* sin almacenamiento */ }
+      msg.innerHTML = `<div class="mensaje error">Si ese correo ya tiene cuenta, entra con tu contraseña o
+        <a href="entrar.html?olvido=1">recupérala aquí</a>.</div>`;
+      return;
     }
     if (data.session) { location.href = 'perfil.html'; return; } // verificación desactivada en Supabase
     $('form-registro').hidden = true;

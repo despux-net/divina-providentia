@@ -6,7 +6,7 @@
   <title>Entrar — Divina Providentia</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=3">
+  <link rel="stylesheet" href="estilos.css?v=5">
 </head>
 <body>
   <header class="cabecera">
@@ -27,9 +27,10 @@
           <fieldset>
             <div class="campo"><label for="email">Correo electrónico</label>
               <input type="email" id="email" autocomplete="email" required></div>
-            <div class="campo"><label for="clave">Contraseña</label>
+            <div class="campo">
+              <div class="etiqueta-fila"><label for="clave">Contraseña</label>
+                <a href="entrar.html?olvido=1" id="link-olvido">¿Olvidaste tu contraseña?</a></div>
               <input type="password" id="clave" autocomplete="current-password" required></div>
-            <p style="margin:0"><a href="#" id="link-olvido">¿Olvidaste tu contraseña?</a></p>
           </fieldset>
           <div id="antirrobot" class="antirrobot"></div>
           <div id="msg"></div>
@@ -40,7 +41,7 @@
 
       <section id="bloque-olvido" hidden>
         <h1>Recuperar contraseña</h1>
-        <p class="sub">Te enviaremos un enlace para elegir una contraseña nueva.</p>
+        <p class="sub">Escribe el correo con el que te registraste y te enviaremos un enlace para elegir una contraseña nueva.</p>
         <form id="form-olvido" novalidate>
           <fieldset>
             <div class="campo"><label for="email-olvido">Correo de tu cuenta</label>
@@ -49,8 +50,15 @@
           <div id="antirrobot-olvido" class="antirrobot"></div>
           <div id="msg-olvido"></div>
           <button class="boton" type="submit" id="btn-olvido">Enviar enlace</button>
-          <button class="boton sec" type="button" id="volver-entrar">Volver</button>
+          <button class="boton sec" type="button" id="volver-entrar">Volver a entrar</button>
         </form>
+        <div id="olvido-enviado" hidden>
+          <div class="mensaje ok"><strong>Revisa tu correo.</strong> Si <b id="olvido-email"></b> tiene una cuenta,
+            te llegará en unos minutos un correo «Elige una contraseña nueva». Ábrelo y pulsa el botón.
+            El enlace caduca en una hora. Mira también en «Spam» o «Promociones».</div>
+          <p><button class="boton sec" type="button" id="olvido-reenviar" disabled>Reenviar (60)</button>
+            <button class="boton sec" type="button" id="olvido-volver">Volver a entrar</button></p>
+        </div>
       </section>
     </div>
   </main>
@@ -58,7 +66,7 @@
   <footer class="pie">© Divina Providentia</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=4"></script>
-  <script src="entrar.js?v=1"></script>
+  <script src="comun.js?v=5"></script>
+  <script src="entrar.js?v=2"></script>
 </body>
 </html>

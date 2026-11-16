@@ -52,17 +52,53 @@
   });
 
   // ---------- Recuperar contraseña ----------
-  $('link-olvido').addEventListener('click', e => {
-    e.preventDefault();
-    $('bloque-entrar').hidden = true;
-    $('bloque-olvido').hidden = false;
-    $('email-olvido').value = $('email').value;
-    if (!robotOlvido) robotOlvido = DP.antirrobot($('antirrobot-olvido'));
-  });
-  $('volver-entrar').addEventListener('click', () => {
-    $('bloque-olvido').hidden = true;
-    $('bloque-entrar').hidden = false;
-  });
+  // El correo puede venir del registro («ese correo ya tiene cuenta»), sin pasar por la URL.
+  let emailGuardado = '';
+  try { emailGuardado = sessionStorage.getItem('dp_email') || ''; sessionStorage.removeItem('dp_email'); } catch { /* nada */ }
+
+  const verOlvido = (mostrar) => {
+    $('bloque-entrar').hidden = mostrar;
+    $('bloque-olvido').hidden = !mostrar;
+    $('form-olvido').hidden = false;
+    $('olvido-enviado').hidden = true;
+    if (mostrar) {
+      $('email-olvido').value = $('email').value || emailGuardado;
+      if (!robotOlvido) robotOlvido = DP.antirrobot($('antirrobot-olvido'));
+      $('email-olvido').focus();
+    }
+  };
+  $('link-olvido').addEventListener('click', e => { e.preventDefault(); verOlvido(true); });
+  $('volver-entrar').addEventListener('click', () => verOlvido(false));
+  $('olvido-volver').addEventListener('click', () => verOlvido(false));
+  if (params.get('olvido')) verOlvido(true);
+
+  async function pedirEnlace(email) {
+    const { error } = await DP.sb.auth.resetPasswordForEmail(email, {
+      redirectTo: `${location.origin}/restablecer.html`, captchaToken: robotOlvido.token()
+    });
+    robotOlvido.reiniciar();
+    return error;
+  }
+
+  // Tras enviar: confirmación y botón de reenviar con espera de 60 s
+  // (Supabase no deja pedir otro enlace al mismo correo antes de un minuto).
+  let esperaId;
+  function mostrarEnviado(email) {
+    $('form-olvido').hidden = true;
+    $('olvido-email').textContent = email;
+    $('olvido-enviado').hidden = false;
+    const b = $('olvido-reenviar');
+    let s = 60;
+    b.disabled = true; b.textContent = `Reenviar (${s})`;
+    clearInterval(esperaId);
+    esperaId = setInterval(() => {
+      s--;
+      if (s > 0) { b.textContent = `Reenviar (${s})`; return; }
+      clearInterval(esperaId);
+      b.disabled = false; b.textContent = 'Reenviar el correo';
+    }, 1000);
+  }
+
   $('form-olvido').addEventListener('submit', async e => {
     e.preventDefault();
     const msg = $('msg-olvido');
@@ -70,14 +106,19 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return DP.mensaje(msg, 'Revisa el correo electrónico.');
     if (robotOlvido.activo && !robotOlvido.token()) return DP.mensaje(msg, 'Marca la casilla «No soy un robot».');
     const btn = $('btn-olvido');
-    btn.disabled = true;
-    const { error } = await DP.sb.auth.resetPasswordForEmail(email, {
-      redirectTo: `${location.origin}/restablecer.html`, captchaToken: robotOlvido.token()
-    });
-    btn.disabled = false;
-    robotOlvido.reiniciar();
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    const error = await pedirEnlace(email);
+    btn.disabled = false; btn.textContent = 'Enviar enlace';
     // Mismo mensaje exista o no la cuenta, para no revelar qué correos están registrados.
-    DP.mensaje(msg, error && !/not found/i.test(error.message || '') ? DP.errorCuenta(error)
-      : 'Si hay una cuenta con ese correo, te llegará un enlace para elegir una contraseña nueva.', error ? 'error' : 'ok');
+    if (error && !/not found/i.test(error.message || '')) return DP.mensaje(msg, DP.errorCuenta(error));
+    DP.mensaje(msg, '');
+    mostrarEnviado(email);
+  });
+
+  // Reenviar: hace falta volver a pasar el «No soy un robot», así que se vuelve al formulario.
+  $('olvido-reenviar').addEventListener('click', () => {
+    $('olvido-enviado').hidden = true;
+    $('form-olvido').hidden = false;
+    DP.mensaje($('msg-olvido'), 'Marca de nuevo «No soy un robot» y pulsa «Enviar enlace».', 'ok');
   });
 })();

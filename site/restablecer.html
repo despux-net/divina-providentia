@@ -6,7 +6,7 @@
   <title>Nueva contraseña — Divina Providentia</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=3">
+  <link rel="stylesheet" href="estilos.css?v=5">
 </head>
 <body>
   <header class="cabecera">
@@ -18,46 +18,36 @@
   <main class="contenedor">
     <div class="form cuenta">
       <h1>Elige una contraseña nueva</h1>
-      <div id="sin-enlace" hidden class="mensaje error">Este enlace no es válido o ya caducó.
-        <a href="entrar.html">Pide uno nuevo desde «¿Olvidaste tu contraseña?»</a>.</div>
+      <p class="sub" id="para-quien" hidden></p>
+
+      <div id="sin-enlace" hidden>
+        <div class="mensaje error"><strong>Este enlace no es válido o ya caducó.</strong>
+          Los enlaces para cambiar la contraseña duran una hora y solo sirven una vez.</div>
+        <p><a class="boton" href="entrar.html?olvido=1">Pedir un enlace nuevo</a></p>
+      </div>
+
       <form id="form-clave" hidden novalidate>
         <fieldset>
           <div class="campo"><label for="clave">Contraseña nueva</label>
-            <input type="password" id="clave" autocomplete="new-password" required>
-            <small class="ayuda">Mínimo 8 caracteres, con letras y números</small></div>
+            <input type="password" id="clave" autocomplete="new-password" required aria-describedby="ayuda-clave">
+            <small class="ayuda" id="ayuda-clave">Mínimo 8 caracteres, con letras y números</small></div>
           <div class="campo"><label for="clave2">Repítela</label>
-            <input type="password" id="clave2" autocomplete="new-password" required></div>
+            <input type="password" id="clave2" autocomplete="new-password" required aria-describedby="ayuda-clave2">
+            <small class="ayuda" id="ayuda-clave2"></small></div>
         </fieldset>
         <div id="msg"></div>
         <button class="boton" type="submit" id="btn">Guardar contraseña</button>
       </form>
+
+      <div id="hecho" hidden>
+        <div class="mensaje ok"><strong>¡Contraseña cambiada!</strong> Por seguridad cerramos la sesión en tus otros dispositivos.</div>
+        <p><a class="boton" href="perfil.html">Ir a mi perfil</a> <a class="boton sec" href="publicar.html">Publicar un inmueble</a></p>
+      </div>
     </div>
   </main>
   <footer class="pie">© Divina Providentia</footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=4"></script>
-  <script>
-    // Se llega desde el correo de «Recuperar contraseña» o desde «Cambiar contraseña» del perfil.
-    (async () => {
-      const $ = id => document.getElementById(id);
-      const { data: { session } } = await DP.sb.auth.getSession();
-      DP.cabecera();
-      if (!session) { $('sin-enlace').hidden = false; return; }
-      $('form-clave').hidden = false;
-      $('form-clave').addEventListener('submit', async e => {
-        e.preventDefault();
-        const clave = $('clave').value, clave2 = $('clave2').value;
-        const problema = DP.problemaContrasena(clave);
-        if (problema) return DP.mensaje($('msg'), problema);
-        if (clave !== clave2) return DP.mensaje($('msg'), 'Las dos contraseñas no coinciden.');
-        $('btn').disabled = true;
-        const { error } = await DP.sb.auth.updateUser({ password: clave });
-        $('btn').disabled = false;
-        if (error) return DP.mensaje($('msg'), DP.errorCuenta(error));
-        DP.mensaje($('msg'), 'Contraseña guardada. Te llevamos a tu perfil…', 'ok');
-        setTimeout(() => { location.href = 'perfil.html'; }, 1500);
-      });
-    })();
-  </script>
+  <script src="comun.js?v=5"></script>
+  <script src="restablecer.js?v=1"></script>
 </body>
 </html>

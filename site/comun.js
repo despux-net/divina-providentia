@@ -157,6 +157,36 @@ const DP = {
   },
 
   // ---------- Formularios de cuenta ----------
+  // Botón de «ojo» dentro de cada campo de contraseña para verla u ocultarla.
+  ojos(raiz = document) {
+    const ICONO_VER = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+    const ICONO_OCULTAR = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.9 5.2A10.8 10.8 0 0112 5c6.5 0 10 7 10 7a17.6 17.6 0 01-3.2 4.2M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7c1.6 0 3-.4 4.3-1"/></svg>';
+    raiz.querySelectorAll('input[type=password]:not([data-con-ojo])').forEach(input => {
+      input.dataset.conOjo = '1';
+      const caja = document.createElement('div');
+      caja.className = 'con-ojo';
+      input.parentNode.insertBefore(caja, input);
+      caja.appendChild(input);
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ojo';
+      const pintar = () => {
+        const visible = input.type === 'text';
+        b.innerHTML = visible ? ICONO_OCULTAR : ICONO_VER;
+        b.setAttribute('aria-label', visible ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        b.setAttribute('aria-pressed', visible);
+        b.title = b.getAttribute('aria-label');
+      };
+      b.addEventListener('click', () => {
+        input.type = input.type === 'password' ? 'text' : 'password';
+        pintar();
+        input.focus();
+      });
+      pintar();
+      caja.appendChild(b);
+    });
+  },
+
   mensaje(el, texto, tipo = 'error') {
     el.innerHTML = texto ? `<div class="mensaje ${tipo}">${DP.esc(texto)}</div>` : '';
   },
@@ -192,3 +222,4 @@ const DP = {
 };
 
 window.DP = DP;
+DP.ojos();

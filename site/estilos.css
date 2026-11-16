@@ -186,3 +186,17 @@ label.check { display: flex; gap: 8px; align-items: center; font-weight: 400; ma
 .antirrobot { margin: 0 0 12px; min-height: 0; }
 .cuenta .boton { margin: 0 6px 8px 0; }
 .publicado-por { font-size: .9rem; color: var(--muted); margin-top: 6px; }
+
+/* Campo de contraseña con botón de «ojo» */
+.con-ojo { position: relative; }
+.con-ojo input { padding-right: 46px; }
+.ojo {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer;
+}
+.ojo:hover { color: var(--ink); background: var(--accent-soft); }
+.ojo:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+.ojo[aria-pressed=true] { color: var(--accent); }
+.etiqueta-fila { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.etiqueta-fila a { font-size: .85rem; font-weight: 500; }
