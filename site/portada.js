@@ -79,7 +79,6 @@
           h.appendChild(document.createTextNode(trozo));
         });
       }
-      if (c.lema_buscador) $('lema-buscador').textContent = c.lema_buscador;
       if (c.titulo_categorias) $('titulo-categorias').textContent = c.titulo_categorias;
       if (c.subtitulo_categorias) $('subtitulo-categorias').textContent = c.subtitulo_categorias;
       const zonas = (Array.isArray(c.sugerencias) ? c.sugerencias : []).map(z => String(z).trim()).filter(Boolean).slice(0, 10);
