@@ -326,6 +326,9 @@ DP.pie = () => {
         </ul>
       </div>
     </div>
+    <a class="emblema" href="index.html" aria-label="Vivinati — inicio">
+      <img src="img/emblema-vivinati.png" alt="Vivinati" width="132" height="50" loading="lazy" decoding="async">
+    </a>
     <div class="legal">
       <span>© ${anio} Vivinati</span>
       <span>Los anuncios son responsabilidad de quien los publica. Los anuncios de otras webs enlazan siempre a su original.</span>
