@@ -1,6 +1,7 @@
 # Indexa anuncios de otras webs inmobiliarias (scripts/indexador/).
-# Se ejecuta cada 6 horas; también se puede lanzar a mano desde
-# GitHub → Actions → «Indexador de inmuebles» → Run workflow.
+# Se ejecuta cada 6 horas. También se lanza a mano:
+#  - desde Pages CMS, botón «Indexar inmuebles ahora» (manda «payload»), o
+#  - desde GitHub → Actions → «Indexador de inmuebles» → Run workflow.
 name: Indexador de inmuebles
 
 on:
@@ -8,6 +9,10 @@ on:
     - cron: '17 */6 * * *'
   workflow_dispatch:
     inputs:
+      payload:
+        description: Datos que manda Pages CMS (JSON)
+        required: false
+        type: string
       max_fichas:
         description: Máximo de fichas por fuente en esta ejecución
         required: false
@@ -32,9 +37,29 @@ jobs:
         with:
           node-version: 20
 
+      # El número puede venir del botón de Pages CMS (payload.inputs.max_fichas),
+      # del formulario de GitHub o, en la pasada programada, del valor por defecto.
+      # El payload se lee como variable de entorno y se valida como número
+      # para que nada de lo que llegue ahí pueda ejecutarse como comando.
+      - name: Decidir cuántas fichas
+        id: limite
+        env:
+          PAYLOAD: ${{ github.event.inputs.payload }}
+          MAX_GITHUB: ${{ github.event.inputs.max_fichas }}
+        run: |
+          n=$(node -e '
+            let n;
+            try { n = JSON.parse(process.env.PAYLOAD || "{}")?.inputs?.max_fichas; } catch {}
+            n = Number(n ?? process.env.MAX_GITHUB ?? 1500);
+            if (!Number.isFinite(n) || n < 1) n = 1500;
+            console.log(Math.min(Math.round(n), 1800));
+          ')
+          echo "Fichas como máximo: $n"
+          echo "max=$n" >> "$GITHUB_OUTPUT"
+
       - name: Indexar fuentes
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          MAX_FICHAS: ${{ github.event.inputs.max_fichas || '1500' }}
+          MAX_FICHAS: ${{ steps.limite.outputs.max }}
           MAX_MINUTOS: '320'
         run: node scripts/indexador/indexar.mjs

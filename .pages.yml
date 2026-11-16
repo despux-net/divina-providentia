@@ -39,18 +39,6 @@ content:
       default:
         sort: id
         order: asc
-    actions:
-      - name: actualizar-printful
-        label: Actualizar desde Printful
-        scope: collection
-        workflow: cms-printful.yml
-        confirm:
-          title: Actualizar desde Printful
-          message: >-
-            Se traen de tu tienda de Printful el precio, las tallas, los colores
-            y las variantes de cada producto. Los productos nuevos aparecen aquí
-            ocultos para que los revises. Tarda uno o dos minutos.
-          button: Actualizar
     fields:
       - name: id
         label: Nº de producto
@@ -409,3 +397,26 @@ content:
         label: Color del fondo suave
         type: string
         pattern: *hex
+
+# ---------------------------------------------------------------
+# Botones generales (barra lateral de Pages CMS → «Actions»).
+# Lanzan un workflow de GitHub con tu sesión de GitHub: solo quien
+# tiene acceso al repositorio puede pulsarlos.
+actions:
+  - name: indexar-inmuebles
+    label: Indexar inmuebles ahora
+    workflow: indexador.yml
+    confirm:
+      title: Indexar inmuebles ahora
+      message: >-
+        Busca anuncios nuevos o cambiados en las webs inmobiliarias (por
+        ahora Rent-A-House) y los añade al buscador. Va despacio a propósito,
+        una página cada 10 segundos: 100 anuncios tardan unos 17 minutos.
+        Si ya hay una pasada en marcha, esta espera a que termine.
+      button: Indexar
+    fields:
+      - name: max_fichas
+        label: ¿Cuántos anuncios como máximo?
+        type: number
+        default: 300
+        required: true
