@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inmueble — Divina Providentia</title>
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="estilos.css?v=1">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <nav class="nav">
+        <a href="index.html">Buscar</a>
+        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+        <span data-nav-sesion></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <p><a href="index.html" id="volver">← Volver a la búsqueda</a></p>
+    <div id="cargando">Cargando…</div>
+    <div class="vacio" id="no-existe" hidden><strong>Este anuncio no existe o ya no está disponible</strong>
+      <p><a class="boton" href="index.html">Ver otros inmuebles</a></p></div>
+
+    <div class="ficha" id="ficha" hidden>
+      <div class="galeria">
+        <img class="principal" id="foto-principal" alt="">
+        <div class="miniaturas" id="miniaturas"></div>
+      </div>
+      <div class="texto">
+        <h2>Descripción</h2>
+        <p class="descripcion" id="descripcion"></p>
+        <div id="bloque-mapa" hidden>
+          <h2>Ubicación</h2>
+          <div id="mapa-ficha"></div>
+          <p class="aviso">La ubicación puede ser aproximada.</p>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="etiquetas" id="etiquetas"></div>
+        <h1 id="titulo"></h1>
+        <div class="precio" id="precio"></div>
+        <div class="lugar" id="lugar"></div>
+        <div class="caract" id="caract"></div>
+        <div id="contacto" style="display:grid;gap:8px"></div>
+        <p class="aviso" id="aviso-externo" hidden>Este anuncio fue encontrado en otra web. Los datos y el contacto están en el anuncio original.</p>
+        <p class="aviso">Consejo: nunca envíes dinero ni pagues reservas sin haber visto el inmueble y verificado al propietario.</p>
+        <p class="aviso" id="fecha"></p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="pie">© Divina Providentia · Los anuncios son responsabilidad de quien los publica.</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="comun.js?v=1"></script>
+  <script src="anuncio.js?v=1"></script>
+</body>
+</html>

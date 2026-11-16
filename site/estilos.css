@@ -1,0 +1,171 @@
+/* Divina Providentia — buscador de inmuebles de Venezuela */
+:root {
+  --bg: #f7f5f0;
+  --ink: #1c1d21;
+  --muted: #5f6168;
+  --accent: #0f6b5c;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2f0ec;
+  --line: #dedad0;
+  --card: #ffffff;
+  --danger: #b3261e;
+  --wa: #1f8f4e;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121315;
+    --ink: #f1efe9;
+    --muted: #a5a7ad;
+    --accent: #4cc2a8;
+    --accent-ink: #0b1f1a;
+    --accent-soft: #17302a;
+    --line: #2a2c30;
+    --card: #1a1b1e;
+    --danger: #f2827a;
+    --wa: #3fbf73;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+a { color: var(--accent); }
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+/* Cabecera */
+.cabecera {
+  border-bottom: 1px solid var(--line);
+  background: var(--card);
+  position: sticky; top: 0; z-index: 1000;
+}
+.cabecera-int {
+  max-width: 1200px; margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.marca { font-weight: 800; color: var(--accent); text-decoration: none; letter-spacing: .01em; margin-right: auto; }
+.marca small { display: block; font-weight: 500; color: var(--muted); font-size: .72rem; letter-spacing: 0; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.nav a { text-decoration: none; color: var(--ink); padding: 6px 10px; border-radius: 8px; font-size: .95rem; }
+.nav a:hover { background: var(--accent-soft); }
+.nav a.boton { color: var(--accent-ink); }
+
+.contenedor { width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; flex: 1; }
+.pie { border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; text-align: center; padding: 20px 16px; }
+
+/* Botones y campos */
+.boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink); font-weight: 600; text-decoration: none;
+}
+.boton:disabled { opacity: .6; cursor: default; }
+.boton.sec { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.boton.peligro { background: transparent; color: var(--danger); border: 1px solid var(--line); }
+.boton.wa { background: var(--wa); color: #fff; }
+.boton.peq { padding: 6px 10px; font-size: .9rem; }
+label { display: block; font-size: .9rem; font-weight: 600; margin-bottom: 4px; }
+.campo { margin-bottom: 14px; }
+.campo small { color: var(--muted); font-weight: 400; }
+input[type=text], input[type=email], input[type=number], input[type=tel], input[type=search], select, textarea {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card);
+}
+textarea { min-height: 140px; resize: vertical; }
+input:focus, select:focus, textarea:focus, .boton:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* Buscador */
+.hero h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); line-height: 1.15; margin: 8px 0 14px; letter-spacing: -.01em; }
+.barra {
+  display: flex; gap: 8px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; padding: 6px; box-shadow: var(--shadow);
+}
+.barra input { border: 0; background: transparent; flex: 1; min-width: 0; }
+.barra input:focus { outline: none; }
+.filtros {
+  display: grid; gap: 8px; margin: 12px 0 16px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+.filtros select, .filtros input { padding: 8px 10px; }
+.resumen { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; color: var(--muted); font-size: .95rem; }
+.vistas { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.vistas button { border: 0; background: var(--card); padding: 6px 12px; cursor: pointer; }
+.vistas button[aria-pressed=true] { background: var(--accent); color: var(--accent-ink); }
+
+.rejilla { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.tarjeta {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column;
+  box-shadow: var(--shadow);
+}
+.tarjeta:hover { border-color: var(--accent); }
+.tarjeta .foto { aspect-ratio: 4/3; background: var(--accent-soft); object-fit: cover; width: 100%; }
+.tarjeta .sinfoto { aspect-ratio: 4/3; display: grid; place-items: center; color: var(--muted); background: var(--accent-soft); font-size: .9rem; }
+.tarjeta .cuerpo { padding: 12px 14px 14px; display: grid; gap: 4px; }
+.precio { font-weight: 800; font-size: 1.15rem; }
+.etiquetas { display: flex; gap: 6px; flex-wrap: wrap; }
+.etiqueta { font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.etiqueta.gris { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+.titulo-t { font-weight: 600; line-height: 1.3; }
+.lugar, .datos { color: var(--muted); font-size: .9rem; }
+
+#mapa { height: 70vh; min-height: 360px; border-radius: var(--radius); border: 1px solid var(--line); }
+.vacio { text-align: center; padding: 48px 16px; color: var(--muted); background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); }
+.vacio strong { display: block; color: var(--ink); font-size: 1.1rem; margin-bottom: 6px; }
+.mas { display: flex; justify-content: center; margin-top: 20px; }
+
+/* Ficha */
+/* En móvil: fotos, después precio y contacto, y al final la descripción */
+.ficha {
+  display: grid; gap: 0 24px; align-items: start;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-areas: "galeria panel" "texto panel";
+}
+.ficha .galeria { grid-area: galeria; }
+.ficha .texto { grid-area: texto; }
+.ficha .panel { grid-area: panel; position: sticky; top: 76px; }
+@media (max-width: 860px) {
+  .ficha { grid-template-columns: minmax(0, 1fr); grid-template-areas: "galeria" "panel" "texto"; gap: 16px; }
+  .ficha .panel { position: static; }
+}
+.galeria .principal { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius); background: var(--accent-soft); }
+.miniaturas { display: flex; gap: 8px; overflow-x: auto; margin-top: 8px; padding-bottom: 4px; }
+.miniaturas button { border: 2px solid transparent; padding: 0; border-radius: 8px; cursor: pointer; background: none; flex: 0 0 auto; }
+.miniaturas button[aria-current=true] { border-color: var(--accent); }
+.miniaturas img { width: 84px; height: 64px; object-fit: cover; border-radius: 6px; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+.panel h1 { font-size: 1.35rem; margin: 6px 0 8px; line-height: 1.25; }
+.caract { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 14px 0; }
+.caract div { background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+.caract span { display: block; color: var(--muted); font-size: .8rem; }
+.descripcion { white-space: pre-line; }
+#mapa-ficha { height: 280px; border-radius: var(--radius); border: 1px solid var(--line); margin-top: 12px; }
+.aviso { font-size: .85rem; color: var(--muted); margin-top: 12px; }
+
+/* Formularios */
+.form { max-width: 760px; }
+.fila { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+fieldset { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin: 0 0 18px; background: var(--card); }
+legend { font-weight: 700; padding: 0 6px; }
+#mapa-form { height: 320px; border-radius: 10px; border: 1px solid var(--line); }
+.fotos-prev { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); margin-top: 10px; }
+.fotos-prev figure { margin: 0; position: relative; }
+.fotos-prev img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; }
+.fotos-prev button { position: absolute; top: 4px; right: 4px; border: 0; border-radius: 999px; width: 26px; height: 26px; cursor: pointer; background: rgba(0,0,0,.65); color: #fff; }
+.mensaje { padding: 10px 12px; border-radius: 10px; margin: 12px 0; }
+.mensaje.ok { background: var(--accent-soft); color: var(--accent); }
+.mensaje.error { background: rgba(179,38,30,.1); color: var(--danger); }
+.lista-mia { display: grid; gap: 10px; }
+.item-mio { display: flex; gap: 12px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; flex-wrap: wrap; }
+.item-mio img, .item-mio .sinfoto { width: 96px; height: 72px; object-fit: cover; border-radius: 8px; flex: 0 0 auto; aspect-ratio: auto; }
+.item-mio .info { flex: 1; min-width: 180px; }
+.item-mio .acciones { display: flex; gap: 6px; flex-wrap: wrap; }

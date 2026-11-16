@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis anuncios — Divina Providentia</title>
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="estilos.css?v=1">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <nav class="nav">
+        <a href="index.html">Buscar</a>
+        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+        <span data-nav-sesion></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1>Mis anuncios</h1>
+    <div id="msg"></div>
+    <div class="lista-mia" id="lista">Cargando…</div>
+  </main>
+
+  <footer class="pie">© Divina Providentia</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=1"></script>
+  <script src="mis-anuncios.js?v=1"></script>
+</body>
+</html>

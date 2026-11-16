@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Publicar un inmueble — Divina Providentia</title>
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="estilos.css?v=1">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <nav class="nav">
+        <a href="index.html">Buscar</a>
+        <span data-nav-sesion></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <div class="form">
+      <h1 id="h1">Publica tu inmueble gratis</h1>
+
+      <!-- Paso 1: entrar con el correo -->
+      <section id="entrar" hidden>
+        <p>Para publicar necesitas entrar con tu correo. Te enviaremos un enlace: ábrelo desde este mismo dispositivo y volverás aquí con la sesión iniciada. No hace falta contraseña.</p>
+        <form id="form-entrar" class="fila" style="align-items:end">
+          <div class="campo" style="margin:0"><label for="email">Tu correo</label>
+            <input type="email" id="email" required autocomplete="email" placeholder="tucorreo@ejemplo.com"></div>
+          <div><button class="boton" type="submit" id="btn-entrar">Enviarme el enlace</button></div>
+        </form>
+        <div id="msg-entrar"></div>
+      </section>
+
+      <!-- Paso 2: el formulario -->
+      <form id="form-anuncio" hidden novalidate>
+        <fieldset>
+          <legend>Lo básico</legend>
+          <div class="fila">
+            <div class="campo"><label for="operacion">Operación</label><select id="operacion" required></select></div>
+            <div class="campo"><label for="tipo">Tipo de inmueble</label><select id="tipo" required></select></div>
+          </div>
+          <div class="campo"><label for="titulo">Título del anuncio <small>(entre 5 y 120 letras)</small></label>
+            <input type="text" id="titulo" required minlength="5" maxlength="120" placeholder="Ej.: Apartamento de 2 habitaciones con vista al Ávila"></div>
+          <div class="fila">
+            <div class="campo"><label for="precio">Precio <small>(vacío = a consultar)</small></label>
+              <input type="number" id="precio" min="0" step="any" inputmode="decimal"></div>
+            <div class="campo"><label for="moneda">Moneda</label>
+              <select id="moneda"><option value="USD">Dólares (USD)</option><option value="VES">Bolívares (Bs.)</option></select></div>
+          </div>
+          <div class="campo"><label for="descripcion">Descripción <small>(opcional)</small></label>
+            <textarea id="descripcion" maxlength="5000" placeholder="Cuenta lo importante: estado del inmueble, servicios (agua, luz, gas), planta eléctrica, condiciones del alquiler…"></textarea></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Características</legend>
+          <div class="fila">
+            <div class="campo"><label for="habitaciones">Habitaciones</label><input type="number" id="habitaciones" min="0" max="50" step="1"></div>
+            <div class="campo"><label for="banos">Baños</label><input type="number" id="banos" min="0" max="50" step="1"></div>
+            <div class="campo"><label for="estacionamientos">Estacionamientos</label><input type="number" id="estacionamientos" min="0" max="50" step="1"></div>
+            <div class="campo"><label for="metros">Metros cuadrados</label><input type="number" id="metros" min="1" step="any"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Ubicación</legend>
+          <div class="fila">
+            <div class="campo"><label for="estado">Estado</label><select id="estado" required></select></div>
+            <div class="campo"><label for="ciudad">Ciudad o municipio</label><input type="text" id="ciudad" maxlength="60" placeholder="Ej.: Caracas"></div>
+            <div class="campo"><label for="zona">Urbanización o sector</label><input type="text" id="zona" maxlength="80" placeholder="Ej.: Los Palos Grandes"></div>
+          </div>
+          <p style="margin:0 0 8px">Toca el mapa para marcar dónde está <small style="color:var(--muted)">(opcional, puede ser aproximado)</small></p>
+          <div id="mapa-form"></div>
+          <p><button type="button" class="boton sec peq" id="quitar-punto" hidden>Quitar el punto del mapa</button></p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Fotos</legend>
+          <p style="margin-top:0">Hasta 12 fotos. La primera será la portada. Se reducen solas para que carguen rápido.</p>
+          <input type="file" id="fotos" accept="image/jpeg,image/png,image/webp" multiple>
+          <div class="fotos-prev" id="fotos-prev"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contacto</legend>
+          <div class="campo"><label for="whatsapp">WhatsApp <small>(se mostrará en el anuncio)</small></label>
+            <input type="tel" id="whatsapp" required placeholder="Ej.: 0414 123 4567" autocomplete="tel"></div>
+        </fieldset>
+
+        <div id="msg-form"></div>
+        <button class="boton" type="submit" id="btn-guardar">Publicar anuncio</button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="pie">© Divina Providentia · Al publicar confirmas que los datos son reales y que tienes derecho a ofrecer este inmueble.</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="comun.js?v=1"></script>
+  <script src="publicar.js?v=1"></script>
+</body>
+</html>
