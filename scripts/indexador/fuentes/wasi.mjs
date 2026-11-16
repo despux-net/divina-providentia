@@ -96,15 +96,28 @@ function zonaDe(partes) {
   return z ? z.replace(/\b\w/g, c => c.toUpperCase()).slice(0, 80) : null;
 }
 
-const wasi = (nombre, host) => ({
+const wasi = (nombre, host, minimoSitemap = 100) => ({
   nombre, host,
   sitemaps: [`${host}/sitemap.xml`],
   // Sus sitemaps no dicen cuándo cambió cada ficha: se revisan las conocidas cada 14 días.
   revisarCadaDias: 14,
   retrasoMinimo: 5,
   prioridad: 5,
+  // Por debajo de esto el sitemap se considera roto y no se desactiva nada.
+  minimoSitemap,
   extraer
 });
 
-export const riv = wasi('RIV', 'https://inmuebles.riv.ve');
-export const bolsaCaracas = wasi('Bolsa Inmobiliaria Caracas', 'https://bolsainmobiliariacaracas.com');
+// Webs de inmobiliarias venezolanas hechas con Wasi (pie «Powered by: wasi.co»).
+// Todas tienen robots.txt abierto y un sitemap con sus fichas.
+// Para añadir otra: comprobar robots.txt, que /sitemap.xml liste fichas
+// (…/tipo-operacion-zona-ciudad/12345) y que extraer() las lea.
+export const WASI = [
+  wasi('RIV', 'https://inmuebles.riv.ve'),
+  wasi('Bolsa Inmobiliaria Caracas', 'https://bolsainmobiliariacaracas.com'),
+  wasi('RE/MAX Habitat', 'https://remaxhabitat.com'),
+  wasi('RE/MAX VIP Las Mercedes', 'https://remaxviplasmercedes.com'),
+  wasi('RE/MAX Atlas', 'https://remax-atlas.com', 20),
+  wasi('Noguera Inmuebles', 'https://noguerainmuebles.com', 15)
+];
+export const [riv, bolsaCaracas] = WASI;

@@ -21,11 +21,11 @@
 import { leerRobots } from './robots.mjs';
 import { fuente as rentahouse } from './fuentes/rentahouse.mjs';
 import { fuente as inmuebleoferta } from './fuentes/inmuebleoferta.mjs';
-import { riv, bolsaCaracas } from './fuentes/wasi.mjs';
+import { WASI } from './fuentes/wasi.mjs';
 
 // HabitaOne (habitaone.com) queda fuera: su Cloudflare bloquea a los bots
 // (403) y no lo vamos a sortear. Además copia anuncios de otros portales.
-const TODAS = [rentahouse, inmuebleoferta, riv, bolsaCaracas];
+const TODAS = [rentahouse, inmuebleoferta, ...WASI];
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nzwtafacdpdgulzcwntx.supabase.co';
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const BOT = 'DivinaProvidentiaBot';
@@ -127,7 +127,7 @@ async function indexar(f) {
     if (r.estado !== 200) throw new Error(`Sitemap ${sm} respondió ${r.estado}`);
     entradas.push(...leerSitemap(r.texto).filter(e => robots.permitido(e.url)));
   }
-  if (entradas.length < 100 && !PRUEBA) throw new Error(`Sitemaps sospechosamente cortos (${entradas.length}); no se toca nada.`);
+  if (entradas.length < (f.minimoSitemap ?? 100) && !PRUEBA) throw new Error(`Sitemaps sospechosamente cortos (${entradas.length}); no se toca nada.`);
   log(`${entradas.length} fichas permitidas en ${sitemaps.length} sitemap(s). Pausa: ${pausa / 1000}s`);
 
   const yaEstan = PRUEBA ? new Map() : await conocidos(f.nombre);
