@@ -31,7 +31,7 @@
   };
   if (fotos.length) {
     $('miniaturas').innerHTML = fotos.length > 1 ? fotos.map((f, n) =>
-      `<button type="button" data-n="${n}" aria-label="Ver foto ${n + 1}"><img src="${DP.esc(f)}" alt="" loading="lazy"></button>`).join('') : '';
+      `<button type="button" data-n="${n}" aria-label="Ver foto ${n + 1}"><img src="${DP.esc(f)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join('') : '';
     $('miniaturas').addEventListener('click', e => { const b = e.target.closest('button'); if (b) mostrar(Number(b.dataset.n)); });
     mostrar(0);
   } else {
@@ -53,7 +53,7 @@
     ['Estacionamientos', i.estacionamientos]
   ].filter(([, v]) => v != null);
   $('caract').innerHTML = caract.map(([k, v]) => `<div><span>${k}</span><strong>${DP.esc(v)}</strong></div>`).join('');
-  $('fecha').textContent = `Publicado el ${new Date(i.creado).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+  $('fecha').textContent = `${i.origen === 'externo' ? 'Encontrado' : 'Publicado'} el ${new Date(i.creado).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' })}`;
 
   // Contacto
   const botones = [];
@@ -63,7 +63,7 @@
   }
   const original = DP.urlSegura(i.url_original);
   if (original) {
-    botones.push(`<a class="boton sec" target="_blank" rel="noopener nofollow" href="${DP.esc(original)}">Ver anuncio original${i.fuente ? ' en ' + DP.esc(i.fuente) : ''}</a>`);
+    botones.push(`<a class="boton${i.whatsapp ? ' sec' : ''}" target="_blank" rel="noopener nofollow" href="${DP.esc(original)}">Ver anuncio original${i.fuente ? ' en ' + DP.esc(i.fuente) : ''}</a>`);
     $('aviso-externo').hidden = false;
   }
   const { data: { session } } = await DP.sb.auth.getSession();

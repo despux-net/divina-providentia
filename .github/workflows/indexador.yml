@@ -1,0 +1,40 @@
+# Indexa anuncios de otras webs inmobiliarias (scripts/indexador/).
+# Se ejecuta cada 6 horas; también se puede lanzar a mano desde
+# GitHub → Actions → «Indexador de inmuebles» → Run workflow.
+name: Indexador de inmuebles
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      max_fichas:
+        description: Máximo de fichas por fuente en esta ejecución
+        required: false
+        default: '1500'
+
+permissions:
+  contents: read
+
+# Nunca dos indexadores a la vez: se pisarían y cargarían de más a las fuentes.
+concurrency:
+  group: indexador
+  cancel-in-progress: false
+
+jobs:
+  indexar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Indexar fuentes
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MAX_FICHAS: ${{ github.event.inputs.max_fichas || '1500' }}
+          MAX_MINUTOS: '320'
+        run: node scripts/indexador/indexar.mjs

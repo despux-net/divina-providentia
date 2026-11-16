@@ -64,7 +64,7 @@ const DP = {
   tarjeta(i) {
     const foto = DP.fotoUrl(i.fotos && i.fotos[0]);
     const img = foto
-      ? `<img class="foto" src="${DP.esc(foto)}" alt="" loading="lazy">`
+      ? `<img class="foto" src="${DP.esc(foto)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
       : `<div class="sinfoto">Sin fotos</div>`;
     const fuente = i.origen === 'externo' && i.fuente ? `<span class="etiqueta gris">${DP.esc(i.fuente)}</span>` : '';
     return `<a class="tarjeta" href="anuncio.html?id=${encodeURIComponent(i.id)}">

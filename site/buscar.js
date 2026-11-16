@@ -104,7 +104,7 @@
     for (const i of conSitio) {
       const foto = DP.fotoUrl(i.fotos && i.fotos[0]);
       const popup = `<a href="anuncio.html?id=${encodeURIComponent(i.id)}" style="text-decoration:none;color:inherit">
-        ${foto ? `<img src="${DP.esc(foto)}" alt="" style="width:200px;height:130px;object-fit:cover;border-radius:6px">` : ''}
+        ${foto ? `<img src="${DP.esc(foto)}" alt="" referrerpolicy="no-referrer" style="width:200px;height:130px;object-fit:cover;border-radius:6px">` : ''}
         <strong style="display:block;margin-top:4px">${DP.esc(DP.precio(i))}</strong>
         ${DP.esc(i.titulo)}<br><small>${DP.esc(DP.lugar(i))}</small></a>`;
       L.marker([i.lat, i.lng]).bindPopup(popup).addTo(capaPuntos);
