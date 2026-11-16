@@ -1,9 +1,15 @@
 {
-  "imagen_fondo": "",
+  "imagen_fondo": "/media/diseno-casa-patio-pabellon-caracas-vista-externa.jpg",
   "posicion": "bottom",
   "velo": 0,
   "titulo_buscador": "Más de {anuncios} inmuebles en toda Venezuela",
   "titulo_categorias": "Apartamentos, casas y anexos en venta y alquiler",
   "subtitulo_categorias": "En pocos minutos a tu nuevo hogar: los anuncios de las principales inmobiliarias y de particulares, en un solo lugar.",
-  "sugerencias": ["Chacao", "Valencia", "Lechería", "Maracaibo", "Barquisimeto"]
+  "sugerencias": [
+    "Chacao",
+    "Valencia",
+    "Lechería",
+    "Maracaibo",
+    "Barquisimeto"
+  ]
 }
