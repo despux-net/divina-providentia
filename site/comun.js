@@ -221,5 +221,50 @@ const DP = {
   }
 };
 
+// Pie de página común a todas las páginas (columnas de enlaces, como los portales grandes).
+DP.pie = () => {
+  const pie = document.querySelector('footer.pie');
+  if (!pie) return;
+  const anio = new Date().getFullYear();
+  const estados = ['Distrito Capital', 'Miranda', 'Carabobo', 'Zulia', 'Lara', 'Anzoátegui'];
+  pie.innerHTML = `<div class="pie-int">
+    <div class="pie-columnas">
+      <div>
+        <h4>Divina Providentia</h4>
+        <p style="margin:0">El buscador de inmuebles de Venezuela: apartamentos, casas, anexos, locales y terrenos en venta y alquiler, en un solo lugar.</p>
+      </div>
+      <div>
+        <h4>Buscar</h4>
+        <ul>
+          <li><a href="index.html?operacion=venta#resultados-sec">Inmuebles en venta</a></li>
+          <li><a href="index.html?operacion=alquiler#resultados-sec">Inmuebles en alquiler</a></li>
+          <li><a href="index.html?tipo=apartamento#resultados-sec">Apartamentos</a></li>
+          <li><a href="index.html?tipo=casa#resultados-sec">Casas</a></li>
+          <li><a href="index.html?vista=mapa#resultados-sec">Ver en el mapa</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Por estado</h4>
+        <ul>${estados.map(e => `<li><a href="index.html?estado=${encodeURIComponent(e)}#resultados-sec">${DP.esc(e)}</a></li>`).join('')}</ul>
+      </div>
+      <div>
+        <h4>Publicar y ayuda</h4>
+        <ul>
+          <li><a href="publicar.html">Publicar gratis</a></li>
+          <li><a href="registro.html">Crear cuenta</a></li>
+          <li><a href="mis-anuncios.html">Mis anuncios</a></li>
+          <li><a href="index.html#consejos">Consejos de seguridad</a></li>
+          <li><a href="bot.html">Cómo encontramos anuncios</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© ${anio} Divina Providentia</span>
+      <span>Los anuncios son responsabilidad de quien los publica. Los anuncios de otras webs enlazan siempre a su original.</span>
+    </div>
+  </div>`;
+};
+
 window.DP = DP;
 DP.ojos();
+DP.pie();

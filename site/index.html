@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Divina Providentia — Buscador de inmuebles en Venezuela</title>
-  <meta name="description" content="Busca apartamentos, casas, anexos, locales y terrenos en venta y alquiler en toda Venezuela. Publica tu inmueble gratis.">
+  <meta name="description" content="Busca apartamentos, casas, anexos, locales y terrenos en venta y alquiler en toda Venezuela. Anuncios de las principales inmobiliarias y de particulares en un solo lugar. Publica tu inmueble gratis.">
   <meta property="og:site_name" content="Divina Providentia">
   <meta property="og:title" content="Divina Providentia — Buscador de inmuebles en Venezuela">
   <meta property="og:description" content="Busca apartamentos, casas, anexos, locales y terrenos en venta y alquiler en toda Venezuela. Publica tu inmueble gratis.">
@@ -12,64 +12,187 @@
   <meta property="og:url" content="https://divinaprovidentia.com/">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=6">
+  <link rel="stylesheet" href="estilos.css?v=7">
 </head>
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <a class="marca" href="index.html"><span>Divina Providentia<small>Inmuebles en Venezuela</small></span></a>
       <nav class="nav">
-        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+        <a href="#resultados-sec">Buscar</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#consejos">Consejos</a>
         <span data-nav-sesion></span>
+        <a class="boton peq" href="publicar.html">Publicar gratis</a>
       </nav>
     </div>
   </header>
 
-  <main class="contenedor">
-    <section class="hero">
-      <h1>Encuentra tu próximo hogar en Venezuela</h1>
-      <form class="barra" id="form-busqueda" role="search">
-        <input type="search" id="q" name="q" placeholder="Ej.: apartamento en alquiler en Chacao" aria-label="Buscar inmuebles">
-        <button class="boton" type="submit">Buscar</button>
+  <!-- Portada: ilustración con el buscador encima -->
+  <section class="hero-foto">
+    <div class="hero-int">
+      <form class="panel-hero" id="form-busqueda" role="search">
+        <h1>Más de <span data-cifra="anuncios">1.900</span> inmuebles en toda Venezuela</h1>
+        <div class="fila-busqueda">
+          <input type="search" id="q" name="q" placeholder="Ciudad, zona o palabra clave" aria-label="Ciudad, zona o palabra clave">
+          <select id="f-tipo" aria-label="Tipo de inmueble"></select>
+          <select id="f-operacion" aria-label="Venta o alquiler"></select>
+          <button class="boton" type="submit">Buscar</button>
+        </div>
+        <p class="sugerencias">Prueba: <a href="?q=Chacao#resultados-sec">Chacao</a> · <a href="?q=Valencia#resultados-sec">Valencia</a> · <a href="?q=Lecheria#resultados-sec">Lechería</a> · <a href="?q=Maracaibo#resultados-sec">Maracaibo</a> · <a href="?q=Barquisimeto#resultados-sec">Barquisimeto</a></p>
       </form>
-      <div class="filtros">
-        <select id="f-operacion" aria-label="Operación"></select>
-        <select id="f-tipo" aria-label="Tipo de inmueble"></select>
-        <select id="f-estado" aria-label="Estado"></select>
-        <input type="number" id="f-min" min="0" step="any" placeholder="Precio mín. (USD)" aria-label="Precio mínimo en dólares">
-        <input type="number" id="f-max" min="0" step="any" placeholder="Precio máx. (USD)" aria-label="Precio máximo en dólares">
-        <select id="f-hab" aria-label="Habitaciones">
-          <option value="">Habitaciones</option>
-          <option value="1">1 o más</option><option value="2">2 o más</option>
-          <option value="3">3 o más</option><option value="4">4 o más</option>
-        </select>
-        <select id="f-orden" aria-label="Ordenar">
-          <option value="recientes">Más recientes</option>
-          <option value="relevancia">Más relevantes</option>
-          <option value="precio_asc">Precio: menor a mayor</option>
-          <option value="precio_desc">Precio: mayor a menor</option>
-        </select>
-      </div>
-    </section>
+    </div>
+  </section>
 
-    <div class="resumen">
-      <span id="resumen" aria-live="polite">Buscando…</span>
+  <!-- Categorías -->
+  <section class="seccion">
+    <div class="seccion-int">
+      <h2>Apartamentos, casas y anexos en venta y alquiler</h2>
+      <p class="bajada">En pocos minutos a tu nuevo hogar: los anuncios de las principales inmobiliarias y de particulares, en un solo lugar.</p>
+      <div class="cuadricula cuatro">
+        <button type="button" class="caja categoria" data-tipo="apartamento">
+          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3"/></svg></span>Apartamentos</span>
+          <p>Encuentra el apartamento ideal en tu ciudad, con fotos, precio y ubicación.</p>
+          <span class="mas-enlace">Ver apartamentos</span>
+        </button>
+        <button type="button" class="caja categoria" data-tipo="casa">
+          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>Casas y quintas</span>
+          <p>Casas, quintas y townhouses para tu familia, en venta y en alquiler.</p>
+          <span class="mas-enlace">Ver casas</span>
+        </button>
+        <button type="button" class="caja categoria" data-tipo="anexo">
+          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v16M14 4l6 2v14M14 20H4V8l10-4"/><circle cx="11" cy="13" r=".6" fill="currentColor"/></svg></span>Anexos y habitaciones</span>
+          <p>Opciones económicas para estudiantes, solos y parejas.</p>
+          <span class="mas-enlace">Ver anexos</span>
+        </button>
+        <button type="button" class="caja categoria" data-tipo="local">
+          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l2-5h14l2 5"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8M10 21v-5h4v5"/></svg></span>Locales y oficinas</span>
+          <p>Espacios para tu negocio: locales, oficinas, galpones y terrenos.</p>
+          <span class="mas-enlace">Ver locales</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resultados -->
+  <main class="contenedor" id="resultados-sec">
+    <div class="cabecera-resultados">
+      <h2 id="titulo-resultados">Anuncios recientes</h2>
       <div class="vistas" role="group" aria-label="Vista">
         <button type="button" id="v-lista" aria-pressed="true">Lista</button>
         <button type="button" id="v-mapa" aria-pressed="false">Mapa</button>
       </div>
     </div>
-
+    <div class="filtros">
+      <select id="f-estado" aria-label="Estado"></select>
+      <input type="number" id="f-min" min="0" step="any" placeholder="Precio mín. (USD)" aria-label="Precio mínimo en dólares">
+      <input type="number" id="f-max" min="0" step="any" placeholder="Precio máx. (USD)" aria-label="Precio máximo en dólares">
+      <select id="f-hab" aria-label="Habitaciones">
+        <option value="">Habitaciones</option>
+        <option value="1">1 o más</option><option value="2">2 o más</option>
+        <option value="3">3 o más</option><option value="4">4 o más</option>
+      </select>
+      <select id="f-orden" aria-label="Ordenar">
+        <option value="recientes">Más recientes</option>
+        <option value="relevancia">Más relevantes</option>
+        <option value="precio_asc">Precio: menor a mayor</option>
+        <option value="precio_desc">Precio: mayor a menor</option>
+      </select>
+    </div>
+    <div class="resumen"><span id="resumen" aria-live="polite">Buscando…</span></div>
     <div id="resultados" class="rejilla"></div>
     <div id="mapa" hidden></div>
-    <div class="mas"><button class="boton sec" id="mas" hidden>Ver más</button></div>
+    <div class="mas"><button class="boton sec" id="mas" hidden>Ver más anuncios</button></div>
   </main>
 
-  <footer class="pie">© Divina Providentia · Los anuncios son responsabilidad de quien los publica. · <a href="bot.html">Cómo encontramos anuncios de otras webs</a></footer>
+  <!-- Empieza ahora -->
+  <section class="seccion azul" id="como-funciona">
+    <div class="seccion-int">
+      <h2>Empieza ahora: encuentra tu hogar o publica tu inmueble</h2>
+      <p class="bajada">Tanto si buscas como si vendes o alquilas: gratis y en pocos minutos.</p>
+      <div class="cuadricula dos">
+        <div class="caja">
+          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg></span>Publica tu inmueble</span>
+          <p>Llega a miles de personas que buscan casa en tu ciudad, sin pagar comisiones por publicar.</p>
+          <ul class="lista-check">
+            <li>Publicar es gratis</li>
+            <li>Contacto directo por WhatsApp</li>
+            <li>¿Ya lo tienes en Facebook? Pega el texto y se rellena solo</li>
+            <li>Edita, pausa o retira tu anuncio cuando quieras</li>
+          </ul>
+          <a class="boton" href="publicar.html">Publicar gratis</a>
+        </div>
+        <div class="caja">
+          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>Busca en toda Venezuela</span>
+          <p>Reunimos en un solo buscador los anuncios de inmobiliarias y particulares de todo el país.</p>
+          <ul class="lista-check">
+            <li>Anuncios de <span data-cifra="fuentes">varias</span> webs inmobiliarias a la vez</li>
+            <li>Filtra por estado, precio en dólares y habitaciones</li>
+            <li>Mira los inmuebles en el mapa</li>
+            <li>Siempre con enlace al anuncio original</li>
+          </ul>
+          <a class="boton sec" href="#resultados-sec">Empezar a buscar</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ventajas -->
+  <section class="seccion">
+    <div class="seccion-int">
+      <h2>Más fácil buscar y publicar</h2>
+      <p class="bajada">Herramientas pensadas para el mercado inmobiliario venezolano.</p>
+      <div class="cuadricula">
+        <div class="caja centrada">
+          <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+          <h3>Todo en un solo lugar</h3>
+          <p>Deja de saltar de página en página: buscamos por ti en los principales portales y lo actualizamos cada 6 horas.</p>
+        </div>
+        <div class="caja centrada">
+          <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+          <h3>Ubicación en el mapa</h3>
+          <p>Ve qué hay cerca de donde quieres vivir o trabajar, con la vista de mapa.</p>
+        </div>
+        <div class="caja centrada">
+          <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.3-4.4A9 9 0 1 1 21 12z"/></svg></span>
+          <h3>Contacto directo</h3>
+          <p>Escribe al anunciante por WhatsApp con un mensaje ya preparado, sin intermediarios.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre nosotros, cifras y consejos -->
+  <section class="seccion azul" id="consejos">
+    <div class="seccion-int">
+      <h2>El buscador de inmuebles de Venezuela</h2>
+      <p class="bajada">Divina Providentia reúne en un solo lugar la oferta inmobiliaria del país para que encontrar casa sea más fácil, rápido y seguro.</p>
+      <div class="cifras">
+        <div class="cifra"><b data-cifra="anuncios">—</b><span>anuncios activos</span></div>
+        <div class="cifra"><b data-cifra="fuentes">—</b><span>webs inmobiliarias</span></div>
+        <div class="cifra"><b data-cifra="estados">—</b><span>estados con anuncios</span></div>
+        <div class="cifra"><b data-cifra="con_mapa">—</b><span>con ubicación en el mapa</span></div>
+      </div>
+      <div class="caja" style="margin-top:28px">
+        <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>Consejos para alquilar o comprar con seguridad</span>
+        <ul class="lista-check consejos">
+          <li>Visita siempre el inmueble antes de pagar nada.</li>
+          <li>No envíes dinero por adelantado para «apartar» un inmueble que no has visto.</li>
+          <li>Pide el documento de propiedad y comprueba que quien vende es el dueño o un agente autorizado.</li>
+          <li>Desconfía de precios muy por debajo de la zona.</li>
+          <li>Haz los pagos con comprobante y firma un contrato.</li>
+          <li>Si algo no te cuadra, consulta con una inmobiliaria o un abogado.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pie"></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=5"></script>
-  <script src="buscar.js?v=2"></script>
+  <script src="comun.js?v=6"></script>
+  <script src="buscar.js?v=3"></script>
+  <script src="portada.js?v=1"></script>
 </body>
 </html>
