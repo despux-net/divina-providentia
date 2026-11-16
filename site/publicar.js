@@ -207,7 +207,17 @@
       metros: 'metros', estado: 'estado', ciudad: 'ciudad', whatsapp: 'WhatsApp', descripcion: 'descripción'
     };
     // Títulos en MAYÚSCULAS (muy comunes en redes) se pasan a frase normal.
-    if (r.titulo && r.titulo === r.titulo.toUpperCase()) r.titulo = r.titulo.toLowerCase().replace(/^./, c => c.toUpperCase());
+    if (r.titulo && r.titulo === r.titulo.toUpperCase()) {
+      const conMayuscula = s => s.replace(/(^|[\s(])([a-záéíóúñ])/g, (m, a, b) => a + b.toUpperCase())
+        .replace(/ (De|Del|Y)(?= )/g, m => m.toLowerCase());
+      r.titulo = r.titulo.toLowerCase().replace(/^./, c => c.toUpperCase())
+        // Los lugares (tras «en», «urb.», «sector»…) vuelven a llevar mayúscula: «en Cabudare, Urb. La Mata».
+        .replace(/\b(en|urb\.?|urbanización|sector|zona|calle|av\.?|avenida)\s+(?!venta\b|alquiler\b)([^,.\n]+)/g,
+          (m, k, lugar) => `${k} ${conMayuscula(lugar)}`)
+        // «APTO EN VENTA - EL CAFETAL»: lo que va tras el guion suele ser el lugar.
+        .replace(/ - ([^,\n]+)/g, (m, lugar) => ` - ${conMayuscula(lugar)}`)
+        .replace(/\b(urb|av)\b\.?/g, m => m[0].toUpperCase() + m.slice(1));
+    }
     const puestos = [];
     for (const [k, nombre] of Object.entries(NOMBRES)) {
       if (r[k] == null || r[k] === '') continue;
