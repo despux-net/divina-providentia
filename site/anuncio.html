@@ -11,7 +11,7 @@
   <meta property="og:type" content="website">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=8">
+  <link rel="stylesheet" href="estilos.css?v=9">
 </head>
 <body>
   <header class="cabecera">
@@ -33,8 +33,16 @@
 
     <div class="ficha" id="ficha" hidden>
       <div class="galeria">
-        <img class="principal" id="foto-principal" alt="" referrerpolicy="no-referrer">
+        <div class="visor" id="visor">
+          <img class="principal" id="foto-principal" alt="" referrerpolicy="no-referrer">
+          <button type="button" class="flecha izq" id="foto-ant" aria-label="Foto anterior" hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" class="flecha der" id="foto-sig" aria-label="Foto siguiente" hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+          <span class="contador-fotos" id="contador-fotos" hidden></span>
+        </div>
         <div class="miniaturas" id="miniaturas"></div>
+        <p class="mas-fotos" id="mas-fotos" hidden></p>
       </div>
       <div class="texto">
         <h2>Descripción</h2>
@@ -72,6 +80,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="comun.js?v=7"></script>
-  <script src="anuncio.js?v=5"></script>
+  <script src="anuncio.js?v=6"></script>
 </body>
 </html>

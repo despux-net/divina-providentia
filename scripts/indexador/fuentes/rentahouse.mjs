@@ -9,5 +9,6 @@ export const fuente = {
   sitemaps: ['https://rentahouse.com.ve/sitemap-rentahouse.com.ve-property-details.xml'],
   retrasoMinimo: 10,
   prioridad: 10,
+  galeria: true, // publica todas sus fotos en schema.org: guardamos hasta 8
   extraer: extraerSchemaOrg
 };

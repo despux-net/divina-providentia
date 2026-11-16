@@ -78,6 +78,9 @@ export function estadoMasCercano(lat, lng) {
   return mejor;
 }
 
+// Fotos que se guardan de cada anuncio externo; el resto se ven en el original.
+export const MAX_FOTOS = 8;
+
 export const sinAcentos = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 function bloquesJsonLd(html) {
@@ -147,12 +150,13 @@ export function extraerSchemaOrg(html, url) {
   let lat = num(geo.latitude), lng = num(geo.longitude);
   if (lat == null || lng == null || lat < 0 || lat > 13 || lng < -74 || lng > -59) { lat = null; lng = null; }
 
-  // Solo un fragmento de la descripción (como hace un buscador): el texto
-  // completo y el resto de fotos están en el anuncio original.
+  // Solo un fragmento de la descripción y hasta MAX_FOTOS fotos (como hace un
+  // buscador): el texto completo y la galería entera están en el original.
   let resumen = String(d.description || '').replace(/[*#_]+/g, '').replace(/\s+/g, ' ').trim();
   if (resumen.length > 300) resumen = resumen.slice(0, 297).replace(/\s+\S*$/, '') + '…';
 
   const zona = (casa.containedInPlace && casa.containedInPlace.name) || dir.streetAddress;
+  const fotosValidas = [...new Set(imagenes.filter(u => /^https:\/\//.test(u || '')))];
 
   return {
     titulo: String(d.name).slice(0, 120),
@@ -168,7 +172,8 @@ export function extraerSchemaOrg(html, url) {
     banos: entero(casa.numberOfBathroomsTotal),
     metros: metros != null && metros > 0 && metros < 1e8 ? metros : null,
     lat, lng,
-    fotos: imagenes.filter(u => /^https:\/\//.test(u || '')).slice(0, 1),
+    fotos: fotosValidas.slice(0, MAX_FOTOS),
+    fotos_total: fotosValidas.length || null,
     fuente_modificado: d.dateModified || d.datePosted || null
   };
 }

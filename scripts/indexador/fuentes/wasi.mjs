@@ -85,7 +85,9 @@ function extraer(html, url) {
     banos: null,
     metros: null, // el campo floorSize de Wasi no es fiable (sale «2» en casas)
     lat, lng,
+    // Wasi carga la galería con JavaScript: en la página solo está la foto principal.
     fotos: imagen && /^https:\/\//.test(imagen) ? [imagen] : [],
+    fotos_total: null,
     fuente_modificado: null
   };
 }

@@ -24,18 +24,49 @@
   // Fotos
   const fotos = (i.fotos || []).map(DP.fotoUrl).filter(Boolean);
   const principal = $('foto-principal');
+  let actual = 0;
   const mostrar = n => {
-    principal.src = fotos[n];
-    principal.alt = `Foto ${n + 1} de ${i.titulo}`;
-    document.querySelectorAll('#miniaturas button').forEach((b, k) => b.setAttribute('aria-current', k === n));
+    actual = (n + fotos.length) % fotos.length;
+    principal.src = fotos[actual];
+    principal.alt = `Foto ${actual + 1} de ${i.titulo}`;
+    $('contador-fotos').textContent = `${actual + 1} / ${fotos.length}`;
+    document.querySelectorAll('#miniaturas button').forEach((b, k) => {
+      b.setAttribute('aria-current', k === actual);
+      if (k === actual) b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
   };
   if (fotos.length) {
-    $('miniaturas').innerHTML = fotos.length > 1 ? fotos.map((f, n) =>
-      `<button type="button" data-n="${n}" aria-label="Ver foto ${n + 1}"><img src="${DP.esc(f)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join('') : '';
-    $('miniaturas').addEventListener('click', e => { const b = e.target.closest('button'); if (b) mostrar(Number(b.dataset.n)); });
+    if (fotos.length > 1) {
+      $('miniaturas').innerHTML = fotos.map((f, n) =>
+        `<button type="button" data-n="${n}" aria-label="Ver foto ${n + 1}"><img src="${DP.esc(f)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join('');
+      $('miniaturas').addEventListener('click', e => { const b = e.target.closest('button'); if (b) mostrar(Number(b.dataset.n)); });
+      $('foto-ant').hidden = $('foto-sig').hidden = $('contador-fotos').hidden = false;
+      $('foto-ant').addEventListener('click', () => mostrar(actual - 1));
+      $('foto-sig').addEventListener('click', () => mostrar(actual + 1));
+      document.addEventListener('keydown', e => {
+        if (/input|textarea|select/i.test(e.target.tagName)) return;
+        if (e.key === 'ArrowLeft') mostrar(actual - 1);
+        if (e.key === 'ArrowRight') mostrar(actual + 1);
+      });
+      // Deslizar con el dedo en el móvil.
+      let x0 = null;
+      $('visor').addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+      $('visor').addEventListener('touchend', e => {
+        if (x0 == null) return;
+        const dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) mostrar(actual + (dx < 0 ? 1 : -1));
+        x0 = null;
+      });
+    }
     mostrar(0);
+    // Anuncios externos: guardamos hasta 8 fotos; la galería completa está en el original.
+    const original = DP.urlSegura(i.url_original);
+    if (original && (i.fotos_total || 0) > fotos.length) {
+      $('mas-fotos').innerHTML = `Mostrando ${fotos.length} de ${i.fotos_total} fotos · <a href="${DP.esc(original)}" target="_blank" rel="noopener nofollow">Ver las ${i.fotos_total} fotos en ${DP.esc(i.fuente || 'el anuncio original')}</a>`;
+      $('mas-fotos').hidden = false;
+    }
   } else {
-    principal.replaceWith(Object.assign(document.createElement('div'), { className: 'vacio', textContent: 'Este anuncio no tiene fotos' }));
+    $('visor').replaceWith(Object.assign(document.createElement('div'), { className: 'vacio', textContent: 'Este anuncio no tiene fotos' }));
   }
 
   // Datos

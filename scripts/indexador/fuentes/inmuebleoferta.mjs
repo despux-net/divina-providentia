@@ -10,5 +10,6 @@ export const fuente = {
   filtroSitemaps: /property-sitemap\d*\.xml$/,
   retrasoMinimo: 5,
   prioridad: 5,
+  galeria: true, // publica todas sus fotos en schema.org: guardamos hasta 8
   extraer: extraerSchemaOrg
 };

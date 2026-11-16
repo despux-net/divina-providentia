@@ -69,7 +69,7 @@ async function conocidos(nombre) {
   const mapa = new Map();
   for (let desde = 0; ; desde += 1000) {
     const filas = await api(
-      `/inmuebles?select=id,url_original,fuente_modificado,activo,visto_en&origen=eq.externo&fuente=eq.${encodeURIComponent(nombre)}&order=id`,
+      `/inmuebles?select=id,url_original,fuente_modificado,activo,visto_en,fotos_total&origen=eq.externo&fuente=eq.${encodeURIComponent(nombre)}&order=id`,
       { headers: { Range: `${desde}-${desde + 999}` } });
     for (const f of filas) mapa.set(f.url_original, f);
     if (filas.length < 1000) return mapa;
@@ -148,6 +148,8 @@ async function indexar(f) {
   const pendientes = entradas.filter(e => {
     const k = yaEstan.get(e.url);
     if (!k || !k.activo) return true;
+    // Fuentes con galería: lo guardado antes de traer varias fotos se vuelve a leer.
+    if (f.galeria && k.fotos_total == null) return true;
     if (e.lastmod) return !k.fuente_modificado || e.lastmod > new Date(k.fuente_modificado);
     // Sin fecha en el sitemap: se vuelve a mirar cada «revisarCadaDias».
     return f.revisarCadaDias != null &&
