@@ -5,7 +5,7 @@
   // Si venimos de la búsqueda, «volver» conserva los filtros que había.
   try {
     const ref = new URL(document.referrer);
-    if (ref.origin === location.origin && /(\/|index\.html|buscar\.html)$/.test(ref.pathname)) $('volver').href = ref.href;
+    if (ref.origin === location.origin && /(\/|index\.html|buscar\.html|conceptos\.html)$/.test(ref.pathname)) $('volver').href = ref.href;
   } catch { /* sin referrer */ }
 
   const id = new URLSearchParams(location.search).get('id');
@@ -71,22 +71,49 @@
 
   // Datos
   const fuente = i.origen === 'externo' && i.fuente ? `<span class="etiqueta gris">${DP.esc(i.fuente)}</span>` : '';
-  $('etiquetas').innerHTML = `<span class="etiqueta">${DP.esc(DP.OPERACIONES[i.operacion])}</span>
-    <span class="etiqueta gris">${DP.esc(DP.TIPOS[i.tipo] || i.tipo)}</span>${fuente}
+  const concepto = DP.esConcepto(i);
+  $('etiquetas').innerHTML = `<span class="etiqueta op-${DP.esc(i.operacion)}">${DP.esc(DP.OPERACIONES[i.operacion])}</span>
+    ${concepto
+      ? `<span class="etiqueta gris">${DP.esc(DP.ETAPAS[i.etapa] || '')}</span><span class="etiqueta gris">${DP.esc(DP.CATEGORIAS[i.categoria_proyecto] || '')}</span>`
+      : `<span class="etiqueta gris">${DP.esc(DP.TIPOS[i.tipo] || i.tipo)}</span>`}${fuente}
     ${i.activo ? '' : '<span class="etiqueta gris">Pausado (solo lo ves tú)</span>'}`;
   $('titulo').textContent = i.titulo;
   $('precio').textContent = DP.precio(i);
   $('lugar').textContent = DP.lugar(i);
   $('descripcion').textContent = i.descripcion || 'Sin descripción.';
-  const caract = [
+  const caract = concepto ? [
+    ['Categoría', DP.CATEGORIAS[i.categoria_proyecto]], ['Etapa', DP.ETAPAS[i.etapa]],
+    ['Tipo propuesto', DP.TIPOS[i.tipo]]
+  ].filter(([, v]) => v) : [
     ['Habitaciones', i.habitaciones], ['Baños', i.banos],
     ['Superficie', i.metros != null ? `${Number(i.metros).toLocaleString('es-VE')} m²` : null],
     ['Estacionamientos', i.estacionamientos]
   ].filter(([, v]) => v != null);
   $('caract').innerHTML = caract.map(([k, v]) => `<div><span>${k}</span><strong>${DP.esc(v)}</strong></div>`).join('');
 
+  // Proyecto conceptual: en vez de precio, la ficha del creador.
+  if (concepto) {
+    $('precio').classList.add('precio-concepto');
+    $('precio').textContent = 'Proyecto conceptual · no está a la venta';
+    $('aviso-consejo').textContent = 'Esto es un proyecto conceptual (render, boceto, tesis o propuesta): no es un inmueble en venta ni en alquiler.';
+    const herramientas = (Array.isArray(i.herramientas) ? i.herramientas : [])
+      .map(h => `<span class="chip-dato">${DP.esc(h)}</span>`).join('');
+    const pintarAutor = p => {
+      const nombre = p && (p.nombre || (p.usuario ? '@' + p.usuario : '')) || 'Creador en Vivinati';
+      $('ficha-autor').innerHTML = `<h2>Creador</h2>
+        <div class="autor-cabeza"><span class="autor-avatar" aria-hidden="true">${DP.esc(nombre.replace('@', '').charAt(0).toUpperCase() || 'V')}</span>
+          <div><strong>${DP.esc(nombre)}</strong>${p && p.usuario && p.nombre ? ` <span class="autor-usuario">@${DP.esc(p.usuario)}</span>` : ''}
+          <div class="autor-rol">${DP.esc(DP.ROLES[i.rol_autor] || '')}</div></div></div>
+        ${i.institucion ? `<p class="autor-dato"><span>Universidad o estudio</span>${DP.esc(i.institucion)}</p>` : ''}
+        ${herramientas ? `<div class="autor-dato"><span>Herramientas</span><div class="chips-datos">${herramientas}</div></div>` : ''}`;
+      $('ficha-autor').hidden = false;
+    };
+    pintarAutor(null);
+    if (i.user_id) DP.sb.rpc('perfil_publico', { p_id: i.user_id }).then(({ data }) => { if (data && data[0]) pintarAutor(data[0]); });
+  }
+
   // Quién lo publicó (solo anuncios hechos en nuestra web): nombre y @usuario.
-  if (i.origen === 'usuario' && i.user_id) {
+  if (!concepto && i.origen === 'usuario' && i.user_id) {
     DP.sb.rpc('perfil_publico', { p_id: i.user_id }).then(({ data }) => {
       const p = data && data[0];
       if (!p || !p.usuario) return;
@@ -99,8 +126,14 @@
   // Contacto
   const botones = [];
   if (i.whatsapp) {
-    const texto = `Hola, vi tu anuncio «${i.titulo}» en Vivinati (${location.href}). ¿Sigue disponible?`;
-    botones.push(`<a class="boton wa" target="_blank" rel="noopener" href="https://wa.me/${i.whatsapp}?text=${encodeURIComponent(texto)}">Escribir por WhatsApp</a>`);
+    const texto = concepto
+      ? `Hola, vi tu proyecto «${i.titulo}» en Vivinati (${location.href}). Me gustaría hablar contigo / colaborar.`
+      : `Hola, vi tu anuncio «${i.titulo}» en Vivinati (${location.href}). ¿Sigue disponible?`;
+    botones.push(`<a class="boton ${concepto ? 'concepto' : 'wa'}" target="_blank" rel="noopener" href="https://wa.me/${i.whatsapp}?text=${encodeURIComponent(texto)}">${concepto ? 'Contactar al creador / Colaborar' : 'Escribir por WhatsApp'}</a>`);
+  }
+  const modelo = concepto && DP.urlSegura(i.url_3d);
+  if (modelo && modelo.startsWith('https://')) {
+    botones.push(`<a class="boton sec" target="_blank" rel="noopener nofollow" href="${DP.esc(modelo)}">Ver modelo 3D externo ↗</a>`);
   }
   const original = DP.urlSegura(i.url_original);
   if (original) {
@@ -109,7 +142,7 @@
   }
   const { data: { session } } = await DP.sb.auth.getSession();
   if (session && session.user.id === i.user_id) {
-    botones.push(`<a class="boton sec" href="publicar.html?id=${encodeURIComponent(i.id)}">Editar mi anuncio</a>`);
+    botones.push(`<a class="boton sec" href="publicar.html?id=${encodeURIComponent(i.id)}">${concepto ? 'Editar mi proyecto' : 'Editar mi anuncio'}</a>`);
   }
   $('contacto').innerHTML = botones.join('');
 

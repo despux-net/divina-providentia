@@ -19,7 +19,16 @@
   let desde = 0, vista = 'lista', soloFavoritos = false;
   let mapa = null, capaPuntos = null, peticion = 0;
 
-  DP.opciones(campos.operacion, { venta: 'En venta', alquiler: 'En alquiler' }, 'Venta y alquiler');
+  DP.opciones(campos.operacion, { venta: 'En venta', alquiler: 'En alquiler', concepto: 'Conceptos 3D' }, 'Venta y alquiler');
+  // Los proyectos conceptuales tienen su propia galería (conceptos.html).
+  const irAConceptos = () => {
+    const p = new URLSearchParams();
+    if (campos.q.value.trim()) p.set('q', campos.q.value.trim());
+    if (campos.estado.value) p.set('estado', campos.estado.value);
+    location.href = 'conceptos.html' + (p.toString() ? '?' + p : '');
+  };
+  // Interruptor «Incluir proyectos conceptuales de la zona» (apagado por defecto).
+  const conceptos = $('f-conceptos');
   DP.opciones(campos.tipo, DP.TIPOS, 'Todos los tipos');
   DP.opcionesEstados(campos.estado, 'Toda Venezuela');
 
@@ -28,6 +37,8 @@
   for (const [k, el] of Object.entries(campos)) if (params.has(k)) el.value = params.get(k);
   if (params.get('vista') === 'mapa') vista = 'mapa';
   if (params.get('fav') === '1') soloFavoritos = true;
+  if (params.get('conceptos') === '1') conceptos.checked = true;
+  if (campos.operacion.value === 'concepto') irAConceptos();
 
   function filtros() {
     const num = el => (el.value === '' ? null : Number(el.value));
@@ -41,7 +52,8 @@
       p_precio_max: max,
       // El filtro de precio está en dólares; sin él se muestran todas las monedas.
       p_moneda: min != null || max != null ? 'USD' : null,
-      p_habitaciones: num(campos.hab)
+      p_habitaciones: num(campos.hab),
+      p_incluir_conceptos: conceptos.checked
     };
   }
 
@@ -50,6 +62,7 @@
     for (const [k, el] of Object.entries(campos)) if (el.value && !(k === 'orden' && el.value === 'recientes')) p.set(k, el.value);
     if (vista === 'mapa') p.set('vista', 'mapa');
     if (soloFavoritos) p.set('fav', '1');
+    if (conceptos.checked) p.set('conceptos', '1');
     const qs = p.toString();
     history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
   }
@@ -225,12 +238,15 @@
   const nuevaBusqueda = () => { soloFavoritos = false; buscar(); };
   function limpiar() {
     for (const [k, el] of Object.entries(campos)) el.value = k === 'orden' ? 'recientes' : '';
+    conceptos.checked = false;
     nuevaBusqueda();
   }
 
   // ---------- Eventos ----------
   $('form-busqueda').addEventListener('submit', e => { e.preventDefault(); $('d-precio').open = false; nuevaBusqueda(); });
-  for (const k of ['operacion', 'tipo', 'estado', 'hab']) campos[k].addEventListener('change', nuevaBusqueda);
+  for (const k of ['tipo', 'estado', 'hab']) campos[k].addEventListener('change', nuevaBusqueda);
+  campos.operacion.addEventListener('change', () => (campos.operacion.value === 'concepto' ? irAConceptos() : nuevaBusqueda()));
+  conceptos.addEventListener('change', nuevaBusqueda);
   campos.orden.addEventListener('change', () => buscar());
   for (const k of ['min', 'max']) campos[k].addEventListener('change', nuevaBusqueda);
   $('d-precio').querySelector('[data-cerrar]').addEventListener('click', () => { $('d-precio').open = false; });

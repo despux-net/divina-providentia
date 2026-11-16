@@ -13,7 +13,13 @@ const DP = {
     townhouse: 'Townhouse', local: 'Local comercial', oficina: 'Oficina',
     terreno: 'Terreno', galpon: 'Galpón', otro: 'Otro'
   },
-  OPERACIONES: { venta: 'En venta', alquiler: 'En alquiler' },
+  OPERACIONES: { venta: 'En venta', alquiler: 'En alquiler', concepto: 'Concepto 3D' },
+
+  // Conceptos 3D (proyectos conceptuales: renders, bocetos, tesis…)
+  ETAPAS: { conceptual: 'Proyecto conceptual', tesis: 'Tesis', anteproyecto: 'Anteproyecto', infraestructura: 'Infraestructura' },
+  ROLES: { estudiante: 'Estudiante', arquitecto: 'Arquitecto/a', emprendedor: 'Emprendedor/a', estudio: 'Estudio' },
+  CATEGORIAS: { residencial: 'Residencial', urbano: 'Urbano', infraestructura: 'Infraestructura', comercial: 'Comercial' },
+  esConcepto(i) { return i && i.operacion === 'concepto'; },
 
   // Estado → capital aproximada, para centrar el mapa.
   ESTADOS: {
@@ -44,6 +50,7 @@ const DP = {
   },
 
   precio(i) {
+    if (DP.esConcepto(i)) return DP.ETAPAS[i.etapa] || 'Proyecto conceptual';
     if (i.precio == null) return 'Precio a consultar';
     const n = Number(i.precio).toLocaleString('es-VE', { maximumFractionDigits: 0 });
     const txt = i.moneda === 'VES' ? `Bs. ${n}` : `$${n}`;
@@ -69,28 +76,32 @@ const DP = {
       ? `<img class="foto" src="${DP.esc(foto)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
       : `<div class="sinfoto">Sin fotos</div>`;
     const precio = DP.esc(DP.precio(i)).replace(' /mes', ' <small>/mes</small>');
-    const origen = i.origen === 'externo' && i.fuente ? `Anuncio de ${DP.esc(i.fuente)}` : 'Publicado en Vivinati';
+    const origen = i.origen === 'externo' && i.fuente ? `Anuncio de ${DP.esc(i.fuente)}`
+      : DP.esConcepto(i) ? (i.institucion ? DP.esc(i.institucion) : 'Portafolio en Vivinati') : 'Publicado en Vivinati';
     const fav = DP.esFavorito(i.id);
-    const chips = [
-      i.habitaciones != null ? `${i.habitaciones} hab.` : null,
-      i.banos != null ? `${i.banos} baños` : null,
-      i.metros != null ? `${Number(i.metros).toLocaleString('es-VE')} m²` : null
-    ].filter(Boolean).map(c => `<span class="chip-dato">${DP.esc(c)}</span>`).join('');
+    const concepto = DP.esConcepto(i);
+    const chips = (concepto
+      ? [DP.ROLES[i.rol_autor], ...(Array.isArray(i.herramientas) ? i.herramientas.slice(0, 3) : [])]
+      : [
+        i.habitaciones != null ? `${i.habitaciones} hab.` : null,
+        i.banos != null ? `${i.banos} baños` : null,
+        i.metros != null ? `${Number(i.metros).toLocaleString('es-VE')} m²` : null
+      ]).filter(Boolean).map(c => `<span class="chip-dato">${DP.esc(c)}</span>`).join('');
     // Solo en el teléfono (estilo app): «Apartamento · En alquiler» arriba y
     // «$650/mes | 85 m² | 2 hab.» abajo. En escritorio están ocultas.
-    const tipo = DP.TIPOS[i.tipo] || i.tipo;
+    const tipo = concepto ? (DP.CATEGORIAS[i.categoria_proyecto] || 'Proyecto') : (DP.TIPOS[i.tipo] || i.tipo);
     const tipoMovil = [tipo, DP.OPERACIONES[i.operacion]].filter(Boolean).join(' · ');
-    const lineaMovil = [
+    const lineaMovil = (concepto ? [DP.precio(i), DP.ROLES[i.rol_autor], i.institucion] : [
       DP.precio(i),
       i.metros != null ? `${Number(i.metros).toLocaleString('es-VE')} m²` : null,
       i.habitaciones != null ? `${i.habitaciones} hab.` : null
-    ].filter(Boolean).map(DP.esc).join(' <span class="sep">|</span> ');
+    ]).filter(Boolean).map(DP.esc).join(' <span class="sep">|</span> ');
     return `<article class="tarjeta-env">
       <a class="tarjeta" href="anuncio.html?id=${encodeURIComponent(i.id)}">
-        <div class="tarjeta-foto">${img}<span class="sello">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span></div>
+        <div class="tarjeta-foto">${img}<span class="sello sello-${DP.esc(i.operacion)}">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span></div>
         <div class="cuerpo">
-          <div class="tipo-movil">${DP.esc(tipoMovil)}</div>
-          <div class="precio">${precio}</div>
+          <div class="tipo-movil op-${DP.esc(i.operacion)}">${DP.esc(tipoMovil)}</div>
+          <div class="precio${concepto ? ' precio-concepto' : ''}">${precio}</div>
           <div class="titulo-t">${DP.esc(i.titulo)}</div>
           <div class="lugar"><span class="lugar-tipo">${DP.esc(tipo)} · </span><span class="lugar-sitio">${DP.esc(DP.lugar(i))}</span></div>
           <div class="linea-movil">${lineaMovil}</div>

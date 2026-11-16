@@ -12,14 +12,14 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=15">
+  <link rel="stylesheet" href="estilos.css?v=16">
 </head>
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
       <a class="marca" href="index.html">Vivinati</a>
       <nav class="nav">
-        <a href="buscar.html">Buscar</a>
+        <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
         <a class="boton peq" href="publicar.html">Publicar gratis</a>
         <span data-nav-sesion></span>
       </nav>
@@ -61,6 +61,7 @@
         <div class="precio" id="precio"></div>
         <div class="lugar" id="lugar"></div>
         <div class="publicado-por" id="publicado-por" hidden></div>
+        <section class="ficha-autor" id="ficha-autor" hidden aria-label="Creador del proyecto"></section>
         <div class="caract" id="caract"></div>
         <div id="contacto" style="display:grid;gap:8px"></div>
         <div class="compartir" id="compartir">
@@ -70,7 +71,7 @@
           <button class="boton sec peq" type="button" id="comp-copiar">Copiar enlace</button>
         </div>
         <p class="aviso" id="aviso-externo" hidden>Este anuncio fue encontrado en otra web. Los datos y el contacto están en el anuncio original.</p>
-        <p class="aviso">Consejo: nunca envíes dinero ni pagues reservas sin haber visto el inmueble y verificado al propietario.</p>
+        <p class="aviso" id="aviso-consejo">Consejo: nunca envíes dinero ni pagues reservas sin haber visto el inmueble y verificado al propietario.</p>
         <p class="aviso" id="fecha"></p>
       </aside>
     </div>
@@ -80,7 +81,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=9"></script>
-  <script src="anuncio.js?v=7"></script>
+  <script src="comun.js?v=10"></script>
+  <script src="anuncio.js?v=8"></script>
 </body>
 </html>

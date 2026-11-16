@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conceptos 3D: proyectos conceptuales y renders — Vivinati</title>
+  <meta name="description" content="Renders 3D, bocetos arquitectónicos, tesis de estudiantes y propuestas de infraestructura del talento emergente en Venezuela.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="estilos.css?v=16">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html"><span>Vivinati</span></a>
+      <nav class="nav">
+        <a href="buscar.html">Buscar</a>
+        <a href="conceptos.html" aria-current="page">Conceptos 3D</a>
+        <span data-nav-sesion></span>
+        <a class="boton peq" href="publicar.html?tipo=concepto">Publicar proyecto</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Presentación de la sección -->
+  <section class="conceptos-intro">
+    <div class="conceptos-intro-int">
+      <span class="insignia-lab">Vivinati Lab</span>
+      <h1>Conceptos 3D</h1>
+      <p>Renders, bocetos arquitectónicos, tesis y propuestas de infraestructura del talento emergente de Venezuela.
+        <strong>No son inmuebles en venta:</strong> son ideas y portafolios para inspirarte o colaborar con sus creadores.</p>
+      <p class="conceptos-intro-acciones"><a class="boton" href="publicar.html?tipo=concepto">Publicar mi proyecto</a>
+        <a class="boton sec" href="buscar.html">Buscar inmuebles reales</a></p>
+    </div>
+  </section>
+
+  <!-- Filtros del portafolio -->
+  <div class="barra-filtros barra-conceptos">
+    <form class="barra-filtros-int" id="form-conceptos" role="search">
+      <input type="search" id="q" placeholder="Idea, universidad o programa (Revit, Blender…)" aria-label="Buscar proyectos" class="campo-q">
+      <select id="f-categoria" class="pildora" aria-label="Categoría"></select>
+      <select id="f-etapa" class="pildora" aria-label="Etapa del proyecto"></select>
+      <select id="f-rol" class="pildora" aria-label="Perfil del autor"></select>
+      <select id="f-estado" class="pildora" aria-label="Estado"></select>
+      <span class="barra-fin">
+        <button type="button" class="redondo sec" id="limpiar" title="Quitar filtros" aria-label="Quitar filtros">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        </button>
+        <button type="submit" class="redondo concepto" title="Buscar" aria-label="Buscar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
+      </span>
+    </form>
+  </div>
+
+  <main class="contenedor">
+    <p class="resumen-linea" id="resumen" aria-live="polite">Buscando…</p>
+    <div id="resultados" class="rejilla resultados-cuatro"></div>
+    <div class="mas"><button class="boton sec" id="mas" hidden>Ver más proyectos</button></div>
+  </main>
+
+  <footer class="pie"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=10"></script>
+  <script src="conceptos.js?v=1"></script>
+</body>
+</html>

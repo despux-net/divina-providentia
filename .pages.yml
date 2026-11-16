@@ -61,6 +61,10 @@ content:
         description: "Escribe {anuncios} donde quieras que salga el número de anuncios en vivo."
         type: string
         required: true
+      - name: lema_buscador
+        label: Frase bajo el título del buscador
+        description: Explica los tres pilares (comprar, alquilar y conceptos 3D) en una frase.
+        type: text
       - name: titulo_categorias
         label: Título de la sección de categorías
         type: string

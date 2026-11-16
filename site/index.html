@@ -13,7 +13,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=15">
+  <link rel="stylesheet" href="estilos.css?v=16">
 </head>
 <body>
   <header class="cabecera">
@@ -21,6 +21,7 @@
       <a class="marca" href="index.html"><span>Vivinati</span></a>
       <nav class="nav">
         <a href="buscar.html">Buscar</a>
+        <a href="conceptos.html">Conceptos 3D</a>
         <a href="#como-funciona">Cómo funciona</a>
         <a href="#consejos">Consejos</a>
         <span data-nav-sesion></span>
@@ -34,10 +35,24 @@
     <div class="hero-int">
       <form class="panel-hero" id="form-busqueda" role="search" action="buscar.html" method="get">
         <h1 id="titulo-buscador">Más de <span data-cifra="anuncios">1.900</span> inmuebles en toda Venezuela</h1>
+        <p class="lema-buscador" id="lema-buscador">Encuentra inmuebles en venta o alquiler en Venezuela, o explora el portafolio de proyectos conceptuales y 3D del talento emergente.</p>
+        <!-- Tres intenciones: Comprar, Alquilar y Conceptos 3D -->
+        <div class="intenciones" role="tablist" aria-label="¿Qué buscas?">
+          <button type="button" role="tab" class="intencion" data-intencion="venta" aria-selected="true">Comprar</button>
+          <button type="button" role="tab" class="intencion" data-intencion="alquiler" aria-selected="false">Alquilar</button>
+          <button type="button" role="tab" class="intencion" data-intencion="concepto" aria-selected="false">Conceptos 3D <span class="insignia-nuevo">Nuevo</span></button>
+        </div>
+        <input type="hidden" id="f-operacion" name="operacion" value="venta">
         <div class="fila-busqueda">
-          <input type="search" id="q" name="q" placeholder="Ciudad, zona o palabra clave" aria-label="Ciudad, zona o palabra clave">
+          <input type="search" id="q" name="q" placeholder="Ciudad, zona o palabra clave" aria-label="Qué buscas">
           <select id="f-tipo" name="tipo" aria-label="Tipo de inmueble"></select>
-          <select id="f-operacion" name="operacion" aria-label="Venta o alquiler"></select>
+          <select id="f-hab" name="hab" aria-label="Habitaciones">
+            <option value="">Habitaciones</option>
+            <option value="1">1+ hab.</option><option value="2">2+ hab.</option>
+            <option value="3">3+ hab.</option><option value="4">4+ hab.</option>
+          </select>
+          <select id="f-categoria" name="categoria" aria-label="Categoría del proyecto" hidden disabled></select>
+          <select id="f-rol" name="rol" aria-label="Perfil del autor" hidden disabled></select>
           <button class="boton" type="submit">Buscar</button>
         </div>
         <p class="sugerencias" id="sugerencias">Prueba: <a href="buscar.html?q=Chacao">Chacao</a> · <a href="buscar.html?q=Valencia">Valencia</a> · <a href="buscar.html?q=Lecheria">Lechería</a> · <a href="buscar.html?q=Maracaibo">Maracaibo</a> · <a href="buscar.html?q=Barquisimeto">Barquisimeto</a></p>
@@ -171,7 +186,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=9"></script>
-    <script src="portada.js?v=3"></script>
+  <script src="comun.js?v=10"></script>
+    <script src="portada.js?v=4"></script>
 </body>
 </html>

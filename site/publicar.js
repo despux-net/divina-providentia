@@ -4,7 +4,9 @@
 (async () => {
   const $ = id => document.getElementById(id);
   const MAX_FOTOS = 12;
-  const editarId = new URLSearchParams(location.search).get('id');
+  const params = new URLSearchParams(location.search);
+  const editarId = params.get('id');
+  let modo = ['venta', 'alquiler', 'concepto'].includes(params.get('tipo')) ? params.get('tipo') : null;
   let usuario = null;
   let fotos = [];          // [{ ruta } | { blob, vista }]
   let fotosOriginales = [];
@@ -13,6 +15,49 @@
 
   DP.opciones($('operacion'), { venta: 'Venta', alquiler: 'Alquiler' });
   DP.opciones($('tipo'), DP.TIPOS);
+  DP.opciones($('etapa'), DP.ETAPAS);
+  DP.opciones($('categoria_proyecto'), DP.CATEGORIAS);
+  DP.opciones($('rol_autor'), DP.ROLES);
+
+  // ---------- Modo: venta, alquiler o proyecto conceptual ----------
+  // El concepto oculta precio, características y «pega tu anuncio», y
+  // muestra los campos de portafolio. La base de datos impide que un
+  // concepto lleve precio.
+  const MODOS = { venta: 'Vender inmueble', alquiler: 'Alquilar inmueble', concepto: 'Proyecto conceptual' };
+  function ponerModo(m) {
+    modo = m;
+    const c = m === 'concepto';
+    $('eleccion').hidden = true;
+    $('form-anuncio').hidden = false;
+    $('modo-elegido').hidden = editando;
+    $('modo-texto').textContent = MODOS[m];
+    if (!c) $('operacion').value = m;
+    $('campo-operacion').hidden = c;
+    $('fila-precio').hidden = c;
+    $('bloque-caract').hidden = c;
+    $('bloque-proyecto').hidden = !c;
+    $('bloque-pegar').hidden = c || editando;
+    $('label-tipo').textContent = c ? 'Tipo de edificación que propones' : 'Tipo de inmueble';
+    $('legend-fotos').textContent = c ? 'Renders e imágenes' : 'Fotos';
+    $('legend-ubicacion').textContent = c ? 'Ubicación del proyecto' : 'Ubicación';
+    $('label-whatsapp').innerHTML = c
+      ? 'WhatsApp de contacto <small>(para que te escriban y colaborar)</small>'
+      : 'WhatsApp <small>(se mostrará en el anuncio)</small>';
+    if (!editando) $('h1').textContent = c ? 'Publica tu proyecto conceptual' : 'Publica tu inmueble gratis';
+    if (c && !$('tipo').value) $('tipo').value = 'otro';
+    if (mapa) setTimeout(() => mapa.invalidateSize(), 0);
+  }
+  function mostrarEleccion() {
+    $('form-anuncio').hidden = true;
+    $('eleccion').hidden = false;
+    $('h1').textContent = '¿Qué quieres publicar?';
+  }
+  document.querySelectorAll('.eleccion').forEach(b => b.addEventListener('click', () => {
+    ponerModo(b.dataset.modo);
+    history.replaceState(null, '', '?tipo=' + b.dataset.modo);
+    window.scrollTo(0, 0);
+  }));
+  $('cambiar-modo').addEventListener('click', () => { history.replaceState(null, '', location.pathname); mostrarEleccion(); });
   DP.opcionesEstados($('estado'), 'Elige un estado');
 
   const mensaje = (el, texto, tipo) => { $(el).innerHTML = texto ? `<div class="mensaje ${tipo}">${DP.esc(texto)}</div>` : ''; };
@@ -31,8 +76,10 @@
   usuario = session.user;
   const perfil = await DP.miPerfil();
   if (!perfil || !perfil.usuario) { location.href = 'perfil.html'; return; }
-  $('form-anuncio').hidden = false;
   if (!editarId && perfil.phone) $('whatsapp').value = perfil.phone;
+  if (editarId) $('form-anuncio').hidden = false;
+  else if (modo) ponerModo(modo);
+  else mostrarEleccion();
   await prepararFormulario();
 
   // ---------- Formulario ----------
@@ -73,9 +120,13 @@
     $('bloque-pegar').hidden = true;
     $('h1').textContent = 'Editar anuncio';
     $('btn-guardar').textContent = 'Guardar cambios';
-    for (const k of ['operacion', 'tipo', 'titulo', 'precio', 'moneda', 'descripcion', 'habitaciones', 'banos', 'estacionamientos', 'metros', 'estado', 'ciudad', 'zona']) {
+    for (const k of ['tipo', 'titulo', 'precio', 'moneda', 'descripcion', 'habitaciones', 'banos', 'estacionamientos', 'metros', 'estado', 'ciudad', 'zona',
+      'etapa', 'categoria_proyecto', 'rol_autor', 'institucion', 'url_3d']) {
       if (i[k] != null) $(k).value = i[k];
     }
+    if (Array.isArray(i.herramientas)) $('herramientas').value = i.herramientas.join(', ');
+    ponerModo(i.operacion);
+    if (i.operacion === 'concepto') $('h1').textContent = 'Editar proyecto conceptual';
     if (i.whatsapp) $('whatsapp').value = '+' + i.whatsapp;
     fotos = (i.fotos || []).map(ruta => ({ ruta }));
     fotosOriginales = [...(i.fotos || [])];
@@ -141,7 +192,17 @@
     const titulo = $('titulo').value.trim();
     const whatsapp = normalizarWhatsapp($('whatsapp').value);
     if (titulo.length < 5) return mensaje('msg-form', 'El título debe tener al menos 5 letras.', 'error');
-    if (!$('estado').value) return mensaje('msg-form', 'Elige el estado donde está el inmueble.', 'error');
+    const concepto = modo === 'concepto';
+    if (!$('estado').value) return mensaje('msg-form', concepto ? 'Elige el estado donde se ubicaría el proyecto.' : 'Elige el estado donde está el inmueble.', 'error');
+    let url3d = null;
+    if (concepto) {
+      if (!$('etapa').value || !$('categoria_proyecto').value || !$('rol_autor').value)
+        return mensaje('msg-form', 'Elige la etapa, la categoría y tu perfil (estudiante, arquitecto…).', 'error');
+      if ($('url_3d').value.trim()) {
+        url3d = DP.urlSegura($('url_3d').value.trim());
+        if (!url3d || !url3d.startsWith('https://')) return mensaje('msg-form', 'El enlace al modelo 3D debe empezar por https://', 'error');
+      }
+    }
     if (!whatsapp) return mensaje('msg-form', 'Revisa el número de WhatsApp (ej.: 0414 123 4567).', 'error');
 
     const btn = $('btn-guardar');
@@ -161,14 +222,22 @@
       }
 
       // 2) Guardar el anuncio
+      const herramientas = [...new Set($('herramientas').value.split(',').map(h => h.trim().slice(0, 40)).filter(Boolean))].slice(0, 12);
       const fila = {
-        operacion: $('operacion').value, tipo: $('tipo').value, titulo,
-        precio: numero('precio'), moneda: $('moneda').value, descripcion: texto('descripcion'),
-        habitaciones: numero('habitaciones'), banos: numero('banos'),
-        estacionamientos: numero('estacionamientos'), metros: numero('metros'),
+        operacion: concepto ? 'concepto' : $('operacion').value, tipo: $('tipo').value, titulo,
+        precio: concepto ? null : numero('precio'), moneda: $('moneda').value, descripcion: texto('descripcion'),
+        habitaciones: concepto ? null : numero('habitaciones'), banos: concepto ? null : numero('banos'),
+        estacionamientos: concepto ? null : numero('estacionamientos'), metros: concepto ? null : numero('metros'),
         estado: $('estado').value, ciudad: texto('ciudad'), zona: texto('zona'),
         lat: punto ? punto.lat : null, lng: punto ? punto.lng : null,
-        whatsapp, fotos: rutas
+        whatsapp, fotos: rutas,
+        // Campos de portafolio: solo en conceptos (la base de datos lo exige).
+        etapa: concepto ? $('etapa').value : null,
+        categoria_proyecto: concepto ? $('categoria_proyecto').value : null,
+        rol_autor: concepto ? $('rol_autor').value : null,
+        institucion: concepto ? texto('institucion') : null,
+        url_3d: concepto ? url3d : null,
+        herramientas: concepto && herramientas.length ? herramientas : null
       };
       const consulta = editando
         ? DP.sb.from('inmuebles').update(fila).eq('id', editarId).select('id').single()
@@ -192,7 +261,7 @@
   function traducirError(error) {
     const m = error.message || '';
     if (/máximo de 30/.test(m)) return m;
-    if (/check constraint/.test(m)) return 'Algún dato no es válido. Revisa el título, los números y el WhatsApp.';
+    if (/check constraint/.test(m)) return 'Algún dato no es válido. Revisa el título, los números, los enlaces y el WhatsApp.';
     return 'No se pudo guardar el anuncio: ' + m;
   }
 

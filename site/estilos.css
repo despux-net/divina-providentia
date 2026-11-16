@@ -543,3 +543,99 @@ a.caja.categoria { text-decoration: none; }
   .corazon:hover { color: #005CA7; }
   .corazon[aria-pressed=true] { color: #e53935; }
 }
+
+/* =====================================================================
+   Tres verticales: Venta (azul), Alquiler (verde) y Concepto 3D (púrpura)
+   ===================================================================== */
+:root {
+  --venta: #1976d2;
+  --alquiler: #2e7d32;
+  --concepto: #7b1fa2;
+  --concepto-claro: #f3e5f5;
+  --concepto-hover: #6a1b9a;
+}
+/* Sello de la foto en las tarjetas */
+.sello { color: #fff; }
+.sello-venta { background: var(--venta); }
+.sello-alquiler { background: var(--alquiler); }
+.sello-concepto { background: var(--concepto); }
+.precio-concepto { color: var(--concepto) !important; font-size: 1.05rem !important; font-weight: 500; }
+/* Etiquetas de la ficha */
+.etiqueta.op-venta { background: var(--venta); color: #fff; }
+.etiqueta.op-alquiler { background: var(--alquiler); color: #fff; }
+.etiqueta.op-concepto { background: var(--concepto); color: #fff; }
+/* Botones púrpura (conceptos) */
+.boton.concepto { background: var(--concepto); color: #fff; }
+.boton.concepto:hover { background: var(--concepto-hover); color: #fff; }
+.redondo.concepto { background: var(--concepto); box-shadow: 0 4px 12px rgba(123, 31, 162, .35); }
+.redondo.concepto:hover { background: var(--concepto-hover); }
+
+/* Portada: frase de los tres pilares y pestañas de intención */
+.lema-buscador { margin: -8px 0 14px; color: var(--muted); font-size: .95rem; line-height: 1.45; }
+.intenciones { display: flex; gap: 4px; margin: 0 0 12px; border-bottom: 1px solid var(--line); }
+.intencion {
+  border: 0; background: none; cursor: pointer; font: inherit; font-size: .95rem; color: var(--muted);
+  padding: 8px 14px 9px; border-bottom: 3px solid transparent; margin-bottom: -1px; display: inline-flex; align-items: center; gap: 6px;
+}
+.intencion:hover { color: var(--ink); }
+.intencion[aria-selected=true] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.intencion[data-intencion=alquiler][aria-selected=true] { color: var(--alquiler); border-bottom-color: var(--alquiler); }
+.intencion[data-intencion=concepto][aria-selected=true] { color: var(--concepto); border-bottom-color: var(--concepto); }
+.insignia-nuevo {
+  background: var(--concepto-claro); color: var(--concepto); font-size: .66rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 999px;
+}
+.panel-hero[data-intencion=concepto] .fila-busqueda .boton { background: var(--concepto); box-shadow: 0 4px 12px rgba(123, 31, 162, .3); }
+
+/* Galería de conceptos */
+.conceptos-intro { background: linear-gradient(135deg, #f8f0fb 0%, #eef5fd 100%); border-bottom: 1px solid var(--line); }
+.conceptos-intro-int { max-width: var(--ancho); margin: 0 auto; padding: 34px 16px 28px; }
+.conceptos-intro h1 { font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 400; margin: 8px 0 8px; }
+.conceptos-intro p { max-width: 720px; margin: 0 0 12px; color: var(--ink); }
+.conceptos-intro-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.conceptos-intro .boton:not(.sec) { background: var(--concepto); }
+.conceptos-intro .boton:not(.sec):hover { background: var(--concepto-hover); }
+.insignia-lab {
+  display: inline-block; background: var(--concepto); color: #fff; font-size: .72rem; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+}
+.barra-conceptos .pildora.activa { border-color: var(--concepto); background-color: var(--concepto-claro); color: var(--concepto); }
+
+/* Buscar: interruptor «Incluir proyectos conceptuales» */
+.interruptor { display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--muted); cursor: pointer; margin: 0; }
+.interruptor input { width: auto; accent-color: var(--concepto); margin: 0; }
+
+/* Publicar: paso de elección con tres tarjetas */
+.eleccion-tarjetas { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: 8px 0 4px; }
+.eleccion {
+  display: grid; gap: 6px; justify-items: start; text-align: left; cursor: pointer; font: inherit;
+  background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--venta); border-radius: 12px;
+  padding: 18px 16px; color: var(--ink); transition: box-shadow .15s, transform .15s;
+}
+.eleccion:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.eleccion strong { font-size: 1.05rem; font-weight: 500; }
+.eleccion span:last-child { color: var(--muted); font-size: .9rem; }
+.eleccion-icono { color: var(--venta); }
+.eleccion.op-alquiler { border-top-color: var(--alquiler); }
+.eleccion.op-alquiler .eleccion-icono { color: var(--alquiler); }
+.eleccion.op-concepto { border-top-color: var(--concepto); background: #fdfaff; }
+.eleccion.op-concepto .eleccion-icono { color: var(--concepto); }
+.modo-elegido { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+
+/* Ficha del creador (detalle de un concepto) */
+.ficha-autor { border: 1px solid #e6d3ef; background: #fdfaff; border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.ficha-autor h2 { font-size: .78rem; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--concepto); margin: 0 0 10px; }
+.autor-cabeza { display: flex; gap: 12px; align-items: center; }
+.autor-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--concepto); color: #fff; display: grid; place-items: center; font-weight: 500; font-size: 1.1rem; flex: none; }
+.autor-usuario { color: var(--muted); font-size: .88rem; }
+.autor-rol { color: var(--concepto); font-size: .88rem; }
+.autor-dato { margin: 10px 0 0; font-size: .92rem; }
+.autor-dato > span { display: block; color: var(--muted); font-size: .78rem; margin-bottom: 2px; }
+
+@media (max-width: 560px) {
+  .tipo-movil.op-venta { color: var(--venta); }
+  .tipo-movil.op-alquiler { color: var(--alquiler); }
+  .tipo-movil.op-concepto { color: var(--concepto); }
+  .intencion { padding: 8px 10px 9px; font-size: .9rem; }
+  .interruptor { flex-basis: 100%; }
+}
