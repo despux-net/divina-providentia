@@ -416,10 +416,15 @@ button.enlace:hover { color: var(--accent-hover); }
 .principal h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 500; margin: 0 0 6px; }
 .resumen-linea { margin: 0 0 16px; color: var(--ink); font-size: .92rem; }
 .resumen-linea b { font-weight: 500; }
-.pills-tipo { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); margin-bottom: 16px; }
-.pill-tipo { border: 1px solid #5c8fc4; border-radius: 999px; background: #fff; color: #1d5b96; padding: 7px 12px; cursor: pointer; font-size: .88rem; transition: all .15s; }
-.pill-tipo:hover { background: var(--azul-claro); }
-.pill-tipo[aria-pressed=true] { background: var(--azul-claro); border-color: var(--azul-claro); font-weight: 500; }
+/* Píldoras de tipo: compactas, del ancho de su texto, en una fila que se reparte sola */
+.pills-tipo { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.pill-tipo {
+  border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink);
+  padding: 3px 11px; cursor: pointer; font-size: .8rem; line-height: 1.5; white-space: nowrap;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.pill-tipo:hover { border-color: var(--azul-medio); color: var(--accent); }
+.pill-tipo[aria-pressed=true] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 500; }
 .barra-orden { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
 .orden { width: auto; padding: 6px 12px; font-size: .8rem; font-weight: 500; text-transform: uppercase; letter-spacing: .03em; border-radius: 4px; }
 
