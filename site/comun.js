@@ -76,13 +76,24 @@ const DP = {
       i.banos != null ? `${i.banos} baños` : null,
       i.metros != null ? `${Number(i.metros).toLocaleString('es-VE')} m²` : null
     ].filter(Boolean).map(c => `<span class="chip-dato">${DP.esc(c)}</span>`).join('');
+    // Solo en el teléfono (estilo app): «Apartamento · En alquiler» arriba y
+    // «$650/mes | 85 m² | 2 hab.» abajo. En escritorio están ocultas.
+    const tipo = DP.TIPOS[i.tipo] || i.tipo;
+    const tipoMovil = [tipo, DP.OPERACIONES[i.operacion]].filter(Boolean).join(' · ');
+    const lineaMovil = [
+      DP.precio(i),
+      i.metros != null ? `${Number(i.metros).toLocaleString('es-VE')} m²` : null,
+      i.habitaciones != null ? `${i.habitaciones} hab.` : null
+    ].filter(Boolean).map(DP.esc).join(' <span class="sep">|</span> ');
     return `<article class="tarjeta-env">
       <a class="tarjeta" href="anuncio.html?id=${encodeURIComponent(i.id)}">
         <div class="tarjeta-foto">${img}<span class="sello">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span></div>
         <div class="cuerpo">
+          <div class="tipo-movil">${DP.esc(tipoMovil)}</div>
           <div class="precio">${precio}</div>
           <div class="titulo-t">${DP.esc(i.titulo)}</div>
-          <div class="lugar">${DP.esc(DP.TIPOS[i.tipo] || i.tipo)} · ${DP.esc(DP.lugar(i))}</div>
+          <div class="lugar"><span class="lugar-tipo">${DP.esc(tipo)} · </span><span class="lugar-sitio">${DP.esc(DP.lugar(i))}</span></div>
+          <div class="linea-movil">${lineaMovil}</div>
           ${chips ? `<div class="chips-datos">${chips}</div>` : ''}
           <div class="origen">${origen}</div>
         </div>
@@ -311,7 +322,31 @@ DP.pie = () => {
   </div>`;
 };
 
+// Barra de pestañas inferior, como en las apps. Solo se ve en el teléfono
+// (el CSS la oculta en pantallas anchas).
+DP.barraMovil = () => {
+  if (document.querySelector('.barra-movil')) return;
+  const pagina = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  const fav = new URLSearchParams(location.search).get('fav') === '1';
+  const icono = d => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const pestañas = [
+    ['buscar.html', 'Buscar', pagina === 'buscar.html' && !fav, '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
+    ['buscar.html?fav=1', 'Favoritos', pagina === 'buscar.html' && fav, '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>'],
+    ['publicar.html', 'Publicar', pagina === 'publicar.html', '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'],
+    ['mis-anuncios.html', 'Mis anuncios', pagina === 'mis-anuncios.html', '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>'],
+    ['perfil.html', 'Perfil', ['perfil.html', 'entrar.html', 'registro.html', 'restablecer.html'].includes(pagina), '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
+  ];
+  const nav = document.createElement('nav');
+  nav.className = 'barra-movil';
+  nav.setAttribute('aria-label', 'Menú principal');
+  nav.innerHTML = pestañas.map(([href, txt, activa, d]) =>
+    `<a href="${href}"${activa ? ' class="activa" aria-current="page"' : ''}>${icono(d)}<span>${txt}</span></a>`).join('');
+  document.body.appendChild(nav);
+  document.body.classList.add('con-barra-movil');
+};
+
 window.DP = DP;
 DP.ojos();
 DP.pie();
+DP.barraMovil();
 DP.activarCorazones();

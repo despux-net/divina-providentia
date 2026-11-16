@@ -493,3 +493,53 @@ a.caja.categoria { text-decoration: none; }
 .globo-lugar { color: var(--muted); font-size: .8rem; }
 .globo-texto .boton { margin-top: 6px; color: #fff; }
 .nota-mapa { color: var(--muted); }
+
+/* =====================================================================
+   Versión teléfono «estilo app» (inspirada en las apps de pisos):
+   cabecera azul, tarjetas a todo lo ancho y barra de pestañas abajo.
+   Todo va dentro de max-width: 560px; el escritorio no cambia.
+   ===================================================================== */
+.tipo-movil, .linea-movil, .barra-movil { display: none; }
+
+@media (max-width: 560px) {
+  /* Cabecera azul con el logotipo en blanco */
+  .cabecera { background: #005CA7; border-bottom: 0; backdrop-filter: none; box-shadow: 0 2px 8px rgba(0, 40, 80, .25); }
+  .cabecera-int { padding: 10px 14px; min-height: 54px; }
+  .marca, .marca:hover { color: #fff; font-size: 1.75rem; }
+  .marca small { display: none; }
+  /* Los enlaces de arriba pasan a la barra inferior; solo queda «Salir» */
+  .cabecera .nav > a, .cabecera .nav [data-nav-sesion] > a:not([data-salir]) { display: none; }
+  .cabecera .nav [data-salir] { color: #fff; font-size: .8rem; padding: 3px 10px; border: 1px solid rgba(255, 255, 255, .55); border-radius: 999px; }
+  .cabecera .nav [data-salir]:hover { background: rgba(255, 255, 255, .15); color: #fff; }
+
+  /* Barra de pestañas fija abajo */
+  body.con-barra-movil { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+  .barra-movil {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1100;
+    background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -2px 10px rgba(0, 0, 0, .06);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .barra-movil a {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 7px 2px 6px; color: #6b7785; font-size: .66rem; line-height: 1.2; text-decoration: none;
+  }
+  .barra-movil a.activa { color: #005CA7; font-weight: 500; }
+  .barra-movil a.activa svg { stroke-width: 2.3; }
+
+  /* Tarjetas tipo app: foto a todo lo ancho y datos compactos debajo */
+  .rejilla, .resultados-dos, .resultados-cuatro { gap: 10px; }
+  .buscar-layout .tarjeta-env { margin: 0 -16px; }
+  .tarjeta, .tarjeta:hover { background: #fff; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; box-shadow: none; transform: none; }
+  .tarjeta-foto .foto, .tarjeta-foto .sinfoto { border-radius: 0; aspect-ratio: 16/10; }
+  .sello, .tarjeta .precio, .chips-datos, .origen, .lugar-tipo { display: none; }
+  .tarjeta .cuerpo { padding: 10px 54px 12px 14px; gap: 1px; }
+  .tipo-movil { display: block; font-weight: 700; font-size: .92rem; color: var(--ink); }
+  .tarjeta .titulo-t { font-weight: 400; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tarjeta .lugar { font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lugar-sitio { color: #005CA7; }
+  .linea-movil { display: block; font-weight: 700; font-size: .92rem; color: var(--ink); margin-top: 2px; }
+  .linea-movil .sep { color: #9aa5b1; font-weight: 400; margin: 0 2px; }
+  .corazon { top: auto; bottom: 30px; right: 10px; background: none; box-shadow: none; color: #005CA7; }
+  .corazon:hover { color: #005CA7; }
+  .corazon[aria-pressed=true] { color: #e53935; }
+}
