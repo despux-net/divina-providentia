@@ -84,6 +84,7 @@
     $('resumen').innerHTML = `<b>${fmt(data.total)}</b> ${data.total === 1 ? 'inmueble' : 'inmuebles'}` +
       (f.p_tipo ? ` · ${fmt(todos)} en todas las categorías` : '') +
       (f.p_estado ? ` en ${DP.esc(f.p_estado)}` : '');
+    ponerNotaMapa();
 
     // Píldoras de tipo (las que tienen anuncios), como «Wohnungen (1883)».
     const pills = ORDEN_TIPOS.filter(t => data.por_tipo[t]).map(t =>
@@ -100,10 +101,13 @@
   // ---------- Resultados ----------
   async function buscar(anadir = false) {
     const id = ++peticion;
-    if (!anadir) { desde = 0; contar(); }
+    if (!anadir) { desde = 0; notaMapa = ''; contar(); }
     guardarEnUrl();
     titular();
     if (!anadir) $('resumen').textContent = 'Buscando…';
+
+    // El mapa tiene su propia consulta: solo anuncios con ubicación.
+    if (vista === 'mapa' && !soloFavoritos) { await cargarMapa(id); return; }
 
     let data, error;
     if (soloFavoritos) {
@@ -126,8 +130,7 @@
     const hayMas = !soloFavoritos && vista === 'lista' && data.length > POR_PAGINA;
     const filas = hayMas ? data.slice(0, POR_PAGINA) : data;
 
-    if (vista === 'mapa') pintarMapa(filas);
-    else pintarLista(filas, anadir);
+    pintarLista(filas, anadir);
     if (soloFavoritos) $('resumen').innerHTML = `<b>${fmt(filas.length)}</b> ${filas.length === 1 ? 'anuncio guardado' : 'anuncios guardados'} · <button type="button" class="enlace" id="salir-favoritos">Volver a la búsqueda</button>`;
     $('mas').hidden = !hayMas;
     desde += filas.length;
@@ -147,26 +150,67 @@
     if (anadir) cont.insertAdjacentHTML('beforeend', html); else cont.innerHTML = html;
   }
 
-  function pintarMapa(filas) {
+  // ---------- Mapa ----------
+  // Puntos azules (en canvas, para que miles de puntos vayan fluidos).
+  // Ordenador: al pasar el cursor sale un globito con foto y precio; clic → anuncio.
+  // Móvil (sin cursor): el primer toque abre el globito con botón «Ver anuncio».
+  const sinCursor = window.matchMedia('(hover: none)').matches;
+  const ESTILO_PUNTO = { radius: 7, color: '#ffffff', weight: 2, fillColor: '#1976d2', fillOpacity: 0.95 };
+  const ESTILO_ACTIVO = { radius: 10, fillColor: '#0d47a1' };
+
+  function globito(i) {
+    const foto = DP.fotoUrl(i.foto);
+    return `<div class="globo-mapa">
+      ${foto ? `<img src="${DP.esc(foto)}" alt="" referrerpolicy="no-referrer">` : '<div class="globo-sinfoto">Sin fotos</div>'}
+      <div class="globo-texto">
+        <strong>${DP.esc(DP.precio(i))}</strong>
+        <span class="globo-tipo">${DP.esc(DP.TIPOS[i.tipo] || '')} · ${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span>
+        <span class="globo-lugar">${DP.esc(DP.lugar(i))}</span>
+        ${sinCursor ? `<a class="boton peq" href="anuncio.html?id=${encodeURIComponent(i.id)}">Ver anuncio</a>` : ''}
+      </div></div>`;
+  }
+
+  async function cargarMapa(id) {
     if (!mapa) {
-      mapa = L.map('mapa').setView(DP.CENTRO_VE, 6);
+      mapa = L.map('mapa', { preferCanvas: true }).setView(DP.CENTRO_VE, 6);
       DP.capaMapa(mapa);
       capaPuntos = L.layerGroup().addTo(mapa);
     }
     setTimeout(() => mapa.invalidateSize(), 0);
+    const { data, error } = await DP.sb.rpc('mapa_inmuebles', filtros());
+    if (id !== peticion) return;
+    if (error) { console.error(error); $('resumen').textContent = 'No se pudo cargar el mapa. Inténtalo de nuevo.'; return; }
+
     capaPuntos.clearLayers();
-    const conSitio = filas.filter(i => i.lat != null && i.lng != null);
-    for (const i of conSitio) {
-      const foto = DP.fotoUrl(i.fotos && i.fotos[0]);
-      const popup = `<a href="anuncio.html?id=${encodeURIComponent(i.id)}" style="text-decoration:none;color:inherit">
-        ${foto ? `<img src="${DP.esc(foto)}" alt="" referrerpolicy="no-referrer" style="width:200px;height:130px;object-fit:cover;border-radius:6px">` : ''}
-        <strong style="display:block;margin-top:4px;color:#1976d2">${DP.esc(DP.precio(i))}</strong>
-        ${DP.esc(i.titulo)}<br><small>${DP.esc(DP.lugar(i))}</small></a>`;
-      L.marker([i.lat, i.lng]).bindPopup(popup).addTo(capaPuntos);
+    for (const i of data) {
+      const punto = L.circleMarker([i.lat, i.lng], ESTILO_PUNTO).addTo(capaPuntos);
+      const ir = () => { location.href = `anuncio.html?id=${encodeURIComponent(i.id)}`; };
+      if (sinCursor) {
+        punto.bindPopup(globito(i), { className: 'popup-globo', closeButton: false, offset: [0, -4], maxWidth: 240 });
+      } else {
+        punto.bindTooltip(globito(i), { direction: 'top', offset: [0, -8], className: 'tooltip-globo', opacity: 1 });
+        punto.on('click', ir);
+        punto.on('mouseover', () => { punto.setStyle(ESTILO_ACTIVO); punto.bringToFront(); mapa.getContainer().style.cursor = 'pointer'; });
+        punto.on('mouseout', () => { punto.setStyle(ESTILO_PUNTO); mapa.getContainer().style.cursor = ''; });
+      }
     }
-    if (conSitio.length) mapa.fitBounds(L.latLngBounds(conSitio.map(i => [i.lat, i.lng])).pad(0.2), { maxZoom: 14 });
+    if (data.length) mapa.fitBounds(L.latLngBounds(data.map(i => [i.lat, i.lng])).pad(0.1), { maxZoom: 14 });
     else if (campos.estado.value) mapa.setView(DP.ESTADOS[campos.estado.value], 10);
     else mapa.setView(DP.CENTRO_VE, 6);
+
+    $('mas').hidden = true;
+    // El total de la búsqueda lo pinta contar(); aquí se aclara cuántos salen en el mapa.
+    notaMapa = data.length
+      ? `<b>${fmt(data.length)}</b> en el mapa · solo aparecen los anuncios que tienen ubicación`
+      : 'Ningún anuncio con ubicación para estos filtros. Prueba la vista de lista.';
+    ponerNotaMapa();
+  }
+
+  let notaMapa = '';
+  function ponerNotaMapa() {
+    const r = $('resumen');
+    if (vista !== 'mapa' || !notaMapa || r.textContent === 'Buscando…' || r.querySelector('.nota-mapa')) return;
+    r.insertAdjacentHTML('beforeend', ` <span class="nota-mapa">· ${notaMapa}</span>`);
   }
 
   function cambiarVista(v) {

@@ -13,3 +13,4 @@ El SQL completo está guardado en la propia base: `select * from supabase_migrat
 7. `estadisticas_publicas` — cifras de la portada (anuncios activos, webs, estados, con mapa).
 8. `conteos_busqueda` — total, conteo por tipo y por estado para la página de búsqueda (mismos filtros y deduplicado que `buscar_inmuebles`).
 9. `inmuebles_fotos_total` — cuántas fotos tiene el anuncio en su web de origen (guardamos hasta 8).
+10. `mapa_inmuebles` — puntos del mapa: solo anuncios con coordenadas (hasta 3000), con los filtros de la búsqueda; índice `inmuebles_geo_idx`.

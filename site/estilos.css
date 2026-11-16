@@ -471,3 +471,19 @@ a.caja.categoria { text-decoration: none; }
 .contador-fotos { position: absolute; bottom: 12px; right: 12px; background: rgba(20, 30, 40, .7); color: #fff; font-size: .82rem; padding: 3px 10px; border-radius: 999px; }
 .mas-fotos { margin: 8px 0 0; font-size: .9rem; color: var(--muted); }
 .mas-fotos a { font-weight: 500; }
+
+/* Mapa de búsqueda: globito al pasar el cursor (o al tocar en el móvil) */
+.leaflet-tooltip.tooltip-globo, .popup-globo .leaflet-popup-content-wrapper {
+  padding: 0; border: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 28px rgba(13, 71, 161, .28);
+}
+.leaflet-tooltip.tooltip-globo::before { border-top-color: #fff; }
+.popup-globo .leaflet-popup-content { margin: 0; width: 220px !important; }
+.globo-mapa { width: 220px; font: 400 13px/1.4 Roboto, Arial, sans-serif; color: var(--ink); white-space: normal; background: #fff; }
+.globo-mapa img, .globo-sinfoto { width: 100%; height: 130px; object-fit: cover; display: block; background: var(--azul-claro); }
+.globo-sinfoto { display: grid; place-items: center; color: var(--muted); }
+.globo-texto { padding: 8px 12px 10px; display: grid; gap: 1px; }
+.globo-texto strong { font-size: 1.05rem; font-weight: 500; color: var(--accent); }
+.globo-tipo { color: var(--ink); }
+.globo-lugar { color: var(--muted); font-size: .8rem; }
+.globo-texto .boton { margin-top: 6px; color: #fff; }
+.nota-mapa { color: var(--muted); }
