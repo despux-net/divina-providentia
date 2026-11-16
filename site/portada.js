@@ -1,46 +1,31 @@
-// Portada: tarjetas de categoría, cifras en vivo y título de los resultados.
-// La búsqueda en sí la hace buscar.js con los mismos campos (#q, #f-tipo…).
+// Portada: el buscador envía a buscar.html (formulario normal, sin JS),
+// aquí solo se rellenan los desplegables, los anuncios recientes y las cifras.
 (() => {
   const $ = id => document.getElementById(id);
-  const irAResultados = () => $('resultados-sec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  DP.opciones($('f-operacion'), { venta: 'En venta', alquiler: 'En alquiler' }, 'Venta y alquiler');
+  DP.opciones($('f-tipo'), DP.TIPOS, 'Todos los tipos');
+  // No enviar campos vacíos (la URL queda limpia: buscar.html?q=Chacao).
+  $('form-busqueda').addEventListener('submit', () => {
+    for (const el of $('form-busqueda').querySelectorAll('[name]')) if (!el.value) el.disabled = true;
+  });
+  window.addEventListener('pageshow', () => $('form-busqueda').querySelectorAll('[name]').forEach(el => { el.disabled = false; }));
 
-  // Tarjetas de categoría: fijan el tipo y llevan a los resultados.
-  document.querySelectorAll('.categoria[data-tipo]').forEach(b => b.addEventListener('click', () => {
-    $('f-tipo').value = b.dataset.tipo;
-    $('f-tipo').dispatchEvent(new Event('change'));
-    irAResultados();
-  }));
+  DP.cabecera();
 
-  // Al buscar desde la portada, bajar a los resultados.
-  $('form-busqueda').addEventListener('submit', () => setTimeout(irAResultados, 50));
-  if (location.hash === '#resultados-sec' || new URLSearchParams(location.search).get('q')) setTimeout(irAResultados, 300);
-
-  // Título de la sección de resultados según los filtros.
-  const PLURAL = {
-    apartamento: 'Apartamentos', casa: 'Casas', anexo: 'Anexos', habitacion: 'Habitaciones',
-    townhouse: 'Townhouses', local: 'Locales comerciales', oficina: 'Oficinas', terreno: 'Terrenos',
-    galpon: 'Galpones', otro: 'Otros inmuebles'
-  };
-  const titular = () => {
-    const tipo = $('f-tipo').value, op = $('f-operacion').value, estado = $('f-estado').value, q = $('q').value.trim();
-    let t = tipo ? PLURAL[tipo] || 'Inmuebles' : (op || estado || q ? 'Inmuebles' : 'Anuncios recientes');
-    if (op) t += op === 'venta' ? ' en venta' : ' en alquiler';
-    if (estado) t += ` en ${estado}`;
-    if (q) t += ` · «${q}»`;
-    $('titulo-resultados').textContent = t;
-  };
-  ['f-tipo', 'f-operacion', 'f-estado'].forEach(id => $(id).addEventListener('change', titular));
-  $('form-busqueda').addEventListener('submit', titular);
-  setTimeout(titular, 0);
+  // Anuncios recientes (8).
+  DP.sb.rpc('buscar_inmuebles', { p_limite: 8 }).then(({ data, error }) => {
+    const cont = $('recientes');
+    if (error || !data) { cont.innerHTML = '<div class="vacio" style="grid-column:1/-1">No se pudieron cargar los anuncios.</div>'; return; }
+    cont.innerHTML = data.map(DP.tarjeta).join('');
+  });
 
   // Cifras en vivo (anuncios activos, webs, estados, con mapa).
   DP.sb.rpc('estadisticas_publicas').then(({ data }) => {
     const c = data && data[0];
     if (!c) return;
-    const fmt = n => Number(n).toLocaleString('es-VE');
     document.querySelectorAll('[data-cifra]').forEach(el => {
       const v = c[el.dataset.cifra];
-      if (v != null) el.textContent = fmt(v);
+      if (v != null) el.textContent = Number(v).toLocaleString('es-VE');
     });
   });
 })();

@@ -5,7 +5,7 @@
   // Si venimos de la búsqueda, «volver» conserva los filtros que había.
   try {
     const ref = new URL(document.referrer);
-    if (ref.origin === location.origin && /(\/|index\.html)$/.test(ref.pathname)) $('volver').href = ref.href;
+    if (ref.origin === location.origin && /(\/|index\.html|buscar\.html)$/.test(ref.pathname)) $('volver').href = ref.href;
   } catch { /* sin referrer */ }
 
   const id = new URLSearchParams(location.search).get('id');

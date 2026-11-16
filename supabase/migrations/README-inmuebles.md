@@ -11,3 +11,4 @@ El SQL completo está guardado en la propia base: `select * from supabase_migrat
 5. `inmuebles_duplicados_v3` + `inmuebles_duplicados_desempate` — columnas `huella` (operación + precio + título normalizado) y `prioridad` (anuncio propio 100, fuente original 10, otras 5, copias 1). `buscar_inmuebles()` muestra solo una copia de cada huella.
 6. `perfiles_usuario_v1` — `profiles.usuario` (@usuario único, 3–20 `[a-z0-9_]`, nombres reservados), `usuario_disponible()`, `perfil_publico()`; `handle_new_user` guarda @usuario y nombre del registro y rechaza duplicados; trigger `perfil_antes_de_guardar` (minúsculas, no autovalidarse).
 7. `estadisticas_publicas` — cifras de la portada (anuncios activos, webs, estados, con mapa).
+8. `conteos_busqueda` — total, conteo por tipo y por estado para la página de búsqueda (mismos filtros y deduplicado que `buscar_inmuebles`).

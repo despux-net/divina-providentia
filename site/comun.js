@@ -61,22 +61,68 @@ const DP = {
     return d.join(' · ');
   },
 
+  // Tarjeta de anuncio: foto con etiqueta de operación y corazón de favorito,
+  // precio grande, título, lugar, datos y, abajo, de qué web viene.
   tarjeta(i) {
     const foto = DP.fotoUrl(i.fotos && i.fotos[0]);
     const img = foto
       ? `<img class="foto" src="${DP.esc(foto)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
       : `<div class="sinfoto">Sin fotos</div>`;
-    const fuente = i.origen === 'externo' && i.fuente ? `<span class="etiqueta gris">${DP.esc(i.fuente)}</span>` : '';
-    return `<a class="tarjeta" href="anuncio.html?id=${encodeURIComponent(i.id)}">
-      ${img}
-      <div class="cuerpo">
-        <div class="etiquetas"><span class="etiqueta">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span>
-          <span class="etiqueta gris">${DP.esc(DP.TIPOS[i.tipo] || i.tipo)}</span>${fuente}</div>
-        <div class="precio">${DP.esc(DP.precio(i))}</div>
-        <div class="titulo-t">${DP.esc(i.titulo)}</div>
-        <div class="lugar">${DP.esc(DP.lugar(i))}</div>
-        <div class="datos">${DP.esc(DP.datos(i))}</div>
-      </div></a>`;
+    const precio = DP.esc(DP.precio(i)).replace(' /mes', ' <small>/mes</small>');
+    const origen = i.origen === 'externo' && i.fuente ? `Anuncio de ${DP.esc(i.fuente)}` : 'Publicado en Divina Providentia';
+    const fav = DP.esFavorito(i.id);
+    const chips = [
+      i.habitaciones != null ? `${i.habitaciones} hab.` : null,
+      i.banos != null ? `${i.banos} baños` : null,
+      i.metros != null ? `${Number(i.metros).toLocaleString('es-VE')} m²` : null
+    ].filter(Boolean).map(c => `<span class="chip-dato">${DP.esc(c)}</span>`).join('');
+    return `<article class="tarjeta-env">
+      <a class="tarjeta" href="anuncio.html?id=${encodeURIComponent(i.id)}">
+        <div class="tarjeta-foto">${img}<span class="sello">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span></div>
+        <div class="cuerpo">
+          <div class="precio">${precio}</div>
+          <div class="titulo-t">${DP.esc(i.titulo)}</div>
+          <div class="lugar">${DP.esc(DP.TIPOS[i.tipo] || i.tipo)} · ${DP.esc(DP.lugar(i))}</div>
+          ${chips ? `<div class="chips-datos">${chips}</div>` : ''}
+          <div class="origen">${origen}</div>
+        </div>
+      </a>
+      <button type="button" class="corazon" data-fav="${DP.esc(i.id)}" aria-pressed="${fav}"
+        aria-label="${fav ? 'Quitar de favoritos' : 'Guardar en favoritos'}" title="${fav ? 'Quitar de favoritos' : 'Guardar en favoritos'}">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>
+      </button>
+    </article>`;
+  },
+
+  // ---------- Favoritos (guardados en este navegador, sin cuenta) ----------
+  favoritos() {
+    try { return JSON.parse(localStorage.getItem('dp_favoritos') || '[]').filter(x => /^[0-9a-f-]{36}$/i.test(x)); }
+    catch { return []; }
+  },
+  esFavorito(id) { return DP.favoritos().includes(id); },
+  alternarFavorito(id) {
+    const lista = DP.favoritos();
+    const i = lista.indexOf(id);
+    if (i >= 0) lista.splice(i, 1); else lista.unshift(id);
+    try { localStorage.setItem('dp_favoritos', JSON.stringify(lista.slice(0, 200))); } catch { /* sin almacenamiento */ }
+    document.dispatchEvent(new CustomEvent('dp:favoritos', { detail: lista }));
+    return i < 0;
+  },
+  // Un solo escuchador para todos los corazones de la página.
+  activarCorazones() {
+    if (DP._corazones) return;
+    DP._corazones = true;
+    document.addEventListener('click', e => {
+      const b = e.target.closest('.corazon[data-fav]');
+      if (!b) return;
+      e.preventDefault();
+      const ahora = DP.alternarFavorito(b.dataset.fav);
+      document.querySelectorAll(`.corazon[data-fav="${CSS.escape(b.dataset.fav)}"]`).forEach(x => {
+        x.setAttribute('aria-pressed', ahora);
+        x.setAttribute('aria-label', ahora ? 'Quitar de favoritos' : 'Guardar en favoritos');
+        x.title = x.getAttribute('aria-label');
+      });
+    });
   },
 
   opciones(sel, mapa, primera) {
@@ -236,16 +282,16 @@ DP.pie = () => {
       <div>
         <h4>Buscar</h4>
         <ul>
-          <li><a href="index.html?operacion=venta#resultados-sec">Inmuebles en venta</a></li>
-          <li><a href="index.html?operacion=alquiler#resultados-sec">Inmuebles en alquiler</a></li>
-          <li><a href="index.html?tipo=apartamento#resultados-sec">Apartamentos</a></li>
-          <li><a href="index.html?tipo=casa#resultados-sec">Casas</a></li>
-          <li><a href="index.html?vista=mapa#resultados-sec">Ver en el mapa</a></li>
+          <li><a href="buscar.html?operacion=venta">Inmuebles en venta</a></li>
+          <li><a href="buscar.html?operacion=alquiler">Inmuebles en alquiler</a></li>
+          <li><a href="buscar.html?tipo=apartamento">Apartamentos</a></li>
+          <li><a href="buscar.html?tipo=casa">Casas</a></li>
+          <li><a href="buscar.html?vista=mapa">Ver en el mapa</a></li>
         </ul>
       </div>
       <div>
         <h4>Por estado</h4>
-        <ul>${estados.map(e => `<li><a href="index.html?estado=${encodeURIComponent(e)}#resultados-sec">${DP.esc(e)}</a></li>`).join('')}</ul>
+        <ul>${estados.map(e => `<li><a href="buscar.html?estado=${encodeURIComponent(e)}">${DP.esc(e)}</a></li>`).join('')}</ul>
       </div>
       <div>
         <h4>Publicar y ayuda</h4>
@@ -268,3 +314,4 @@ DP.pie = () => {
 window.DP = DP;
 DP.ojos();
 DP.pie();
+DP.activarCorazones();

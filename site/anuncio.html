@@ -11,14 +11,14 @@
   <meta property="og:type" content="website">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=7">
+  <link rel="stylesheet" href="estilos.css?v=8">
 </head>
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
       <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
       <nav class="nav">
-        <a href="index.html">Buscar</a>
+        <a href="buscar.html">Buscar</a>
         <a class="boton peq" href="publicar.html">Publicar gratis</a>
         <span data-nav-sesion></span>
       </nav>
@@ -26,7 +26,7 @@
   </header>
 
   <main class="contenedor">
-    <p><a href="index.html" id="volver">← Volver a la búsqueda</a></p>
+    <p><a href="buscar.html" id="volver">← Volver a la búsqueda</a></p>
     <div id="cargando">Cargando…</div>
     <div class="vacio" id="no-existe" hidden><strong>Este anuncio no existe o ya no está disponible</strong>
       <p><a class="boton" href="index.html">Ver otros inmuebles</a></p></div>
@@ -71,7 +71,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=6"></script>
-  <script src="anuncio.js?v=4"></script>
+  <script src="comun.js?v=7"></script>
+  <script src="anuncio.js?v=5"></script>
 </body>
 </html>
