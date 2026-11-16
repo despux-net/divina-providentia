@@ -20,7 +20,7 @@
     <h2>Cómo se comporta</h2>
     <ul>
       <li>Se identifica como <code>Mozilla/5.0 (compatible; DivinaProvidentiaBot/1.0; +https://divinaprovidentia.com/bot.html)</code>.</li>
-      <li>Lee y obedece <code>robots.txt</code>, incluido <code>Crawl-delay</code>. Nunca hace más de una petición a la vez por web y espera al menos 10 segundos entre peticiones.</li>
+      <li>Lee y obedece <code>robots.txt</code>, incluido <code>Crawl-delay</code>. Nunca hace más de una petición a la vez por web y espera al menos 5 segundos entre peticiones (más si la web lo pide). Si una web le responde que no (403) o que vaya más despacio (429), la deja en paz hasta la siguiente pasada.</li>
       <li>Usa los sitemaps y los datos estructurados (schema.org) que la propia web publica para los buscadores.</li>
       <li>Solo muestra un resumen corto, una foto, el precio y la ubicación general. El texto completo, el resto de fotos y el contacto quedan en la web de origen.</li>
       <li>Cuando un anuncio desaparece de la web de origen, lo retira de nuestros resultados.</li>

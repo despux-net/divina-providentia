@@ -14,9 +14,9 @@ on:
         required: false
         type: string
       max_fichas:
-        description: Máximo de fichas por fuente en esta ejecución
+        description: Máximo de fichas por fuente (vacío = hasta agotar el tiempo)
         required: false
-        default: '1500'
+        default: ''
 
 permissions:
   contents: read
@@ -37,8 +37,9 @@ jobs:
         with:
           node-version: 20
 
-      # El número puede venir del botón de Pages CMS (payload.inputs.max_fichas),
-      # del formulario de GitHub o, en la pasada programada, del valor por defecto.
+      # Máximo de fichas POR FUENTE. Puede venir del botón de Pages CMS
+      # (payload.inputs.max_fichas) o del formulario de GitHub. En la pasada
+      # programada no hay máximo: cada fuente trabaja hasta agotar el tiempo.
       # El payload se lee como variable de entorno y se valida como número
       # para que nada de lo que llegue ahí pueda ejecutarse como comando.
       - name: Decidir cuántas fichas
@@ -50,11 +51,10 @@ jobs:
           n=$(node -e '
             let n;
             try { n = JSON.parse(process.env.PAYLOAD || "{}")?.inputs?.max_fichas; } catch {}
-            n = Number(n ?? process.env.MAX_GITHUB ?? 1500);
-            if (!Number.isFinite(n) || n < 1) n = 1500;
-            console.log(Math.min(Math.round(n), 1800));
+            n = Number(n || process.env.MAX_GITHUB || 0);
+            console.log(Number.isFinite(n) && n >= 1 ? Math.min(Math.round(n), 50000) : "");
           ')
-          echo "Fichas como máximo: $n"
+          echo "Fichas como máximo por fuente: ${n:-sin límite (solo el tiempo)}"
           echo "max=$n" >> "$GITHUB_OUTPUT"
 
       - name: Indexar fuentes

@@ -409,14 +409,14 @@ actions:
     confirm:
       title: Indexar inmuebles ahora
       message: >-
-        Busca anuncios nuevos o cambiados en las webs inmobiliarias (por
-        ahora Rent-A-House) y los añade al buscador. Va despacio a propósito,
-        una página cada 10 segundos: 100 anuncios tardan unos 17 minutos.
-        Si ya hay una pasada en marcha, esta espera a que termine.
+        Busca anuncios nuevos o cambiados en las webs inmobiliarias
+        (Rent-A-House, Inmueble Oferta, RIV y Bolsa Inmobiliaria Caracas), todas
+        a la vez, y los añade al buscador. Cada web va a su ritmo (entre 5 y 10
+        segundos por página) y aparecen en la web de 10 en 10. Si ya hay una
+        pasada en marcha, esta espera a que termine.
       button: Indexar
     fields:
       - name: max_fichas
-        label: ¿Cuántos anuncios como máximo?
+        label: ¿Cuántos anuncios como máximo por web? (vacío = todo lo que dé tiempo)
         type: number
-        default: 300
-        required: true
+        required: false
