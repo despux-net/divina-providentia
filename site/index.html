@@ -29,17 +29,17 @@
   </header>
 
   <!-- Portada: ilustración con el buscador encima -->
-  <section class="hero-foto">
+  <section class="hero-foto" id="hero">
     <div class="hero-int">
       <form class="panel-hero" id="form-busqueda" role="search" action="buscar.html" method="get">
-        <h1>Más de <span data-cifra="anuncios">1.900</span> inmuebles en toda Venezuela</h1>
+        <h1 id="titulo-buscador">Más de <span data-cifra="anuncios">1.900</span> inmuebles en toda Venezuela</h1>
         <div class="fila-busqueda">
           <input type="search" id="q" name="q" placeholder="Ciudad, zona o palabra clave" aria-label="Ciudad, zona o palabra clave">
           <select id="f-tipo" name="tipo" aria-label="Tipo de inmueble"></select>
           <select id="f-operacion" name="operacion" aria-label="Venta o alquiler"></select>
           <button class="boton" type="submit">Buscar</button>
         </div>
-        <p class="sugerencias">Prueba: <a href="buscar.html?q=Chacao">Chacao</a> · <a href="buscar.html?q=Valencia">Valencia</a> · <a href="buscar.html?q=Lecheria">Lechería</a> · <a href="buscar.html?q=Maracaibo">Maracaibo</a> · <a href="buscar.html?q=Barquisimeto">Barquisimeto</a></p>
+        <p class="sugerencias" id="sugerencias">Prueba: <a href="buscar.html?q=Chacao">Chacao</a> · <a href="buscar.html?q=Valencia">Valencia</a> · <a href="buscar.html?q=Lecheria">Lechería</a> · <a href="buscar.html?q=Maracaibo">Maracaibo</a> · <a href="buscar.html?q=Barquisimeto">Barquisimeto</a></p>
       </form>
     </div>
   </section>
@@ -47,8 +47,8 @@
   <!-- Categorías -->
   <section class="seccion">
     <div class="seccion-int">
-      <h2>Apartamentos, casas y anexos en venta y alquiler</h2>
-      <p class="bajada">En pocos minutos a tu nuevo hogar: los anuncios de las principales inmobiliarias y de particulares, en un solo lugar.</p>
+      <h2 id="titulo-categorias">Apartamentos, casas y anexos en venta y alquiler</h2>
+      <p class="bajada" id="subtitulo-categorias">En pocos minutos a tu nuevo hogar: los anuncios de las principales inmobiliarias y de particulares, en un solo lugar.</p>
       <div class="cuadricula cuatro">
         <a class="caja categoria" href="buscar.html?tipo=apartamento">
           <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3"/></svg></span>Apartamentos</span>
@@ -171,6 +171,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="comun.js?v=7"></script>
-    <script src="portada.js?v=2"></script>
+    <script src="portada.js?v=3"></script>
 </body>
 </html>

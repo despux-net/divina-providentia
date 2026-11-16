@@ -1,0 +1,1 @@
+Fotos subidas desde Pages CMS (portada, etc.). Se publican en /media/.
