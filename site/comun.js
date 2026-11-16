@@ -129,7 +129,7 @@ const DP = {
   // La clave del sitio es pública. La secreta vive solo en Supabase
   // (Authentication → Attack Protection), que es quien comprueba el token.
   // Mientras TURNSTILE_SITE_KEY esté vacía, el widget no se muestra.
-  TURNSTILE_SITE_KEY: '',
+  TURNSTILE_SITE_KEY: '0x4AAAAAAGDgiLDbWnalwbx_',
 
   antirrobot(contenedor) {
     const estado = { token: null, id: null };
