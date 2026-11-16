@@ -66,7 +66,7 @@
       if (f.q) t += ` · «${f.q}»`;
     }
     $('titulo-resultados').textContent = t;
-    document.title = `${t} — Divina Providentia`;
+    document.title = `${t} — Vivinati`;
     const precio = $('d-precio').querySelector('summary');
     precio.textContent = f.p_precio_min != null || f.p_precio_max != null
       ? `$${fmt(f.p_precio_min || 0)} – ${f.p_precio_max != null ? '$' + fmt(f.p_precio_max) : 'más'}` : 'Precio';

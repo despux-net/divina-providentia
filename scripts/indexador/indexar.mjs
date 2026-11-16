@@ -1,4 +1,4 @@
-// DIVINA PROVIDENTIA — INDEXADOR DE ANUNCIOS EXTERNOS
+// VIVINATI — INDEXADOR DE ANUNCIOS EXTERNOS
 //
 // Recorre las fuentes de ./fuentes/ A LA VEZ (cada web con su propio ritmo),
 // descarga las fichas nuevas o cambiadas y las guarda en la tabla inmuebles
@@ -8,7 +8,7 @@
 //  - Se lee robots.txt de cada fuente y se obedece (Disallow y Crawl-delay).
 //  - Nunca más de una petición a la vez por fuente, con pausa entre ellas.
 //  - Si una fuente responde 403/429/503, se deja en paz hasta la próxima pasada.
-//  - El bot se identifica y explica en https://divinaprovidentia.com/bot.html.
+//  - El bot se identifica y explica en https://vivinati.com/bot.html.
 //  - Solo se guarda un resumen, una foto y el enlace al original.
 //
 // Uso:  node scripts/indexador/indexar.mjs              (todas las fuentes)
@@ -28,8 +28,8 @@ import { WASI } from './fuentes/wasi.mjs';
 const TODAS = [rentahouse, inmuebleoferta, ...WASI];
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nzwtafacdpdgulzcwntx.supabase.co';
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const BOT = 'DivinaProvidentiaBot';
-const UA = `Mozilla/5.0 (compatible; ${BOT}/1.0; +https://divinaprovidentia.com/bot.html)`;
+const BOT = 'VivinatiBot';
+const UA = `Mozilla/5.0 (compatible; ${BOT}/1.0; +https://vivinati.com/bot.html)`;
 const LOTE = 10; // se guarda cada 10 fichas para que aparezcan pronto en la web
 
 const args = process.argv.slice(2);

@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DivinaProvidentiaBot — Divina Providentia</title>
+  <title>VivinatiBot — Vivinati</title>
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=10">
+  <link rel="stylesheet" href="estilos.css?v=11">
 </head>
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <a class="marca" href="index.html">Vivinati<small>Inmuebles en Venezuela</small></a>
       <nav class="nav"><a href="buscar.html">Buscar</a></nav>
     </div>
   </header>
   <main class="contenedor" style="max-width:760px">
-    <h1>DivinaProvidentiaBot</h1>
-    <p>Divina Providentia es un buscador de inmuebles en Venezuela. Igual que otros buscadores, nuestro bot lee anuncios públicos de portales inmobiliarios para que la gente los encuentre en un solo lugar, y <strong>siempre enlaza al anuncio original</strong>.</p>
+    <h1>VivinatiBot</h1>
+    <p>Vivinati es un buscador de inmuebles en Venezuela. Igual que otros buscadores, nuestro bot lee anuncios públicos de portales inmobiliarios para que la gente los encuentre en un solo lugar, y <strong>siempre enlaza al anuncio original</strong>.</p>
     <h2>Cómo se comporta</h2>
     <ul>
-      <li>Se identifica como <code>Mozilla/5.0 (compatible; DivinaProvidentiaBot/1.0; +https://divinaprovidentia.com/bot.html)</code>.</li>
+      <li>Se identifica como <code>Mozilla/5.0 (compatible; VivinatiBot/1.0; +https://vivinati.com/bot.html)</code>.</li>
       <li>Lee y obedece <code>robots.txt</code>, incluido <code>Crawl-delay</code>. Nunca hace más de una petición a la vez por web y espera al menos 5 segundos entre peticiones (más si la web lo pide). Si una web le responde que no (403) o que vaya más despacio (429), la deja en paz hasta la siguiente pasada.</li>
       <li>Usa los sitemaps y los datos estructurados (schema.org) que la propia web publica para los buscadores.</li>
       <li>Solo muestra un resumen corto, una foto, el precio y la ubicación general. El texto completo, el resto de fotos y el contacto quedan en la web de origen.</li>
@@ -27,9 +27,9 @@
     </ul>
     <h2>Si no quieres que leamos tu web</h2>
     <p>Añade esto a tu <code>robots.txt</code> y dejaremos de leerla en la siguiente pasada:</p>
-    <pre style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto">User-agent: DivinaProvidentiaBot
+    <pre style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto">User-agent: VivinatiBot
 Disallow: /</pre>
   </main>
-  <footer class="pie">© Divina Providentia</footer>
+  <footer class="pie">© Vivinati</footer>
 </body>
 </html>

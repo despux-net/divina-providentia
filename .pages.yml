@@ -1,5 +1,5 @@
 # ===================================================================
-# DIVINA PROVIDENTIA — PAGES CMS (buscador de inmuebles)
+# VIVINATI — PAGES CMS (buscador de inmuebles)
 #
 # Se edita desde https://app.pagescms.org. Cada guardado es un commit
 # en main y GitHub Pages publica la web sola (~1 minuto).
@@ -20,7 +20,7 @@ media:
 content:
 
   # ---------------------------------------------------------------
-  # Portada de divinaprovidentia.com: imagen de fondo del buscador y
+  # Portada de vivinati.com: imagen de fondo del buscador y
   # textos principales. La lee site/portada.js al cargar la página.
   - name: portada
     label: Portada

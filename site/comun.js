@@ -69,7 +69,7 @@ const DP = {
       ? `<img class="foto" src="${DP.esc(foto)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
       : `<div class="sinfoto">Sin fotos</div>`;
     const precio = DP.esc(DP.precio(i)).replace(' /mes', ' <small>/mes</small>');
-    const origen = i.origen === 'externo' && i.fuente ? `Anuncio de ${DP.esc(i.fuente)}` : 'Publicado en Divina Providentia';
+    const origen = i.origen === 'externo' && i.fuente ? `Anuncio de ${DP.esc(i.fuente)}` : 'Publicado en Vivinati';
     const fav = DP.esFavorito(i.id);
     const chips = [
       i.habitaciones != null ? `${i.habitaciones} hab.` : null,
@@ -276,7 +276,7 @@ DP.pie = () => {
   pie.innerHTML = `<div class="pie-int">
     <div class="pie-columnas">
       <div>
-        <h4>Divina Providentia</h4>
+        <h4>Vivinati</h4>
         <p style="margin:0">El buscador de inmuebles de Venezuela: apartamentos, casas, anexos, locales y terrenos en venta y alquiler, en un solo lugar.</p>
       </div>
       <div>
@@ -305,7 +305,7 @@ DP.pie = () => {
       </div>
     </div>
     <div class="legal">
-      <span>© ${anio} Divina Providentia</span>
+      <span>© ${anio} Vivinati</span>
       <span>Los anuncios son responsabilidad de quien los publica. Los anuncios de otras webs enlazan siempre a su original.</span>
     </div>
   </div>`;

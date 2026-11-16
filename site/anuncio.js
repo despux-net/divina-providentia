@@ -18,7 +18,7 @@
   if (error) console.error(error);
   if (!i) { $('no-existe').hidden = false; return; }
 
-  document.title = `${i.titulo} — Divina Providentia`;
+  document.title = `${i.titulo} — Vivinati`;
   $('ficha').hidden = false;
 
   // Fotos
@@ -99,7 +99,7 @@
   // Contacto
   const botones = [];
   if (i.whatsapp) {
-    const texto = `Hola, vi tu anuncio «${i.titulo}» en Divina Providentia (${location.href}). ¿Sigue disponible?`;
+    const texto = `Hola, vi tu anuncio «${i.titulo}» en Vivinati (${location.href}). ¿Sigue disponible?`;
     botones.push(`<a class="boton wa" target="_blank" rel="noopener" href="https://wa.me/${i.whatsapp}?text=${encodeURIComponent(texto)}">Escribir por WhatsApp</a>`);
   }
   const original = DP.urlSegura(i.url_original);
