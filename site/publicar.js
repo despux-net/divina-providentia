@@ -70,6 +70,7 @@
       return;
     }
     editando = true;
+    $('bloque-pegar').hidden = true;
     $('h1').textContent = 'Editar anuncio';
     $('btn-guardar').textContent = 'Guardar cambios';
     for (const k of ['operacion', 'tipo', 'titulo', 'precio', 'moneda', 'descripcion', 'habitaciones', 'banos', 'estacionamientos', 'metros', 'estado', 'ciudad', 'zona']) {
@@ -194,4 +195,33 @@
     if (/check constraint/.test(m)) return 'Algún dato no es válido. Revisa el título, los números y el WhatsApp.';
     return 'No se pudo guardar el anuncio: ' + m;
   }
+
+  // ---------- «Pega tu anuncio» (texto de Facebook, Instagram o WhatsApp) ----------
+  $('btn-pegar').addEventListener('click', () => {
+    const texto = $('texto-pegado').value.trim();
+    if (texto.length < 15) return mensaje('msg-pegar', 'Pega primero el texto de tu anuncio.', 'error');
+    const r = window.DP_PEGAR.leer(texto);
+    const NOMBRES = {
+      operacion: 'operación', tipo: 'tipo', titulo: 'título', precio: 'precio', moneda: 'moneda',
+      habitaciones: 'habitaciones', banos: 'baños', estacionamientos: 'estacionamientos',
+      metros: 'metros', estado: 'estado', ciudad: 'ciudad', whatsapp: 'WhatsApp', descripcion: 'descripción'
+    };
+    // Títulos en MAYÚSCULAS (muy comunes en redes) se pasan a frase normal.
+    if (r.titulo && r.titulo === r.titulo.toUpperCase()) r.titulo = r.titulo.toLowerCase().replace(/^./, c => c.toUpperCase());
+    const puestos = [];
+    for (const [k, nombre] of Object.entries(NOMBRES)) {
+      if (r[k] == null || r[k] === '') continue;
+      const el = $(k);
+      if (!el) continue;
+      if (el.tagName === 'SELECT' && ![...el.options].some(o => o.value === String(r[k]))) continue;
+      el.value = r[k];
+      puestos.push(nombre);
+    }
+    if (r.estado) $('estado').dispatchEvent(new Event('change')); // centra el mapa en el estado
+    if (!puestos.length) return mensaje('msg-pegar', 'No encontramos datos en el texto. Rellena el formulario a mano.', 'error');
+    const faltan = ['operacion', 'tipo', 'precio', 'estado', 'whatsapp'].filter(k => r[k] == null).map(k => NOMBRES[k]);
+    mensaje('msg-pegar', `Listo: rellenamos ${puestos.join(', ')}.` +
+      (faltan.length ? ` Completa tú: ${faltan.join(', ')}.` : '') +
+      ' Revisa todo, marca el punto en el mapa y añade las fotos.', 'ok');
+  });
 })();

@@ -200,3 +200,8 @@ label.check { display: flex; gap: 8px; align-items: center; font-weight: 400; ma
 .ojo[aria-pressed=true] { color: var(--accent); }
 .etiqueta-fila { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .etiqueta-fila a { font-size: .85rem; font-weight: 500; }
+
+/* Pega tu anuncio y compartir */
+fieldset.pegar { background: var(--accent-soft); border-color: transparent; }
+fieldset.pegar textarea { min-height: 110px; }
+.compartir { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 14px; color: var(--muted); font-size: .9rem; }

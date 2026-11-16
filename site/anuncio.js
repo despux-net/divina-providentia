@@ -82,6 +82,23 @@
   }
   $('contacto').innerHTML = botones.join('');
 
+  // Compartir: enlace limpio a esta ficha (sin parámetros extra).
+  const enlace = `${location.origin}/anuncio.html?id=${encodeURIComponent(i.id)}`;
+  const resumen = `${i.titulo} · ${DP.precio(i)} · ${DP.lugar(i)}`;
+  $('comp-wa').href = `https://wa.me/?text=${encodeURIComponent(resumen + '\n' + enlace)}`;
+  $('comp-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(enlace)}`;
+  $('comp-copiar').addEventListener('click', async () => {
+    const b = $('comp-copiar');
+    try { await navigator.clipboard.writeText(enlace); b.textContent = '¡Copiado!'; }
+    catch { window.prompt('Copia este enlace:', enlace); }
+    setTimeout(() => { b.textContent = 'Copiar enlace'; }, 2000);
+  });
+  if (navigator.share) {
+    // En el móvil, el botón de copiar abre el menú de compartir del teléfono.
+    $('comp-copiar').textContent = 'Más opciones';
+    $('comp-copiar').onclick = e => { e.stopImmediatePropagation(); navigator.share({ title: i.titulo, text: resumen, url: enlace }).catch(() => {}); };
+  }
+
   // Mapa
   if (i.lat != null && i.lng != null) {
     $('bloque-mapa').hidden = false;

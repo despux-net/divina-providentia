@@ -4,9 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Inmueble — Divina Providentia</title>
+  <meta name="description" content="Inmueble en Venezuela en Divina Providentia, el buscador de inmuebles de Venezuela.">
+  <meta property="og:site_name" content="Divina Providentia">
+  <meta property="og:title" content="Inmueble en Divina Providentia">
+  <meta property="og:description" content="Apartamentos, casas y locales en venta y alquiler en toda Venezuela.">
+  <meta property="og:type" content="website">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=5">
+  <link rel="stylesheet" href="estilos.css?v=6">
 </head>
 <body>
   <header class="cabecera">
@@ -49,6 +54,12 @@
         <div class="publicado-por" id="publicado-por" hidden></div>
         <div class="caract" id="caract"></div>
         <div id="contacto" style="display:grid;gap:8px"></div>
+        <div class="compartir" id="compartir">
+          <span>Compartir:</span>
+          <a class="boton sec peq" id="comp-wa" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="boton sec peq" id="comp-fb" target="_blank" rel="noopener">Facebook</a>
+          <button class="boton sec peq" type="button" id="comp-copiar">Copiar enlace</button>
+        </div>
         <p class="aviso" id="aviso-externo" hidden>Este anuncio fue encontrado en otra web. Los datos y el contacto están en el anuncio original.</p>
         <p class="aviso">Consejo: nunca envíes dinero ni pagues reservas sin haber visto el inmueble y verificado al propietario.</p>
         <p class="aviso" id="fecha"></p>
@@ -61,6 +72,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="comun.js?v=5"></script>
-  <script src="anuncio.js?v=3"></script>
+  <script src="anuncio.js?v=4"></script>
 </body>
 </html>
