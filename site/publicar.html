@@ -6,7 +6,7 @@
   <title>Publicar un inmueble — Divina Providentia</title>
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=2">
+  <link rel="stylesheet" href="estilos.css?v=3">
 </head>
 <body>
   <header class="cabecera">
@@ -23,15 +23,11 @@
     <div class="form">
       <h1 id="h1">Publica tu inmueble gratis</h1>
 
-      <!-- Paso 1: entrar con el correo -->
+      <!-- Sin sesión: crear cuenta o entrar -->
       <section id="entrar" hidden>
-        <p>Para publicar necesitas entrar con tu correo. Te enviaremos un enlace: ábrelo desde este mismo dispositivo y volverás aquí con la sesión iniciada. No hace falta contraseña.</p>
-        <form id="form-entrar" class="fila" style="align-items:end">
-          <div class="campo" style="margin:0"><label for="email">Tu correo</label>
-            <input type="email" id="email" required autocomplete="email" placeholder="tucorreo@ejemplo.com"></div>
-          <div><button class="boton" type="submit" id="btn-entrar">Enviarme el enlace</button></div>
-        </form>
-        <div id="msg-entrar"></div>
+        <p>Para publicar necesitas una cuenta gratuita. Así cada anuncio tiene un responsable y puedes editarlo o retirarlo cuando quieras.</p>
+        <p><a class="boton" id="ir-registro" href="registro.html">Crear cuenta</a>
+          <a class="boton sec" id="ir-entrar" href="entrar.html">Ya tengo cuenta</a></p>
       </section>
 
       <!-- Paso 2: el formulario -->
@@ -99,7 +95,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=2"></script>
-  <script src="publicar.js?v=2"></script>
+  <script src="comun.js?v=3"></script>
+  <script src="publicar.js?v=3"></script>
 </body>
 </html>

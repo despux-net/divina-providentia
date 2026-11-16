@@ -18,31 +18,22 @@
   const mensaje = (el, texto, tipo) => { $(el).innerHTML = texto ? `<div class="mensaje ${tipo}">${DP.esc(texto)}</div>` : ''; };
 
   // ---------- Sesión ----------
-  async function arrancar(session) {
-    DP.cabecera();
-    usuario = session ? session.user : null;
-    $('entrar').hidden = !!usuario;
-    $('form-anuncio').hidden = !usuario;
-    if (usuario && !mapa) await prepararFormulario();
-  }
-
-  $('form-entrar').addEventListener('submit', async e => {
-    e.preventDefault();
-    const email = $('email').value.trim();
-    $('btn-entrar').disabled = true;
-    const { error } = await DP.sb.auth.signInWithOtp({
-      email, options: { emailRedirectTo: location.origin + location.pathname + location.search }
-    });
-    $('btn-entrar').disabled = false;
-    if (error) mensaje('msg-entrar', 'No se pudo enviar el enlace: ' + error.message, 'error');
-    else mensaje('msg-entrar', `Listo. Revisa tu correo (${email}) y abre el enlace. Si no lo ves, mira en «spam».`, 'ok');
-  });
-
-  DP.sb.auth.onAuthStateChange((evento, session) => {
-    if (evento === 'SIGNED_IN' || evento === 'SIGNED_OUT') arrancar(session);
-  });
+  // Para publicar hace falta una cuenta activada con @usuario.
+  const aqui = 'publicar.html' + location.search;
   const { data: { session } } = await DP.sb.auth.getSession();
-  await arrancar(session);
+  DP.cabecera();
+  if (!session) {
+    $('entrar').hidden = false;
+    $('ir-entrar').href = 'entrar.html?next=' + encodeURIComponent(aqui);
+    $('ir-registro').href = 'registro.html?next=' + encodeURIComponent(aqui);
+    return;
+  }
+  usuario = session.user;
+  const perfil = await DP.miPerfil();
+  if (!perfil || !perfil.usuario) { location.href = 'perfil.html'; return; }
+  $('form-anuncio').hidden = false;
+  if (!editarId && perfil.phone) $('whatsapp').value = perfil.phone;
+  await prepararFormulario();
 
   // ---------- Formulario ----------
   async function prepararFormulario() {

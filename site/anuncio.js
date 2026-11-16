@@ -53,6 +53,16 @@
     ['Estacionamientos', i.estacionamientos]
   ].filter(([, v]) => v != null);
   $('caract').innerHTML = caract.map(([k, v]) => `<div><span>${k}</span><strong>${DP.esc(v)}</strong></div>`).join('');
+
+  // Quién lo publicó (solo anuncios hechos en nuestra web): nombre y @usuario.
+  if (i.origen === 'usuario' && i.user_id) {
+    DP.sb.rpc('perfil_publico', { p_id: i.user_id }).then(({ data }) => {
+      const p = data && data[0];
+      if (!p || !p.usuario) return;
+      $('publicado-por').textContent = `Publicado por ${p.nombre ? p.nombre + ' · ' : ''}@${p.usuario}`;
+      $('publicado-por').hidden = false;
+    });
+  }
   $('fecha').textContent = `${i.origen === 'externo' ? 'Encontrado' : 'Publicado'} el ${new Date(i.creado).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' })}`;
 
   // Contacto

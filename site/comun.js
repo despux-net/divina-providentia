@@ -96,17 +96,98 @@ const DP = {
     }).addTo(mapa);
   },
 
+  // Perfil de quien tiene la sesión (o null). Se guarda en memoria por página.
+  async miPerfil() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return null;
+    if (!DP._perfil) {
+      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email').eq('id', session.user.id).maybeSingle();
+      DP._perfil = data || { id: session.user.id, usuario: null };
+    }
+    return DP._perfil;
+  },
+
   // Pinta la cabecera según haya sesión o no.
   async cabecera() {
     const { data: { session } } = await sb.auth.getSession();
     const nav = document.querySelector('[data-nav-sesion]');
     if (!nav) return session;
-    nav.innerHTML = session
-      ? `<a href="mis-anuncios.html">Mis anuncios</a><a href="#" data-salir>Salir</a>`
-      : `<a href="publicar.html">Entrar</a>`;
-    const salir = nav.querySelector('[data-salir]');
-    if (salir) salir.addEventListener('click', async e => { e.preventDefault(); await sb.auth.signOut(); location.href = 'index.html'; });
+    if (session) {
+      const p = await DP.miPerfil();
+      const quien = p && p.usuario ? '@' + p.usuario : 'Mi perfil';
+      nav.innerHTML = `<a href="mis-anuncios.html">Mis anuncios</a><a href="perfil.html">${DP.esc(quien)}</a><a href="#" data-salir>Salir</a>`;
+      nav.querySelector('[data-salir]').addEventListener('click', async e => {
+        e.preventDefault(); await sb.auth.signOut(); location.href = 'index.html';
+      });
+    } else {
+      nav.innerHTML = `<a href="entrar.html">Entrar</a><a href="registro.html">Crear cuenta</a>`;
+    }
     return session;
+  },
+
+  // ---------- «No soy un robot» (Cloudflare Turnstile) ----------
+  // La clave del sitio es pública. La secreta vive solo en Supabase
+  // (Authentication → Attack Protection), que es quien comprueba el token.
+  // Mientras TURNSTILE_SITE_KEY esté vacía, el widget no se muestra.
+  TURNSTILE_SITE_KEY: '',
+
+  antirrobot(contenedor) {
+    const estado = { token: null, id: null };
+    if (!DP.TURNSTILE_SITE_KEY) { contenedor.hidden = true; return { activo: false, token: () => undefined, reiniciar() {} }; }
+    const pintar = () => {
+      estado.id = window.turnstile.render(contenedor, {
+        sitekey: DP.TURNSTILE_SITE_KEY, language: 'es', theme: 'auto',
+        callback: t => { estado.token = t; },
+        'expired-callback': () => { estado.token = null; },
+        'error-callback': () => { estado.token = null; }
+      });
+    };
+    if (window.turnstile) pintar();
+    else {
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      s.async = true; s.onload = pintar;
+      document.head.appendChild(s);
+    }
+    return {
+      activo: true,
+      token: () => estado.token,
+      reiniciar() { estado.token = null; if (window.turnstile && estado.id != null) window.turnstile.reset(estado.id); }
+    };
+  },
+
+  // ---------- Formularios de cuenta ----------
+  mensaje(el, texto, tipo = 'error') {
+    el.innerHTML = texto ? `<div class="mensaje ${tipo}">${DP.esc(texto)}</div>` : '';
+  },
+
+  // Reglas de contraseña: 8+ caracteres, al menos una letra y un número.
+  problemaContrasena(c) {
+    if (c.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
+    if (!/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(c) || !/\d/.test(c)) return 'La contraseña debe tener letras y números.';
+    return null;
+  },
+
+  // Mensajes de Supabase Auth en español claro.
+  errorCuenta(error) {
+    const m = (error && (error.message || error.error_description)) || '';
+    if (/usuario_ocupado/.test(m)) return 'Ese @usuario ya está en uso. Elige otro.';
+    if (/usuario_invalido/.test(m)) return 'Ese @usuario no está permitido. Usa de 3 a 20 letras, números o _.';
+    if (/Database error saving new user/i.test(m)) return 'No se pudo crear la cuenta. Puede que ese @usuario ya esté en uso: prueba con otro.';
+    if (/Invalid login credentials/i.test(m)) return 'Correo o contraseña incorrectos.';
+    if (/Email not confirmed/i.test(m)) return 'Aún no has activado tu cuenta. Abre el enlace que te enviamos por correo.';
+    if (/already registered|already been registered/i.test(m)) return 'Ya existe una cuenta con ese correo. Entra o recupera tu contraseña.';
+    if (/captcha/i.test(m)) return 'Confirma que no eres un robot y vuelve a intentarlo.';
+    if (/rate limit|too many|security purposes/i.test(m)) return 'Demasiados intentos seguidos. Espera unos minutos y vuelve a probar.';
+    if (/Password should be|weak/i.test(m)) return 'La contraseña es demasiado débil. Usa al menos 8 caracteres con letras y números.';
+    if (/same.*password|different from the old/i.test(m)) return 'La nueva contraseña debe ser distinta de la anterior.';
+    return 'Algo salió mal: ' + m;
+  },
+
+  // Adónde volver tras entrar (solo páginas de este sitio).
+  siguiente(porDefecto = 'mis-anuncios.html') {
+    const n = new URLSearchParams(location.search).get('next') || '';
+    return /^[a-z0-9-]+\.html(\?[\w=&%-]*)?$/i.test(n) ? n : porDefecto;
   }
 };
 

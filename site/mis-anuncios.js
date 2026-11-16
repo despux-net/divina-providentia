@@ -2,7 +2,7 @@
 (async () => {
   const $ = id => document.getElementById(id);
   const session = await DP.cabecera();
-  if (!session) { location.href = 'publicar.html'; return; }
+  if (!session) { location.href = 'entrar.html?next=mis-anuncios.html'; return; }
   const uid = session.user.id;
 
   async function cargar() {

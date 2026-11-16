@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crear cuenta — Divina Providentia</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="estilos.css?v=3">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <nav class="nav"><a href="index.html">Buscar</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <div class="form cuenta">
+      <h1>Crea tu cuenta</h1>
+      <p class="sub">Para publicar inmuebles gratis. ¿Ya tienes cuenta? <a href="entrar.html">Entra aquí</a>.</p>
+
+      <form id="form-registro" novalidate>
+        <fieldset>
+          <div class="campo">
+            <label for="nombre">Nombre <small>(se verá en tus anuncios)</small></label>
+            <input type="text" id="nombre" autocomplete="name" maxlength="80" required placeholder="Ej.: María Pérez">
+          </div>
+          <div class="campo">
+            <label for="usuario">Usuario</label>
+            <div class="arroba"><span>@</span><input type="text" id="usuario" autocomplete="username" maxlength="20" required
+              placeholder="mariaperez" autocapitalize="none" spellcheck="false" aria-describedby="ayuda-usuario"></div>
+            <small class="ayuda" id="ayuda-usuario">De 3 a 20 letras minúsculas, números o _</small>
+          </div>
+          <div class="campo">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" autocomplete="email" required placeholder="tucorreo@ejemplo.com">
+          </div>
+          <div class="campo">
+            <label for="clave">Contraseña</label>
+            <input type="password" id="clave" autocomplete="new-password" minlength="8" required aria-describedby="ayuda-clave">
+            <small class="ayuda" id="ayuda-clave">Mínimo 8 caracteres, con letras y números</small>
+          </div>
+          <div class="campo">
+            <label for="clave2">Repite la contraseña</label>
+            <input type="password" id="clave2" autocomplete="new-password" required aria-describedby="ayuda-clave2">
+            <small class="ayuda" id="ayuda-clave2"></small>
+          </div>
+          <label class="check"><input type="checkbox" id="ver-clave"> Mostrar contraseña</label>
+        </fieldset>
+
+        <div id="antirrobot" class="antirrobot"></div>
+        <div id="msg"></div>
+        <button class="boton" type="submit" id="btn">Crear cuenta</button>
+        <p class="aviso">Te enviaremos un correo con un enlace para activar la cuenta.</p>
+      </form>
+
+      <section id="hecho" hidden>
+        <div class="mensaje ok"><strong>¡Casi listo!</strong> Te enviamos un correo a <b id="hecho-email"></b>.
+          Abre el enlace para activar tu cuenta. Si no lo ves en unos minutos, mira en «Spam» o «Promociones».</div>
+        <p><a class="boton sec" href="entrar.html">Ir a entrar</a></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="pie">© Divina Providentia</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=3"></script>
+  <script src="registro.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi perfil — Divina Providentia</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="estilos.css?v=3">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <nav class="nav">
+        <a href="index.html">Buscar</a>
+        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+        <span data-nav-sesion></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <div class="form cuenta">
+      <div id="bienvenida" hidden class="mensaje ok"><strong>¡Bienvenido!</strong> Tu cuenta está activa.
+        <a href="publicar.html">Publica tu primer inmueble</a>.</div>
+      <h1>Mi perfil</h1>
+      <p class="sub" id="correo"></p>
+
+      <form id="form-perfil" novalidate>
+        <fieldset>
+          <div class="campo"><label for="nombre">Nombre <small>(se verá en tus anuncios)</small></label>
+            <input type="text" id="nombre" maxlength="80" autocomplete="name" required></div>
+          <div class="campo"><label for="usuario">Usuario</label>
+            <div class="arroba"><span>@</span><input type="text" id="usuario" maxlength="20" autocapitalize="none" spellcheck="false" required></div>
+            <small class="ayuda" id="ayuda-usuario">De 3 a 20 letras minúsculas, números o _</small></div>
+          <div class="campo"><label for="telefono">WhatsApp <small>(opcional; se rellenará solo al publicar)</small></label>
+            <input type="tel" id="telefono" autocomplete="tel" placeholder="Ej.: 0414 123 4567"></div>
+        </fieldset>
+        <div id="msg"></div>
+        <button class="boton" type="submit" id="btn">Guardar cambios</button>
+        <a class="boton sec" href="restablecer.html">Cambiar contraseña</a>
+      </form>
+    </div>
+  </main>
+
+  <footer class="pie">© Divina Providentia</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=3"></script>
+  <script src="perfil.js?v=1"></script>
+</body>
+</html>

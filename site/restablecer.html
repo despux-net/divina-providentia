@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nueva contraseña — Divina Providentia</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="estilos.css?v=3">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html">Divina Providentia<small>Inmuebles en Venezuela</small></a>
+      <nav class="nav"><a href="index.html">Buscar</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+  <main class="contenedor">
+    <div class="form cuenta">
+      <h1>Elige una contraseña nueva</h1>
+      <div id="sin-enlace" hidden class="mensaje error">Este enlace no es válido o ya caducó.
+        <a href="entrar.html">Pide uno nuevo desde «¿Olvidaste tu contraseña?»</a>.</div>
+      <form id="form-clave" hidden novalidate>
+        <fieldset>
+          <div class="campo"><label for="clave">Contraseña nueva</label>
+            <input type="password" id="clave" autocomplete="new-password" required>
+            <small class="ayuda">Mínimo 8 caracteres, con letras y números</small></div>
+          <div class="campo"><label for="clave2">Repítela</label>
+            <input type="password" id="clave2" autocomplete="new-password" required></div>
+        </fieldset>
+        <div id="msg"></div>
+        <button class="boton" type="submit" id="btn">Guardar contraseña</button>
+      </form>
+    </div>
+  </main>
+  <footer class="pie">© Divina Providentia</footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=3"></script>
+  <script>
+    // Se llega desde el correo de «Recuperar contraseña» o desde «Cambiar contraseña» del perfil.
+    (async () => {
+      const $ = id => document.getElementById(id);
+      const { data: { session } } = await DP.sb.auth.getSession();
+      DP.cabecera();
+      if (!session) { $('sin-enlace').hidden = false; return; }
+      $('form-clave').hidden = false;
+      $('form-clave').addEventListener('submit', async e => {
+        e.preventDefault();
+        const clave = $('clave').value, clave2 = $('clave2').value;
+        const problema = DP.problemaContrasena(clave);
+        if (problema) return DP.mensaje($('msg'), problema);
+        if (clave !== clave2) return DP.mensaje($('msg'), 'Las dos contraseñas no coinciden.');
+        $('btn').disabled = true;
+        const { error } = await DP.sb.auth.updateUser({ password: clave });
+        $('btn').disabled = false;
+        if (error) return DP.mensaje($('msg'), DP.errorCuenta(error));
+        DP.mensaje($('msg'), 'Contraseña guardada. Te llevamos a tu perfil…', 'ok');
+        setTimeout(() => { location.href = 'perfil.html'; }, 1500);
+      });
+    })();
+  </script>
+</body>
+</html>
