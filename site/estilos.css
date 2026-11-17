@@ -1141,3 +1141,6 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 .buscar-404 input { flex: 1; min-width: 0; }
 .atajos-404 { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; }
 @media (max-width: 560px) { .buscar-404 { flex-direction: column; } .pagina-404 { padding-top: 32px; } }
+
+/* Logo en banda azul al principio de Quiénes somos, Contacto y Seguridad (v37) */
+.logo-banda { display: block; width: min(360px, 100%); height: auto; border-radius: 6px; margin: 4px 0 22px; }
