@@ -1178,3 +1178,22 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 .cerca-grupo li { display: flex; justify-content: space-between; gap: 10px; font-size: .88rem; padding: 2px 0; }
 .cerca-grupo li span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cerca-dist { color: var(--muted); flex: none; }
+a.eleccion { color: inherit; text-decoration: none; }
+a.eleccion:hover { text-decoration: none; }
+.busco-aviso { text-align: center; margin: 18px 0 0; }
+#busco-sec .lista-solicitudes { margin-top: 6px; }
+
+/* Menú de arriba en una línea aunque haya sesión iniciada (v40) */
+@media (min-width: 561px) {
+  .cabecera .nav { flex-wrap: nowrap; }
+  .cabecera .nav a { padding: 8px 8px; white-space: nowrap; }
+  .cabecera .nav [data-nav-sesion] { display: contents; }
+}
+@media (min-width: 561px) and (max-width: 1150px) {
+  .cabecera .nav a { padding: 7px 6px; font-size: .86rem; }
+  .cabecera .nav .nav-perfil { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (min-width: 561px) and (max-width: 1150px) {
+  .marca img { height: 18px; }
+  .cabecera .nav a { padding: 7px 5px; }
+}

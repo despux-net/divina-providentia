@@ -29,6 +29,39 @@ const DP = {
     return /\b(adelanto|anticipo|apartar|apartarlo|apartado|separarlo|separar el|reservarlo|deposito|depositar|depositame|transferencia|transfiere|transferir|zelle|binance|usdt|cripto|bitcoin|western union|pago movil|paypal|giftcard|tarjeta de regalo|codigo que te llego|codigo de verificacion|enviame el dinero|mandame el pago|envia el pago)\b/.test(t);
   },
 
+  // «Busco inmueble»: tarjeta pública de una búsqueda (portada y busco.html).
+  haceCuanto(f) {
+    const d = Math.floor((Date.now() - new Date(f)) / 864e5);
+    return d <= 0 ? 'hoy' : d === 1 ? 'ayer' : `hace ${d} días`;
+  },
+  queBusca(s) {
+    const tipo = s.tipo ? (DP.TIPOS[s.tipo] || 'inmueble').toLowerCase() : 'inmueble';
+    return `Busca ${tipo} ${s.operacion === 'venta' ? 'para comprar' : 'en alquiler'}`;
+  },
+  datosBusqueda(s) {
+    return [
+      s.presupuesto ? `Hasta $${Number(s.presupuesto).toLocaleString('es-VE')}${s.operacion === 'alquiler' ? ' /mes' : ''}` : null,
+      s.habitaciones ? `${s.habitaciones}+ hab.` : null
+    ].filter(Boolean).join(' · ');
+  },
+  tarjetaSolicitud(s, yo) {
+    const nombre = s.nombre || (s.usuario ? '@' + s.usuario : 'Usuario');
+    const perfil = s.usuario ? `creador.html?u=${encodeURIComponent(s.usuario)}` : null;
+    const datos = DP.datosBusqueda(s);
+    return `<article class="solicitud">
+      <div class="sol-cab"><strong>${DP.esc(DP.queBusca(s))}</strong>
+        <span class="sol-lugar">${DP.esc([s.zona, s.estado].filter(Boolean).join(', '))}</span></div>
+      ${datos ? `<p class="sol-datos">${DP.esc(datos)}</p>` : ''}
+      <p class="sol-texto">${DP.esc(s.descripcion)}</p>
+      <div class="sol-pie">
+        <span class="sol-autor">${perfil ? `<a href="${perfil}" class="sin-subrayado">` : ''}${DP.avatar({ nombre, avatar_url: s.avatar_url }, 28)}${perfil ? '</a>' : ''}
+          ${perfil ? `<a href="${perfil}">${DP.esc(nombre)}</a>` : DP.esc(nombre)}
+          ${s.valoraciones ? DP.estrellas(s.estrellas, s.valoraciones, true) : ''}
+          <span class="insignia-gris">· ${DP.haceCuanto(s.creado)}</span></span>
+        ${s.user_id === yo ? '' : `<a class="boton peq" href="chat.html?con=${encodeURIComponent(s.user_id)}">Escribirle</a>`}
+      </div></article>`;
+  },
+
   // Perfil público: etiquetas (tipo, empresa, zona) y enlaces de contacto.
   etiquetasPerfil(p) {
     if (!p) return '';

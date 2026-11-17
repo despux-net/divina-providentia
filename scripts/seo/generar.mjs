@@ -135,6 +135,7 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
       <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
       <nav class="nav">
         <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
+        <a href="busco.html">Busco inmueble</a>
         <span data-nav-sesion></span>
         <a class="boton peq" href="publicar.html">Publicar gratis</a>
       </nav>
@@ -298,6 +299,7 @@ function paginaPrecios({ titulo, h1, desc, url, migas, intro, tabla: t, enlaces 
       <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
       <nav class="nav">
         <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
+        <a href="busco.html">Busco inmueble</a>
         <span data-nav-sesion></span>
         <a class="boton peq" href="publicar.html">Publicar gratis</a>
       </nav>

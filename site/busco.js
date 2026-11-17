@@ -16,20 +16,10 @@
   const params = new URLSearchParams(location.search);
   for (const k of ['operacion', 'tipo', 'estado']) if (params.get(k)) $('f-' + k).value = params.get(k);
 
-  const haceCuanto = f => {
-    const d = Math.floor((Date.now() - new Date(f)) / 864e5);
-    return d <= 0 ? 'hoy' : d === 1 ? 'ayer' : `hace ${d} días`;
-  };
-  const que = s => {
-    const tipo = s.tipo ? (DP.TIPOS[s.tipo] || 'inmueble').toLowerCase() : 'inmueble';
-    return `Busca ${tipo} ${s.operacion === 'venta' ? 'para comprar' : 'en alquiler'}`;
-  };
-  const datos = s => [
-    s.presupuesto ? `Hasta $${Number(s.presupuesto).toLocaleString('es-VE')}${s.operacion === 'alquiler' ? ' /mes' : ''}` : null,
-    s.habitaciones ? `${s.habitaciones}+ hab.` : null
-  ].filter(Boolean).join(' · ');
+  const haceCuanto = DP.haceCuanto, que = DP.queBusca, datos = DP.datosBusqueda;
 
   function tarjeta(s, mia) {
+    if (!mia) return DP.tarjetaSolicitud(s, yo);
     const nombre = s.nombre || (s.usuario ? '@' + s.usuario : 'Usuario');
     const perfil = s.usuario ? `creador.html?u=${encodeURIComponent(s.usuario)}` : null;
     return `<article class="solicitud">
@@ -44,11 +34,7 @@
               ? `<button type="button" class="enlace" data-cerrar="${s.id}">Ya lo encontré (cerrar)</button>`
               : `<button type="button" class="enlace" data-reabrir="${s.id}">Volver a publicar</button>`}
             <button type="button" class="enlace peligro" data-borrar="${s.id}">Borrar</button></span>`
-        : `<span class="sol-autor">${perfil ? `<a href="${perfil}" class="sin-subrayado">` : ''}${DP.avatar({ nombre, avatar_url: s.avatar_url }, 28)}${perfil ? '</a>' : ''}
-            ${perfil ? `<a href="${perfil}">${DP.esc(nombre)}</a>` : DP.esc(nombre)}
-            ${s.valoraciones ? DP.estrellas(s.estrellas, s.valoraciones, true) : ''}
-            <span class="insignia-gris">· ${haceCuanto(s.creado)}</span></span>
-          ${s.user_id === yo ? '' : `<a class="boton peq" href="chat.html?con=${encodeURIComponent(s.user_id)}">Escribirle</a>`}`}
+        : ''}
       </div></article>`;
   }
 

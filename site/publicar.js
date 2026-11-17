@@ -52,7 +52,7 @@
     $('eleccion').hidden = false;
     $('h1').textContent = '¿Qué quieres publicar?';
   }
-  document.querySelectorAll('.eleccion').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.eleccion[data-modo]').forEach(b => b.addEventListener('click', () => {
     ponerModo(b.dataset.modo);
     history.replaceState(null, '', '?tipo=' + b.dataset.modo);
     window.scrollTo(0, 0);

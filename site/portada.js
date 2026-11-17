@@ -54,6 +54,16 @@
     cont.innerHTML = data.map(DP.tarjeta).join('');
   });
 
+  // Personas que buscan inmueble (las 4 últimas).
+  DP.sb.rpc('solicitudes_publicas', { p_limite: 4 }).then(async ({ data, error }) => {
+    const cont = $('portada-busco');
+    if (error) { cont.innerHTML = ''; return; }
+    const { data: { session } } = await DP.sb.auth.getSession();
+    cont.innerHTML = data && data.length
+      ? data.map(s => DP.tarjetaSolicitud(s, session && session.user.id)).join('')
+      : '<p class="sub">Aún no hay búsquedas publicadas. Sé el primero: cuéntanos qué buscas y los anunciantes te escribirán.</p>';
+  });
+
   // ---------- Contenido editable desde Pages CMS (site/contenido/portada.json) ----------
   // Si el archivo no carga, la portada se queda con los textos e ilustración de fábrica.
   const contenido = fetch('contenido/portada.json', { cache: 'no-cache' })
