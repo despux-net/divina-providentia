@@ -135,31 +135,60 @@
     else if (DP.ESTADOS[i.estado]) mapa.setView(DP.ESTADOS[i.estado], 11);
   }
 
-  // ---------- Fotos ----------
-  // Reduce cada foto a 1600 px como máximo y la pasa a JPEG: los móviles
-  // hacen fotos de 5–10 MB que en Venezuela tardarían mucho en cargar.
+  // ---------- Fotos: se optimizan en el teléfono/PC ANTES de subirlas ----------
+  // Nunca se sube el original. Cada foto se reduce a 1600 px en su lado
+  // largo (lo máximo que muestra la ficha, incluso en pantallas retina) y se
+  // guarda en WebP (≈30 % menos que JPEG con la misma calidad visual). Si el
+  // navegador no sabe crear WebP, se usa JPEG. Así una foto de móvil de
+  // 4–10 MB queda en ~150–400 KB sin diferencia a la vista. De paso se
+  // eliminan los datos ocultos de la foto (GPS, modelo del teléfono…).
+  const LADO_MAX = 1600;
+  const PESO_OBJETIVO = 450 * 1024;   // si una foto muy detallada pasa de esto, se aprieta un poco más
+  const kb = n => n >= 1048576 ? `${(n / 1048576).toLocaleString('es-VE', { maximumFractionDigits: 1 })} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
+  const aBlob = (c, tipo, calidad) => new Promise(r => c.toBlob(r, tipo, calidad));
+
   async function reducir(file) {
     const bmp = await createImageBitmap(file).catch(() => null);
     if (!bmp) throw new Error(`No se pudo leer «${file.name}». ¿Es una foto JPG, PNG o WebP?`);
-    const escala = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const escala = Math.min(1, LADO_MAX / Math.max(bmp.width, bmp.height));
     const c = document.createElement('canvas');
     c.width = Math.round(bmp.width * escala); c.height = Math.round(bmp.height * escala);
-    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
-    return await new Promise(r => c.toBlob(r, 'image/jpeg', 0.82));
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff';                       // fondo blanco para PNG con transparencia
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';           // reducción nítida, sin dientes de sierra
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    bmp.close && bmp.close();
+
+    let blob = await aBlob(c, 'image/webp', 0.8);
+    if (!blob || blob.type !== 'image/webp') blob = await aBlob(c, 'image/jpeg', 0.82);  // navegadores sin WebP
+    if (blob.size > PESO_OBJETIVO) {
+      const otra = await aBlob(c, blob.type, blob.type === 'image/webp' ? 0.72 : 0.75);
+      if (otra && otra.size < blob.size) blob = otra;
+    }
+    if (!blob) throw new Error(`No se pudo preparar «${file.name}».`);
+    return blob;
   }
 
   $('fotos').addEventListener('change', async e => {
     const archivos = [...e.target.files];
     e.target.value = '';
     mensaje('msg-form', '');
+    let antes = 0, despues = 0;
     for (const f of archivos) {
       if (fotos.length >= MAX_FOTOS) { mensaje('msg-form', `Máximo ${MAX_FOTOS} fotos.`, 'error'); break; }
       try {
         const blob = await reducir(f);
+        antes += f.size; despues += blob.size;
         fotos.push({ blob, vista: URL.createObjectURL(blob) });
       } catch (err) { mensaje('msg-form', err.message, 'error'); }
     }
     pintarFotos();
+    if (despues && antes > despues) {
+      $('fotos-ahorro').textContent = `Fotos optimizadas: ${kb(antes)} → ${kb(despues)} (${Math.round((1 - despues / antes) * 100)} % menos), misma calidad a la vista.`;
+      $('fotos-ahorro').hidden = false;
+    }
   });
 
   function pintarFotos() {
@@ -215,8 +244,9 @@
       const rutas = [];
       for (const f of fotos) {
         if (f.ruta) { rutas.push(f.ruta); continue; }
-        const ruta = `${usuario.id}/${crypto.randomUUID()}.jpg`;
-        const { error } = await DP.sb.storage.from('inmuebles').upload(ruta, f.blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+        const webp = f.blob.type === 'image/webp';
+        const ruta = `${usuario.id}/${crypto.randomUUID()}.${webp ? 'webp' : 'jpg'}`;
+        const { error } = await DP.sb.storage.from('inmuebles').upload(ruta, f.blob, { contentType: webp ? 'image/webp' : 'image/jpeg', cacheControl: '31536000' });
         if (error) throw new Error('No se pudo subir una foto: ' + error.message);
         f.ruta = ruta; rutas.push(ruta);
       }

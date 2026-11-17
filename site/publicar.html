@@ -122,9 +122,10 @@
 
         <fieldset>
           <legend id="legend-fotos">Fotos</legend>
-          <p style="margin-top:0">Hasta 12 fotos. La primera será la portada. Se reducen solas para que carguen rápido.</p>
+          <p style="margin-top:0">Hasta 12 fotos. La primera será la portada. Se optimizan solas antes de subirlas: pesan mucho menos y se ven igual.</p>
           <input type="file" id="fotos" accept="image/jpeg,image/png,image/webp" multiple>
           <div class="fotos-prev" id="fotos-prev"></div>
+          <p class="ayuda" id="fotos-ahorro" hidden></p>
         </fieldset>
 
         <fieldset>
@@ -145,6 +146,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="comun.js?v=11"></script>
   <script src="pegar.js?v=1"></script>
-  <script src="publicar.js?v=6"></script>
+  <script src="publicar.js?v=7"></script>
 </body>
 </html>
