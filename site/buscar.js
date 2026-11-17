@@ -31,7 +31,8 @@
     location.href = 'conceptos.html' + (p.toString() ? '?' + p : '');
   };
   // Interruptor «Incluir proyectos conceptuales de la zona» (apagado por defecto).
-  const conceptos = $('f-conceptos');
+  // Ya no se mezclan en la búsqueda: viven solo en conceptos.html.
+  const conceptos = { checked: false, addEventListener() {} };
   DP.opciones(campos.tipo, DP.TIPOS, 'Todos los tipos');
   DP.opcionesEstados(campos.estado, 'Toda Venezuela');
 
@@ -40,7 +41,6 @@
   for (const [k, el] of Object.entries(campos)) if (params.has(k)) el.value = params.get(k);
   if (params.get('vista') === 'mapa') vista = 'mapa';
   if (params.get('fav') === '1') soloFavoritos = true;
-  if (params.get('conceptos') === '1') conceptos.checked = true;
   for (const [k, el] of Object.entries(casillas)) el.checked = params.get(k) === '1';
   if (campos.operacion.value === 'concepto') irAConceptos();
 
