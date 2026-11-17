@@ -1107,3 +1107,16 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 .regla-de-oro strong { font-size: 1rem; font-weight: 600; }
 .resumen-privacidad { background: none; border: 0; border-left: 3px solid var(--line); border-radius: 0; padding: 0 0 0 16px; }
 .aviso-estafa { background: #f6f7f9; border: 0; border-left: 3px solid #b26a00; border-radius: 0 8px 8px 0; color: var(--ink); }
+
+/* Avisos sin cajetín: solo el color del texto (v34) */
+.mensaje { background: none !important; border: 0 !important; border-radius: 0; padding: 0; margin: 12px 0; font-weight: 500; }
+.mensaje.ok { color: #1f6b33; }
+.mensaje.error { color: var(--danger); }
+.caja-info { background: none; border-radius: 0; padding: 0; margin: 0 0 16px; }
+.vacio { background: none; border: 0; border-radius: 0; }
+.aviso-importante { background: none; border: 0; border-radius: 0; padding: 0; }
+.completo { background: none; border: 0; border-radius: 0; padding: 0; }
+.zona-peligro details { background: none; border: 0; border-radius: 0; padding: 0; }
+.aviso-estafa { background: none; border: 0; border-radius: 0; padding: 4px 0; color: #8a4b00; }
+.aviso-estafa a { color: #8a4b00; text-decoration: underline; }
+.resumen-privacidad, .regla-de-oro { border: 0; padding: 0; }
