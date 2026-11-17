@@ -684,9 +684,9 @@ a.caja.categoria { text-decoration: none; }
    ===================================================================== */
 .marca { display: inline-flex; align-items: center; line-height: 0; }
 .marca picture, .marca img { display: block; }
-.marca img { height: 36px; width: auto; }
+.marca img { height: 22px; width: auto; }
 .marca:hover img { opacity: .88; }
-@media (max-width: 560px) { .marca img { height: 28px; } }
+@media (max-width: 560px) { .marca img { height: 20px; } }
 
 /* Pie: sello «VIVINATI 2» (blanco sobre azul), sin líneas de separación */
 .pie .emblema { justify-content: center; gap: 0; }
