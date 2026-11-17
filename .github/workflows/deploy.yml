@@ -32,10 +32,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      # La tienda de ropa está retirada (copia íntegra en la rama
-      # «tienda-ropa» y la etiqueta «tienda-ropa-2026-11-16»). Ahora solo se
-      # publica la carpeta site/, que es la nueva web del buscador de
-      # inmuebles. Los archivos viejos siguen en el repo pero no salen a la web.
+      # Se publica la carpeta site/ (la web de vivinati.com).
       - name: Preparar la carpeta que se publica
         run: |
           cp CNAME site/CNAME
