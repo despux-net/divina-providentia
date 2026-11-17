@@ -1120,3 +1120,13 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 .aviso-estafa { background: none; border: 0; border-radius: 0; padding: 4px 0; color: #8a4b00; }
 .aviso-estafa a { color: #8a4b00; text-decoration: underline; }
 .resumen-privacidad, .regla-de-oro { border: 0; padding: 0; }
+
+/* Barra de búsqueda en una sola línea en escritorio: lupa y filtros alineados (v35) */
+@media (min-width: 1000px) {
+  .barra-filtros-int { flex-wrap: nowrap; gap: 8px; }
+  .barra-filtros .campo-q { flex: 1 1 150px; min-width: 120px; max-width: 240px; }
+  .barra-filtros .pildora { flex: 0 1 auto; min-width: 0; padding: 8px 28px 8px 13px; font-size: .88rem; background-position: right 7px center; }
+  .barra-filtros details.pildora { padding: 0; }
+  .barra-filtros details.pildora > summary { padding: 8px 28px 8px 13px; white-space: nowrap; }
+  .barra-fin { flex: none; gap: 8px; }
+}
