@@ -11,6 +11,10 @@
   $('nombre').value = perfil.full_name || '';
   $('usuario').value = perfil.usuario || '';
   $('telefono').value = perfil.phone || '';
+  $('biografia').value = perfil.biography || '';
+  const contarBio = () => { $('ayuda-biografia').textContent = `${$('biografia').value.length} / 1.000 caracteres. Cuéntale a la gente a qué te dedicas, en qué zonas trabajas y qué negocios buscas.`; };
+  $('biografia').addEventListener('input', contarBio);
+  contarBio();
   if (!perfil.usuario) DP.mensaje($('msg'), 'Elige un @usuario para completar tu perfil.', 'ok');
 
   const ayuda = $('ayuda-usuario'), textoAyuda = ayuda.textContent;
@@ -46,14 +50,14 @@
 
     $('btn').disabled = true;
     const { error } = await DP.sb.from('profiles')
-      .update({ full_name: nombre, usuario, phone: telefono || null })
+      .update({ full_name: nombre, usuario, phone: telefono || null, biography: $('biografia').value.trim() || null })
       .eq('id', session.user.id);
     $('btn').disabled = false;
     if (error) {
       const m = error.message || '';
       return DP.mensaje(msg, /profiles_usuario_unico|duplicate/.test(m) ? `@${usuario} ya está en uso.` : DP.errorCuenta(error));
     }
-    Object.assign(perfil, { full_name: nombre, usuario, phone: telefono || null });
+    Object.assign(perfil, { full_name: nombre, usuario, phone: telefono || null, biography: $('biografia').value.trim() || null });
     DP._perfil = perfil;
     DP.cabecera();
     DP.mensaje(msg, 'Perfil guardado.', 'ok');

@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=23">
+  <link rel="stylesheet" href="estilos.css?v=24">
 </head>
 <body>
   <header class="cabecera">
@@ -51,6 +51,9 @@
             <small class="ayuda" id="ayuda-usuario">De 3 a 20 letras minúsculas, números o _</small></div>
           <div class="campo"><label for="telefono">WhatsApp <small>(opcional; se rellenará solo al publicar)</small></label>
             <input type="tel" id="telefono" autocomplete="tel" placeholder="Ej.: 0414 123 4567"></div>
+          <div class="campo"><label for="biografia">Sobre mí / mi negocio <small>(opcional; se verá en tu perfil público)</small></label>
+            <textarea id="biografia" maxlength="1000" rows="5" placeholder="Ej.: Agente inmobiliario en Caracas desde 2015. Me especializo en apartamentos en el este (Chacao, Altamira, Los Palos Grandes). Atiendo de lunes a sábado. Abierto a alianzas con otras inmobiliarias y constructoras."></textarea>
+            <small class="ayuda" id="ayuda-biografia">Cuéntale a la gente a qué te dedicas, en qué zonas trabajas y qué tipo de negocios buscas. Máximo 1.000 caracteres.</small></div>
         </fieldset>
         <div id="msg"></div>
         <button class="boton" type="submit" id="btn">Guardar cambios</button>
@@ -76,7 +79,7 @@
   <footer class="pie">© Vivinati</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=14"></script>
-  <script src="perfil.js?v=3"></script>
+  <script src="comun.js?v=15"></script>
+  <script src="perfil.js?v=4"></script>
 </body>
 </html>

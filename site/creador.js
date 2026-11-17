@@ -16,6 +16,9 @@
   $('avatar').innerHTML = DP.avatar({ nombre, avatar_url: p.avatar_url }, 88);
   $('valoracion').innerHTML = DP.estrellas(p.estrellas, p.valoraciones) +
     (p.miembro_desde ? ` <span class="insignia-gris">· En Vivinati desde ${new Date(p.miembro_desde + 'T12:00:00').toLocaleDateString('es-VE', { month: 'long', year: 'numeric' })}</span>` : '');
+  if (p.biografia) { $('biografia').textContent = p.biografia; $('sobre-mi').hidden = false; }
+  document.querySelector('meta[name="description"]').setAttribute('content',
+    (p.biografia || `Perfil de ${nombre} en Vivinati: inmuebles y proyectos en Venezuela.`).slice(0, 160));
   $('perfil').hidden = false;
 
   const { data: filas } = await DP.sb.from('inmuebles').select('*').eq('user_id', p.id).eq('activo', true)

@@ -248,7 +248,7 @@ const DP = {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return null;
     if (!DP._perfil) {
-      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email, avatar_url').eq('id', session.user.id).maybeSingle();
+      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email, avatar_url, biography').eq('id', session.user.id).maybeSingle();
       DP._perfil = data || { id: session.user.id, usuario: null };
     }
     return DP._perfil;

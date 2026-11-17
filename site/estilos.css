@@ -947,3 +947,7 @@ a.caja.categoria { text-decoration: none; }
 
 .perfil-acciones { display: flex; gap: 8px; flex-wrap: wrap; }
 .nav-perfil { display: inline-flex !important; align-items: center; gap: 6px; }
+
+/* Descripción del perfil */
+.sobre-mi p { white-space: pre-line; max-width: 760px; margin: 0; line-height: 1.6; }
+.anfitrion-bio { margin: -4px 0 14px; font-size: .9rem; color: var(--ink); white-space: pre-line; }

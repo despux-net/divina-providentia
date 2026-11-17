@@ -188,6 +188,7 @@
             </div>
           </div>
         </div>
+        ${p && p.biografia ? `<p class="anfitrion-bio">${DP.esc(p.biografia.length > 180 ? p.biografia.slice(0, 180).replace(/\s+\S*$/, '') + '…' : p.biografia)}</p>` : ''}
         ${concepto ? `
           ${i.institucion ? `<p class="autor-dato"><span>Universidad o estudio</span>${DP.esc(i.institucion)}</p>` : ''}
           ${Array.isArray(i.herramientas) && i.herramientas.length ? `<div class="autor-dato"><span>Herramientas</span><div class="chips-datos">${i.herramientas.map(h => `<span class="chip-dato">${DP.esc(h)}</span>`).join('')}</div></div>` : ''}` : ''}
