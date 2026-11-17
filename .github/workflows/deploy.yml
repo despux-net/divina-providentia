@@ -45,6 +45,10 @@ jobs:
       - name: Generar páginas para Google (SEO)
         run: node scripts/seo/generar.mjs site || echo "::warning::No se pudieron generar las páginas SEO"
 
+      # Logos elegidos en Pages CMS (site/contenido/logos.json).
+      - name: Aplicar los logos de Pages CMS
+        run: node scripts/logos/aplicar.mjs site || echo "::warning::No se pudieron aplicar los logos"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

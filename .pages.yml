@@ -6,10 +6,6 @@
 #
 # Solo se publica la carpeta site/: por eso el contenido vive en
 # site/contenido/ y las fotos subidas en site/media/.
-#
-# Las secciones de la antigua tienda de ropa (productos, lookbook, pie,
-# apariencia) se quitaron de aquí el 2026-11-16; sus archivos siguen en
-# content/ y la tienda completa en la rama «tienda-ropa».
 # ===================================================================
 
 media:
@@ -18,6 +14,40 @@ media:
   categories: [image]
 
 content:
+
+  # ---------------------------------------------------------------
+  # Logos de la web. Al guardar, la web se vuelve a publicar (~1-2 min)
+  # y scripts/logos/aplicar.mjs pone el logo elegido en todas las páginas.
+  # Para volver al original, borra la imagen y deja el campo vacío.
+  - name: logos
+    label: Logos
+    type: file
+    path: site/contenido/logos.json
+    format: json
+    fields:
+      - name: cabecera
+        label: Logo de arriba (ordenador)
+        description: >-
+          Se ve en el menú de arriba de todas las páginas, sobre fondo blanco.
+          Mejor un PNG con fondo transparente, alargado (por ejemplo 532 × 60 px).
+          Se muestra a 22 px de alto.
+        type: image
+      - name: cabecera_movil
+        label: Logo de arriba (teléfono)
+        description: >-
+          En el teléfono el menú de arriba es azul: usa una versión en blanco
+          con fondo transparente, del mismo formato que el anterior.
+        type: image
+      - name: pie
+        label: Emblema del pie de página
+        description: Sello que aparece abajo, en el centro del pie de todas las páginas (unos 150 px de ancho).
+        type: image
+      - name: banda
+        label: Logo en banda (páginas informativas)
+        description: >-
+          Logo grande al principio de Quiénes somos, Contacto, Centro de seguridad
+          y Política de privacidad (se ve a unos 360 px de ancho).
+        type: image
 
   # ---------------------------------------------------------------
   # Portada de vivinati.com: imagen de fondo del buscador y
