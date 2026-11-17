@@ -1,0 +1,31 @@
+# Avisa por correo (a contact@vivinati.com) de los mensajes nuevos del
+# formulario de contacto. Revisa cada 15 minutos (GitHub puede retrasarlo
+# un poco). Usa los secretos SUPABASE_SERVICE_ROLE_KEY y RESEND_API_KEY.
+name: Avisos de contacto
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contacto
+  cancel-in-progress: false
+
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Avisar de mensajes nuevos
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node scripts/contacto/avisar.mjs

@@ -65,3 +65,8 @@ end $$;
 drop trigger if exists contacto_web_limite on public.contacto_web;
 create trigger contacto_web_limite before insert on public.contacto_web
   for each row execute function public.contacto_web_limite();
+
+-- Aviso por correo de mensajes nuevos (scripts/contacto/avisar.mjs) y correo público.
+alter table public.contacto_web add column if not exists avisado boolean not null default false;
+update public.ajustes_sitio set valor = 'contact@vivinati.com', actualizado = now()
+  where clave = 'correo_contacto' and (valor is null or valor = '');
