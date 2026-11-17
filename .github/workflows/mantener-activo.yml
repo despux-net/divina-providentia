@@ -1,0 +1,27 @@
+# GitHub pausa las tareas programadas de un repositorio público tras 60 días
+# sin cambios. Esta tarea, una vez al mes, vuelve a activar todas las tareas
+# (indexador, alertas, avisos de contacto, despliegue diario) para que nunca
+# se detengan aunque nadie toque la web. Gratis: no hace commits.
+name: Mantener tareas activas
+
+on:
+  schedule:
+    - cron: '0 6 1,15 * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  activar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Reactivar las tareas programadas
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          for f in indexador.yml alertas.yml contacto.yml deploy.yml mantener-activo.yml; do
+            gh api -X PUT "repos/$REPO/actions/workflows/$f/enable" && echo "Activa: $f" || echo "No se pudo activar: $f"
+          done
