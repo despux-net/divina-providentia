@@ -23,6 +23,8 @@
     if (redes) { caja.innerHTML = redes; caja.hidden = false; }
   });
 
+  const robot = DP.antirrobot($('antirrobot'));
+
   $('c-mensaje').addEventListener('input', e => { $('c-cuenta').textContent = `${e.target.value.length.toLocaleString('es-VE')} / 2.000`; });
 
   $('form-contacto').addEventListener('submit', async e => {
@@ -37,15 +39,21 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) return DP.mensaje(m, 'Revisa tu correo: lo necesitamos para responderte.');
     if (mensaje.length < 10) return DP.mensaje(m, 'Cuéntanos un poco más (mínimo 10 caracteres).');
     if (enlace && !DP.urlSegura(enlace)) return DP.mensaje(m, 'Revisa el enlace.');
+    if (robot.activo && !robot.token()) return DP.mensaje(m, 'Marca la casilla «No soy un robot».');
 
     $('c-btn').disabled = true; $('c-btn').textContent = 'Enviando…';
-    const { error } = await DP.sb.from('contacto_web').insert({
-      nombre, correo, motivo: $('c-motivo').value, mensaje, enlace: enlace || null
+    // Se envía por la función «contacto», que comprueba el «No soy un robot» con Cloudflare.
+    const { error } = await DP.sb.functions.invoke('contacto', {
+      body: { nombre, correo, motivo: $('c-motivo').value, mensaje, enlace: enlace || null, token: robot.token() }
     });
     $('c-btn').disabled = false; $('c-btn').textContent = 'Enviar mensaje';
+    robot.reiniciar();
     if (error) {
-      return DP.mensaje(m, /demasiados_mensajes/.test(error.message || '')
+      let codigo = '';
+      try { codigo = (await error.context.json()).error; } catch { /* sin detalle */ }
+      return DP.mensaje(m, codigo === 'demasiados'
         ? 'Ya recibimos varios mensajes tuyos en la última hora. Espera un poco antes de enviar otro.'
+        : codigo === 'robot' ? 'No pudimos comprobar que no eres un robot. Marca de nuevo la casilla e inténtalo otra vez.'
         : 'No se pudo enviar. Revisa los datos e inténtalo de nuevo.');
     }
     $('form-contacto').reset();
