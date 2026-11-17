@@ -1197,3 +1197,26 @@ a.eleccion:hover { text-decoration: none; }
   .marca img { height: 18px; }
   .cabecera .nav a { padding: 7px 5px; }
 }
+
+/* Menú del usuario (@usuario ▾) con Mensajes, Mi perfil, Mis anuncios y Salir (v42) */
+.menu-usuario { position: relative; display: inline-flex; }
+.cabecera .nav .nav-perfil { display: inline-flex !important; align-items: center; gap: 6px; position: relative;
+  background: none; border: 0; font: inherit; font-size: .92rem; color: var(--ink); padding: 8px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.cabecera .nav .nav-perfil:hover, .menu-usuario.abierto .nav-perfil { background: var(--bg-azul); color: var(--accent); }
+.nav-quien { max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+.nav-flecha { flex: none; opacity: .7; }
+.menu-desplegable { display: none; position: absolute; right: 0; top: 100%; min-width: 190px; padding: 6px; margin-top: 4px;
+  background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 24px rgba(20, 40, 70, .12); z-index: 1000; }
+.menu-desplegable::before { content: ""; position: absolute; left: 0; right: 0; top: -8px; height: 8px; }
+.menu-usuario:hover .menu-desplegable, .menu-usuario:focus-within .menu-desplegable, .menu-usuario.abierto .menu-desplegable { display: block; }
+.cabecera .nav .menu-desplegable a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border-radius: 6px; font-size: .92rem; }
+.cabecera .nav .menu-desplegable a:hover { background: var(--bg-azul); color: var(--accent); }
+.cabecera .nav .menu-desplegable [data-salir] { color: var(--danger); border-top: 1px solid var(--line); border-radius: 0 0 6px 6px; margin-top: 4px; }
+.nav-perfil .badge-mensajes { position: absolute; top: 0; right: -2px; }
+@media (max-width: 560px) {
+  /* En el teléfono: la barra de abajo lleva Mensajes y Perfil; arriba solo queda «Salir». */
+  .cabecera .nav .nav-perfil { display: none !important; }
+  .menu-desplegable { display: contents !important; }
+  .cabecera .nav .menu-desplegable a:not([data-salir]) { display: none; }
+  .cabecera .nav .menu-desplegable [data-salir] { color: #fff; border: 1px solid rgba(255, 255, 255, .55); border-radius: 999px; margin: 0; padding: 3px 10px; font-size: .8rem; }
+}

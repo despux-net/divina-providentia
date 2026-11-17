@@ -136,6 +136,7 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
       <nav class="nav">
         <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
         <a href="busco.html">Busco inmueble</a>
+        <a href="sobre.html">Quiénes somos</a>
         <span data-nav-sesion></span>
         <a class="boton peq" href="publicar.html">Publicar gratis</a>
       </nav>
@@ -300,6 +301,7 @@ function paginaPrecios({ titulo, h1, desc, url, migas, intro, tabla: t, enlaces 
       <nav class="nav">
         <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
         <a href="busco.html">Busco inmueble</a>
+        <a href="sobre.html">Quiénes somos</a>
         <span data-nav-sesion></span>
         <a class="boton peq" href="publicar.html">Publicar gratis</a>
       </nav>

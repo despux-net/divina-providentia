@@ -360,8 +360,20 @@ const DP = {
     if (session) {
       const p = await DP.miPerfil();
       const quien = p && p.usuario ? '@' + p.usuario : 'Mi perfil';
-      nav.innerHTML = `<a href="chat.html" data-mensajes>Mensajes</a><a href="mis-anuncios.html">Mis anuncios</a>` +
-        `<a href="perfil.html" class="nav-perfil">${p && p.avatar_url ? DP.avatar({ nombre: quien, avatar_url: p.avatar_url }, 24) + ' ' : ''}${DP.esc(quien)}</a><a href="#" data-salir>Salir</a>`;
+      // @usuario con menú desplegable (al pasar el cursor, al hacer clic o con el teclado).
+      nav.innerHTML = `<div class="menu-usuario">
+        <button type="button" class="nav-perfil" aria-haspopup="true" aria-expanded="false" data-mensajes>${p && p.avatar_url ? DP.avatar({ nombre: quien, avatar_url: p.avatar_url }, 24) : ''}<span class="nav-quien">${DP.esc(quien)}</span><svg class="nav-flecha" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg></button>
+        <div class="menu-desplegable" role="menu">
+          <a href="chat.html" role="menuitem" data-mensajes>Mensajes</a>
+          <a href="perfil.html" role="menuitem">Mi perfil</a>
+          <a href="mis-anuncios.html" role="menuitem">Mis anuncios</a>
+          <a href="#" role="menuitem" data-salir>Salir</a>
+        </div></div>`;
+      const menu = nav.querySelector('.menu-usuario'), boton = menu.querySelector('.nav-perfil');
+      const abrir = si => { menu.classList.toggle('abierto', si); boton.setAttribute('aria-expanded', si); };
+      boton.addEventListener('click', e => { e.stopPropagation(); abrir(!menu.classList.contains('abierto')); });
+      document.addEventListener('click', e => { if (!menu.contains(e.target)) abrir(false); });
+      menu.addEventListener('keydown', e => { if (e.key === 'Escape') { abrir(false); boton.focus(); } });
       nav.querySelector('[data-salir]').addEventListener('click', async e => {
         e.preventDefault();
         try { indexedDB.deleteDatabase('vivinati-chat'); } catch { /* nada */ }
