@@ -70,3 +70,8 @@ create trigger contacto_web_limite before insert on public.contacto_web
 alter table public.contacto_web add column if not exists avisado boolean not null default false;
 update public.ajustes_sitio set valor = 'contact@vivinati.com', actualizado = now()
   where clave = 'correo_contacto' and (valor is null or valor = '');
+
+-- Desde que existe la función «contacto» (con «No soy un robot»), la web ya no
+-- escribe directamente en la tabla: así ningún robot se salta la comprobación.
+drop policy if exists "Contacto: cualquiera escribe" on public.contacto_web;
+revoke insert on public.contacto_web from anon, authenticated;
