@@ -52,6 +52,7 @@
       : '<p class="ayuda">Todavía nadie ha valorado a esta persona.</p>';
   }
   cargarResenas();
+  DP.resumenEstrellas(p.id, $('resumen-estrellas'));
 
   // Solo puede valorar quien ha conversado con esta persona (los dos escribieron).
   if (session && session.user.id !== p.id) {

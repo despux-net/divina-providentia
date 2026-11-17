@@ -109,6 +109,13 @@
     perfil.avatar_url = null; DP._perfil = perfil; pintarAvatar();
   });
 
+  // ---------- Mi puntuación acumulada ----------
+  DP.resumenEstrellas(session.user.id, $('resumen-estrellas'), {
+    pie: perfil.usuario
+      ? `Te valoran las personas con las que has conversado por el chat. <a href="creador.html?u=${encodeURIComponent(perfil.usuario)}#valoraciones">Ver los comentarios que te dejaron</a>.`
+      : 'Te valoran las personas con las que has conversado por el chat.'
+  });
+
   // ---------- Perfil público (portafolio) ----------
   function pintarEnlacePublico() {
     if (!perfil.usuario) return;

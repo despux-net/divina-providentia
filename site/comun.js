@@ -87,6 +87,27 @@ const DP = {
     const v = Number(valor).toLocaleString('es-VE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     return `<span class="estrellas" title="${v} de 5 estrellas"><span class="estrella" aria-hidden="true">★</span> <b>${v}</b>/5 <span class="n">(${Number(n).toLocaleString('es-VE')})</span></span>`;
   },
+  // Resumen de puntuación acumulada: media grande, total y barras por estrellas.
+  async resumenEstrellas(userId, cont, opciones = {}) {
+    const { data } = await sb.from('valoraciones').select('estrellas').eq('usuario_id', userId);
+    const lista = (data || []).map(v => v.estrellas);
+    const n = lista.length;
+    const media = n ? lista.reduce((a, b) => a + b, 0) / n : 0;
+    const por = [5, 4, 3, 2, 1].map(e => [e, lista.filter(x => x === e).length]);
+    const fmtMedia = media.toLocaleString('es-VE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    cont.innerHTML = `<div class="resumen-estrellas">
+      <div class="resumen-nota">
+        <b>${n ? fmtMedia : '–'}</b><span>de 5</span>
+        ${DP.cincoEstrellas(Math.round(media))}
+        <small>${n ? `${n.toLocaleString('es-VE')} ${n === 1 ? 'valoración' : 'valoraciones'}` : 'Aún sin valoraciones'}</small>
+      </div>
+      <div class="resumen-barras">${por.map(([e, c]) => `<div class="barra-estrella">
+        <span>${e} ★</span><span class="pista"><span style="width:${n ? Math.round(c / n * 100) : 0}%"></span></span><span class="cuenta">${c}</span></div>`).join('')}
+      </div>
+    </div>${opciones.pie ? `<p class="ayuda">${opciones.pie}</p>` : ''}`;
+    return { n, media };
+  },
+
   // Cinco estrellas dibujadas (para reseñas)
   cincoEstrellas(n) {
     return `<span class="cinco-estrellas" aria-label="${n} de 5 estrellas">${'★'.repeat(n)}<span>${'★'.repeat(5 - n)}</span></span>`;
