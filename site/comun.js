@@ -441,6 +441,7 @@ DP.pie = () => {
           <li><a href="mis-anuncios.html">Mis anuncios</a></li>
           <li><a href="index.html#consejos">Consejos de seguridad</a></li>
           <li><a href="bot.html">Cómo encontramos anuncios</a></li>
+          <li><a href="condiciones.html">Condiciones de uso y aviso de responsabilidad</a></li>
         </ul>
       </div>
     </div>
