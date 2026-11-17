@@ -1097,3 +1097,13 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 .aviso-estafa { align-self: stretch; background: #fff4d6; border: 1px solid #f1d27a; border-radius: 12px; padding: 10px 12px; font-size: .86rem; line-height: 1.45; color: #5b4300; }
 .aviso-estafa strong { display: block; margin-bottom: 2px; }
 .aviso-estafa a { display: inline-block; margin-top: 4px; font-weight: 600; }
+
+/* Más sobrio: sin recuadros de color (v33) */
+.tarjetas-valores { gap: 6px 28px; margin: 10px 0 6px; }
+.tarjetas-valores > div, .alertas-estafa > div { background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 12px 0 4px; }
+.tarjetas-valores h3 { font-size: .98rem; margin: 0 0 3px; }
+.tarjetas-valores p { color: var(--muted); }
+.regla-de-oro { background: none; border: 0; border-left: 3px solid var(--ink); border-radius: 0; padding: 2px 0 2px 16px; margin: 6px 0 12px; }
+.regla-de-oro strong { font-size: 1rem; font-weight: 600; }
+.resumen-privacidad { background: none; border: 0; border-left: 3px solid var(--line); border-radius: 0; padding: 0 0 0 16px; }
+.aviso-estafa { background: #f6f7f9; border: 0; border-left: 3px solid #b26a00; border-radius: 0 8px 8px 0; color: var(--ink); }

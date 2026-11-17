@@ -33,7 +33,7 @@ const DP = {
   etiquetasPerfil(p) {
     if (!p) return '';
     const zona = [p.ciudad, p.estado].filter(Boolean).join(', ');
-    return [p.tipo_perfil && DP.TIPOS_PERFIL[p.tipo_perfil], p.empresa, zona && '📍 ' + zona]
+    return [p.tipo_perfil && DP.TIPOS_PERFIL[p.tipo_perfil], p.empresa, zona]
       .filter(Boolean).map(t => `<span class="chip-dato">${DP.esc(t)}</span>`).join('');
   },
   numeroWa(v) {

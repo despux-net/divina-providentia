@@ -90,7 +90,7 @@
       const aviso = document.createElement('div');
       aviso.className = 'aviso-estafa';
       aviso.setAttribute('role', 'note');
-      aviso.innerHTML = '<strong>⚠️ Cuidado con los pagos por adelantado</strong>No envíes dinero, reservas ni depósitos sin haber visitado el inmueble y comprobado quién es el propietario. Vivinati nunca te pedirá pagos. <a href="seguridad.html" target="_blank" rel="noopener">Cómo evitar estafas</a>';
+      aviso.innerHTML = '<strong>Cuidado con los pagos por adelantado</strong>No envíes dinero, reservas ni depósitos sin haber visitado el inmueble y comprobado quién es el propietario. Vivinati nunca te pedirá pagos. <a href="seguridad.html" target="_blank" rel="noopener">Cómo evitar estafas</a>';
       $('mensajes').appendChild(aviso);
     }
   }
@@ -121,7 +121,7 @@
     // Código de seguridad para comprobar el cifrado en persona o por teléfono
     try {
       const codigo = await DP.e2e.codigo(c.otro_id);
-      $('seguridad').innerHTML = `🔒 Cifrado de extremo a extremo · <button type="button" class="enlace" id="ver-codigo">Código de seguridad</button>`;
+      $('seguridad').innerHTML = `Cifrado de extremo a extremo · <button type="button" class="enlace" id="ver-codigo">Código de seguridad</button>`;
       $('ver-codigo').addEventListener('click', () => alert(`Código de seguridad de esta conversación:\n\n${codigo}\n\nSi tu contacto ve el mismo código en su pantalla, nadie más puede leer vuestros mensajes.`));
     } catch {
       $('seguridad').textContent = 'Esta persona aún no ha activado su chat cifrado: podrá leerte cuando entre en Vivinati.';
