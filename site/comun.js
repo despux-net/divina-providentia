@@ -327,7 +327,7 @@ DP.pie = () => {
       </div>
     </div>
     <a class="emblema" href="index.html" aria-label="Vivinati — inicio">
-      <img src="img/emblema-vivinati.png" alt="Vivinati" width="132" height="50" loading="lazy" decoding="async">
+      <img src="img/sello-vivinati.png" alt="Vivinati" width="150" height="25" loading="lazy" decoding="async">
     </a>
     <div class="legal">
       <span>© ${anio} Vivinati</span>

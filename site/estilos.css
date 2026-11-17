@@ -1,8 +1,6 @@
 /* Vivinati — buscador de inmuebles de Venezuela
    Tema claro: blanco con azul claro. Tipografía Roboto (300/400/500/700). */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-/* Logotipo «vivinati»: Merriweather Black, solo las letras que usa (pesa muy poco). */
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@900&text=vinat&display=block');
 
 :root {
   color-scheme: light;
@@ -679,3 +677,20 @@ a.caja.categoria { text-decoration: none; }
 .seo-enlaces ul { list-style: none; margin: 0; padding: 0; columns: 4 200px; column-gap: 24px; }
 .seo-enlaces li { break-inside: avoid; padding: 3px 0; font-size: .92rem; }
 .seo-enlaces span { color: var(--muted); font-size: .82rem; }
+
+/* =====================================================================
+   Logotipo en imagen («VIVINATI 1»: azul; en el móvil, versión blanca
+   sobre la cabecera azul). La altura no cambia la de la cabecera.
+   ===================================================================== */
+.marca { display: inline-flex; align-items: center; line-height: 0; }
+.marca picture, .marca img { display: block; }
+.marca img { height: 36px; width: auto; }
+.marca:hover img { opacity: .88; }
+@media (max-width: 560px) { .marca img { height: 28px; } }
+
+/* Pie: sello «VIVINATI 2» (blanco sobre azul), sin líneas de separación */
+.pie .emblema { justify-content: center; gap: 0; }
+.pie .emblema::before, .pie .emblema::after { content: none; display: none; }
+.pie .emblema img { width: 150px; height: auto; border-radius: 6px; opacity: .9; filter: none; box-shadow: 0 1px 4px rgba(0, 60, 120, .18); }
+.pie .emblema:hover img { opacity: 1; }
+@media (max-width: 560px) { .pie .emblema img { width: 128px; } }
