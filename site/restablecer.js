@@ -41,6 +41,7 @@
     if (clave !== clave2) return DP.mensaje($('msg'), 'Las dos contraseñas no coinciden.');
     $('btn').disabled = true; $('btn').textContent = 'Guardando…';
     const { error } = await DP.sb.auth.updateUser({ password: clave });
+    if (!error) { try { await DP.e2e.cambiarContraseña(clave); } catch (err) { console.error(err); } }
     $('btn').disabled = false; $('btn').textContent = 'Guardar contraseña';
     if (error) return DP.mensaje($('msg'), DP.errorCuenta(error));
     // Si alguien más tenía la contraseña vieja, pierde su sesión.

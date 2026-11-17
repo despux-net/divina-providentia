@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=22">
+  <link rel="stylesheet" href="estilos.css?v=23">
 </head>
 <body>
   <header class="cabecera">
@@ -29,7 +29,18 @@
       <div id="bienvenida" hidden class="mensaje ok"><strong>¡Bienvenido!</strong> Tu cuenta está activa.
         <a href="publicar.html">Publica tu primer inmueble</a>.</div>
       <h1>Mi perfil</h1>
-      <p class="sub" id="correo"></p>
+      <div class="editar-avatar">
+        <span id="avatar-actual"></span>
+        <div>
+          <p class="sub" id="correo"></p>
+          <p><label class="boton sec peq" for="archivo-avatar">Cambiar foto</label>
+            <button type="button" class="enlace peligro" id="quitar-avatar" hidden>Quitar foto</button></p>
+          <input type="file" id="archivo-avatar" accept="image/jpeg,image/png,image/webp" hidden>
+          <p class="ayuda">Se recorta en cuadrado y se optimiza sola. Se verá en tus anuncios y en el chat.</p>
+          <div id="msg-avatar"></div>
+        </div>
+      </div>
+      <p class="accesos-perfil"><a href="mis-anuncios.html">Mis anuncios</a> · <a href="chat.html">Mis mensajes</a></p>
 
       <form id="form-perfil" novalidate>
         <fieldset>
@@ -65,7 +76,7 @@
   <footer class="pie">© Vivinati</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=13"></script>
-  <script src="perfil.js?v=2"></script>
+  <script src="comun.js?v=14"></script>
+  <script src="perfil.js?v=3"></script>
 </body>
 </html>

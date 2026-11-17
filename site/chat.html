@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mensajes — Vivinati</title>
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="estilos.css?v=23">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco.png"><img src="img/logo-vivinati.png" alt="Vivinati" width="194" height="36"></picture></a>
+      <nav class="nav"><a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor chat-pagina">
+    <div class="chat-app" id="app">
+      <aside class="chat-lista">
+        <h1>Mensajes</h1>
+        <ul id="lista"><li class="chat-vacio-lista">Cargando…</li></ul>
+      </aside>
+
+      <section class="chat-conversacion" id="conversacion">
+        <!-- Desbloquear el chat en este navegador -->
+        <div class="chat-desbloquear" id="desbloquear" hidden>
+          <h2>🔒 Tu chat está cifrado</h2>
+          <p id="texto-desbloquear">Para leer y escribir mensajes en este navegador, confirma tu contraseña de Vivinati. Solo se usa aquí, en tu dispositivo: nunca sale de él.</p>
+          <form id="form-desbloquear">
+            <label for="clave">Contraseña</label>
+            <input type="password" id="clave" autocomplete="current-password" required>
+            <div id="msg-desbloquear"></div>
+            <button class="boton" type="submit">Abrir mis mensajes</button>
+          </form>
+          <p id="volver-a-entrar" hidden><button class="boton" type="button" id="btn-reentrar">Volver a entrar</button></p>
+        </div>
+
+        <div class="chat-desbloquear" id="sin-conversacion">
+          <h2>Tus conversaciones</h2>
+          <p>Elige una conversación o escribe a alguien desde un anuncio con el botón «Enviar mensaje».</p>
+          <p class="aviso">🔒 Los mensajes están cifrados de extremo a extremo: ni Vivinati puede leerlos.</p>
+        </div>
+
+        <div id="vista-conv" hidden style="display:contents">
+          <header class="chat-conversacion-cab">
+            <button type="button" class="chat-volver" id="volver" aria-label="Volver a la lista">←</button>
+            <span id="conv-avatar"></span>
+            <div class="info"><strong id="conv-nombre"></strong><br><a id="conv-anuncio" hidden></a></div>
+            <a class="boton sec peq" id="conv-valorar" hidden>Valorar</a>
+          </header>
+          <div class="chat-mensajes" id="mensajes"></div>
+          <p class="chat-seguridad" id="seguridad"></p>
+          <form class="chat-entrada" id="form-msg">
+            <textarea id="texto" rows="1" maxlength="2000" placeholder="Escribe un mensaje…" aria-label="Mensaje"></textarea>
+            <button type="submit" class="enviar-chat" aria-label="Enviar">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=14"></script>
+  <script src="cifrado.js?v=2"></script>
+  <script src="chat.js?v=1"></script>
+</body>
+</html>

@@ -13,7 +13,9 @@
   document.title = `${nombre} (@${p.usuario}) — Vivinati`;
   $('nombre').textContent = nombre;
   $('usuario').textContent = '@' + p.usuario;
-  $('avatar').textContent = nombre.replace('@', '').charAt(0).toUpperCase();
+  $('avatar').innerHTML = DP.avatar({ nombre, avatar_url: p.avatar_url }, 88);
+  $('valoracion').innerHTML = DP.estrellas(p.estrellas, p.valoraciones) +
+    (p.miembro_desde ? ` <span class="insignia-gris">· En Vivinati desde ${new Date(p.miembro_desde + 'T12:00:00').toLocaleDateString('es-VE', { month: 'long', year: 'numeric' })}</span>` : '');
   $('perfil').hidden = false;
 
   const { data: filas } = await DP.sb.from('inmuebles').select('*').eq('user_id', p.id).eq('activo', true)
@@ -32,6 +34,58 @@
     herr.length ? herr.join(', ') : null,
     `${todos.length} ${todos.length === 1 ? 'publicación' : 'publicaciones'}`
   ].filter(Boolean).join(' · ');
+
+  // ---------- Valoraciones ----------
+  const { data: { session } } = await DP.sb.auth.getSession();
+  if (session && session.user.id !== p.id) { $('escribir').href = `chat.html?con=${p.id}`; $('escribir').hidden = false; }
+  async function cargarResenas() {
+    const { data: rs } = await DP.sb.rpc('resenas_de', { p_usuario: p.id, p_limite: 30 });
+    $('titulo-resenas').textContent = rs && rs.length ? `Valoraciones (${rs.length})` : 'Valoraciones';
+    $('resenas').innerHTML = rs && rs.length ? rs.map(r => `<article class="resena">
+        <div class="resena-cab">${DP.avatar({ nombre: r.autor_nombre || r.autor_usuario, avatar_url: r.autor_avatar }, 34)}
+          <div><strong>${DP.esc(r.autor_nombre || '@' + r.autor_usuario)}</strong><br>${DP.cincoEstrellas(r.estrellas)}</div>
+          <span class="fecha">${new Date(r.creado).toLocaleDateString('es-VE', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
+        ${r.comentario ? `<p>${DP.esc(r.comentario)}</p>` : ''}</article>`).join('')
+      : '<p class="ayuda">Todavía nadie ha valorado a esta persona.</p>';
+  }
+  cargarResenas();
+
+  // Solo puede valorar quien ha conversado con esta persona (los dos escribieron).
+  if (session && session.user.id !== p.id) {
+    const { data: puede } = await DP.sb.rpc('puede_valorar', { p_usuario: p.id });
+    if (puede) {
+      const { data: mia } = await DP.sb.from('valoraciones').select('*').eq('autor_id', session.user.id).eq('usuario_id', p.id).maybeSingle();
+      let elegidas = mia ? mia.estrellas : 0;
+      $('valorar').innerHTML = `<form class="form-valorar" id="form-valorar">
+        <strong>${mia ? 'Tu valoración' : 'Valora a ' + DP.esc(nombre.split(' ')[0])}</strong>
+        <div class="elegir-estrellas" role="radiogroup" aria-label="Estrellas">${[1, 2, 3, 4, 5].map(n =>
+          `<button type="button" data-n="${n}" aria-label="${n} estrella${n > 1 ? 's' : ''}">★</button>`).join('')}</div>
+        <textarea id="comentario" maxlength="600" rows="3" placeholder="Cuenta cómo fue el trato (opcional)">${DP.esc(mia && mia.comentario || '')}</textarea>
+        <div id="msg-valorar"></div>
+        <p style="margin:0"><button class="boton peq" type="submit">${mia ? 'Guardar cambios' : 'Publicar valoración'}</button></p></form>`;
+      const pintarEstrellas = () => document.querySelectorAll('.elegir-estrellas button').forEach(b => b.classList.toggle('on', Number(b.dataset.n) <= elegidas));
+      pintarEstrellas();
+      document.querySelector('.elegir-estrellas').addEventListener('click', e => {
+        const b = e.target.closest('button'); if (!b) return;
+        elegidas = Number(b.dataset.n); pintarEstrellas();
+      });
+      $('form-valorar').addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!elegidas) return DP.mensaje($('msg-valorar'), 'Elige de 1 a 5 estrellas.');
+        const fila = { autor_id: session.user.id, usuario_id: p.id, estrellas: elegidas,
+          comentario: $('comentario').value.trim() || null, actualizado: new Date().toISOString() };
+        const { error } = mia
+          ? await DP.sb.from('valoraciones').update(fila).eq('id', mia.id)
+          : await DP.sb.from('valoraciones').insert(fila);
+        if (error) return DP.mensaje($('msg-valorar'), 'No se pudo guardar la valoración.');
+        DP.mensaje($('msg-valorar'), '¡Gracias! Tu valoración ya está publicada.', 'ok');
+        cargarResenas();
+      });
+    } else if (location.hash === '#valorar') {
+      $('valorar').innerHTML = '<p class="ayuda">Podrás valorar a esta persona cuando ambos se hayan escrito por el chat de Vivinati.</p>';
+    }
+    if (location.hash === '#valorar') $('valoraciones').scrollIntoView();
+  }
 
   const enlace = `${location.origin}/@${p.usuario}`;
   $('compartir').addEventListener('click', async () => {

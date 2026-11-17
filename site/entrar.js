@@ -35,7 +35,14 @@
     const { error } = await DP.sb.auth.signInWithPassword({ email, password: clave, options: { captchaToken: robot.token() } });
     btn.disabled = false; btn.textContent = 'Entrar';
     robot.reiniciar();
-    if (!error) { location.href = destino; return; }
+    if (!error) {
+      btn.disabled = true; btn.textContent = 'Preparando tu chat cifrado…';
+      try {
+        const r = await DP.e2e.desbloquear(clave);
+        if (r === 'contraseña') await DP.e2e.nuevasClaves(clave);
+      } catch (err) { console.error(err); /* el chat pedirá la contraseña más tarde */ }
+      location.href = destino; return;
+    }
     DP.mensaje(msg, DP.errorCuenta(error));
     $('btn-reenviar').hidden = !/Email not confirmed/i.test(error.message || '');
   });

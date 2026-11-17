@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=22">
+  <link rel="stylesheet" href="estilos.css?v=23">
 </head>
 <body>
   <header class="cabecera">
@@ -30,13 +30,17 @@
 
     <section class="perfil-publico" id="perfil" hidden>
       <div class="perfil-cabeza">
-        <span class="autor-avatar grande" id="avatar" aria-hidden="true"></span>
+        <span id="avatar"></span>
         <div>
           <h1 id="nombre"></h1>
           <p class="autor-usuario" id="usuario"></p>
+          <p id="valoracion"></p>
           <p class="perfil-resumen" id="resumen"></p>
         </div>
-        <button type="button" class="boton sec peq" id="compartir">Compartir perfil</button>
+        <div class="perfil-acciones">
+          <a class="boton peq" id="escribir" hidden>Enviar mensaje</a>
+          <button type="button" class="boton sec peq" id="compartir">Compartir perfil</button>
+        </div>
       </div>
 
       <section id="bloque-conceptos" hidden>
@@ -48,13 +52,19 @@
         <div class="rejilla resultados-cuatro" id="lista-inmuebles"></div>
       </section>
       <div class="vacio" id="sin-nada" hidden><strong>Aún no hay publicaciones</strong></div>
+
+      <section id="valoraciones">
+        <h2 id="titulo-resenas">Valoraciones</h2>
+        <div id="valorar"></div>
+        <div class="resenas" id="resenas"></div>
+      </section>
     </section>
   </main>
 
   <footer class="pie"></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=13"></script>
-  <script src="creador.js?v=1"></script>
+  <script src="comun.js?v=14"></script>
+  <script src="creador.js?v=2"></script>
 </body>
 </html>

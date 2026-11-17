@@ -60,6 +60,51 @@
     pintarEnlacePublico();
   });
 
+  // ---------- Avatar: foto cuadrada de 256 px en WebP (~15 KB) ----------
+  function pintarAvatar() {
+    $('avatar-actual').innerHTML = DP.avatar({ nombre: perfil.full_name || perfil.usuario, avatar_url: perfil.avatar_url }, 88);
+    $('quitar-avatar').hidden = !perfil.avatar_url;
+  }
+  pintarAvatar();
+  async function recortar(file) {
+    const bmp = await createImageBitmap(file).catch(() => null);
+    if (!bmp) throw new Error('No se pudo leer esa imagen. Usa una foto JPG, PNG o WebP.');
+    const lado = Math.min(bmp.width, bmp.height), T = 256;
+    const c = Object.assign(document.createElement('canvas'), { width: T, height: T });
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bmp, (bmp.width - lado) / 2, (bmp.height - lado) / 2, lado, lado, 0, 0, T, T);
+    let blob = await new Promise(r => c.toBlob(r, 'image/webp', 0.85));
+    if (!blob || blob.type !== 'image/webp') blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.85));
+    return blob;
+  }
+  $('archivo-avatar').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    const m = $('msg-avatar');
+    try {
+      DP.mensaje(m, 'Subiendo foto…', 'ok');
+      const blob = await recortar(f);
+      const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
+      const ruta = `${session.user.id}/avatar-${Date.now()}.${ext}`;
+      const { error } = await DP.sb.storage.from('avatares').upload(ruta, blob, { contentType: blob.type, cacheControl: '31536000' });
+      if (error) throw error;
+      const anterior = perfil.avatar_url;
+      const { error: e2 } = await DP.sb.from('profiles').update({ avatar_url: ruta }).eq('id', session.user.id);
+      if (e2) throw e2;
+      if (anterior) DP.sb.storage.from('avatares').remove([anterior]);
+      perfil.avatar_url = ruta; DP._perfil = perfil;
+      pintarAvatar(); DP.mensaje(m, '¡Foto actualizada!', 'ok');
+    } catch (err) { console.error(err); DP.mensaje(m, err.message && !/row-level|policy/i.test(err.message) ? err.message : 'No se pudo subir la foto.'); }
+  });
+  $('quitar-avatar').addEventListener('click', async () => {
+    if (!perfil.avatar_url || !confirm('¿Quitar tu foto?')) return;
+    const anterior = perfil.avatar_url;
+    await DP.sb.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+    DP.sb.storage.from('avatares').remove([anterior]);
+    perfil.avatar_url = null; DP._perfil = perfil; pintarAvatar();
+  });
+
   // ---------- Perfil público (portafolio) ----------
   function pintarEnlacePublico() {
     if (!perfil.usuario) return;

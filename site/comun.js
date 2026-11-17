@@ -68,6 +68,30 @@ const DP = {
     return d.join(' · ');
   },
 
+  // ---------- Avatar y estrellas ----------
+  avatarUrl(ruta) {
+    return ruta ? `${SUPABASE_URL}/storage/v1/object/public/avatares/${ruta.split('/').map(encodeURIComponent).join('/')}` : null;
+  },
+  // Círculo con la foto o, si no hay, con la inicial del nombre.
+  avatar(p, tam = 48) {
+    const nombre = (p && (p.nombre || p.full_name || p.usuario)) || 'V';
+    const url = DP.avatarUrl(p && (p.avatar_url || p.otro_avatar || p.autor_avatar));
+    const estilo = `width:${tam}px;height:${tam}px;font-size:${Math.round(tam * 0.42)}px`;
+    return url
+      ? `<img class="avatar" src="${DP.esc(url)}" alt="" width="${tam}" height="${tam}" style="${estilo}" loading="lazy">`
+      : `<span class="avatar avatar-letra" style="${estilo}" aria-hidden="true">${DP.esc(nombre.replace('@', '').charAt(0).toUpperCase())}</span>`;
+  },
+  // «★ 4,9/5 (1.743)» o «Sin valoraciones aún»
+  estrellas(valor, n, corto = false) {
+    if (!n) return `<span class="estrellas sin">${corto ? 'Nuevo' : 'Sin valoraciones aún'}</span>`;
+    const v = Number(valor).toLocaleString('es-VE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    return `<span class="estrellas" title="${v} de 5 estrellas"><span class="estrella" aria-hidden="true">★</span> <b>${v}</b>/5 <span class="n">(${Number(n).toLocaleString('es-VE')})</span></span>`;
+  },
+  // Cinco estrellas dibujadas (para reseñas)
+  cincoEstrellas(n) {
+    return `<span class="cinco-estrellas" aria-label="${n} de 5 estrellas">${'★'.repeat(n)}<span>${'★'.repeat(5 - n)}</span></span>`;
+  },
+
   // Filtros guardados (p_operacion, p_tipo…) → parámetros de buscar.html (?operacion=…)
   urlDeFiltros(f) {
     const M = { q: 'q', p_operacion: 'operacion', p_tipo: 'tipo', p_estado: 'estado', p_precio_min: 'min', p_precio_max: 'max',
@@ -224,10 +248,23 @@ const DP = {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return null;
     if (!DP._perfil) {
-      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email').eq('id', session.user.id).maybeSingle();
+      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email, avatar_url').eq('id', session.user.id).maybeSingle();
       DP._perfil = data || { id: session.user.id, usuario: null };
     }
     return DP._perfil;
+  },
+
+  // Globito rojo con los mensajes sin leer (menú de arriba y barra del móvil).
+  async contarMensajes() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    const { data: n } = await sb.rpc('no_leidos_total');
+    document.querySelectorAll('[data-mensajes]').forEach(a => {
+      let b = a.querySelector('.badge-mensajes');
+      if (!n) { if (b) b.remove(); return; }
+      if (!b) { b = document.createElement('span'); b.className = 'badge-mensajes'; a.appendChild(b); }
+      b.textContent = n > 99 ? '99+' : n;
+    });
   },
 
   // Pinta la cabecera según haya sesión o no.
@@ -238,10 +275,14 @@ const DP = {
     if (session) {
       const p = await DP.miPerfil();
       const quien = p && p.usuario ? '@' + p.usuario : 'Mi perfil';
-      nav.innerHTML = `<a href="mis-anuncios.html">Mis anuncios</a><a href="perfil.html">${DP.esc(quien)}</a><a href="#" data-salir>Salir</a>`;
+      nav.innerHTML = `<a href="chat.html" data-mensajes>Mensajes</a><a href="mis-anuncios.html">Mis anuncios</a>` +
+        `<a href="perfil.html" class="nav-perfil">${p && p.avatar_url ? DP.avatar({ nombre: quien, avatar_url: p.avatar_url }, 24) + ' ' : ''}${DP.esc(quien)}</a><a href="#" data-salir>Salir</a>`;
       nav.querySelector('[data-salir]').addEventListener('click', async e => {
-        e.preventDefault(); await sb.auth.signOut(); location.href = 'index.html';
+        e.preventDefault();
+        try { indexedDB.deleteDatabase('vivinati-chat'); } catch { /* nada */ }
+        await sb.auth.signOut(); location.href = 'index.html';
       });
+      DP.contarMensajes();
     } else {
       nav.innerHTML = `<a href="entrar.html">Entrar</a><a href="registro.html">Crear cuenta</a>`;
     }
@@ -403,14 +444,14 @@ DP.barraMovil = () => {
     ['buscar.html', 'Buscar', pagina === 'buscar.html' && !fav, '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
     ['buscar.html?fav=1', 'Favoritos', pagina === 'buscar.html' && fav, '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>'],
     ['publicar.html', 'Publicar', pagina === 'publicar.html', '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'],
-    ['mis-anuncios.html', 'Mis anuncios', pagina === 'mis-anuncios.html', '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>'],
+    ['chat.html', 'Mensajes', pagina === 'chat.html', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>'],
     ['perfil.html', 'Perfil', ['perfil.html', 'entrar.html', 'registro.html', 'restablecer.html'].includes(pagina), '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
   ];
   const nav = document.createElement('nav');
   nav.className = 'barra-movil';
   nav.setAttribute('aria-label', 'Menú principal');
   nav.innerHTML = pestañas.map(([href, txt, activa, d]) =>
-    `<a href="${href}"${activa ? ' class="activa" aria-current="page"' : ''}>${icono(d)}<span>${txt}</span></a>`).join('');
+    `<a href="${href}"${activa ? ' class="activa" aria-current="page"' : ''}${href === 'chat.html' ? ' data-mensajes' : ''}>${icono(d)}<span>${txt}</span></a>`).join('');
   document.body.appendChild(nav);
   document.body.classList.add('con-barra-movil');
 };
