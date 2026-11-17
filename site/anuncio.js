@@ -19,6 +19,23 @@
   if (!i) { $('no-existe').hidden = false; return; }
 
   document.title = `${i.titulo} — Vivinati`;
+  // SEO: descripción y dirección canónica de esta ficha. Los anuncios copiados
+  // de otras webs no se indexan (contenido duplicado: el original es el bueno);
+  // Google los encuentra igualmente en las páginas /inmuebles/…
+  const meta = (attr, nombre, valor) => {
+    let m = document.head.querySelector(`meta[${attr}="${nombre}"]`);
+    if (!m) { m = document.createElement('meta'); m.setAttribute(attr, nombre); document.head.appendChild(m); }
+    m.setAttribute('content', valor);
+  };
+  const resumenSeo = [DP.precio(i), DP.OPERACIONES[i.operacion], DP.TIPOS[i.tipo], DP.lugar(i)].filter(Boolean).join(' · ');
+  meta('name', 'description', `${resumenSeo}. ${(i.descripcion || '').slice(0, 140)}`.trim());
+  meta('property', 'og:title', i.titulo);
+  meta('property', 'og:description', resumenSeo);
+  if (i.fotos && i.fotos[0]) meta('property', 'og:image', DP.fotoUrl(i.fotos[0]));
+  const canon = document.createElement('link');
+  canon.rel = 'canonical'; canon.href = `${location.origin}/anuncio.html?id=${encodeURIComponent(i.id)}`;
+  document.head.appendChild(canon);
+  if (i.origen === 'externo') meta('name', 'robots', 'noindex, follow');
   $('ficha').hidden = false;
 
   // Fotos

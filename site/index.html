@@ -3,17 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vivinati — Buscador de inmuebles en Venezuela</title>
-  <meta name="description" content="Busca apartamentos, casas, anexos, locales y terrenos en venta y alquiler en toda Venezuela. Anuncios de las principales inmobiliarias y de particulares en un solo lugar. Publica tu inmueble gratis.">
+  <title>Vivinati — Inmuebles en venta y alquiler en Venezuela: apartamentos, casas y proyectos</title>
+  <meta name="description" content="El buscador de inmuebles de Venezuela: apartamentos, casas, anexos, locales y terrenos en venta y alquiler de inmobiliarias y particulares, con mapa y precios en dólares. Publica gratis y explora proyectos conceptuales 3D.">
+  <link rel="canonical" href="https://vivinati.com/">
   <meta property="og:site_name" content="Vivinati">
   <meta property="og:title" content="Vivinati — Buscador de inmuebles en Venezuela">
   <meta property="og:description" content="Busca apartamentos, casas, anexos, locales y terrenos en venta y alquiler en toda Venezuela. Publica tu inmueble gratis.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vivinati.com/">
+  <meta property="og:image" content="https://vivinati.com/img/og-vivinati.png">
+  <meta property="og:locale" content="es_VE">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebSite","name":"Vivinati","alternateName":"Vivinati — Buscador de inmuebles en Venezuela","url":"https://vivinati.com/","inLanguage":"es-VE","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://vivinati.com/buscar.html?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org","@type":"Organization","name":"Vivinati","url":"https://vivinati.com/","logo":"https://vivinati.com/img/emblema-vivinati.png","description":"Buscador de inmuebles de Venezuela: apartamentos, casas, anexos, locales y terrenos en venta y alquiler, y portafolio de proyectos conceptuales 3D.","areaServed":{"@type":"Country","name":"Venezuela"}}]</script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=19">
+  <link rel="stylesheet" href="estilos.css?v=20">
 </head>
 <body>
   <header class="cabecera">
@@ -140,6 +145,14 @@
           <a class="boton sec" href="conceptos.html">Ver la galería</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Búsquedas populares: las rellena scripts/seo/generar.mjs al publicar -->
+  <section class="seccion populares">
+    <div class="seccion-int">
+      <h2>Búsquedas populares</h2>
+      <ul class="lista-populares"><!--POPULARES--><!--/POPULARES--></ul>
     </div>
   </section>
 

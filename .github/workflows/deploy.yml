@@ -5,6 +5,8 @@ on:
     branches:
       - main  # Se ejecuta cuando haces push a la rama main
   workflow_dispatch:  # Permite ejecutar manualmente desde GitHub
+  schedule:
+    - cron: '30 7 * * *'  # Cada día (3:30 a. m. en Venezuela): rehace las páginas para Google con los anuncios nuevos
 
 # Permisos necesarios para desplegar a GitHub Pages
 permissions:
@@ -39,6 +41,12 @@ jobs:
           cp CNAME site/CNAME
           echo "Archivos que se publican:"
           ls -1 site
+
+      # SEO: páginas /inmuebles/… con los anuncios escritos en el HTML,
+      # sitemap.xml, robots.txt y «Búsquedas populares» de la portada.
+      # Si Supabase fallara, se publica igual la web sin estas páginas.
+      - name: Generar páginas para Google (SEO)
+        run: node scripts/seo/generar.mjs site || echo "::warning::No se pudieron generar las páginas SEO"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
