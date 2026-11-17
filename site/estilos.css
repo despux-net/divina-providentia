@@ -1065,3 +1065,35 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 .boton-social:disabled { opacity: .6; cursor: default; }
 .legal-social { font-size: .8rem; color: var(--muted); margin: 10px 0 0; text-align: center; }
 .legal-social a { text-decoration: underline; color: inherit; }
+
+/* ---------- Confianza: quiénes somos, contacto, privacidad, seguridad (v32) ---------- */
+.pie-columnas { grid-template-columns: 1.3fr repeat(4, 1fr); }
+@media (max-width: 900px) { .pie-columnas { grid-template-columns: 1fr 1fr 1fr; } }
+@media (max-width: 760px) { .pie-columnas { grid-template-columns: 1fr 1fr; } }
+.redes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.red-social { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--line); color: var(--accent); background: #fff; transition: background .15s, color .15s; }
+.red-social:hover { background: var(--accent); color: #fff; text-decoration: none; }
+.redes-pagina { margin: 14px 0; }
+.entradilla { font-size: 1.08rem; color: var(--ink); margin: 6px 0 22px; }
+.tarjetas-valores { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 16px 0 10px; }
+.tarjetas-valores > div { background: var(--bg-azul); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; line-height: 1.5; }
+.tarjetas-valores h3 { font-size: 1rem; font-weight: 600; margin: 4px 0 4px; }
+.tarjetas-valores p { margin: 0; font-size: .92rem; color: #45505c; }
+.icono-valor { font-size: 1.5rem; }
+.alertas-estafa > div { background: #fff8f6; border-color: #f6d2c9; }
+.regla-de-oro { background: #fff4d6; border: 1px solid #f1d27a; border-left: 5px solid #e0a800; border-radius: 12px; padding: 14px 18px; margin: 4px 0 8px; }
+.regla-de-oro strong { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+.regla-de-oro p { margin: 0; }
+.lista-pasos { padding-left: 22px; }
+.lista-pasos li { margin: 8px 0; }
+.resumen-privacidad { background: var(--bg-azul); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px; margin-bottom: 8px; }
+.pagina-contacto { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: 40px; align-items: start; max-width: 1040px; }
+.pagina-contacto h1 { margin: 0 0 6px; font-weight: 500; }
+.atajos-contacto { padding-left: 20px; line-height: 1.55; }
+.atajos-contacto li { margin: 8px 0; }
+.tarjeta-form { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
+@media (max-width: 860px) { .pagina-contacto { grid-template-columns: 1fr; gap: 18px; } }
+.aviso-estafa { align-self: stretch; background: #fff4d6; border: 1px solid #f1d27a; border-radius: 12px; padding: 10px 12px; font-size: .86rem; line-height: 1.45; color: #5b4300; }
+.aviso-estafa strong { display: block; margin-bottom: 2px; }
+.aviso-estafa a { display: inline-block; margin-top: 4px; font-weight: 600; }

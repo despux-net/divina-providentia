@@ -22,6 +22,13 @@ const DP = {
   CATEGORIAS: { residencial: 'Residencial', urbano: 'Urbano', infraestructura: 'Infraestructura', comercial: 'Comercial' },
   esConcepto(i) { return i && i.operacion === 'concepto'; },
 
+  // ¿El mensaje habla de pagos por adelantado? Se comprueba en el navegador de
+  // quien lo recibe (el chat sigue cifrado: nadie más lo lee).
+  pareceEstafa(texto) {
+    const t = String(texto || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    return /\b(adelanto|anticipo|apartar|apartarlo|apartado|separarlo|separar el|reservarlo|deposito|depositar|depositame|transferencia|transfiere|transferir|zelle|binance|usdt|cripto|bitcoin|western union|pago movil|paypal|giftcard|tarjeta de regalo|codigo que te llego|codigo de verificacion|enviame el dinero|mandame el pago|envia el pago)\b/.test(t);
+  },
+
   // Perfil público: etiquetas (tipo, empresa, zona) y enlaces de contacto.
   etiquetasPerfil(p) {
     if (!p) return '';
@@ -488,10 +495,19 @@ DP.pie = () => {
           <li><a href="publicar.html">Publicar gratis</a></li>
           <li><a href="registro.html">Crear cuenta</a></li>
           <li><a href="mis-anuncios.html">Mis anuncios</a></li>
-          <li><a href="index.html#consejos">Consejos de seguridad</a></li>
+          <li><a href="seguridad.html">Centro de seguridad: evita estafas</a></li>
           <li><a href="bot.html">Cómo encontramos anuncios</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Vivinati</h4>
+        <ul>
+          <li><a href="sobre.html">Quiénes somos</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="privacidad.html">Política de privacidad</a></li>
           <li><a href="condiciones.html">Condiciones de uso y aviso de responsabilidad</a></li>
         </ul>
+        <div class="redes" data-redes hidden></div>
       </div>
     </div>
     <a class="emblema" href="index.html" aria-label="Vivinati — inicio">
@@ -499,10 +515,43 @@ DP.pie = () => {
     </a>
     <div class="legal">
       <span>© ${anio} Vivinati</span>
-      <span>Los anuncios son responsabilidad de quien los publica; Vivinati no se hace responsable de estafas ni engaños. <a href="condiciones.html">Condiciones de uso</a></span>
+      <span>Los anuncios son responsabilidad de quien los publica; Vivinati no se hace responsable de estafas ni engaños. <a href="condiciones.html">Condiciones de uso</a> · <a href="privacidad.html">Privacidad</a></span>
     </div>
   </div>`;
+  DP.ajustes().then(a => {
+    const html = DP.iconosRedes(a);
+    const caja = pie.querySelector('[data-redes]');
+    if (html && caja) { caja.innerHTML = html; caja.hidden = false; }
+  });
 };
+
+// Ajustes que el dueño edita en Supabase (tabla ajustes_sitio): redes y correo.
+// Se guardan 1 hora en el navegador para no preguntar en cada página.
+DP.ajustes = async () => {
+  if (DP._ajustes) return DP._ajustes;
+  try {
+    const c = JSON.parse(sessionStorage.getItem('dp_ajustes') || 'null');
+    if (c && Date.now() - c.t < 3600e3) return (DP._ajustes = c.v);
+  } catch { /* sin almacenamiento */ }
+  const { data } = await sb.from('ajustes_sitio').select('clave, valor');
+  const v = Object.fromEntries((data || []).map(f => [f.clave, (f.valor || '').trim()]));
+  try { sessionStorage.setItem('dp_ajustes', JSON.stringify({ t: Date.now(), v })); } catch { /* nada */ }
+  return (DP._ajustes = v);
+};
+
+// Iconos de redes: solo salen las que tienen enlace en ajustes_sitio.
+DP.REDES = {
+  instagram: ['Instagram', '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>'],
+  facebook: ['Facebook', '<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>'],
+  tiktok: ['TikTok', '<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 2.6 2.3 4.4 5 4.6"/>'],
+  x: ['X', '<path d="M4 4l16 16M20 4L4 20"/>'],
+  youtube: ['YouTube', '<rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/>'],
+  whatsapp: ['WhatsApp', '<path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.5-4.3a8.5 8.5 0 1 1 15.5-4.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 .8c-1-.5-2-1.5-2.5-2.5l.8-1-1-2z" fill="currentColor" stroke="none"/>']
+};
+DP.iconosRedes = a => Object.entries(DP.REDES)
+  .filter(([k]) => a && /^https:\/\//i.test(a[k] || '') && DP.urlSegura(a[k]))
+  .map(([k, [nombre, svg]]) => `<a class="red-social" href="${DP.esc(DP.urlSegura(a[k]))}" target="_blank" rel="noopener me" aria-label="Vivinati en ${nombre}" title="${nombre}">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${svg}</svg></a>`).join('');
 
 // Barra de pestañas inferior, como en las apps. Solo se ve en el teléfono
 // (el CSS la oculta en pantallas anchas).

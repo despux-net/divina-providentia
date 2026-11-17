@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiénes somos — Vivinati</title>
+  <meta name="description" content="Vivinati es un buscador de inmuebles venezolano y gratuito: reúne en un solo lugar apartamentos, casas, locales y terrenos en venta y alquiler de toda Venezuela.">
+  <link rel="canonical" href="https://vivinati.com/sobre.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="estilos.css?v=32">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav"><a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a><a class="boton peq" href="publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor texto-legal pagina-info">
+    <h1>Quiénes somos</h1>
+    <p class="entradilla">Vivinati es un buscador de inmuebles <b>hecho en Venezuela y para Venezuela</b>. Queremos que encontrar dónde vivir, invertir o abrir tu negocio sea más fácil, más transparente y más seguro.</p>
+
+    <div class="tarjetas-valores">
+      <div><span class="icono-valor">🔎</span><h3>Todo en un solo lugar</h3>
+        <p>Reunimos anuncios de particulares e inmobiliarias de todo el país para que no tengas que visitar diez páginas distintas.</p></div>
+      <div><span class="icono-valor">🆓</span><h3>Gratis de verdad</h3>
+        <p>Buscar, guardar favoritos, crear alertas y publicar no cuesta nada. No cobramos comisiones ni nos quedamos con parte de ninguna operación.</p></div>
+      <div><span class="icono-valor">🔒</span><h3>Pensado para tu seguridad</h3>
+        <p>Chat cifrado de extremo a extremo, reportes de anuncios sospechosos, valoraciones entre usuarios y un <a href="seguridad.html">centro de seguridad</a> contra estafas.</p></div>
+      <div><span class="icono-valor">📍</span><h3>Venezolano</h3>
+        <p>Conocemos el mercado local: precios en dólares, zonas, estados y la forma en que de verdad se compra y se alquila aquí.</p></div>
+    </div>
+
+    <h2>Qué hacemos</h2>
+    <ul>
+      <li><b>Buscador:</b> filtra por estado, ciudad, tipo, precio, habitaciones y más, o busca directamente en el mapa.</li>
+      <li><b>Anuncios publicados en Vivinati:</b> cualquier persona puede publicar gratis y hablar con los interesados por nuestro chat cifrado.</li>
+      <li><b>Anuncios de otras webs:</b> nuestro buscador encuentra anuncios públicos de portales e inmobiliarias venezolanas y te lleva a la web original para contactar. <a href="bot.html">Así lo hacemos</a>.</li>
+      <li><b>Conceptos 3D:</b> un portafolio donde estudiantes, arquitectos y emprendedores muestran proyectos y renders.</li>
+      <li><b>Información de precios:</b> referencias del precio del m² por zona para que sepas si un anuncio está en línea con el mercado.</li>
+    </ul>
+
+    <h2>Lo que <u>no</u> somos</h2>
+    <p>Vivinati <b>no es una inmobiliaria</b> ni un intermediario: no vendemos ni alquilamos inmuebles, no cobramos reservas y nunca te pediremos dinero. Si alguien te pide un pago «a nombre de Vivinati», es una estafa: <a href="contacto.html?motivo=estafa">avísanos</a>.</p>
+
+    <h2>Cómo nos financiamos</h2>
+    <p>Hoy Vivinati es un proyecto independiente y gratuito. No vendemos tus datos ni mostramos publicidad de terceros. Si algún día añadimos servicios de pago (por ejemplo, destacar un anuncio), lo diremos claramente aquí y en las <a href="condiciones.html">condiciones de uso</a>; buscar y publicar seguirá siendo gratis.</p>
+
+    <h2>Hablemos</h2>
+    <p>¿Una duda, una sugerencia, un anuncio sospechoso o eres una inmobiliaria y quieres aparecer en Vivinati? <a href="contacto.html">Escríbenos</a>. Leemos todos los mensajes.</p>
+    <div class="redes redes-pagina" data-redes hidden></div>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=22"></script>
+  <script>DP.cabecera(); DP.ajustes().then(a => { const h = DP.iconosRedes(a), c = document.querySelector('main [data-redes]'); if (h) { c.innerHTML = h; c.hidden = false; } });</script>
+</body>
+</html>

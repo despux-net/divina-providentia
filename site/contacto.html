@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contacto — Vivinati</title>
+  <meta name="description" content="Escríbele al equipo de Vivinati: dudas, sugerencias, anuncios sospechosos, inmobiliarias que quieren aparecer o solicitudes de retirada.">
+  <link rel="canonical" href="https://vivinati.com/contacto.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="estilos.css?v=32">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav"><a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a><a class="boton peq" href="publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor pagina-contacto">
+    <div class="contacto-intro">
+      <h1>Contacto</h1>
+      <p class="sub">Leemos todos los mensajes y respondemos al correo que nos dejes, normalmente en 1 o 2 días hábiles.</p>
+      <ul class="atajos-contacto">
+        <li><b>¿Un anuncio sospechoso?</b> Lo más rápido es pulsar «Reportar este anuncio» dentro del propio anuncio.</li>
+        <li><b>¿Te pidieron dinero por adelantado?</b> Lee primero el <a href="seguridad.html">Centro de seguridad</a>.</li>
+        <li><b>¿Eres una inmobiliaria o portal?</b> Cuéntanos tu web y te añadimos al buscador, o pide que retiremos tus anuncios.</li>
+      </ul>
+      <p id="correo-publico" hidden></p>
+      <div class="redes redes-pagina" data-redes hidden></div>
+      <p class="aviso">Vivinati nunca te pedirá pagos, contraseñas ni códigos por correo, WhatsApp o redes sociales.</p>
+    </div>
+
+    <form id="form-contacto" class="form tarjeta-form" novalidate>
+      <div class="campo"><label for="c-nombre">Tu nombre</label>
+        <input type="text" id="c-nombre" maxlength="80" autocomplete="name" required></div>
+      <div class="campo"><label for="c-correo">Tu correo <small>(para responderte)</small></label>
+        <input type="email" id="c-correo" maxlength="120" autocomplete="email" required></div>
+      <div class="campo"><label for="c-motivo">Motivo</label>
+        <select id="c-motivo">
+          <option value="duda">Tengo una duda o sugerencia</option>
+          <option value="estafa">Quiero avisar de una posible estafa</option>
+          <option value="anuncio">Problema con un anuncio o mi cuenta</option>
+          <option value="retirar">Soy inmobiliaria: quiero aparecer o que retiren mis anuncios</option>
+          <option value="prensa">Prensa o alianzas</option>
+          <option value="otro">Otro</option>
+        </select></div>
+      <div class="campo"><label for="c-enlace">Enlace relacionado <small>(opcional: anuncio, perfil o tu web)</small></label>
+        <input type="url" id="c-enlace" maxlength="300" placeholder="https://"></div>
+      <div class="campo"><label for="c-mensaje">Mensaje</label>
+        <textarea id="c-mensaje" rows="6" maxlength="2000" required></textarea>
+        <small class="ayuda" id="c-cuenta">0 / 2.000</small></div>
+      <div id="c-msg"></div>
+      <button class="boton" type="submit" id="c-btn">Enviar mensaje</button>
+      <p class="ayuda">Usaremos tu correo solo para responderte. <a href="privacidad.html">Privacidad</a>.</p>
+    </form>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=22"></script>
+  <script src="contacto.js?v=1"></script>
+</body>
+</html>

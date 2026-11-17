@@ -85,6 +85,14 @@
     div.innerHTML = (texto == null ? '<em>No se puede descifrar este mensaje (se envió con una clave anterior).</em>' : DP.esc(texto).replace(/\n/g, '<br>')) +
       `<span class="hora">${hora(m.creado)}${mia && m.leido_en ? ' · Leído' : ''}</span>`;
     $('mensajes').appendChild(div);
+    // Aviso de seguridad (una vez por conversación) si te piden pagos o adelantos.
+    if (!mia && texto && DP.pareceEstafa(texto) && !$('mensajes').querySelector('.aviso-estafa')) {
+      const aviso = document.createElement('div');
+      aviso.className = 'aviso-estafa';
+      aviso.setAttribute('role', 'note');
+      aviso.innerHTML = '<strong>⚠️ Cuidado con los pagos por adelantado</strong>No envíes dinero, reservas ni depósitos sin haber visitado el inmueble y comprobado quién es el propietario. Vivinati nunca te pedirá pagos. <a href="seguridad.html" target="_blank" rel="noopener">Cómo evitar estafas</a>';
+      $('mensajes').appendChild(aviso);
+    }
   }
   async function abrir(c) {
     if (!c) return;
