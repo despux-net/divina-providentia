@@ -45,6 +45,11 @@ jobs:
       - name: Generar páginas para Google (SEO)
         run: node scripts/seo/generar.mjs site || echo "::warning::No se pudieron generar las páginas SEO"
 
+      # Páginas para compartir (vivinati.com/a/<id>/): foto, precio y zona en
+      # la vista previa de WhatsApp y redes. Si fallara, se publica igual.
+      - name: Páginas para compartir anuncios
+        run: node scripts/compartir/generar.mjs site || echo "::warning::No se pudieron generar las páginas para compartir"
+
       # Logos elegidos en Pages CMS (site/contenido/logos.json).
       - name: Aplicar los logos de Pages CMS
         run: node scripts/logos/aplicar.mjs site || echo "::warning::No se pudieron aplicar los logos"

@@ -300,7 +300,7 @@ const DP = {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return null;
     if (!DP._perfil) {
-      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email, avatar_url, biography, tipo_perfil, empresa, estado, ciudad, sitio_web, instagram, mostrar_telefono').eq('id', session.user.id).maybeSingle();
+      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email, avatar_url, biography, tipo_perfil, empresa, estado, ciudad, sitio_web, instagram, mostrar_telefono, avisos_chat').eq('id', session.user.id).maybeSingle();
       DP._perfil = data || { id: session.user.id, usuario: null };
     }
     return DP._perfil;
@@ -482,6 +482,7 @@ DP.pie = () => {
           <li><a href="buscar.html?tipo=apartamento">Apartamentos</a></li>
           <li><a href="buscar.html?tipo=casa">Casas</a></li>
           <li><a href="buscar.html?vista=mapa">Ver en el mapa</a></li>
+          <li><a href="busco.html">Personas que buscan inmueble</a></li>
           <li><a href="precios/">Precio del m² por zona</a></li>
         </ul>
       </div>

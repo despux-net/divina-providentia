@@ -1,0 +1,35 @@
+# «Cerca de»: guarda en Supabase los lugares cercanos (OpenStreetMap) de cada
+# zona con anuncios. Cada día, con calma (una consulta cada 10 s). Gratis.
+name: Lugares cercanos
+
+on:
+  schedule:
+    - cron: '45 9 * * *'
+  workflow_dispatch:
+    inputs:
+      max_zonas:
+        description: Zonas como máximo en esta pasada
+        required: false
+        default: '300'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cercanias
+  cancel-in-progress: false
+
+jobs:
+  cercanias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Buscar lugares cercanos
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MAX_ZONAS: ${{ inputs.max_zonas || '300' }}
+        run: node scripts/cercanias/generar.mjs

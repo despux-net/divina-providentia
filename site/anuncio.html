@@ -15,7 +15,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=37">
+  <link rel="stylesheet" href="estilos.css?v=38">
 </head>
 <body>
   <header class="cabecera">
@@ -87,6 +87,11 @@
             <p class="lugar" id="lugar"></p>
             <div id="mapa-ficha"></div>
             <p class="aviso">La ubicación puede ser aproximada.</p>
+            <div id="cerca" class="cerca" hidden>
+              <h3>Cerca de este inmueble</h3>
+              <div id="cerca-lista"><p class="ayuda">Buscando colegios, farmacias, transporte y más…</p></div>
+              <p class="aviso">Distancias en línea recta desde la ubicación del anuncio. Datos de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.</p>
+            </div>
           </section>
 
           <p class="aviso" id="fecha"></p>
@@ -164,8 +169,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=23"></script>
+  <script src="comun.js?v=24"></script>
   <script src="cifrado.js?v=2"></script>
-  <script src="anuncio.js?v=13"></script>
+  <script src="anuncio.js?v=14"></script>
 </body>
 </html>

@@ -250,7 +250,8 @@
   });
 
   // ---------- Compartir ----------
-  const enlace = `${location.origin}/anuncio.html?id=${encodeURIComponent(i.id)}`;
+  // /a/<id>/ trae foto, precio y zona para la vista previa de WhatsApp y redes.
+  const enlace = `https://vivinati.com/a/${encodeURIComponent(i.id)}/`;
   const resumen = `${i.titulo} · ${DP.precio(i)} · ${DP.lugar(i)}`;
   $('comp-wa').href = `https://wa.me/?text=${encodeURIComponent(resumen + '\n' + enlace)}`;
   $('comp-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(enlace)}`;
@@ -269,6 +270,86 @@
     const mapa = L.map('mapa-ficha', { scrollWheelZoom: false }).setView([i.lat, i.lng], 15);
     DP.capaMapa(mapa);
     L.circle([i.lat, i.lng], { radius: 150, color: '#005CA7' }).addTo(mapa);
+    // «Cerca de»: se busca solo cuando la persona llega al mapa (para no cargar de más).
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver(e => { if (e[0].isIntersecting) { obs.disconnect(); cercaDe(mapa, i); } }, { rootMargin: '300px' });
+      obs.observe($('bloque-mapa'));
+    } else cercaDe(mapa, i);
+  }
+
+  // ---------- Cerca de este inmueble (OpenStreetMap / Overpass, gratis) ----------
+  async function cercaDe(mapa, i) {
+    const CATS = [
+      ['educacion', 'Colegios y universidades', t => /^(school|kindergarten|university|college)$/.test(t.amenity)],
+      ['salud', 'Hospitales y clínicas', t => /^(hospital|clinic|doctors)$/.test(t.amenity)],
+      ['farmacia', 'Farmacias', t => t.amenity === 'pharmacy'],
+      ['compras', 'Supermercados y centros comerciales', t => /^(supermarket|mall|department_store)$/.test(t.shop)],
+      ['transporte', 'Metro y transporte', t => t.station === 'subway' || t.railway === 'station' || t.railway === 'subway_entrance' || (t.public_transport === 'station')],
+      ['parque', 'Parques y plazas', t => t.leisure === 'park' || t.place === 'square'],
+      ['banco', 'Bancos', t => t.amenity === 'bank']
+    ];
+    const clave = `dp_cerca_${i.id}`;
+    let elementos = null, guardados = null;
+    try { elementos = JSON.parse(sessionStorage.getItem(clave) || 'null'); } catch { /* nada */ }
+    // 1) Lo guardado en Supabase para esta zona (~500 m) por scripts/cercanias/generar.mjs.
+    if (!elementos) {
+      const celda = `${(Math.round(i.lat / 0.005) * 0.005).toFixed(3)},${(Math.round(i.lng / 0.005) * 0.005).toFixed(3)}`;
+      const { data } = await DP.sb.from('cercanias').select('datos').eq('celda', celda).maybeSingle();
+      if (data && Array.isArray(data.datos)) guardados = data.datos;
+    }
+    // 2) Si la zona aún no está guardada, se pregunta a OpenStreetMap en el momento.
+    if (!elementos && !guardados) {
+      const a = `(around:1200,${Number(i.lat).toFixed(5)},${Number(i.lng).toFixed(5)})`;
+      const q = `[out:json][timeout:20];(nwr${a}[amenity~"^(school|kindergarten|university|college|hospital|clinic|doctors|pharmacy|bank)$"][name];` +
+        `nwr${a}[shop~"^(supermarket|mall|department_store)$"][name];nwr${a}[station=subway];nwr${a}[railway~"^(station|subway_entrance)$"];` +
+        `nwr${a}[public_transport=station][name];nwr${a}[leisure=park][name];nwr${a}[place=square][name];);out center tags 250;`;
+      for (const servidor of ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']) {
+        try {
+          const r = await fetch(servidor, { method: 'POST', body: 'data=' + encodeURIComponent(q), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+          if (r.ok) { elementos = (await r.json()).elements || []; break; }
+        } catch { /* se prueba el siguiente */ }
+      }
+      if (!elementos) { $('cerca').hidden = true; return; }
+      try { sessionStorage.setItem(clave, JSON.stringify(elementos)); } catch { /* sin almacenamiento */ }
+    }
+    const rad = x => x * Math.PI / 180;
+    const distancia = (la, lo) => {
+      const dLa = rad(la - i.lat), dLo = rad(lo - i.lng);
+      const h = Math.sin(dLa / 2) ** 2 + Math.cos(rad(i.lat)) * Math.cos(rad(la)) * Math.sin(dLo / 2) ** 2;
+      return 6371000 * 2 * Math.asin(Math.sqrt(h));
+    };
+    const fmt = m => m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toLocaleString('es-VE', { maximumFractionDigits: 1 })} km`;
+    const grupos = Object.fromEntries(CATS.map(([k]) => [k, []]));
+    const vistos = new Set();
+    if (guardados) {
+      for (const g of guardados) {
+        if (!grupos[g.c] || g.la == null || g.lo == null) continue;
+        grupos[g.c].push({ nombre: String(g.n || ''), la: g.la, lo: g.lo, d: distancia(g.la, g.lo) });
+      }
+    }
+    for (const e of (elementos || [])) {
+      const t = e.tags || {}, la = e.lat ?? (e.center && e.center.lat), lo = e.lon ?? (e.center && e.center.lon);
+      if (la == null || lo == null) continue;
+      const nombre = (t.name || '').trim();
+      const cat = CATS.find(([, , f]) => f(t));
+      if (!cat || (!nombre && cat[0] !== 'transporte')) continue;
+      const etiqueta = nombre || 'Estación';
+      const llave = cat[0] + '|' + etiqueta.toLowerCase();
+      if (vistos.has(llave)) continue;
+      vistos.add(llave);
+      grupos[cat[0]].push({ nombre: etiqueta, la, lo, d: distancia(la, lo) });
+    }
+    const filas = CATS.map(([k, titulo]) => {
+      const l = grupos[k].sort((x, y) => x.d - y.d);
+      if (!l.length) return '';
+      l.slice(0, 6).forEach(p => L.circleMarker([p.la, p.lo], { radius: 5, color: '#6b7785', weight: 1.5, fillColor: '#fff', fillOpacity: 1 })
+        .bindTooltip(`${p.nombre} · ${fmt(p.d)}`).addTo(mapa));
+      return `<div class="cerca-grupo"><strong>${titulo}</strong>
+        <ul>${l.slice(0, 3).map(p => `<li><span>${DP.esc(p.nombre)}</span><span class="cerca-dist">${fmt(p.d)}</span></li>`).join('')}</ul></div>`;
+    }).filter(Boolean);
+    if (!filas.length) { $('cerca').hidden = true; return; }
+    $('cerca-lista').innerHTML = filas.join('');
+    $('cerca').hidden = false;
   }
 
   // ---------- Precio de referencia por m² ----------

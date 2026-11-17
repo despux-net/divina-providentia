@@ -6,6 +6,9 @@
     (function () {
       var m = location.pathname.match(/^\/@([a-z0-9_]{3,20})\/?$/i);
       if (m) location.replace('/creador.html?u=' + m[1].toLowerCase());
+      // vivinati.com/a/<id>/ de un anuncio nuevo (su página se crea en la próxima publicación)
+      var a = location.pathname.match(/^\/a\/([0-9a-f-]{36})\/?$/i);
+      if (a) location.replace('/anuncio.html?id=' + a[1]);
     })();
   </script>
   <meta charset="utf-8">
@@ -19,7 +22,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon.png">
-  <link rel="stylesheet" href="/estilos.css?v=37">
+  <link rel="stylesheet" href="/estilos.css?v=38">
 </head>
 <body>
   <header class="cabecera">
@@ -53,7 +56,7 @@
 
   <footer class="pie"></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="/comun.js?v=23"></script>
+  <script src="/comun.js?v=24"></script>
   <script>DP.cabecera();</script>
 </body>
 </html>

@@ -200,6 +200,16 @@
   });
   cargarAlertas();
 
+  // ---------- Avisos por correo de mensajes nuevos del chat ----------
+  $('avisos-chat').checked = perfil.avisos_chat !== false;
+  $('avisos-chat').addEventListener('change', async e => {
+    const activo = e.target.checked;
+    const { error } = await DP.sb.from('profiles').update({ avisos_chat: activo }).eq('id', session.user.id);
+    if (error) { e.target.checked = !activo; return DP.mensaje($('msg-avisos'), 'No se pudo guardar. Inténtalo de nuevo.'); }
+    perfil.avisos_chat = activo; DP._perfil = perfil;
+    DP.mensaje($('msg-avisos'), activo ? 'Te avisaremos por correo de los mensajes nuevos.' : 'Ya no te enviaremos avisos de mensajes.', 'ok');
+  });
+
   // ---------- Datos de acceso: cambiar correo ----------
   $('form-correo').addEventListener('submit', async e => {
     e.preventDefault();

@@ -383,7 +383,7 @@ const propios = await tabla('inmuebles?select=id,actualizado&origen=eq.usuario&a
 const urls = [
   ['/', 'daily', '1.0'], ['/buscar.html', 'daily', '0.9'], ['/conceptos.html', 'daily', '0.8'],
   ['/publicar.html', 'monthly', '0.6'], ['/bot.html', 'yearly', '0.3'], ['/condiciones.html', 'yearly', '0.3'],
-  ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/privacidad.html', 'yearly', '0.3'],
+  ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/busco.html', 'daily', '0.6'], ['/privacidad.html', 'yearly', '0.3'],
   ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7']),
   ...paginasPrecios.map(u => [u, 'weekly', '0.6'])
 ].map(([u, f, pr]) => `<url><loc>${DOMINIO}${u}</loc><lastmod>${HOY}</lastmod><changefreq>${f}</changefreq><priority>${pr}</priority></url>`)

@@ -1144,3 +1144,37 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 
 /* Logo en banda azul al principio de Quiénes somos, Contacto y Seguridad (v37) */
 .logo-banda { display: block; width: min(360px, 100%); height: auto; border-radius: 6px; margin: 4px 0 22px; }
+
+/* Busco inmueble (v38) */
+.pagina-busco { max-width: 900px; }
+.busco-cab { display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.busco-cab h1 { margin: 0 0 6px; font-weight: 500; }
+.busco-cab .boton { flex: none; margin-top: 6px; }
+#form-solicitud { margin: 0 0 28px; }
+#form-solicitud h2, #mis-solicitudes h2 { font-size: 1.15rem; font-weight: 500; margin: 0 0 14px; }
+#form-solicitud .boton { margin: 0 6px 6px 0; }
+#mis-solicitudes { margin-bottom: 30px; }
+.filtros-busco { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 6px; }
+.lista-solicitudes { display: grid; }
+.solicitud { border-top: 1px solid var(--line); padding: 16px 0; }
+.lista-solicitudes .solicitud:last-child { border-bottom: 1px solid var(--line); }
+.sol-cab { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.sol-cab strong { font-size: 1.02rem; font-weight: 600; }
+.sol-lugar { color: var(--muted); }
+.sol-datos { margin: 4px 0 0; color: var(--accent); font-weight: 500; font-size: .93rem; }
+.sol-texto { margin: 8px 0 10px; line-height: 1.55; white-space: pre-line; }
+.sol-pie { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; font-size: .9rem; }
+.sol-autor { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sol-acciones { display: inline-flex; gap: 14px; }
+@media (max-width: 640px) { .busco-cab { flex-direction: column; gap: 6px; } }
+
+/* Cerca de este inmueble (v38) */
+.cerca { margin-top: 18px; }
+.cerca h3 { font-size: 1.02rem; font-weight: 600; margin: 0 0 8px; }
+#cerca-lista { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 4px 28px; }
+.cerca-grupo { border-top: 1px solid var(--line); padding: 10px 0 6px; }
+.cerca-grupo strong { display: block; font-size: .9rem; font-weight: 600; margin-bottom: 4px; }
+.cerca-grupo ul { list-style: none; margin: 0; padding: 0; }
+.cerca-grupo li { display: flex; justify-content: space-between; gap: 10px; font-size: .88rem; padding: 2px 0; }
+.cerca-grupo li span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cerca-dist { color: var(--muted); flex: none; }
