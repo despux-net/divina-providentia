@@ -1,12 +1,22 @@
 <!doctype html>
 <html lang="es">
 <head>
+  <script>
+    // vivinati.com/@usuario → página pública del creador
+    (function () {
+      var m = location.pathname.match(/^\/@([a-z0-9_]{3,20})\/?$/i);
+      if (m) location.replace('/creador.html?u=' + m[1].toLowerCase());
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Página no encontrada — Vivinati</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon.png">
-  <link rel="stylesheet" href="/estilos.css?v=21">
+  <link rel="stylesheet" href="/estilos.css?v=22">
 </head>
 <body>
   <main class="contenedor">

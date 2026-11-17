@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dejar de recibir una alerta — Vivinati</title>
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="estilos.css?v=22">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco.png"><img src="img/logo-vivinati.png" alt="Vivinati" width="194" height="36"></picture></a>
+      <nav class="nav"><a href="buscar.html">Buscar</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+  <main class="contenedor">
+    <div class="form cuenta">
+      <h1>Alertas por correo</h1>
+      <div id="msg"><p>Un momento…</p></div>
+      <p><a class="boton sec" href="perfil.html#alertas">Ver mis alertas</a> <a class="boton" href="buscar.html">Buscar inmuebles</a></p>
+    </div>
+  </main>
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=13"></script>
+  <script>
+    (async () => {
+      DP.cabecera();
+      const t = new URLSearchParams(location.search).get('t') || '';
+      const msg = document.getElementById('msg');
+      if (!/^[0-9a-f-]{36}$/i.test(t)) { msg.innerHTML = '<div class="mensaje error">Este enlace no es válido.</div>'; return; }
+      const { data, error } = await DP.sb.rpc('baja_alerta', { p_token: t });
+      msg.innerHTML = error || !data
+        ? '<div class="mensaje error">No encontramos esa alerta (quizá ya la habías borrado).</div>'
+        : `<div class="mensaje ok"><strong>Listo.</strong> Ya no te enviaremos «${DP.esc(data)}». Puedes reactivarla cuando quieras desde tu perfil.</div>`;
+    })();
+  </script>
+</body>
+</html>

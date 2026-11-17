@@ -29,7 +29,7 @@ const CLAVE = comun.match(/SUPABASE_ANON_KEY = '([^']+)'/)[1];   // pública a p
 // Un «objeto que lo acepta todo» hace de navegador: comun.js se carga sin
 // tocar nada real y nos quedamos con DP.tarjeta, DP.precio, DP.TIPOS…
 const nada = new Proxy(function () {}, { get: (t, k) => (k === Symbol.toPrimitive ? () => '' : nada), apply: () => nada, construct: () => nada });
-const ctx = { window: { supabase: { createClient: () => nada } }, document: nada, localStorage: nada, location: nada, navigator: nada, console, URL, URLSearchParams, CustomEvent: function () {} };
+const ctx = { window: { supabase: { createClient: () => nada }, addEventListener: () => {} }, matchMedia: nada, document: nada, localStorage: nada, location: nada, navigator: nada, console, URL, URLSearchParams, CustomEvent: function () {} };
 vm.createContext(ctx);
 vm.runInContext(comun, ctx);
 const DP = ctx.window.DP;
@@ -121,6 +121,9 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
   <meta property="og:image" content="${DOMINIO}/img/og-vivinati.png">
   <meta property="og:locale" content="es_VE">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="estilos.css?v=${(fs.readFileSync(path.join(SITIO, 'index.html'), 'utf8').match(/estilos\.css\?v=(\d+)/) || [])[1] || 1}">
@@ -203,6 +206,7 @@ await enParalelo(paginas.map(p => async () => {
     otras: [
       existe.has(ruta(otraOp, p.tipo, p.estado)) && [titular(otraOp, p.tipo, p.estado), ruta(otraOp, p.tipo, p.estado).slice(1)],
       p.estado && [titular(p.op, p.tipo, null), ruta(p.op, p.tipo, null).slice(1)],
+      ['Precio del m² por zona', 'precios/'],
       ['Conceptos 3D: proyectos y renders del talento emergente', 'conceptos.html']
     ].filter(Boolean)
   };
@@ -219,12 +223,168 @@ const index = fs.readFileSync(indexRuta, 'utf8');
 const bloque = populares.map(p => `<li><a href="${ruta(p.op, p.tipo, p.estado).slice(1)}">${esc(titular(p.op, p.tipo, p.estado))}</a></li>`).join('');
 fs.writeFileSync(indexRuta, index.replace(/<!--POPULARES-->[\s\S]*?<!--\/POPULARES-->/, `<!--POPULARES-->${bloque}<!--/POPULARES-->`));
 
+// 3b) Páginas de precios por zona: /precios/, /precios/<estado>/, /precios/<estado>/<ciudad>/
+//     Mediana del precio por m² y del precio total, por tipo, en venta y alquiler (USD).
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const ahora = new Date();
+const periodo = `${MESES[ahora.getUTCMonth()]} ${ahora.getUTCFullYear()}`;
+const versionDe = nombre => (fs.readFileSync(path.join(SITIO, 'index.html'), 'utf8').match(new RegExp(nombre.replace('.', '\\.') + '\\?v=(\\d+)')) || [])[1] || 1;
+
+// Todos los anuncios activos con precio en USD (sin repetir: una copia por huella).
+const muestras = [];
+{
+  const vistos = new Set();
+  for (let desde = 0; ; desde += 1000) {
+    const lote = await tabla(`inmuebles?select=huella,operacion,tipo,estado,ciudad,precio,metros&activo=eq.true&moneda=eq.USD&precio=gt.0&operacion=in.(venta,alquiler)&order=id&offset=${desde}&limit=1000`);
+    for (const i of lote) {
+      if (vistos.has(i.huella)) continue;
+      vistos.add(i.huella);
+      const m2 = i.metros >= 15 && i.metros <= 5000 ? i.precio / i.metros : null;
+      const razonable = i.operacion === 'venta' ? (!m2 || (m2 >= 30 && m2 <= 15000)) : (!m2 || (m2 >= 0.5 && m2 <= 80));
+      if (razonable) muestras.push({ ...i, m2 });
+    }
+    if (lote.length < 1000) break;
+  }
+}
+const mediana = v => { if (!v.length) return null; const s = [...v].sort((a, b) => a - b); const k = s.length >> 1; return s.length % 2 ? s[k] : (s[k - 1] + s[k]) / 2; };
+const dinero = (n, dec = 0) => '$' + Number(n).toLocaleString('es-VE', { maximumFractionDigits: dec, minimumFractionDigits: dec });
+function tablaPrecios(lista) {
+  const filas = Object.keys(PLURAL).map(tipo => {
+    const celdas = ['venta', 'alquiler'].map(op => {
+      const g = lista.filter(i => i.tipo === tipo && i.operacion === op);
+      const m2 = g.map(i => i.m2).filter(Boolean);
+      return {
+        m2: m2.length >= 3 ? mediana(m2) : null, nm2: m2.length,
+        total: g.length >= 3 ? mediana(g.map(i => Number(i.precio))) : null, n: g.length
+      };
+    });
+    return { tipo, celdas };
+  }).filter(f => f.celdas.some(c => c.m2 || c.total));
+  if (!filas.length) return '';
+  const celda = (c, op) => `<td>${c.m2 ? `<b>${dinero(c.m2, op === 'alquiler' ? 1 : 0)}</b>/m²` : '—'}</td><td>${c.total ? dinero(c.total) + (op === 'alquiler' ? '/mes' : '') : '—'}<span class="n">${c.n ? ` · ${fmt(c.n)} anuncios` : ''}</span></td>`;
+  return `<div class="tabla-precios-env"><table class="tabla-precios">
+    <thead><tr><th rowspan="2">Tipo</th><th colspan="2">En venta</th><th colspan="2">En alquiler (al mes)</th></tr>
+    <tr><th>Precio por m²</th><th>Precio típico</th><th>Por m²</th><th>Alquiler típico</th></tr></thead>
+    <tbody>${filas.map(f => `<tr><th>${esc(PLURAL[f.tipo])}</th>${celda(f.celdas[0], 'venta')}${celda(f.celdas[1], 'alquiler')}</tr>`).join('')}</tbody>
+  </table></div>`;
+}
+function paginaPrecios({ titulo, h1, desc, url, migas, intro, tabla: t, enlaces }) {
+  const ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: migas.map(([n, u], k) => ({ '@type': 'ListItem', position: k + 1, name: n, item: DOMINIO + u })) };
+  return `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="/">
+  <title>${esc(titulo)}</title>
+  <meta name="description" content="${esc(desc)}">
+  <link rel="canonical" href="${DOMINIO}${url}">
+  <meta property="og:site_name" content="Vivinati">
+  <meta property="og:title" content="${esc(h1)}">
+  <meta property="og:description" content="${esc(desc)}">
+  <meta property="og:url" content="${DOMINIO}${url}">
+  <meta property="og:image" content="${DOMINIO}/img/og-vivinati.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="estilos.css?v=${versionDe('estilos.css')}">
+  <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco.png"><img src="img/logo-vivinati.png" alt="Vivinati" width="194" height="36"></picture></a>
+      <nav class="nav">
+        <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
+        <span data-nav-sesion></span>
+        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+      </nav>
+    </div>
+  </header>
+  <main class="contenedor seo-pagina">
+    <nav class="migas" aria-label="Estás en">${migas.map(([n, u], k) => k === migas.length - 1 ? `<span>${esc(n)}</span>` : `<a href="${u.slice(1)}">${esc(n)}</a>`).join(' › ')}</nav>
+    <h1>${esc(h1)}</h1>
+    <p class="seo-intro">${intro}</p>
+    ${t || '<p>Aún no hay suficientes anuncios con precio y metros para calcular una referencia fiable.</p>'}
+    <p class="aviso">Medianas calculadas cada día con los anuncios activos en Vivinati que indican precio en dólares
+      (y metros, para el precio por m²). Mostramos una cifra solo si hay al menos 3 anuncios. Es una referencia, no una tasación.</p>
+    ${enlaces}
+  </main>
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=${versionDe('comun.js')}"></script>
+  <script>DP.cabecera();</script>
+</body>
+</html>
+`;
+}
+const paginasPrecios = [];
+{
+  const escribir = (url, html) => {
+    const archivo = path.join(SITIO, url, 'index.html');
+    fs.mkdirSync(path.dirname(archivo), { recursive: true });
+    fs.writeFileSync(archivo, html);
+    paginasPrecios.push(url);
+  };
+  fs.rmSync(path.join(SITIO, 'precios'), { recursive: true, force: true });
+  const porEstado = {};
+  for (const i of muestras) (porEstado[i.estado] ||= []).push(i);
+  const estadosOrden = Object.entries(porEstado).filter(([, v]) => v.length >= 5).sort((a, b) => b[1].length - a[1].length);
+  const listaEnlaces = (t, l) => l.length ? `<section class="seo-enlaces"><h2>${esc(t)}</h2><ul>${l.map(([n, u, c]) =>
+    `<li><a href="${u.slice(1)}">${esc(n)}</a>${c ? ` <span>${fmt(c)}</span>` : ''}</li>`).join('')}</ul></section>` : '';
+  const estadosEnlaces = estadosOrden.map(([e, v]) => [`Precios en ${lugarTxt(e)}`, `/precios/${slug(e)}/`, v.length]);
+
+  // Venezuela
+  escribir('/precios/', paginaPrecios({
+    titulo: `Precio del m² en Venezuela por estado · ${periodo} — Vivinati`,
+    h1: `Precio del metro cuadrado en Venezuela · ${periodo}`,
+    desc: `¿Cuánto cuesta el m² en Venezuela? Precio por m² y precio típico de apartamentos, casas, locales y terrenos en venta y alquiler, por estado. Datos de ${fmt(muestras.length)} anuncios, actualizados cada día.`,
+    url: '/precios/', migas: [['Inicio', '/'], ['Precios por zona', '/precios/']],
+    intro: `Referencias de precio calculadas con <b>${fmt(muestras.length)}</b> anuncios activos de inmobiliarias y particulares de todo el país. Elige un estado para ver el detalle por ciudad.`,
+    tabla: tablaPrecios(muestras),
+    enlaces: listaEnlaces('Precios por estado', estadosEnlaces)
+  }));
+  // Estados y ciudades
+  for (const [estado, lista] of estadosOrden) {
+    const porCiudad = {};
+    for (const i of lista) if (i.ciudad) (porCiudad[i.ciudad] ||= []).push(i);
+    const ciudades = Object.entries(porCiudad).filter(([, v]) => v.length >= 10).sort((a, b) => b[1].length - a[1].length);
+    const ciudadesEnlaces = ciudades.map(([c, v]) => [`Precios en ${c}`, `/precios/${slug(estado)}/${slug(c)}/`, v.length]);
+    const buscarEn = Object.keys(OPS).filter(op => existe.has(ruta(op, null, estado))).map(op => [titular(op, null, estado), ruta(op, null, estado)]);
+    escribir(`/precios/${slug(estado)}/`, paginaPrecios({
+      titulo: `Precio del m² en ${lugarTxt(estado)} · ${periodo} — Vivinati`,
+      h1: `Precio del metro cuadrado en ${lugarTxt(estado)} · ${periodo}`,
+      desc: `Precio por m² y precio típico de apartamentos, casas y locales en venta y alquiler en ${lugarTxt(estado)}. Calculado con ${fmt(lista.length)} anuncios, actualizado cada día.`,
+      url: `/precios/${slug(estado)}/`, migas: [['Inicio', '/'], ['Precios por zona', '/precios/'], [lugarTxt(estado), `/precios/${slug(estado)}/`]],
+      intro: `Referencias de precio en ${esc(lugarTxt(estado))} calculadas con <b>${fmt(lista.length)}</b> anuncios activos.`,
+      tabla: tablaPrecios(lista),
+      enlaces: listaEnlaces('Por ciudad o municipio', ciudadesEnlaces) + listaEnlaces('Ver los anuncios', buscarEn) +
+        listaEnlaces('Otros estados', estadosEnlaces.filter(([, u]) => u !== `/precios/${slug(estado)}/`))
+    }));
+    for (const [ciudad, lc] of ciudades) {
+      const url = `/precios/${slug(estado)}/${slug(ciudad)}/`;
+      escribir(url, paginaPrecios({
+        titulo: `Precio del m² en ${ciudad}, ${estado} · ${periodo} — Vivinati`,
+        h1: `Precio del metro cuadrado en ${ciudad} · ${periodo}`,
+        desc: `¿Cuánto cuesta el m² en ${ciudad} (${estado})? Precio por m² y precio típico de inmuebles en venta y alquiler, con ${fmt(lc.length)} anuncios. Actualizado cada día.`,
+        url, migas: [['Inicio', '/'], ['Precios por zona', '/precios/'], [lugarTxt(estado), `/precios/${slug(estado)}/`], [ciudad, url]],
+        intro: `Referencias de precio en ${esc(ciudad)} (${esc(estado)}) calculadas con <b>${fmt(lc.length)}</b> anuncios activos.`,
+        tabla: tablaPrecios(lc),
+        enlaces: listaEnlaces(`Otras ciudades de ${lugarTxt(estado)}`, ciudadesEnlaces.filter(([, u]) => u !== url)) + listaEnlaces('Ver los anuncios', buscarEn)
+      }));
+    }
+  }
+}
+
 // 4) sitemap.xml: páginas públicas + búsquedas + anuncios publicados en Vivinati.
 const propios = await tabla('inmuebles?select=id,actualizado&origen=eq.usuario&activo=eq.true&order=actualizado.desc&limit=5000');
 const urls = [
   ['/', 'daily', '1.0'], ['/buscar.html', 'daily', '0.9'], ['/conceptos.html', 'daily', '0.8'],
   ['/publicar.html', 'monthly', '0.6'], ['/bot.html', 'yearly', '0.3'],
-  ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7'])
+  ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7']),
+  ...paginasPrecios.map(u => [u, 'weekly', '0.6'])
 ].map(([u, f, pr]) => `<url><loc>${DOMINIO}${u}</loc><lastmod>${HOY}</lastmod><changefreq>${f}</changefreq><priority>${pr}</priority></url>`)
   .concat(propios.map(i => `<url><loc>${DOMINIO}/anuncio.html?id=${i.id}</loc><lastmod>${String(i.actualizado).slice(0, 10)}</lastmod><priority>0.5</priority></url>`));
 fs.writeFileSync(path.join(SITIO, 'sitemap.xml'),
@@ -238,6 +398,7 @@ Disallow: /registro.html
 Disallow: /restablecer.html
 Disallow: /perfil.html
 Disallow: /mis-anuncios.html
+Disallow: /baja.html
 
 Sitemap: ${DOMINIO}/sitemap.xml
 `);

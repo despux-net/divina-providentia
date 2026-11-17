@@ -1,0 +1,31 @@
+# Envía por correo los anuncios nuevos de las alertas de búsqueda
+# (scripts/alertas/enviar.mjs). Una vez al día, a las 9:00 en Venezuela.
+# Necesita los secretos SUPABASE_SERVICE_ROLE_KEY y RESEND_API_KEY.
+name: Alertas por correo
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: alertas
+  cancel-in-progress: false
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Enviar alertas
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node scripts/alertas/enviar.mjs

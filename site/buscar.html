@@ -7,10 +7,13 @@
   <link rel="canonical" href="https://vivinati.com/buscar.html">
   <meta property="og:image" content="https://vivinati.com/img/og-vivinati.png">
   <meta name="description" content="Apartamentos, casas, anexos, locales y terrenos en venta y alquiler en toda Venezuela, con filtros por estado, precio y habitaciones.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=21">
+  <link rel="stylesheet" href="estilos.css?v=22">
 </head>
 <body>
   <header class="cabecera">
@@ -36,6 +39,24 @@
         <div class="desplegable-panel">
           <label for="f-min">Desde (USD)</label><input type="number" id="f-min" min="0" step="any" placeholder="0">
           <label for="f-max">Hasta (USD)</label><input type="number" id="f-max" min="0" step="any" placeholder="Sin límite">
+          <button type="button" class="boton peq" data-cerrar>Aplicar</button>
+        </div>
+      </details>
+      <details class="pildora desplegable" id="d-mas">
+        <summary>Más filtros</summary>
+        <div class="desplegable-panel panel-mas">
+          <div class="dos-columnas">
+            <div><label for="f-m2min">m² desde</label><input type="number" id="f-m2min" min="0" step="any" placeholder="0"></div>
+            <div><label for="f-m2max">m² hasta</label><input type="number" id="f-m2max" min="0" step="any" placeholder="Sin límite"></div>
+          </div>
+          <label for="f-banos">Baños</label>
+          <select id="f-banos"><option value="">Cualquiera</option><option value="1">1 o más</option><option value="2">2 o más</option><option value="3">3 o más</option></select>
+          <label for="f-dias">Publicados</label>
+          <select id="f-dias"><option value="">Cuando sea</option><option value="1">Últimas 24 horas</option><option value="7">Últimos 7 días</option><option value="30">Últimos 30 días</option></select>
+          <label class="casilla"><input type="checkbox" id="f-estac"> Con estacionamiento</label>
+          <label class="casilla"><input type="checkbox" id="f-fotos"> Solo con fotos</label>
+          <label class="casilla"><input type="checkbox" id="f-vivinati"> Solo publicados en Vivinati</label>
+          <label class="casilla"><input type="checkbox" id="f-bajadas"> Bajaron de precio</label>
           <button type="button" class="boton peq" data-cerrar>Aplicar</button>
         </div>
       </details>
@@ -93,6 +114,7 @@
     <main class="principal" id="resultados-sec">
       <h1 id="titulo-resultados">Inmuebles en Venezuela</h1>
       <p class="resumen-linea" id="resumen" aria-live="polite">Buscando…</p>
+      <div id="msg-alerta"></div>
       <div class="pills-tipo" id="pills-tipo"></div>
       <div class="barra-orden">
         <select id="f-orden" class="orden" aria-label="Ordenar">
@@ -100,7 +122,9 @@
           <option value="relevancia">Más relevantes</option>
           <option value="precio_asc">Precio: menor a mayor</option>
           <option value="precio_desc">Precio: mayor a menor</option>
+          <option value="bajadas">Bajaron de precio</option>
         </select>
+        <button type="button" class="boton sec peq boton-alerta" id="crear-alerta"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Avísame de anuncios nuevos</button>
         <div class="vistas" role="group" aria-label="Vista">
           <button type="button" id="v-lista" aria-pressed="true">Lista</button>
           <button type="button" id="v-mapa" aria-pressed="false">Mapa</button>
@@ -116,7 +140,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=12"></script>
-  <script src="buscar.js?v=7"></script>
+  <script src="comun.js?v=13"></script>
+  <script src="buscar.js?v=8"></script>
 </body>
 </html>

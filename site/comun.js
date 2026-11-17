@@ -68,9 +68,28 @@ const DP = {
     return d.join(' · ');
   },
 
+  // Filtros guardados (p_operacion, p_tipo…) → parámetros de buscar.html (?operacion=…)
+  urlDeFiltros(f) {
+    const M = { q: 'q', p_operacion: 'operacion', p_tipo: 'tipo', p_estado: 'estado', p_precio_min: 'min', p_precio_max: 'max',
+      p_habitaciones: 'hab', p_metros_min: 'm2min', p_metros_max: 'm2max', p_banos: 'banos', p_dias: 'dias',
+      p_estacionamiento: 'estac', p_con_fotos: 'fotos', p_solo_vivinati: 'vivinati', p_bajo_precio: 'bajadas', p_incluir_conceptos: 'conceptos' };
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(f || {})) if (M[k] && v !== null && v !== false && v !== '') p.set(M[k], v === true ? '1' : v);
+    return p.toString();
+  },
+
+  // «Bajó $50» si el precio bajó en los últimos 60 días (lo calcula la base de datos).
+  bajada(i) {
+    if (!i.precio_bajo_en || !(i.precio_anterior > i.precio)) return null;
+    if (Date.now() - Date.parse(i.precio_bajo_en) > 60 * 864e5) return null;
+    const n = Number(i.precio_anterior - i.precio).toLocaleString('es-VE', { maximumFractionDigits: 0 });
+    return `Bajó ${i.moneda === 'VES' ? 'Bs. ' : '$'}${n}`;
+  },
+
   // Tarjeta de anuncio: foto con etiqueta de operación y corazón de favorito,
   // precio grande, título, lugar, datos y, abajo, de qué web viene.
   tarjeta(i) {
+    const bajo = DP.bajada(i);
     const foto = DP.fotoUrl(i.fotos && i.fotos[0]);
     const img = foto
       ? `<img class="foto" src="${DP.esc(foto)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
@@ -98,10 +117,10 @@ const DP = {
     ]).filter(Boolean).map(DP.esc).join(' <span class="sep">|</span> ');
     return `<article class="tarjeta-env">
       <a class="tarjeta" href="anuncio.html?id=${encodeURIComponent(i.id)}">
-        <div class="tarjeta-foto">${img}<span class="sello sello-${DP.esc(i.operacion)}">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span></div>
+        <div class="tarjeta-foto">${img}<span class="sello sello-${DP.esc(i.operacion)}">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span>${bajo ? `<span class="cinta-bajada">↓ ${DP.esc(bajo)}</span>` : ''}</div>
         <div class="cuerpo">
           <div class="tipo-movil op-${DP.esc(i.operacion)}">${DP.esc(tipoMovil)}</div>
-          <div class="precio${concepto ? ' precio-concepto' : ''}">${precio}</div>
+          <div class="precio${concepto ? ' precio-concepto' : ''}">${precio}${bajo ? ` <s class="precio-antes">${DP.esc(DP.precio({ ...i, precio: i.precio_anterior }))}</s>` : ''}</div>
           <div class="titulo-t">${DP.esc(i.titulo)}</div>
           <div class="lugar"><span class="lugar-tipo">${DP.esc(tipo)} · </span><span class="lugar-sitio">${DP.esc(DP.lugar(i))}</span></div>
           <div class="linea-movil">${lineaMovil}</div>
@@ -116,19 +135,55 @@ const DP = {
     </article>`;
   },
 
-  // ---------- Favoritos (guardados en este navegador, sin cuenta) ----------
+  // ---------- Favoritos ----------
+  // Se guardan en este navegador y, si hay sesión, también en la cuenta
+  // (tabla favoritos): así aparecen en cualquier teléfono u ordenador.
   favoritos() {
     try { return JSON.parse(localStorage.getItem('dp_favoritos') || '[]').filter(x => /^[0-9a-f-]{36}$/i.test(x)); }
     catch { return []; }
+  },
+  _guardarFavoritos(lista) {
+    try { localStorage.setItem('dp_favoritos', JSON.stringify(lista.slice(0, 200))); } catch { /* sin almacenamiento */ }
+    document.dispatchEvent(new CustomEvent('dp:favoritos', { detail: lista }));
   },
   esFavorito(id) { return DP.favoritos().includes(id); },
   alternarFavorito(id) {
     const lista = DP.favoritos();
     const i = lista.indexOf(id);
     if (i >= 0) lista.splice(i, 1); else lista.unshift(id);
-    try { localStorage.setItem('dp_favoritos', JSON.stringify(lista.slice(0, 200))); } catch { /* sin almacenamiento */ }
-    document.dispatchEvent(new CustomEvent('dp:favoritos', { detail: lista }));
+    DP._guardarFavoritos(lista);
+    // En la cuenta, sin esperar (si falla, queda al menos en el navegador).
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      const t = sb.from('favoritos');
+      (i < 0 ? t.upsert({ user_id: session.user.id, inmueble_id: id }, { onConflict: 'user_id,inmueble_id', ignoreDuplicates: true })
+             : t.delete().eq('user_id', session.user.id).eq('inmueble_id', id)).then(() => {});
+    });
     return i < 0;
+  },
+  // Une los favoritos del navegador con los de la cuenta (una vez por visita).
+  async sincronizarFavoritos() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session || DP._sincronizado) return;
+    DP._sincronizado = true;
+    const { data, error } = await sb.from('favoritos').select('inmueble_id').order('creado', { ascending: false }).limit(200);
+    if (error || !data) return;
+    const enCuenta = data.map(f => f.inmueble_id);
+    const local = DP.favoritos();
+    const soloLocal = local.filter(id => !enCuenta.includes(id));
+    if (soloLocal.length) {
+      await sb.from('favoritos').upsert(soloLocal.map(inmueble_id => ({ user_id: session.user.id, inmueble_id })),
+        { onConflict: 'user_id,inmueble_id', ignoreDuplicates: true });
+    }
+    const union = [...new Set([...local, ...enCuenta])];
+    if (union.length !== local.length) {
+      DP._guardarFavoritos(union);
+      document.querySelectorAll('.corazon[data-fav]').forEach(x => {
+        const si = union.includes(x.dataset.fav);
+        x.setAttribute('aria-pressed', si);
+        x.setAttribute('aria-label', si ? 'Quitar de favoritos' : 'Guardar en favoritos');
+      });
+    }
   },
   // Un solo escuchador para todos los corazones de la página.
   activarCorazones() {
@@ -309,6 +364,7 @@ DP.pie = () => {
           <li><a href="buscar.html?tipo=apartamento">Apartamentos</a></li>
           <li><a href="buscar.html?tipo=casa">Casas</a></li>
           <li><a href="buscar.html?vista=mapa">Ver en el mapa</a></li>
+          <li><a href="precios/">Precio del m² por zona</a></li>
         </ul>
       </div>
       <div>
@@ -359,8 +415,58 @@ DP.barraMovil = () => {
   document.body.classList.add('con-barra-movil');
 };
 
+// ---------- Instalar como app (PWA) ----------
+// Android/Chrome avisan con «beforeinstallprompt»: guardamos el aviso y
+// mostramos nuestro botón (en el perfil y una barra discreta en el móvil).
+// En iPhone no existe ese aviso: explicamos «Compartir → Añadir a inicio».
+DP.app = () => {
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+  const instalada = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  let aviso = null;
+  const bloque = document.getElementById('bloque-instalar');
+  const ocultarBarra = () => { const b = document.querySelector('.barra-instalar'); if (b) b.remove(); };
+  const instalar = async () => {
+    if (!aviso) return;
+    aviso.prompt();
+    await aviso.userChoice.catch(() => null);
+    aviso = null; ocultarBarra();
+    if (bloque) bloque.hidden = true;
+  };
+  document.addEventListener('click', e => { if (e.target.closest('[data-instalar]')) instalar(); });
+  if (instalada) return;
+  if (bloque && ios) {
+    bloque.hidden = false;
+    bloque.querySelector('[data-instalar]').hidden = true;
+    document.getElementById('texto-instalar').innerHTML = 'En iPhone: abre vivinati.com en Safari, pulsa <b>Compartir</b> (el cuadrado con la flecha) y luego <b>«Añadir a pantalla de inicio»</b>.';
+  }
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    aviso = e;
+    if (bloque) bloque.hidden = false;
+    let cerrada = false;
+    try { cerrada = Date.now() - Number(localStorage.getItem('dp_instalar_cerrado') || 0) < 14 * 864e5; } catch { /* nada */ }
+    if (cerrada || document.querySelector('.barra-instalar')) return;
+    const barra = document.createElement('div');
+    barra.className = 'barra-instalar';
+    barra.innerHTML = `<img src="/img/icono-192.png" alt="" width="36" height="36"><span><b>Vivinati en tu teléfono</b><br>Instálala gratis, sin tienda de apps</span>
+      <button type="button" class="boton peq" data-instalar>Instalar</button>
+      <button type="button" class="cerrar" aria-label="Cerrar">×</button>`;
+    barra.querySelector('.cerrar').addEventListener('click', () => {
+      try { localStorage.setItem('dp_instalar_cerrado', String(Date.now())); } catch { /* nada */ }
+      ocultarBarra();
+    });
+    document.body.appendChild(barra);
+  });
+  window.addEventListener('appinstalled', () => { ocultarBarra(); if (bloque) bloque.hidden = true; });
+};
+
 window.DP = DP;
 DP.ojos();
 DP.pie();
 DP.barraMovil();
 DP.activarCorazones();
+DP.sincronizarFavoritos();
+DP.app();

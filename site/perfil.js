@@ -57,5 +57,41 @@
     DP._perfil = perfil;
     DP.cabecera();
     DP.mensaje(msg, 'Perfil guardado.', 'ok');
+    pintarEnlacePublico();
   });
+
+  // ---------- Perfil público (portafolio) ----------
+  function pintarEnlacePublico() {
+    if (!perfil.usuario) return;
+    $('enlace-publico').innerHTML = `Tu página pública: <a href="creador.html?u=${encodeURIComponent(perfil.usuario)}">vivinati.com/@${DP.esc(perfil.usuario)}</a>`;
+    $('enlace-publico').hidden = false;
+  }
+  pintarEnlacePublico();
+
+  // ---------- Mis alertas ----------
+  async function cargarAlertas() {
+    const { data, error } = await DP.sb.from('alertas').select('id, nombre, filtros, activa, creado').order('creado', { ascending: false });
+    const ul = $('lista-alertas');
+    if (error) { ul.innerHTML = '<li class="ayuda">No se pudieron cargar tus alertas.</li>'; return; }
+    if (!data.length) { ul.innerHTML = '<li class="ayuda">Aún no tienes alertas.</li>'; return; }
+    ul.innerHTML = data.map(a => `<li class="${a.activa ? '' : 'pausada'}">
+      <a href="buscar.html?${DP.urlDeFiltros(a.filtros)}">${DP.esc(a.nombre)}</a>
+      <span class="estado-alerta">${a.activa ? 'Activa' : 'Pausada'}</span>
+      <span class="acciones-alerta">
+        <button type="button" class="enlace" data-alternar="${a.id}" data-activa="${a.activa}">${a.activa ? 'Pausar' : 'Reanudar'}</button>
+        <button type="button" class="enlace peligro" data-borrar="${a.id}">Borrar</button>
+      </span></li>`).join('');
+  }
+  $('lista-alertas').addEventListener('click', async e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.borrar) {
+      if (!confirm('¿Borrar esta alerta?')) return;
+      await DP.sb.from('alertas').delete().eq('id', b.dataset.borrar);
+    } else if (b.dataset.alternar) {
+      await DP.sb.from('alertas').update({ activa: b.dataset.activa !== 'true' }).eq('id', b.dataset.alternar);
+    }
+    cargarAlertas();
+  });
+  cargarAlertas();
+  if (location.hash === '#alertas') setTimeout(() => $('alertas').scrollIntoView(), 300);
 })();

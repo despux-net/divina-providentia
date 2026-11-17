@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mi perfil — Vivinati</title>
   <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=21">
+  <link rel="stylesheet" href="estilos.css?v=22">
 </head>
 <body>
   <header class="cabecera">
@@ -42,13 +45,27 @@
         <button class="boton" type="submit" id="btn">Guardar cambios</button>
         <a class="boton sec" href="restablecer.html">Cambiar contraseña</a>
       </form>
+      <p class="sub" id="enlace-publico" hidden></p>
+
+      <section class="bloque-cuenta" id="alertas">
+        <h2>Mis alertas por correo</h2>
+        <p class="ayuda">Te escribimos una vez al día si aparecen anuncios nuevos que encajan. Crea una desde
+          <a href="buscar.html">la búsqueda</a> con el botón «Avísame de anuncios nuevos» (máximo 5).</p>
+        <ul class="lista-alertas" id="lista-alertas"><li class="ayuda">Cargando…</li></ul>
+      </section>
+
+      <section class="bloque-cuenta instalar-app" id="bloque-instalar" hidden>
+        <h2>Vivinati en tu teléfono</h2>
+        <p class="ayuda" id="texto-instalar">Instala Vivinati como una app: queda con su icono en la pantalla de inicio.</p>
+        <button type="button" class="boton sec" data-instalar>Instalar la app</button>
+      </section>
     </div>
   </main>
 
   <footer class="pie">© Vivinati</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=12"></script>
-  <script src="perfil.js?v=1"></script>
+  <script src="comun.js?v=13"></script>
+  <script src="perfil.js?v=2"></script>
 </body>
 </html>

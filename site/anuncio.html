@@ -9,10 +9,13 @@
   <meta property="og:title" content="Inmueble en Vivinati">
   <meta property="og:description" content="Apartamentos, casas y locales en venta y alquiler en toda Venezuela.">
   <meta property="og:type" content="website">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=21">
+  <link rel="stylesheet" href="estilos.css?v=22">
 </head>
 <body>
   <header class="cabecera">
@@ -63,6 +66,7 @@
         <div class="publicado-por" id="publicado-por" hidden></div>
         <section class="ficha-autor" id="ficha-autor" hidden aria-label="Creador del proyecto"></section>
         <div class="caract" id="caract"></div>
+        <p class="ref-precio" id="ref-precio" hidden></p>
         <div id="contacto" style="display:grid;gap:8px"></div>
         <div class="compartir" id="compartir">
           <span>Compartir:</span>
@@ -73,15 +77,39 @@
         <p class="aviso" id="aviso-externo" hidden>Este anuncio fue encontrado en otra web. Los datos y el contacto están en el anuncio original.</p>
         <p class="aviso" id="aviso-consejo">Consejo: nunca envíes dinero ni pagues reservas sin haber visto el inmueble y verificado al propietario.</p>
         <p class="aviso" id="fecha"></p>
+        <p class="reportar"><button type="button" class="enlace" id="btn-reportar">Reportar este anuncio</button></p>
+        <form class="form-reporte" id="form-reporte" hidden novalidate>
+          <label for="motivo">¿Qué pasa con este anuncio?</label>
+          <select id="motivo" required>
+            <option value="">Elige un motivo</option>
+            <option value="estafa">Parece una estafa</option>
+            <option value="vendido">Ya se vendió o alquiló</option>
+            <option value="datos_falsos">Datos o fotos falsos</option>
+            <option value="duplicado">Está repetido</option>
+            <option value="otro">Otro motivo</option>
+          </select>
+          <label for="detalle">Cuéntanos más <small>(opcional)</small></label>
+          <textarea id="detalle" maxlength="500" rows="3"></textarea>
+          <div id="msg-reporte"></div>
+          <p><button class="boton peq" type="submit" id="enviar-reporte">Enviar reporte</button>
+            <button class="boton sec peq" type="button" id="cancelar-reporte">Cancelar</button></p>
+          <p class="aviso">Si varias personas lo reportan, el anuncio se pausa hasta que lo revisemos.</p>
+        </form>
       </aside>
     </div>
+
+    <!-- Parecidos: misma operación, tipo y estado (primero la misma zona) -->
+    <section class="similares" id="similares" hidden>
+      <h2 id="similares-titulo">Inmuebles parecidos</h2>
+      <div class="rejilla resultados-cuatro" id="lista-similares"></div>
+    </section>
   </main>
 
   <footer class="pie">© Vivinati · Los anuncios son responsabilidad de quien los publica.</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=12"></script>
-  <script src="anuncio.js?v=9"></script>
+  <script src="comun.js?v=13"></script>
+  <script src="anuncio.js?v=10"></script>
 </body>
 </html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perfil — Vivinati</title>
+  <meta name="description" content="Portafolio y anuncios de un creador en Vivinati: proyectos conceptuales 3D e inmuebles en Venezuela.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="estilos.css?v=22">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco.png"><img src="img/logo-vivinati.png" alt="Vivinati" width="194" height="36"></picture></a>
+      <nav class="nav">
+        <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
+        <span data-nav-sesion></span>
+        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <div class="vacio" id="no-existe" hidden><strong>Este perfil no existe</strong>
+      <p><a class="boton" href="conceptos.html">Ver proyectos conceptuales</a></p></div>
+
+    <section class="perfil-publico" id="perfil" hidden>
+      <div class="perfil-cabeza">
+        <span class="autor-avatar grande" id="avatar" aria-hidden="true"></span>
+        <div>
+          <h1 id="nombre"></h1>
+          <p class="autor-usuario" id="usuario"></p>
+          <p class="perfil-resumen" id="resumen"></p>
+        </div>
+        <button type="button" class="boton sec peq" id="compartir">Compartir perfil</button>
+      </div>
+
+      <section id="bloque-conceptos" hidden>
+        <h2>Proyectos conceptuales</h2>
+        <div class="rejilla resultados-cuatro" id="lista-conceptos"></div>
+      </section>
+      <section id="bloque-inmuebles" hidden>
+        <h2>Inmuebles publicados</h2>
+        <div class="rejilla resultados-cuatro" id="lista-inmuebles"></div>
+      </section>
+      <div class="vacio" id="sin-nada" hidden><strong>Aún no hay publicaciones</strong></div>
+    </section>
+  </main>
+
+  <footer class="pie"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=13"></script>
+  <script src="creador.js?v=1"></script>
+</body>
+</html>

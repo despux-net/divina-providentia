@@ -694,3 +694,83 @@ a.caja.categoria { text-decoration: none; }
 .pie .emblema img { width: 150px; height: auto; border-radius: 6px; opacity: .9; filter: none; box-shadow: 0 1px 4px rgba(0, 60, 120, .18); }
 .pie .emblema:hover img { opacity: 1; }
 @media (max-width: 560px) { .pie .emblema img { width: 128px; } }
+
+/* =====================================================================
+   Mejoras de experiencia (noviembre 2026)
+   ===================================================================== */
+/* «Más filtros» */
+.desplegable-panel.panel-mas { width: 290px; }
+.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.casilla { display: flex; align-items: center; gap: 8px; margin: 2px 0 !important; font-size: .9rem; cursor: pointer; }
+.casilla input { width: auto; margin: 0; accent-color: var(--accent); }
+@media (max-width: 560px) { .desplegable-panel.panel-mas { width: min(290px, calc(100vw - 32px)); } }
+
+/* Botón de alerta */
+.boton-alerta { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.barra-orden { flex-wrap: wrap; gap: 8px; }
+#msg-alerta .mensaje { margin: 0 0 12px; }
+
+/* «Bajó de precio» */
+.cinta-bajada {
+  position: absolute; left: 12px; bottom: 12px; background: #2e7d32; color: #fff; font-size: .76rem; font-weight: 500;
+  padding: 3px 9px; border-radius: 999px; box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.precio-antes { color: var(--muted); font-size: .8em; font-weight: 400; margin-left: 4px; }
+.etiqueta-bajada { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: .78rem; font-weight: 500; padding: 2px 9px; border-radius: 999px; vertical-align: middle; }
+
+/* Ficha: precio de referencia, verificado, reportar y parecidos */
+.ref-precio { background: var(--bg-azul); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: .88rem; margin: 10px 0; }
+.ref-precio span { color: var(--muted); }
+.ref-precio .bien { color: #2e7d32; }
+.ref-precio strong { color: #b23b00; }
+.verificado { display: inline-block; margin-left: 6px; background: #e8f5e9; color: #2e7d32; font-size: .74rem; font-weight: 500; padding: 1px 8px; border-radius: 999px; }
+.reportar { margin: 6px 0 0; font-size: .85rem; }
+.reportar .enlace { color: var(--muted); }
+.form-reporte { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-top: 8px; display: grid; gap: 6px; }
+.form-reporte label { margin: 0; font-size: .88rem; }
+.form-reporte p { margin: 4px 0 0; }
+.similares { margin-top: 36px; }
+.similares h2 { font-size: 1.2rem; font-weight: 500; margin: 0 0 14px; }
+
+/* Perfil: alertas e instalar */
+.bloque-cuenta { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); }
+.bloque-cuenta h2 { font-size: 1.1rem; font-weight: 500; margin: 0 0 6px; }
+.lista-alertas { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 8px; }
+.lista-alertas li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.lista-alertas li > a { flex: 1 1 220px; font-weight: 500; }
+.lista-alertas li.pausada > a { color: var(--muted); }
+.estado-alerta { font-size: .78rem; color: #2e7d32; background: #e8f5e9; padding: 1px 8px; border-radius: 999px; }
+.lista-alertas li.pausada .estado-alerta { color: var(--muted); background: #f1f4f7; }
+.acciones-alerta { display: flex; gap: 12px; font-size: .88rem; }
+.enlace.peligro { color: #c62828; }
+
+/* Perfil público de creadores */
+.perfil-publico { padding: 24px 0 48px; }
+.perfil-cabeza { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+.perfil-cabeza > div { flex: 1 1 240px; }
+.perfil-cabeza h1 { margin: 0; font-size: 1.6rem; font-weight: 500; }
+.perfil-cabeza p { margin: 2px 0; }
+.perfil-resumen { color: var(--muted); }
+.autor-avatar.grande { width: 72px; height: 72px; font-size: 1.9rem; background: var(--accent); }
+.perfil-publico h2 { font-size: 1.15rem; font-weight: 500; margin: 26px 0 12px; }
+
+/* Precios por zona */
+.tabla-precios-env { overflow-x: auto; margin: 18px 0 8px; border: 1px solid var(--line); border-radius: 12px; }
+.tabla-precios { border-collapse: collapse; width: 100%; min-width: 620px; font-size: .92rem; }
+.tabla-precios th, .tabla-precios td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+.tabla-precios thead th { background: var(--bg-azul); font-weight: 500; font-size: .84rem; }
+.tabla-precios tbody th { font-weight: 500; }
+.tabla-precios tbody tr:last-child > * { border-bottom: 0; }
+.tabla-precios b { color: var(--accent); font-weight: 500; }
+.tabla-precios .n { display: block; color: var(--muted); font-size: .76rem; }
+
+/* Barra «Instalar Vivinati» (solo cuando el navegador lo permite) */
+.barra-instalar {
+  position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 1200; display: flex; align-items: center; gap: 10px;
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; box-shadow: 0 6px 24px rgba(0, 40, 80, .18);
+  font-size: .85rem; max-width: 520px; margin: 0 auto;
+}
+.barra-instalar img { border-radius: 9px; flex: none; }
+.barra-instalar span { flex: 1; line-height: 1.3; }
+.barra-instalar .cerrar { border: 0; background: none; font-size: 1.4rem; color: var(--muted); cursor: pointer; padding: 0 4px; }
+@media (max-width: 560px) { body.con-barra-movil .barra-instalar { bottom: calc(66px + env(safe-area-inset-bottom)); } }

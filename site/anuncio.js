@@ -96,6 +96,9 @@
     ${i.activo ? '' : '<span class="etiqueta gris">Pausado (solo lo ves tú)</span>'}`;
   $('titulo').textContent = i.titulo;
   $('precio').textContent = DP.precio(i);
+  const bajo = DP.bajada(i);
+  if (bajo) $('precio').insertAdjacentHTML('beforeend',
+    ` <s class="precio-antes">${DP.esc(DP.precio({ ...i, precio: i.precio_anterior }))}</s> <span class="etiqueta-bajada">↓ ${DP.esc(bajo)}</span>`);
   $('lugar').textContent = DP.lugar(i);
   $('descripcion').textContent = i.descripcion || 'Sin descripción.';
   const caract = concepto ? [
@@ -122,7 +125,8 @@
           <div><strong>${DP.esc(nombre)}</strong>${p && p.usuario && p.nombre ? ` <span class="autor-usuario">@${DP.esc(p.usuario)}</span>` : ''}
           <div class="autor-rol">${DP.esc(DP.ROLES[i.rol_autor] || '')}</div></div></div>
         ${i.institucion ? `<p class="autor-dato"><span>Universidad o estudio</span>${DP.esc(i.institucion)}</p>` : ''}
-        ${herramientas ? `<div class="autor-dato"><span>Herramientas</span><div class="chips-datos">${herramientas}</div></div>` : ''}`;
+        ${herramientas ? `<div class="autor-dato"><span>Herramientas</span><div class="chips-datos">${herramientas}</div></div>` : ''}
+        ${p && p.usuario ? `<p class="autor-dato"><a href="creador.html?u=${encodeURIComponent(p.usuario)}">Ver su portafolio completo →</a></p>` : ''}`;
       $('ficha-autor').hidden = false;
     };
     pintarAutor(null);
@@ -134,7 +138,8 @@
     DP.sb.rpc('perfil_publico', { p_id: i.user_id }).then(({ data }) => {
       const p = data && data[0];
       if (!p || !p.usuario) return;
-      $('publicado-por').textContent = `Publicado por ${p.nombre ? p.nombre + ' · ' : ''}@${p.usuario}`;
+      $('publicado-por').innerHTML = `Publicado por ${DP.esc(p.nombre ? p.nombre + ' · ' : '')}<a href="creador.html?u=${encodeURIComponent(p.usuario)}">@${DP.esc(p.usuario)}</a>
+        <span class="verificado" title="Cuenta con correo confirmado y usuario registrado en Vivinati">✓ Cuenta verificada</span>`;
       $('publicado-por').hidden = false;
     });
   }
@@ -187,4 +192,61 @@
     DP.capaMapa(mapa);
     L.circle([i.lat, i.lng], { radius: 150, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0f6b5c' }).addTo(mapa);
   }
+
+  // ---------- Precio de referencia por m² (mediana de inmuebles parecidos) ----------
+  if (!DP.esConcepto(i) && i.precio > 0 && i.metros > 0 && i.moneda === 'USD') {
+    DP.sb.rpc('precio_referencia', { p_id: i.id }).then(({ data }) => {
+      const r = data && data[0];
+      if (!r || !r.m2) return;
+      const m2 = i.precio / i.metros;
+      const dif = Math.round((m2 / r.m2 - 1) * 100);
+      const comp = Math.abs(dif) < 5 ? 'en la media de la zona'
+        : dif < 0 ? `<b class="bien">${-dif} % por debajo</b> de la media` : `<b>${dif} % por encima</b> de la media`;
+      const f = n => Number(n).toLocaleString('es-VE', { maximumFractionDigits: 0 });
+      $('ref-precio').innerHTML = `Este anuncio: <b>$${f(m2)}/m²</b>${i.operacion === 'alquiler' ? ' al mes' : ''}, ${comp}.
+        En ${DP.esc(r.ambito)}, el m² de ${DP.esc(({ apartamento: 'apartamentos', casa: 'casas', anexo: 'anexos', habitacion: 'habitaciones', townhouse: 'townhouses', local: 'locales', oficina: 'oficinas', terreno: 'terrenos', galpon: 'galpones' })[i.tipo] || 'inmuebles')} ${i.operacion === 'venta' ? 'en venta' : 'en alquiler'} ronda
+        <b>$${f(r.m2)}</b> <span>(mediana de ${f(r.muestras)} anuncios)</span>${dif < -40 ? '. <strong>Un precio muy bajo puede ser señal de estafa: verifica antes de pagar.</strong>' : '.'}`;
+      $('ref-precio').hidden = false;
+    });
+  }
+
+  // ---------- Inmuebles parecidos ----------
+  DP.sb.rpc('similares', { p_id: i.id, p_limite: 8 }).then(({ data }) => {
+    if (!data || !data.length) return;
+    const PLURALES = {
+      apartamento: 'apartamentos', casa: 'casas', anexo: 'anexos', habitacion: 'habitaciones', townhouse: 'townhouses',
+      local: 'locales comerciales', oficina: 'oficinas', terreno: 'terrenos', galpon: 'galpones'
+    };
+    $('similares-titulo').textContent = DP.esConcepto(i) ? 'Otros proyectos parecidos'
+      : `Otros ${PLURALES[i.tipo] || 'inmuebles'} ${DP.OPERACIONES[i.operacion].toLowerCase()} en ${i.ciudad || i.estado}`;
+    $('lista-similares').innerHTML = data.map(DP.tarjeta).join('');
+    $('similares').hidden = false;
+  });
+
+  // ---------- Reportar el anuncio ----------
+  const idNavegador = () => {
+    try {
+      let v = localStorage.getItem('dp_cliente');
+      if (!v) { v = crypto.randomUUID(); localStorage.setItem('dp_cliente', v); }
+      return v;
+    } catch { return crypto.randomUUID(); }
+  };
+  const avisar = (t, tipo) => { $('msg-reporte').innerHTML = t ? `<div class="mensaje ${tipo}">${DP.esc(t)}</div>` : ''; };
+  $('btn-reportar').addEventListener('click', () => { $('form-reporte').hidden = false; $('btn-reportar').hidden = true; $('motivo').focus(); });
+  $('cancelar-reporte').addEventListener('click', () => { $('form-reporte').hidden = true; $('btn-reportar').hidden = false; avisar(''); });
+  $('form-reporte').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!$('motivo').value) return avisar('Elige un motivo.', 'error');
+    const { data: { session } } = await DP.sb.auth.getSession();
+    const fila = {
+      inmueble_id: i.id, motivo: $('motivo').value, detalle: $('detalle').value.trim() || null,
+      reportante: session ? session.user.id : idNavegador()
+    };
+    $('enviar-reporte').disabled = true;
+    const { error } = await DP.sb.from('reportes').insert(fila);
+    $('enviar-reporte').disabled = false;
+    if (error && error.code === '23505') return avisar('Ya habías reportado este anuncio. ¡Gracias!', 'ok');
+    if (error) { console.error(error); return avisar('No se pudo enviar el reporte. Inténtalo de nuevo.', 'error'); }
+    $('form-reporte').innerHTML = '<div class="mensaje ok"><strong>Gracias por avisar.</strong> Revisaremos este anuncio.</div>';
+  });
 })();

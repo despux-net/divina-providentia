@@ -6,8 +6,11 @@
   const $ = id => document.getElementById(id);
   const campos = {
     q: $('q'), operacion: $('f-operacion'), tipo: $('f-tipo'), estado: $('f-estado'),
-    min: $('f-min'), max: $('f-max'), hab: $('f-hab'), orden: $('f-orden')
+    min: $('f-min'), max: $('f-max'), hab: $('f-hab'), orden: $('f-orden'),
+    m2min: $('f-m2min'), m2max: $('f-m2max'), banos: $('f-banos'), dias: $('f-dias')
   };
+  // Casillas de «Más filtros» (en la URL como ?estac=1&fotos=1…)
+  const casillas = { estac: $('f-estac'), fotos: $('f-fotos'), vivinati: $('f-vivinati'), bajadas: $('f-bajadas') };
   const PLURAL = {
     apartamento: 'Apartamentos', casa: 'Casas', anexo: 'Anexos', habitacion: 'Habitaciones',
     townhouse: 'Townhouses', local: 'Locales', oficina: 'Oficinas', terreno: 'Terrenos',
@@ -38,6 +41,7 @@
   if (params.get('vista') === 'mapa') vista = 'mapa';
   if (params.get('fav') === '1') soloFavoritos = true;
   if (params.get('conceptos') === '1') conceptos.checked = true;
+  for (const [k, el] of Object.entries(casillas)) el.checked = params.get(k) === '1';
   if (campos.operacion.value === 'concepto') irAConceptos();
 
   function filtros() {
@@ -53,7 +57,15 @@
       // El filtro de precio está en dólares; sin él se muestran todas las monedas.
       p_moneda: min != null || max != null ? 'USD' : null,
       p_habitaciones: num(campos.hab),
-      p_incluir_conceptos: conceptos.checked
+      p_incluir_conceptos: conceptos.checked,
+      p_metros_min: num(campos.m2min),
+      p_metros_max: num(campos.m2max),
+      p_banos: num(campos.banos),
+      p_dias: num(campos.dias),
+      p_estacionamiento: casillas.estac.checked || null,
+      p_con_fotos: casillas.fotos.checked || null,
+      p_solo_vivinati: casillas.vivinati.checked || null,
+      p_bajo_precio: casillas.bajadas.checked || null
     };
   }
 
@@ -63,6 +75,7 @@
     if (vista === 'mapa') p.set('vista', 'mapa');
     if (soloFavoritos) p.set('fav', '1');
     if (conceptos.checked) p.set('conceptos', '1');
+    for (const [k, el] of Object.entries(casillas)) if (el.checked) p.set(k, '1');
     const qs = p.toString();
     history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
   }
@@ -85,6 +98,11 @@
       ? `$${fmt(f.p_precio_min || 0)} – ${f.p_precio_max != null ? '$' + fmt(f.p_precio_max) : 'más'}` : 'Precio';
     $('d-precio').classList.toggle('activa', f.p_precio_min != null || f.p_precio_max != null);
     for (const el of [campos.tipo, campos.operacion, campos.hab, campos.estado]) el.classList.toggle('activa', !!el.value);
+    // «Más filtros (3)»: cuántos hay puestos
+    const extra = [campos.m2min, campos.m2max, campos.banos, campos.dias].filter(el => el.value).length +
+      Object.values(casillas).filter(el => el.checked).length;
+    $('d-mas').querySelector('summary').textContent = extra ? `Más filtros (${extra})` : 'Más filtros';
+    $('d-mas').classList.toggle('activa', extra > 0);
   }
 
   // ---------- Conteos: total, píldoras por tipo y lista de estados ----------
@@ -239,6 +257,7 @@
   function limpiar() {
     for (const [k, el] of Object.entries(campos)) el.value = k === 'orden' ? 'recientes' : '';
     conceptos.checked = false;
+    for (const el of Object.values(casillas)) el.checked = false;
     nuevaBusqueda();
   }
 
@@ -247,6 +266,26 @@
   for (const k of ['tipo', 'estado', 'hab']) campos[k].addEventListener('change', nuevaBusqueda);
   campos.operacion.addEventListener('change', () => (campos.operacion.value === 'concepto' ? irAConceptos() : nuevaBusqueda()));
   conceptos.addEventListener('change', nuevaBusqueda);
+  for (const el of [campos.m2min, campos.m2max, campos.banos, campos.dias, ...Object.values(casillas)]) el.addEventListener('change', nuevaBusqueda);
+  $('d-mas').querySelector('[data-cerrar]').addEventListener('click', () => { $('d-mas').open = false; });
+  document.addEventListener('click', e => { if (!e.target.closest('#d-mas')) $('d-mas').open = false; });
+
+  // ---------- Alertas: «Avísame de anuncios nuevos» con estos filtros ----------
+  $('crear-alerta').addEventListener('click', async () => {
+    const msg = (t, tipo) => { $('msg-alerta').innerHTML = t ? `<div class="mensaje ${tipo}">${t}</div>` : ''; };
+    const { data: { session } } = await DP.sb.auth.getSession();
+    if (!session) {
+      msg(`Para recibir avisos por correo necesitas una cuenta gratuita. <a href="entrar.html?next=${encodeURIComponent('buscar.html' + location.search)}">Entra</a> o <a href="registro.html">crea tu cuenta</a>.`, 'error');
+      return;
+    }
+    const f = Object.fromEntries(Object.entries(filtros()).filter(([, v]) => v !== null && v !== false && v !== ''));
+    const nombre = $('titulo-resultados').textContent.slice(0, 150);
+    const b = $('crear-alerta'); b.disabled = true;
+    const { error } = await DP.sb.from('alertas').insert({ nombre, filtros: f });
+    b.disabled = false;
+    if (error) return msg(DP.esc(/máximo de 5/.test(error.message) ? error.message : 'No se pudo crear la alerta. Inténtalo de nuevo.'), 'error');
+    msg(`<strong>¡Listo!</strong> Te escribiremos a <b>${DP.esc(session.user.email)}</b> cuando aparezcan anuncios nuevos de «${DP.esc(nombre)}». Gestiona tus alertas en <a href="perfil.html#alertas">tu perfil</a>.`, 'ok');
+  });
   campos.orden.addEventListener('change', () => buscar());
   for (const k of ['min', 'max']) campos[k].addEventListener('change', nuevaBusqueda);
   $('d-precio').querySelector('[data-cerrar]').addEventListener('click', () => { $('d-precio').open = false; });
