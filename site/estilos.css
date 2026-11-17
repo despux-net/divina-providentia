@@ -1130,3 +1130,14 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
   .barra-filtros details.pildora > summary { padding: 8px 28px 8px 13px; white-space: nowrap; }
   .barra-fin { flex: none; gap: 8px; }
 }
+
+/* Página 404 (v36) */
+.pagina-404 { max-width: 640px; text-align: center; padding-top: 56px; padding-bottom: 72px; }
+.logo-404 { width: min(320px, 70vw); height: auto; display: block; margin: 0 auto 26px; }
+.codigo-404 { margin: 0 0 4px; color: var(--muted); font-size: .9rem; letter-spacing: .12em; text-transform: uppercase; }
+.pagina-404 h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 500; margin: 0 0 10px; }
+.pagina-404 .sub { margin: 0 auto 22px; max-width: 480px; }
+.buscar-404 { display: flex; gap: 8px; max-width: 520px; margin: 0 auto 22px; }
+.buscar-404 input { flex: 1; min-width: 0; }
+.atajos-404 { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; }
+@media (max-width: 560px) { .buscar-404 { flex-direction: column; } .pagina-404 { padding-top: 32px; } }
