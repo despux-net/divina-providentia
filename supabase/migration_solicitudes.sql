@@ -91,3 +91,64 @@ alter table public.cercanias enable row level security;
 drop policy if exists "Cercanías: lectura pública" on public.cercanias;
 create policy "Cercanías: lectura pública" on public.cercanias for select using (true);
 grant select on public.cercanias to anon, authenticated;
+
+-- ---------------------------------------------------------------
+-- Pin rojo de la demanda: zona donde busca la persona (redondeada a ~100 m).
+alter table public.solicitudes
+  add column if not exists lat double precision,
+  add column if not exists lng double precision;
+alter table public.solicitudes drop constraint if exists solicitudes_pin_venezuela;
+alter table public.solicitudes add constraint solicitudes_pin_venezuela check (
+  (lat is null and lng is null) or (lat between 0.5 and 12.6 and lng between -73.5 and -59.5));
+
+create or replace function public.solicitudes_redondear_pin()
+returns trigger language plpgsql set search_path to '' as $$
+begin
+  if new.lat is not null then new.lat := round(new.lat::numeric, 3); end if;
+  if new.lng is not null then new.lng := round(new.lng::numeric, 3); end if;
+  return new;
+end $$;
+drop trigger if exists solicitudes_redondear_pin on public.solicitudes;
+create trigger solicitudes_redondear_pin before insert or update on public.solicitudes
+  for each row execute function public.solicitudes_redondear_pin();
+
+drop function if exists public.solicitudes_publicas(text, text, text, integer, integer);
+create function public.solicitudes_publicas(
+  p_operacion text default null, p_estado text default null, p_tipo text default null,
+  p_limite integer default 30, p_desde integer default 0)
+returns table(id uuid, user_id uuid, operacion text, tipo text, estado text, zona text, presupuesto numeric,
+              habitaciones integer, descripcion text, creado timestamptz, lat double precision, lng double precision,
+              usuario text, nombre text, avatar_url text, estrellas numeric, valoraciones integer)
+language sql stable security definer set search_path to '' as $$
+  select s.id, s.user_id, s.operacion, s.tipo, s.estado, s.zona, s.presupuesto, s.habitaciones, s.descripcion, s.creado,
+         s.lat, s.lng, p.usuario, p.full_name, p.avatar_url,
+         (select round(avg(v.estrellas)::numeric, 1) from public.valoraciones v where v.usuario_id = s.user_id),
+         (select count(*)::int from public.valoraciones v where v.usuario_id = s.user_id)
+  from public.solicitudes s join public.profiles p on p.id = s.user_id
+  where s.activo and s.expira > now()
+    and (p_operacion is null or s.operacion = p_operacion)
+    and (p_estado is null or s.estado = p_estado)
+    and (p_tipo is null or s.tipo = p_tipo)
+  order by s.creado desc
+  limit least(greatest(p_limite, 1), 60) offset greatest(p_desde, 0)
+$$;
+grant execute on function public.solicitudes_publicas(text, text, text, integer, integer) to anon, authenticated;
+
+-- Puntos rojos para los mapas (hasta 1.000, solo las que tienen pin).
+create or replace function public.mapa_solicitudes(
+  p_operacion text default null, p_estado text default null, p_tipo text default null)
+returns table(id uuid, user_id uuid, operacion text, tipo text, estado text, zona text, presupuesto numeric,
+              habitaciones integer, descripcion text, creado timestamptz, lat double precision, lng double precision,
+              usuario text, nombre text)
+language sql stable security definer set search_path to '' as $$
+  select s.id, s.user_id, s.operacion, s.tipo, s.estado, s.zona, s.presupuesto, s.habitaciones, left(s.descripcion, 160),
+         s.creado, s.lat, s.lng, p.usuario, p.full_name
+  from public.solicitudes s join public.profiles p on p.id = s.user_id
+  where s.activo and s.expira > now() and s.lat is not null and s.lng is not null
+    and (p_operacion is null or s.operacion = p_operacion)
+    and (p_estado is null or s.estado = p_estado)
+    and (p_tipo is null or s.tipo = p_tipo)
+  order by s.creado desc
+  limit 1000
+$$;
+grant execute on function public.mapa_solicitudes(text, text, text) to anon, authenticated;

@@ -201,12 +201,28 @@
       </div></div>`;
   }
 
+  let capaDemanda = null;
   async function cargarMapa(id) {
     if (!mapa) {
       mapa = L.map('mapa', { preferCanvas: true }).setView(DP.CENTRO_VE, 6);
       DP.capaMapa(mapa);
       capaPuntos = L.layerGroup().addTo(mapa);
+      // Capa propia por encima de los puntos azules, para que no queden tapados.
+      mapa.createPane('demanda').style.zIndex = 450;
+      capaDemanda = L.layerGroup().addTo(mapa);
+      $('ver-demanda').addEventListener('change', e => { if (e.target.checked) capaDemanda.addTo(mapa); else capaDemanda.remove(); });
     }
+    $('leyenda-mapa').hidden = false;
+    // Puntos rojos: lo que busca la gente («Busco inmueble») con los mismos filtros.
+    DP.sb.rpc('mapa_solicitudes', {
+      p_operacion: ['venta', 'alquiler'].includes(campos.operacion.value) ? campos.operacion.value : null,
+      p_estado: campos.estado.value || null, p_tipo: campos.tipo.value || null
+    }).then(async ({ data: dem }) => {
+      if (id !== peticion) return;
+      capaDemanda.clearLayers();
+      const { data: { session } } = await DP.sb.auth.getSession();
+      for (const s of dem || []) DP.puntoDemanda(s, session && session.user.id, 'demanda').addTo(capaDemanda);
+    });
     setTimeout(() => mapa.invalidateSize(), 0);
     const { data, error } = await DP.sb.rpc('mapa_inmuebles', filtros());
     if (id !== peticion) return;
@@ -250,6 +266,7 @@
     $('v-mapa').setAttribute('aria-pressed', v === 'mapa');
     $('resultados').hidden = v !== 'lista';
     $('mapa').hidden = v !== 'mapa';
+    $('leyenda-mapa').hidden = v !== 'mapa' || soloFavoritos;
     buscar();
   }
 

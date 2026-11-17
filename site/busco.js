@@ -63,6 +63,28 @@
   $('mas').addEventListener('click', () => cargar(true));
   cargar(false);
 
+  // ---------- Mapa de la demanda: puntos rojos ----------
+  let mapaDemanda = null, capaDemanda = null;
+  async function cargarMapaDemanda() {
+    const { data } = await DP.sb.rpc('mapa_solicitudes', {
+      p_operacion: $('f-operacion').value || null, p_estado: $('f-estado').value || null, p_tipo: $('f-tipo').value || null
+    });
+    const hay = data && data.length;
+    $('mapa-demanda').hidden = !hay; $('leyenda-demanda').hidden = !hay;
+    if (!hay) return;
+    if (!mapaDemanda) {
+      mapaDemanda = L.map('mapa-demanda', { scrollWheelZoom: false }).setView(DP.CENTRO_VE, 6);
+      DP.capaMapa(mapaDemanda);
+      capaDemanda = L.layerGroup().addTo(mapaDemanda);
+    }
+    setTimeout(() => mapaDemanda.invalidateSize(), 0);
+    capaDemanda.clearLayers();
+    for (const s of data) DP.puntoDemanda(s, yo).addTo(capaDemanda);
+    mapaDemanda.fitBounds(L.latLngBounds(data.map(s => [s.lat, s.lng])).pad(0.2), { maxZoom: 12 });
+  }
+  cargarMapaDemanda();
+  ['f-operacion', 'f-tipo', 'f-estado'].forEach(id => $(id).addEventListener('change', cargarMapaDemanda));
+
   // ---------- Tus búsquedas ----------
   async function cargarMias() {
     if (!yo) return;
@@ -89,8 +111,31 @@
   const abrir = () => {
     if (!session) { location.href = 'entrar.html?next=' + encodeURIComponent('busco.html#publicar'); return; }
     $('form-solicitud').hidden = false; $('abrir-form').hidden = true;
+    prepararMapaPin();
     $('form-solicitud').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  // ---------- Pin rojo: la zona donde busca ----------
+  let mapaPin = null, pin = null;
+  const iconoPin = () => L.divIcon({ className: 'icono-pin', html: '<span class="pin-rojo"></span>', iconSize: [26, 34], iconAnchor: [13, 32] });
+  function prepararMapaPin() {
+    if (mapaPin) { setTimeout(() => mapaPin.invalidateSize(), 0); return; }
+    mapaPin = L.map('s-mapa', { scrollWheelZoom: false }).setView(DP.CENTRO_VE, 6);
+    DP.capaMapa(mapaPin);
+    mapaPin.on('click', e => ponerPin(e.latlng));
+    setTimeout(() => mapaPin.invalidateSize(), 0);
+  }
+  function ponerPin(latlng) {
+    if (!pin) {
+      pin = L.marker(latlng, { icon: iconoPin(), draggable: true }).addTo(mapaPin);
+    } else pin.setLatLng(latlng);
+    $('s-ayuda-pin').textContent = 'Pin colocado. Puedes arrastrarlo para ajustarlo.';
+    $('s-ayuda-pin').className = 'ayuda bien';
+  }
+  $('s-estado').addEventListener('change', () => {
+    const c = DP.ESTADOS[$('s-estado').value];
+    if (mapaPin && c && !pin) mapaPin.setView(c, 11);
+  });
   $('abrir-form').addEventListener('click', abrir);
   $('s-cancelar').addEventListener('click', () => { $('form-solicitud').hidden = true; $('abrir-form').hidden = false; });
   if (location.hash === '#publicar' && session) abrir();
@@ -107,17 +152,23 @@
     const descripcion = $('s-descripcion').value.trim();
     if (!$('s-estado').value) return DP.mensaje(m, 'Elige el estado donde buscas.');
     if (descripcion.length < 20) return DP.mensaje(m, 'Cuéntanos un poco más (mínimo 20 caracteres).');
+    if (!pin) { $('s-mapa').scrollIntoView({ behavior: 'smooth', block: 'center' }); return DP.mensaje(m, 'Marca en el mapa la zona donde buscas (toca el mapa para poner el pin rojo).'); }
+    const { lat, lng } = pin.getLatLng();
+    if (lat < 0.5 || lat > 12.6 || lng < -73.5 || lng > -59.5) return DP.mensaje(m, 'El pin debe estar dentro de Venezuela.');
     const perfil = await DP.miPerfil();
     if (!perfil || !perfil.usuario) return DP.mensaje(m, 'Antes de publicar, elige tu @usuario en «Mi perfil».');
     $('s-btn').disabled = true;
     const presupuesto = Number($('s-presupuesto').value) || null;
     const { error } = await DP.sb.from('solicitudes').insert({
       operacion: $('s-operacion').value, tipo: $('s-tipo').value || null, estado: $('s-estado').value,
-      zona: $('s-zona').value.trim() || null, presupuesto, habitaciones: Number($('s-hab').value) || null, descripcion
+      zona: $('s-zona').value.trim() || null, presupuesto, habitaciones: Number($('s-hab').value) || null, descripcion,
+      lat, lng
     });
     $('s-btn').disabled = false;
     if (error) return DP.mensaje(m, /máximo 5/.test(error.message) ? 'Puedes tener como máximo 5 búsquedas publicadas. Cierra alguna antes.' : 'No se pudo publicar. Revisa los datos e inténtalo de nuevo.');
     $('form-solicitud').reset(); etiquetaPresupuesto();
+    if (pin) { pin.remove(); pin = null; $('s-ayuda-pin').className = 'ayuda'; }
+    cargarMapaDemanda();
     $('form-solicitud').hidden = true; $('abrir-form').hidden = false;
     DP.mensaje($('resumen-busco'), '');
     cargarMias(); cargar(false);

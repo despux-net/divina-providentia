@@ -13,7 +13,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=42">
+  <link rel="stylesheet" href="estilos.css?v=43">
 </head>
 <body>
   <header class="cabecera">
@@ -137,6 +137,10 @@
       </div>
       <div id="resultados" class="rejilla resultados-dos"></div>
       <div id="mapa" hidden></div>
+      <div class="leyenda-mapa" id="leyenda-mapa" hidden>
+        <span><span class="punto-azul"></span> Inmuebles en oferta</span>
+        <label class="check"><input type="checkbox" id="ver-demanda" checked> <span class="punto-rojo"></span> Lo que busca la gente <a href="busco.html">(ver todo)</a></label>
+      </div>
       <div class="mas"><button class="boton sec" id="mas" hidden>Ver más anuncios</button></div>
       <p class="sub busco-aviso">¿No encuentras lo que buscas? <a href="busco.html#publicar">Publica lo que buscas</a> y deja que los anunciantes te escriban.</p>
     </main>
@@ -146,7 +150,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=26"></script>
-  <script src="buscar.js?v=9"></script>
+  <script src="comun.js?v=29"></script>
+  <script src="buscar.js?v=11"></script>
 </body>
 </html>

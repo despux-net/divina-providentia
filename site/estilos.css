@@ -1220,3 +1220,22 @@ a.eleccion:hover { text-decoration: none; }
   .cabecera .nav .menu-desplegable a:not([data-salir]) { display: none; }
   .cabecera .nav .menu-desplegable [data-salir] { color: #fff; border: 1px solid rgba(255, 255, 255, .55); border-radius: 999px; margin: 0; padding: 3px 10px; font-size: .8rem; }
 }
+
+/* Demanda en el mapa: puntos rojos (v43) */
+.punto-azul, .punto-rojo { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.15); vertical-align: -1px; }
+.punto-azul { background: #1976d2; }
+.punto-rojo { background: #d93025; }
+.leyenda-mapa { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center; margin: 10px 0 0; font-size: .88rem; color: var(--muted); }
+.leyenda-mapa .check { font-size: .88rem; color: var(--ink); gap: 6px; }
+.leyenda-mapa a { font-size: .84rem; }
+.globo-demanda { display: grid; gap: 3px; font-size: .86rem; line-height: 1.4; min-width: 200px; }
+.globo-demanda strong { font-size: .95rem; color: #d93025; }
+.globo-demanda span { color: var(--muted); }
+.globo-demanda .globo-demanda-datos { color: var(--ink); font-weight: 500; }
+.globo-demanda p { margin: 4px 0; color: var(--ink); }
+.globo-demanda .boton { justify-self: start; margin-top: 4px; color: #fff; }
+.mapa-pin { height: 280px; border-radius: 10px; border: 1px solid var(--line); cursor: crosshair; }
+.mapa-demanda { height: 320px; border-radius: 12px; border: 1px solid var(--line); margin: 6px 0 4px; }
+.icono-pin { background: none; border: 0; }
+.pin-rojo { display: block; width: 26px; height: 26px; margin: 0 auto; background: #d93025; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+.pin-rojo::after { content: ""; position: absolute; width: 8px; height: 8px; left: 6px; top: 6px; background: #fff; border-radius: 50%; }

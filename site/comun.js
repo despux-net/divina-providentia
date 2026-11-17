@@ -62,6 +62,25 @@ const DP = {
       </div></article>`;
   },
 
+  // Punto rojo de la demanda en un mapa Leaflet (lo que busca la gente).
+  ESTILO_DEMANDA: { radius: 9, color: '#ffffff', weight: 2.5, fillColor: '#d93025', fillOpacity: 0.95 },
+  puntoDemanda(s, yo, pane) {
+    const punto = L.circleMarker([s.lat, s.lng], pane ? { ...DP.ESTILO_DEMANDA, pane } : DP.ESTILO_DEMANDA);
+    const nombre = s.nombre || (s.usuario ? '@' + s.usuario : 'Usuario');
+    const datos = DP.datosBusqueda(s);
+    punto.bindPopup(`<div class="globo-demanda">
+        <strong>${DP.esc(DP.queBusca(s))}</strong>
+        <span>${DP.esc([s.zona, s.estado].filter(Boolean).join(', '))}</span>
+        ${datos ? `<span class="globo-demanda-datos">${DP.esc(datos)}</span>` : ''}
+        <p>${DP.esc(s.descripcion || '')}</p>
+        <span class="globo-demanda-autor">${DP.esc(nombre)} · ${DP.haceCuanto(s.creado)}</span>
+        ${s.user_id === yo ? '' : `<a class="boton peq" href="chat.html?con=${encodeURIComponent(s.user_id)}">Escribirle</a>`}
+      </div>`, { maxWidth: 260, className: 'popup-demanda' });
+    punto.on('mouseover', () => punto.setStyle({ radius: 11 }));
+    punto.on('mouseout', () => punto.setStyle({ radius: 9 }));
+    return punto;
+  },
+
   // Perfil público: etiquetas (tipo, empresa, zona) y enlaces de contacto.
   etiquetasPerfil(p) {
     if (!p) return '';
