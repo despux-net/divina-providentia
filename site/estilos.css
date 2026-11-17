@@ -980,11 +980,11 @@ a.caja.categoria { text-decoration: none; }
 .aviso-importante ul { margin: 8px 0 0; }
 
 /* Registro: casilla de aceptar condiciones */
-.aceptar-condiciones { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 14px 0; background: var(--bg-azul); }
+.aceptar-condiciones { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; margin: 12px 0; background: var(--bg-azul); }
 .aceptar-condiciones.falta { border-color: #e53935; background: #fff5f5; }
-.casilla-condiciones { display: flex; gap: 10px; align-items: flex-start; margin: 0; font-size: .88rem; line-height: 1.45; cursor: pointer; }
-.casilla-condiciones input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: var(--accent); }
-.aceptar-condiciones .enlace { margin: 8px 0 0 30px; font-size: .9rem; font-weight: 500; }
+.casilla-condiciones { display: flex; gap: 10px; align-items: center; margin: 0; font-size: .88rem; line-height: 1.45; cursor: pointer; }
+.casilla-condiciones input { width: 18px; height: 18px; margin: 0; flex: none; accent-color: var(--accent); }
+.aceptar-condiciones .enlace { font-size: inherit; font-weight: 500; vertical-align: baseline; }
 
 /* Ventana de condiciones */
 .ventana-condiciones { border: 0; padding: 0; width: min(760px, 94vw); max-height: 88vh; border-radius: 16px; display: none; flex-direction: column; }
