@@ -22,10 +22,14 @@ import { leerRobots } from './robots.mjs';
 import { fuente as rentahouse } from './fuentes/rentahouse.mjs';
 import { fuente as inmuebleoferta } from './fuentes/inmuebleoferta.mjs';
 import { WASI } from './fuentes/wasi.mjs';
+import { fuente as zonaven } from './fuentes/zonaven.mjs';
+import { fuente as viveven } from './fuentes/viveven.mjs';
 
 // HabitaOne (habitaone.com) queda fuera: su Cloudflare bloquea a los bots
 // (403) y no lo vamos a sortear. Además copia anuncios de otros portales.
-const TODAS = [rentahouse, inmuebleoferta, ...WASI];
+// MercadoPiso responde 403 a los bots y Portal Inmobiliario copia fichas de
+// otras webs: no se indexan. ZonaVen y ViveVen son portales con fichas propias.
+const TODAS = [rentahouse, inmuebleoferta, ...WASI, zonaven, viveven];
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nzwtafacdpdgulzcwntx.supabase.co';
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const BOT = 'VivinatiBot';
@@ -39,6 +43,15 @@ const SOLO = opcion('--solo');
 const FUENTES = SOLO ? TODAS.filter(f => f.nombre === SOLO) : TODAS;
 const MAX_FICHAS = PRUEBA || Number(process.env.MAX_FICHAS || Infinity);
 const FIN = Date.now() + Number(process.env.MAX_MINUTOS || 320) * 60_000;
+
+// Quita teléfonos, correos y enlaces de WhatsApp de los textos de otras webs:
+// para contactar se va al anuncio original (ver privacidad.html).
+const sinContacto = t => t == null ? t : String(t)
+  .replace(/https?:\/\/(wa\.me|api\.whatsapp\.com)\S*/gi, '')
+  .replace(/[\w.+-]+@[\w-]+\.[\w.]{2,}/g, '')
+  .replace(/\+?\d[\d\s().-]{8,}\d/g, m => (m.replace(/\D/g, '').length >= 10 ? '' : m))
+  .replace(/\b(whats?app|tel[eé]fono|tlf|cel(ular)?)\b\s*[:.]?[ \t]*(?=[\n,.;]|$)/gim, '')
+  .replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim() || null;
 
 const dormir = ms => new Promise(r => setTimeout(r, ms));
 const hora = () => new Date().toISOString().slice(11, 19);
@@ -125,7 +138,7 @@ async function indexar(f) {
     if (!robots.permitido(sm)) continue;
     const r = await pedir(sm);
     if (r.estado !== 200) throw new Error(`Sitemap ${sm} respondió ${r.estado}`);
-    entradas.push(...leerSitemap(r.texto).filter(e => robots.permitido(e.url)));
+    entradas.push(...leerSitemap(r.texto).filter(e => robots.permitido(e.url) && (!f.filtroFichas || f.filtroFichas.test(e.url))));
   }
   if (entradas.length < (f.minimoSitemap ?? 100) && !PRUEBA) throw new Error(`Sitemaps sospechosamente cortos (${entradas.length}); no se toca nada.`);
   log(`${entradas.length} fichas permitidas en ${sitemaps.length} sitemap(s). Pausa: ${pausa / 1000}s`);
@@ -170,7 +183,8 @@ async function indexar(f) {
     const datos = f.extraer(res.texto, e.url);
     if (!datos) { fallos++; continue; }
     const fila = {
-      ...datos, origen: 'externo', fuente: f.nombre, url_original: e.url, whatsapp: null,
+      ...datos, titulo: sinContacto(datos.titulo), descripcion: sinContacto(datos.descripcion),
+      origen: 'externo', fuente: f.nombre, url_original: e.url, whatsapp: null,
       activo: true, visto_en: new Date().toISOString(), prioridad: f.prioridad,
       fuente_modificado: datos.fuente_modificado || (e.lastmod ? e.lastmod.toISOString() : null)
     };
