@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#005CA7">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="estilos.css?v=30">
+  <link rel="stylesheet" href="estilos.css?v=31">
 </head>
 <body>
   <header class="cabecera">
@@ -32,7 +32,7 @@
           <h2>🔒 Tu chat está cifrado</h2>
           <p id="texto-desbloquear">Para leer y escribir mensajes en este navegador, confirma tu contraseña de Vivinati. Solo se usa aquí, en tu dispositivo: nunca sale de él.</p>
           <form id="form-desbloquear">
-            <label for="clave">Contraseña</label>
+            <label for="clave" id="etiqueta-clave">Contraseña</label>
             <input type="password" id="clave" autocomplete="current-password" required>
             <div id="msg-desbloquear"></div>
             <button class="boton" type="submit">Abrir mis mensajes</button>
@@ -67,8 +67,8 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=19"></script>
+  <script src="comun.js?v=20"></script>
   <script src="cifrado.js?v=2"></script>
-  <script src="chat.js?v=1"></script>
+  <script src="chat.js?v=2"></script>
 </body>
 </html>

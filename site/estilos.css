@@ -1054,3 +1054,14 @@ input[type=url] { width: 100%; padding: 10px 12px; border: 1px solid var(--line)
 .anfitrion-etiquetas { margin: 12px 0 0; }
 @media (max-width: 860px) { .menu-cuenta { position: static; } }
 @media (max-width: 560px) { .cabecera .nav .nav-perfil { display: none !important; } }
+
+/* ---------- Continuar con Google ---------- */
+.separador-o { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: .88rem; margin: 18px 0 14px; }
+.separador-o::before, .separador-o::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.boton-social { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 16px;
+  background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; font: inherit; font-weight: 600;
+  box-shadow: var(--shadow); cursor: pointer; transition: box-shadow .15s, border-color .15s; }
+.boton-social:hover { border-color: var(--azul-medio); box-shadow: var(--shadow-hover); }
+.boton-social:disabled { opacity: .6; cursor: default; }
+.legal-social { font-size: .8rem; color: var(--muted); margin: 10px 0 0; text-align: center; }
+.legal-social a { text-decoration: underline; color: inherit; }

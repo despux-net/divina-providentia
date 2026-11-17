@@ -7,6 +7,7 @@
   const session = await DP.cabecera();
   if (session) { location.href = 'perfil.html'; return; }
 
+  DP.botonesSociales($('sociales'), DP.siguiente('perfil.html'));
   const robot = DP.antirrobot($('antirrobot'));
   const ayudaUsuario = $('ayuda-usuario');
   const textoAyuda = ayudaUsuario.textContent;

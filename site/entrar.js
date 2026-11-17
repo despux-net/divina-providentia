@@ -17,7 +17,14 @@
     setTimeout(() => { location.href = 'perfil.html?bienvenida=1'; }, 1800);
     return;
   }
+  // Vuelta de Google: las cuentas nuevas aún no tienen @usuario → a elegirlo.
+  if (params.get('oauth') && session) {
+    const p = await DP.miPerfil();
+    location.href = p && p.usuario ? destino : 'perfil.html?bienvenida=1';
+    return;
+  }
   if (session) { location.href = destino; return; }
+  DP.botonesSociales($('sociales'), destino);
   const errorEnlace = new URLSearchParams(location.hash.slice(1)).get('error_description');
   if (errorEnlace) DP.mensaje($('msg'), 'El enlace no es válido o ya caducó. Entra con tu contraseña o pide uno nuevo.');
 

@@ -26,7 +26,16 @@
     if (estado === 'lista') return true;
     $('sin-conversacion').hidden = true;
     $('desbloquear').hidden = false;
-    if (estado === 'sin-claves') {
+    // Cuentas creadas con Google: no tienen contraseña de Vivinati, así que
+    // el respaldo de la clave del chat se protege con una «clave del chat».
+    const sinContraseña = !((session.user.app_metadata || {}).providers || []).includes('email');
+    if (sinContraseña) {
+      $('etiqueta-clave').textContent = 'Clave del chat';
+      $('clave').autocomplete = estado === 'sin-claves' ? 'new-password' : 'current-password';
+      $('texto-desbloquear').textContent = estado === 'sin-claves'
+        ? 'Entraste con Google, así que crea una clave para tu chat cifrado (mínimo 8 caracteres). Te la pediremos al abrir tus mensajes en otro teléfono u ordenador. Guárdala bien: Vivinati no la conoce y no puede recuperarla.'
+        : 'Para leer tus mensajes en este navegador, escribe la clave del chat que creaste la primera vez. Solo se usa aquí, en tu dispositivo.';
+    } else if (estado === 'sin-claves') {
       // Nunca se crearon claves (cuenta anterior al chat): hace falta entrar con la contraseña.
       $('texto-desbloquear').textContent = 'Para activar tu chat cifrado, vuelve a entrar con tu correo y contraseña (solo esta vez).';
       $('form-desbloquear').hidden = true;
@@ -39,11 +48,12 @@
     return new Promise(listo => {
       $('form-desbloquear').addEventListener('submit', async e => {
         e.preventDefault();
+        if (sinContraseña && estado === 'sin-claves' && $('clave').value.length < 8) return DP.mensaje($('msg-desbloquear'), 'La clave del chat debe tener al menos 8 caracteres.');
         const b = e.target.querySelector('button'); b.disabled = true; b.textContent = 'Abriendo…';
         const r = await DP.e2e.desbloquear($('clave').value).catch(() => 'error');
         b.disabled = false; b.textContent = 'Abrir mis mensajes';
         if (r === 'ok' || r === 'nueva') { $('desbloquear').hidden = true; $('clave').value = ''; listo(true); }
-        else DP.mensaje($('msg-desbloquear'), r === 'contraseña' ? 'Esa no es tu contraseña. Inténtalo de nuevo.' : 'No se pudo abrir el chat.');
+        else DP.mensaje($('msg-desbloquear'), r === 'contraseña' ? (sinContraseña ? 'Esa no es la clave de tu chat. Inténtalo de nuevo.' : 'Esa no es tu contraseña. Inténtalo de nuevo.') : 'No se pudo abrir el chat.');
       });
     });
   }
