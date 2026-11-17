@@ -1,6 +1,6 @@
 {
-  "cabecera": "/img/logo-vivinati-v2.png",
-  "cabecera_movil": "/img/logo-vivinati-blanco-v2.png",
-  "pie": "/img/sello-vivinati.png",
-  "banda": "/img/logo-vivinati-banda.png"
+  "cabecera": "/media/logos/logo-vivinati-v2.png",
+  "cabecera_movil": "/media/logos/logo-vivinati-blanco-v2.png",
+  "pie": "/media/logos/sello-vivinati.png",
+  "banda": "/media/logos/logo-vivinati-banda.png"
 }
