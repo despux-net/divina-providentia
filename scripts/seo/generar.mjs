@@ -382,7 +382,7 @@ const paginasPrecios = [];
 const propios = await tabla('inmuebles?select=id,actualizado&origen=eq.usuario&activo=eq.true&order=actualizado.desc&limit=5000');
 const urls = [
   ['/', 'daily', '1.0'], ['/buscar.html', 'daily', '0.9'], ['/conceptos.html', 'daily', '0.8'],
-  ['/publicar.html', 'monthly', '0.6'], ['/bot.html', 'yearly', '0.3'],
+  ['/publicar.html', 'monthly', '0.6'], ['/bot.html', 'yearly', '0.3'], ['/condiciones.html', 'yearly', '0.3'],
   ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7']),
   ...paginasPrecios.map(u => [u, 'weekly', '0.6'])
 ].map(([u, f, pr]) => `<url><loc>${DOMINIO}${u}</loc><lastmod>${HOY}</lastmod><changefreq>${f}</changefreq><priority>${pr}</priority></url>`)

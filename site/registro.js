@@ -41,6 +41,31 @@
   $('clave').addEventListener('input', comprobarIguales);
   $('clave2').addEventListener('input', comprobarIguales);
 
+  // ---------- Condiciones: ventana «Leer condiciones» ----------
+  const ventana = $('ventana-condiciones');
+  let cargadas = false;
+  $('leer-condiciones').addEventListener('click', async () => {
+    ventana.showModal();
+    if (cargadas) return;
+    try {
+      const html = await fetch('condiciones.html', { cache: 'no-cache' }).then(r => r.text());
+      const art = new DOMParser().parseFromString(html, 'text/html').getElementById('condiciones');
+      art.querySelector('h1').remove();
+      $('texto-condiciones').replaceChildren(...art.childNodes);
+      cargadas = true;
+    } catch {
+      $('texto-condiciones').innerHTML = '<p>No se pudieron cargar. <a href="condiciones.html" target="_blank" rel="noopener">Ábrelas aquí</a>.</p>';
+    }
+  });
+  $('cerrar-condiciones').addEventListener('click', () => ventana.close());
+  ventana.addEventListener('click', e => { if (e.target === ventana) ventana.close(); });
+  $('aceptar-condiciones').addEventListener('click', () => {
+    $('acepto').checked = true; DP.mensaje($('msg'), '');
+    $('acepto').closest('.aceptar-condiciones').classList.remove('falta');
+    ventana.close();
+  });
+  $('acepto').addEventListener('change', () => { $('acepto').closest('.aceptar-condiciones').classList.remove('falta'); if ($('acepto').checked) DP.mensaje($('msg'), ''); });
+
   $('form-registro').addEventListener('submit', async e => {
     e.preventDefault();
     const msg = $('msg');
@@ -56,6 +81,10 @@
     const problema = DP.problemaContrasena(clave);
     if (problema) return DP.mensaje(msg, problema);
     if (clave !== clave2) return DP.mensaje(msg, 'Las dos contraseñas no coinciden.');
+    if (!$('acepto').checked) {
+      $('acepto').closest('.aceptar-condiciones').classList.add('falta');
+      return DP.mensaje(msg, 'Para crear tu cuenta debes leer y aceptar las condiciones de uso.');
+    }
     if (robot.activo && !robot.token()) return DP.mensaje(msg, 'Marca la casilla «No soy un robot».');
 
     const btn = $('btn');
@@ -65,7 +94,7 @@
     const { data, error } = await DP.sb.auth.signUp({
       email, password: clave,
       options: {
-        data: { usuario, nombre },
+        data: { usuario, nombre, condiciones_version: 1, condiciones_aceptadas: new Date().toISOString() },
         emailRedirectTo: `${location.origin}/entrar.html?activada=1`,
         captchaToken: robot.token()
       }

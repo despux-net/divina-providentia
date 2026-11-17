@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=25">
+  <link rel="stylesheet" href="estilos.css?v=26">
 </head>
 <body>
   <header class="cabecera">
@@ -53,6 +53,14 @@
           </div>
         </fieldset>
 
+        <div class="aceptar-condiciones">
+          <label class="casilla-condiciones">
+            <input type="checkbox" id="acepto" required>
+            <span>He leído y acepto las <b>condiciones de uso</b> y el <b>aviso de responsabilidad</b>: Vivinati no se hace responsable de estafas ni engaños; quien publica responde por su contenido y yo verificaré por mi cuenta (llamadas, visitas, documentos) antes de cualquier trato.</span>
+          </label>
+          <button type="button" class="enlace" id="leer-condiciones">Leer condiciones</button>
+        </div>
+
         <div id="antirrobot" class="antirrobot"></div>
         <div id="msg"></div>
         <button class="boton" type="submit" id="btn">Crear cuenta</button>
@@ -67,10 +75,23 @@
     </div>
   </main>
 
+  <!-- Ventana con las condiciones (se cargan de condiciones.html) -->
+  <dialog class="ventana-condiciones" id="ventana-condiciones" aria-labelledby="titulo-ventana">
+    <div class="ventana-cab">
+      <strong id="titulo-ventana">Condiciones de uso y aviso de responsabilidad</strong>
+      <button type="button" class="cerrar-ventana" id="cerrar-condiciones" aria-label="Cerrar">×</button>
+    </div>
+    <div class="ventana-cuerpo texto-legal" id="texto-condiciones"><p>Cargando…</p></div>
+    <div class="ventana-pie">
+      <a href="condiciones.html" target="_blank" rel="noopener">Abrir en otra pestaña</a>
+      <button type="button" class="boton" id="aceptar-condiciones">He leído y acepto</button>
+    </div>
+  </dialog>
+
   <footer class="pie">© Vivinati</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=16"></script>
-  <script src="registro.js?v=2"></script>
+  <script src="comun.js?v=17"></script>
+  <script src="registro.js?v=3"></script>
 </body>
 </html>

@@ -449,7 +449,7 @@ DP.pie = () => {
     </a>
     <div class="legal">
       <span>© ${anio} Vivinati</span>
-      <span>Los anuncios son responsabilidad de quien los publica. Los anuncios de otras webs enlazan siempre a su original.</span>
+      <span>Los anuncios son responsabilidad de quien los publica; Vivinati no se hace responsable de estafas ni engaños. <a href="condiciones.html">Condiciones de uso</a></span>
     </div>
   </div>`;
 };
