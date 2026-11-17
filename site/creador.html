@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=29">
+  <link rel="stylesheet" href="estilos.css?v=30">
 </head>
 <body>
   <header class="cabecera">
@@ -36,9 +36,11 @@
           <p class="autor-usuario" id="usuario"></p>
           <p id="valoracion"></p>
           <p class="perfil-resumen" id="resumen"></p>
+          <p class="chips-datos perfil-etiquetas" id="etiquetas" hidden></p>
         </div>
         <div class="perfil-acciones">
           <a class="boton peq" id="escribir" hidden>Enviar mensaje</a>
+          <span class="perfil-contactos" id="contactos"></span>
           <button type="button" class="boton sec peq" id="compartir">Compartir perfil</button>
         </div>
       </div>
@@ -70,7 +72,7 @@
   <footer class="pie"></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=18"></script>
-  <script src="creador.js?v=4"></script>
+  <script src="comun.js?v=19"></script>
+  <script src="creador.js?v=5"></script>
 </body>
 </html>

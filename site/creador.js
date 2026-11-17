@@ -1,6 +1,7 @@
 // Página pública de un creador: creador.html?u=usuario (y vivinati.com/@usuario,
 // que 404.html redirige aquí). Muestra su portafolio de conceptos 3D y sus
-// inmuebles activos. Nunca se muestra el correo ni el teléfono del perfil.
+// inmuebles activos. Nunca se muestra el correo; el WhatsApp solo si la
+// persona marcó «Mostrar mi WhatsApp en mi perfil público».
 (async () => {
   const $ = id => document.getElementById(id);
   DP.cabecera();
@@ -16,6 +17,9 @@
   $('avatar').innerHTML = DP.avatar({ nombre, avatar_url: p.avatar_url }, 88);
   $('valoracion').innerHTML = DP.estrellas(p.estrellas, p.valoraciones) +
     (p.miembro_desde ? ` <span class="insignia-gris">· En Vivinati desde ${new Date(p.miembro_desde + 'T12:00:00').toLocaleDateString('es-VE', { month: 'long', year: 'numeric' })}</span>` : '');
+  const etiquetas = DP.etiquetasPerfil(p);
+  if (etiquetas) { $('etiquetas').innerHTML = etiquetas; $('etiquetas').hidden = false; }
+  $('contactos').innerHTML = DP.contactosPerfil(p);
   if (p.biografia) { $('biografia').textContent = p.biografia; $('sobre-mi').hidden = false; }
   document.querySelector('meta[name="description"]').setAttribute('content',
     (p.biografia || `Perfil de ${nombre} en Vivinati: inmuebles y proyectos en Venezuela.`).slice(0, 160));

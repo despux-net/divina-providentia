@@ -18,8 +18,32 @@ const DP = {
   // Conceptos 3D (proyectos conceptuales: renders, bocetos, tesis…)
   ETAPAS: { conceptual: 'Proyecto conceptual', tesis: 'Tesis', anteproyecto: 'Anteproyecto', infraestructura: 'Infraestructura' },
   ROLES: { estudiante: 'Estudiante', arquitecto: 'Arquitecto/a', emprendedor: 'Emprendedor/a', estudio: 'Estudio' },
+  TIPOS_PERFIL: { particular: 'Particular', agente: 'Agente inmobiliario', inmobiliaria: 'Inmobiliaria', constructora: 'Constructora o promotora', arquitecto: 'Arquitecto/a o estudio', estudiante: 'Estudiante de arquitectura o diseño', otro: 'Otro' },
   CATEGORIAS: { residencial: 'Residencial', urbano: 'Urbano', infraestructura: 'Infraestructura', comercial: 'Comercial' },
   esConcepto(i) { return i && i.operacion === 'concepto'; },
+
+  // Perfil público: etiquetas (tipo, empresa, zona) y enlaces de contacto.
+  etiquetasPerfil(p) {
+    if (!p) return '';
+    const zona = [p.ciudad, p.estado].filter(Boolean).join(', ');
+    return [p.tipo_perfil && DP.TIPOS_PERFIL[p.tipo_perfil], p.empresa, zona && '📍 ' + zona]
+      .filter(Boolean).map(t => `<span class="chip-dato">${DP.esc(t)}</span>`).join('');
+  },
+  numeroWa(v) {
+    let d = String(v || '').replace(/\D/g, '');
+    if (/^0\d{10}$/.test(d)) d = '58' + d.slice(1);
+    else if (/^[24]\d{9}$/.test(d)) d = '58' + d;
+    return /^\d{10,15}$/.test(d) ? d : null;
+  },
+  contactosPerfil(p) {
+    if (!p) return '';
+    const wa = DP.numeroWa(p.whatsapp), l = [];
+    if (wa) l.push(`<a class="boton sec peq wa-sec" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`);
+    if (p.instagram && /^[a-z0-9._]{1,30}$/.test(p.instagram)) l.push(`<a class="boton sec peq" href="https://instagram.com/${p.instagram}" target="_blank" rel="noopener nofollow">Instagram</a>`);
+    const web = p.sitio_web && /^https:\/\//.test(p.sitio_web) && DP.urlSegura(p.sitio_web);
+    if (web) l.push(`<a class="boton sec peq" href="${DP.esc(web)}" target="_blank" rel="noopener nofollow ugc">Página web ↗</a>`);
+    return l.join('');
+  },
 
   // Estado → capital aproximada, para centrar el mapa.
   ESTADOS: {
@@ -269,7 +293,7 @@ const DP = {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return null;
     if (!DP._perfil) {
-      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email, avatar_url, biography').eq('id', session.user.id).maybeSingle();
+      const { data } = await sb.from('profiles').select('id, usuario, full_name, phone, email, avatar_url, biography, tipo_perfil, empresa, estado, ciudad, sitio_web, instagram, mostrar_telefono').eq('id', session.user.id).maybeSingle();
       DP._perfil = data || { id: session.user.id, usuario: null };
     }
     return DP._perfil;

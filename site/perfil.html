@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="estilos.css?v=29">
+  <link rel="stylesheet" href="estilos.css?v=30">
 </head>
 <body>
   <header class="cabecera">
@@ -24,59 +24,127 @@
     </div>
   </header>
 
-  <main class="contenedor">
-    <div class="form cuenta">
+  <main class="contenedor perfil-app">
+    <aside class="menu-cuenta" aria-label="Mi cuenta">
+      <a href="#datos" data-seccion="datos">Mi perfil</a>
+      <a href="#sobre-mi" data-seccion="sobre-mi">Sobre mí</a>
+      <a href="#mis-estrellas" data-seccion="mis-estrellas">Mi puntuación</a>
+      <a href="mis-anuncios.html">Mis anuncios</a>
+      <a href="buscar.html?fav=1">Favoritos</a>
+      <a href="chat.html">Mensajes</a>
+      <a href="#alertas" data-seccion="alertas">Alertas por correo</a>
+      <a href="#acceso" data-seccion="acceso">Datos de acceso</a>
+      <a href="condiciones.html">Condiciones y privacidad</a>
+      <a href="#eliminar" data-seccion="eliminar" class="peligro">Eliminar cuenta</a>
+    </aside>
+
+    <div class="perfil-contenido">
       <div id="bienvenida" hidden class="mensaje ok"><strong>¡Bienvenido!</strong> Tu cuenta está activa.
         <a href="publicar.html">Publica tu primer inmueble</a>.</div>
-      <h1>Mi perfil</h1>
-      <div class="editar-avatar">
-        <span id="avatar-actual"></span>
-        <div>
-          <p class="sub" id="correo"></p>
-          <p><label class="boton sec peq" for="archivo-avatar">Cambiar foto</label>
-            <button type="button" class="enlace peligro" id="quitar-avatar" hidden>Quitar foto</button></p>
-          <input type="file" id="archivo-avatar" accept="image/jpeg,image/png,image/webp" hidden>
-          <p class="ayuda">Se recorta en cuadrado y se optimiza sola. Se verá en tus anuncios y en el chat.</p>
-          <div id="msg-avatar"></div>
+
+      <section id="datos" class="perfil-seccion">
+        <h1 class="perfil-titulo">Mi perfil</h1>
+        <div class="avatar-grande">
+          <span id="avatar-actual"></span>
+          <label class="avatar-editar" for="archivo-avatar">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            Editar</label>
         </div>
-      </div>
-      <p class="accesos-perfil"><a href="mis-anuncios.html">Mis anuncios</a> · <a href="chat.html">Mis mensajes</a></p>
+        <input type="file" id="archivo-avatar" accept="image/jpeg,image/png,image/webp" hidden>
+        <p class="centrado"><button type="button" class="enlace peligro" id="quitar-avatar" hidden>Quitar foto</button></p>
+        <div id="msg-avatar"></div>
+        <p class="centrado sub" id="enlace-publico" hidden></p>
+
+        <div class="completo" id="completo" hidden>
+          <div class="completo-cab"><strong id="completo-texto"></strong><span id="completo-falta"></span></div>
+          <div class="completo-barra"><span id="completo-relleno"></span></div>
+        </div>
+      </section>
 
       <form id="form-perfil" novalidate>
-        <fieldset>
-          <div class="campo"><label for="nombre">Nombre <small>(se verá en tus anuncios)</small></label>
-            <input type="text" id="nombre" maxlength="80" autocomplete="name" required></div>
-          <div class="campo"><label for="usuario">Usuario</label>
-            <div class="arroba"><span>@</span><input type="text" id="usuario" maxlength="20" autocapitalize="none" spellcheck="false" required></div>
-            <small class="ayuda" id="ayuda-usuario">De 3 a 20 letras minúsculas, números o _</small></div>
-          <div class="campo"><label for="telefono">WhatsApp <small>(opcional; se rellenará solo al publicar)</small></label>
-            <input type="tel" id="telefono" autocomplete="tel" placeholder="Ej.: 0414 123 4567"></div>
-          <div class="campo"><label for="biografia">Sobre mí / mi negocio <small>(opcional; se verá en tu perfil público)</small></label>
-            <textarea id="biografia" maxlength="1000" rows="5" placeholder="Ej.: Agente inmobiliario en Caracas desde 2015. Me especializo en apartamentos en el este (Chacao, Altamira, Los Palos Grandes). Atiendo de lunes a sábado. Abierto a alianzas con otras inmobiliarias y constructoras."></textarea>
-            <small class="ayuda" id="ayuda-biografia">Cuéntale a la gente a qué te dedicas, en qué zonas trabajas y qué tipo de negocios buscas. Máximo 1.000 caracteres.</small></div>
-        </fieldset>
-        <div id="msg"></div>
-        <button class="boton" type="submit" id="btn">Guardar cambios</button>
-        <a class="boton sec" href="restablecer.html">Cambiar contraseña</a>
-      </form>
-      <p class="sub" id="enlace-publico" hidden></p>
+        <section class="perfil-seccion">
+          <h2 class="perfil-sub">Información del perfil</h2>
+          <div class="rejilla-campos">
+            <div class="campo"><label for="nombre">Nombre <small>(se verá en tus anuncios)</small></label>
+              <input type="text" id="nombre" maxlength="80" autocomplete="name" required></div>
+            <div class="campo"><label for="usuario">Usuario</label>
+              <div class="arroba"><span>@</span><input type="text" id="usuario" maxlength="20" autocapitalize="none" spellcheck="false" required></div>
+              <small class="ayuda" id="ayuda-usuario">De 3 a 20 letras minúsculas, números o _</small></div>
+            <div class="campo"><label for="tipo-perfil">Tipo de perfil</label>
+              <select id="tipo-perfil"></select></div>
+            <div class="campo"><label for="empresa">Empresa o inmobiliaria <small>(opcional)</small></label>
+              <input type="text" id="empresa" maxlength="80" autocomplete="organization" placeholder="Ej.: Inmobiliaria Los Andes"></div>
+            <div class="campo"><label for="estado">Estado donde trabajas</label>
+              <select id="estado"></select></div>
+            <div class="campo"><label for="ciudad">Ciudad o zona <small>(opcional)</small></label>
+              <input type="text" id="ciudad" maxlength="60" placeholder="Ej.: Chacao, Altamira"></div>
+          </div>
+        </section>
 
-      <section class="bloque-cuenta" id="mis-estrellas">
-        <h2>Mi puntuación</h2>
+        <section class="perfil-seccion">
+          <h2 class="perfil-sub">Información de contacto</h2>
+          <div class="rejilla-campos">
+            <div class="campo"><label for="telefono">WhatsApp</label>
+              <input type="tel" id="telefono" autocomplete="tel" placeholder="Ej.: 0414 123 4567"></div>
+            <div class="campo"><label for="instagram">Instagram <small>(opcional)</small></label>
+              <div class="arroba"><span>@</span><input type="text" id="instagram" maxlength="30" autocapitalize="none" spellcheck="false" placeholder="tu_cuenta"></div></div>
+            <div class="campo ancho"><label for="sitio-web">Página web <small>(opcional)</small></label>
+              <input type="url" id="sitio-web" maxlength="200" placeholder="https://"></div>
+          </div>
+          <label class="check"><input type="checkbox" id="mostrar-telefono"> Mostrar mi WhatsApp en mi perfil público</label>
+          <small class="ayuda">Si no lo marcas, tu número solo se usa para rellenar tus anuncios. Tu correo nunca se muestra.</small>
+        </section>
+
+        <section class="perfil-seccion" id="sobre-mi">
+          <h2 class="perfil-sub">Sobre mí / mi negocio</h2>
+          <div class="campo">
+            <textarea id="biografia" maxlength="1000" rows="5" aria-label="Sobre mí o mi negocio" placeholder="Ej.: Agente inmobiliario en Caracas desde 2015. Me especializo en apartamentos en el este (Chacao, Altamira, Los Palos Grandes). Atiendo de lunes a sábado. Abierto a alianzas con otras inmobiliarias y constructoras."></textarea>
+            <small class="ayuda" id="ayuda-biografia"></small></div>
+        </section>
+
+        <div id="msg"></div>
+        <p class="centrado"><button class="boton grande guardar-perfil" type="submit" id="btn">Guardar cambios</button></p>
+      </form>
+
+      <section class="perfil-seccion" id="mis-estrellas">
+        <h2 class="perfil-sub">Mi puntuación</h2>
         <div id="resumen-estrellas"><p class="ayuda">Cargando…</p></div>
       </section>
 
-      <section class="bloque-cuenta" id="alertas">
-        <h2>Mis alertas por correo</h2>
+      <section class="perfil-seccion" id="alertas">
+        <h2 class="perfil-sub">Mis alertas por correo</h2>
         <p class="ayuda">Te escribimos una vez al día si aparecen anuncios nuevos que encajan. Crea una desde
           <a href="buscar.html">la búsqueda</a> con el botón «Avísame de anuncios nuevos» (máximo 5).</p>
         <ul class="lista-alertas" id="lista-alertas"><li class="ayuda">Cargando…</li></ul>
       </section>
 
-      <section class="bloque-cuenta instalar-app" id="bloque-instalar" hidden>
-        <h2>Vivinati en tu teléfono</h2>
+      <section class="perfil-seccion" id="acceso">
+        <h2 class="perfil-sub">Datos de acceso</h2>
+        <p>Correo: <strong id="correo"></strong></p>
+        <form id="form-correo" class="fila-correo" novalidate>
+          <input type="email" id="correo-nuevo" autocomplete="email" placeholder="Nuevo correo" aria-label="Nuevo correo">
+          <button class="boton sec" type="submit" id="btn-correo">Cambiar correo</button>
+        </form>
+        <div id="msg-correo"></div>
+        <p><a class="boton sec" href="restablecer.html">Cambiar contraseña</a></p>
+      </section>
+
+      <section class="perfil-seccion instalar-app" id="bloque-instalar" hidden>
+        <h2 class="perfil-sub">Vivinati en tu teléfono</h2>
         <p class="ayuda" id="texto-instalar">Instala Vivinati como una app: queda con su icono en la pantalla de inicio.</p>
         <button type="button" class="boton sec" data-instalar>Instalar la app</button>
+      </section>
+
+      <section class="perfil-seccion zona-peligro" id="eliminar">
+        <h2 class="perfil-sub">Eliminar cuenta</h2>
+        <p>Se borran para siempre tu perfil, tus anuncios y proyectos, tus fotos, favoritos, alertas, mensajes y valoraciones. No se puede deshacer.</p>
+        <details>
+          <summary>Quiero eliminar mi cuenta</summary>
+          <label for="confirmar-borrado">Escribe <strong>ELIMINAR</strong> para confirmar</label>
+          <input type="text" id="confirmar-borrado" autocomplete="off" autocapitalize="characters">
+          <button type="button" class="boton peligro" id="btn-eliminar" disabled>Eliminar mi cuenta para siempre</button>
+          <div id="msg-eliminar"></div>
+        </details>
       </section>
     </div>
   </main>
@@ -84,7 +152,7 @@
   <footer class="pie">© Vivinati</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=18"></script>
-  <script src="perfil.js?v=5"></script>
+  <script src="comun.js?v=19"></script>
+  <script src="perfil.js?v=6"></script>
 </body>
 </html>

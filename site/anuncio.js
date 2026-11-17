@@ -188,6 +188,7 @@
             </div>
           </div>
         </div>
+        ${DP.etiquetasPerfil(p) ? `<div class="chips-datos anfitrion-etiquetas">${DP.etiquetasPerfil(p)}</div>` : ''}
         ${p && p.biografia ? `<p class="anfitrion-bio">${DP.esc(p.biografia.length > 180 ? p.biografia.slice(0, 180).replace(/\s+\S*$/, '') + '…' : p.biografia)}</p>` : ''}
         ${concepto ? `
           ${i.institucion ? `<p class="autor-dato"><span>Universidad o estudio</span>${DP.esc(i.institucion)}</p>` : ''}
