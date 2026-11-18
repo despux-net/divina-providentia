@@ -1332,3 +1332,10 @@ body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display:
 .opciones-op { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 10px; }
 .opciones-op label { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; margin: 0; }
 .fila-precio-ind { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0 14px; }
+
+/* Pestañas Real Estate / Industrial (Mi perfil y perfil público) */
+.pestanas-mercado { display: flex; justify-content: center; gap: 6px; margin: 4px 0 10px; }
+.pestanas-mercado a { padding: 6px 18px; border-radius: 999px; border: 1px solid var(--line); color: #3c4650; text-decoration: none; font-size: .92rem; }
+.pestanas-mercado a:hover { border-color: #b9c9da; text-decoration: none; }
+.pestanas-mercado a[aria-current="page"] { background: #005CA7; border-color: #005CA7; color: #fff; }
+.perfil-publico .pestanas-mercado { justify-content: flex-start; }

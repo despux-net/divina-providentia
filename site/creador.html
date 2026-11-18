@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="/estilos.css?v=49">
+  <link rel="stylesheet" href="/estilos.css?v=50">
 </head>
 <body>
   <header class="cabecera">
@@ -25,6 +25,10 @@
       <p><a class="boton" href="/realestate/conceptos.html">Ver proyectos conceptuales</a></p></div>
 
     <section class="perfil-publico" id="perfil" hidden>
+      <nav class="pestanas-mercado" id="pestanas" aria-label="Perfil en cada mercado" hidden>
+        <a id="tab-realestate">Real Estate</a>
+        <a id="tab-industrial">Industrial</a>
+      </nav>
       <div class="perfil-cabeza">
         <span id="avatar"></span>
         <div>
@@ -46,6 +50,11 @@
         <p id="biografia"></p>
       </section>
 
+      <section class="sobre-mi" id="profesional" hidden>
+        <h2>Información profesional</h2>
+        <dl class="datos-ind" id="datos-profesionales"></dl>
+      </section>
+
       <section id="bloque-conceptos" hidden>
         <h2>Proyectos conceptuales</h2>
         <div class="rejilla resultados-cuatro" id="lista-conceptos"></div>
@@ -53,6 +62,10 @@
       <section id="bloque-inmuebles" hidden>
         <h2>Inmuebles publicados</h2>
         <div class="rejilla resultados-cuatro" id="lista-inmuebles"></div>
+      </section>
+      <section id="bloque-productos" hidden>
+        <h2>Publicaciones en Industrial</h2>
+        <div class="rejilla resultados-cuatro" id="lista-productos"></div>
       </section>
       <div class="vacio" id="sin-nada" hidden><strong>Aún no hay publicaciones</strong></div>
 
@@ -68,7 +81,8 @@
   <footer class="pie"></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="/comun.js?v=32"></script>
-  <script src="/creador.js?v=5"></script>
+  <script src="/comun.js?v=33"></script>
+  <script src="/industrial/industrial.js?v=3"></script>
+  <script src="/creador.js?v=6"></script>
 </body>
 </html>

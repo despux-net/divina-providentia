@@ -18,7 +18,9 @@ const DP = {
   // Conceptos 3D (proyectos conceptuales: renders, bocetos, tesis…)
   ETAPAS: { conceptual: 'Proyecto conceptual', tesis: 'Tesis', anteproyecto: 'Anteproyecto', infraestructura: 'Infraestructura' },
   ROLES: { estudiante: 'Estudiante', arquitecto: 'Arquitecto/a', emprendedor: 'Emprendedor/a', estudio: 'Estudio' },
-  TIPOS_PERFIL: { particular: 'Particular', agente: 'Agente inmobiliario', inmobiliaria: 'Inmobiliaria', constructora: 'Constructora o promotora', arquitecto: 'Arquitecto/a o estudio', estudiante: 'Estudiante de arquitectura o diseño', proveedor: 'Empresa industrial o proveedor', otro: 'Otro' },
+  TIPOS_PERFIL: { particular: 'Particular', agente: 'Agente inmobiliario', inmobiliaria: 'Inmobiliaria', constructora: 'Constructora o promotora', arquitecto: 'Arquitecto/a o estudio', estudiante: 'Estudiante de arquitectura o diseño', otro: 'Otro' },
+  // Perfil de Vivinati Industrial (independiente del de Real Estate)
+  TIPOS_PERFIL_IND: { fabricante: 'Fabricante', distribuidor: 'Distribuidor o proveedor', importador: 'Importador', servicios: 'Servicios industriales o taller', particular: 'Particular', otro: 'Otro' },
   CATEGORIAS: { residencial: 'Residencial', urbano: 'Urbano', infraestructura: 'Infraestructura', comercial: 'Comercial' },
   esConcepto(i) { return i && i.operacion === 'concepto'; },
 
@@ -85,7 +87,8 @@ const DP = {
   etiquetasPerfil(p) {
     if (!p) return '';
     const zona = [p.ciudad, p.estado].filter(Boolean).join(', ');
-    return [p.tipo_perfil && DP.TIPOS_PERFIL[p.tipo_perfil], p.empresa, zona]
+    const tipo = p.tipo_perfil && (DP.TIPOS_PERFIL[p.tipo_perfil] || DP.TIPOS_PERFIL_IND[p.tipo_perfil]);
+    return [tipo, p.cargo && p.empresa ? `${p.cargo} en ${p.empresa}` : (p.empresa || p.cargo), zona]
       .filter(Boolean).map(t => `<span class="chip-dato">${DP.esc(t)}</span>`).join('');
   },
   numeroWa(v) {
@@ -101,6 +104,8 @@ const DP = {
     if (p.instagram && /^[a-z0-9._]{1,30}$/.test(p.instagram)) l.push(`<a class="boton sec peq" href="https://instagram.com/${p.instagram}" target="_blank" rel="noopener nofollow">Instagram</a>`);
     const web = p.sitio_web && /^https:\/\//.test(p.sitio_web) && DP.urlSegura(p.sitio_web);
     if (web) l.push(`<a class="boton sec peq" href="${DP.esc(web)}" target="_blank" rel="noopener nofollow ugc">Página web ↗</a>`);
+    const lk = p.linkedin && /^https:\/\//.test(p.linkedin) && DP.urlSegura(p.linkedin);
+    if (lk) l.push(`<a class="boton sec peq" href="${DP.esc(lk)}" target="_blank" rel="noopener nofollow ugc">LinkedIn</a>`);
     return l.join('');
   },
   // Directorio de constructoras: la usa constructoras.html y también el
@@ -403,7 +408,7 @@ const DP = {
         <button type="button" class="nav-perfil" aria-haspopup="true" aria-expanded="false" data-mensajes>${p && p.avatar_url ? DP.avatar({ nombre: quien, avatar_url: p.avatar_url }, 24) : ''}<span class="nav-quien">${DP.esc(quien)}</span><svg class="nav-flecha" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg></button>
         <div class="menu-desplegable" role="menu">
           <a href="/chat.html" role="menuitem" data-mensajes>Mensajes</a>
-          <a href="/perfil.html" role="menuitem">Mi perfil</a>
+          <a href="${location.pathname.startsWith('/industrial/') ? '/perfil.html?m=industrial' : '/perfil.html'}" role="menuitem">Mi perfil</a>
           <a href="/realestate/mis-anuncios.html" role="menuitem">Mis anuncios (inmuebles)</a>
           <a href="/industrial/mis-publicaciones.html" role="menuitem">Mis publicaciones (industrial)</a>
           <a href="#" role="menuitem" data-salir>Salir</a>
@@ -707,7 +712,7 @@ DP.barraMovil = () => {
     ['/industrial/buscar.html', 'Buscar', pagina === '/industrial/buscar.html', '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
     ['/industrial/publicar.html', 'Publicar', pagina === '/industrial/publicar.html', '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'],
     ['/chat.html', 'Mensajes', pagina === '/chat.html', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>'],
-    ['/perfil.html', 'Perfil', pagina === '/perfil.html', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
+    ['/perfil.html?m=industrial', 'Perfil', pagina === '/perfil.html', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
   ] : [
     ['/realestate/buscar.html', 'Buscar', pagina === '/realestate/buscar.html' && !fav, '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
     ['/realestate/buscar.html?fav=1', 'Favoritos', pagina === '/realestate/buscar.html' && fav, '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>'],

@@ -1,42 +1,89 @@
-// Mi perfil: foto, datos del perfil, contacto, «Sobre mí», puntuación,
-// alertas, datos de acceso y eliminar cuenta. La RLS solo deja tocar la
-// fila propia; el teléfono solo es público si la persona lo marca.
+// Mi perfil. Una sola cuenta (correo, contraseña y @usuario) con DOS perfiles
+// públicos independientes: Real Estate (tabla profiles) e Industrial (tabla
+// perfiles_industrial). /perfil.html edita el de Real Estate y
+// /perfil.html?m=industrial el de Industrial. Lo demás (alertas, avisos,
+// correo, eliminar cuenta) es de la cuenta y se comparte.
 (async () => {
   const $ = id => document.getElementById(id);
   const session = await DP.cabecera();
-  if (!session) { location.href = '/entrar.html?next=/perfil.html'; return; }
+  const MERCADO = new URLSearchParams(location.search).get('m') === 'industrial' ? 'industrial' : 'realestate';
+  const IND_ = MERCADO === 'industrial';
+  if (!session) { location.href = '/entrar.html?next=' + encodeURIComponent('/perfil.html' + location.search); return; }
   if (new URLSearchParams(location.search).get('bienvenida')) $('bienvenida').hidden = false;
 
-  const perfil = await DP.miPerfil();
-  DP.opciones($('tipo-perfil'), DP.TIPOS_PERFIL, 'Elige una opción');
+  const cuenta = await DP.miPerfil();            // profiles: @usuario, avisos… y el perfil de Real Estate
+  let perfil;                                      // los datos del mercado que se edita, con nombres comunes
+  if (IND_) {
+    const { data } = await DP.sb.from('perfiles_industrial').select('*').eq('user_id', session.user.id).maybeSingle();
+    const i = data || {};
+    perfil = { nombre: i.nombre, avatar_url: i.avatar_url, tipo_perfil: i.tipo_perfil, empresa: i.empresa, cargo: i.cargo, rif: i.rif,
+      estado: i.estado, ciudad: i.ciudad, direccion: i.direccion, telefono: i.telefono, mostrar_telefono: i.mostrar_telefono,
+      instagram: i.instagram, sitio_web: i.sitio_web, linkedin: i.linkedin, biografia: i.biografia, registro: i.registro,
+      anios_experiencia: i.anios_experiencia, especialidades: i.especialidades, horario: i.horario, existe: !!data };
+  } else {
+    const c = cuenta;
+    perfil = { nombre: c.full_name, avatar_url: c.avatar_url, tipo_perfil: c.tipo_perfil, empresa: c.empresa, cargo: c.cargo, rif: c.rif,
+      estado: c.estado, ciudad: c.ciudad, direccion: c.direccion, telefono: c.phone, mostrar_telefono: c.mostrar_telefono,
+      instagram: c.instagram, sitio_web: c.sitio_web, linkedin: c.linkedin, biografia: c.biography, registro: c.registro,
+      anios_experiencia: c.anios_experiencia, especialidades: c.especialidades, horario: c.horario, existe: true };
+  }
+
+  // ---------- Pestañas y textos según el mercado ----------
+  $('tab-' + MERCADO).setAttribute('aria-current', 'page');
+  $('nota-mercado').textContent = IND_
+    ? 'Este es tu perfil en Vivinati Industrial. Es independiente del de Real Estate: puedes usar otro nombre, foto, empresa y datos. Tu @usuario, tu correo y tu contraseña son los mismos.'
+    : 'Este es tu perfil en Vivinati Real Estate. Tu perfil de Industrial es independiente: edítalo en la otra pestaña. Tu @usuario, tu correo y tu contraseña son los mismos.';
+  DP.opciones($('tipo-perfil'), IND_ ? DP.TIPOS_PERFIL_IND : DP.TIPOS_PERFIL, 'Elige una opción');
   DP.opcionesEstados($('estado'), 'Elige un estado');
+  if (IND_) {
+    $('label-empresa').innerHTML = 'Empresa <small>(opcional)</small>';
+    $('empresa').placeholder = 'Ej.: Suministros Industriales del Centro, C.A.';
+    $('ciudad').placeholder = 'Ej.: Valencia, zona industrial Castillito';
+    $('label-registro').textContent = 'Registro o certificaciones';
+    $('registro').placeholder = 'Ej.: ISO 9001, distribuidor autorizado';
+    $('especialidades').placeholder = 'Ej.: neumática, automatización, motores eléctricos, rodamientos';
+    $('biografia').placeholder = 'Ej.: Distribuidores de componentes neumáticos y de automatización desde 2008. Stock en Valencia, envíos a todo el país. Atendemos a fábricas de alimentos, plásticos y metalmecánica.';
+    document.querySelector('label[for="nombre"]').innerHTML = 'Nombre <small>(se verá en tus publicaciones de Industrial)</small>';
+  }
 
   function rellenar() {
     $('correo').textContent = session.user.email;
-    $('nombre').value = perfil.full_name || '';
-    $('usuario').value = perfil.usuario || '';
+    $('nombre').value = perfil.nombre || '';
+    $('usuario').value = cuenta.usuario || '';
     $('tipo-perfil').value = perfil.tipo_perfil || '';
     $('empresa').value = perfil.empresa || '';
+    $('cargo').value = perfil.cargo || '';
+    $('rif').value = perfil.rif || '';
     $('estado').value = perfil.estado || '';
     $('ciudad').value = perfil.ciudad || '';
-    $('telefono').value = perfil.phone || '';
+    $('direccion').value = perfil.direccion || '';
+    $('registro').value = perfil.registro || '';
+    $('anios').value = perfil.anios_experiencia ?? '';
+    $('especialidades').value = (perfil.especialidades || []).join(', ');
+    $('horario').value = perfil.horario || '';
+    $('telefono').value = perfil.telefono || '';
     $('instagram').value = perfil.instagram || '';
     $('sitio-web').value = perfil.sitio_web || '';
+    $('linkedin').value = perfil.linkedin || '';
     $('mostrar-telefono').checked = !!perfil.mostrar_telefono;
-    $('biografia').value = perfil.biography || '';
+    $('biografia').value = perfil.biografia || '';
   }
+  // Primera vez en Industrial: se proponen nombre, WhatsApp y estado de la cuenta (se pueden cambiar).
+  if (IND_ && !perfil.existe) Object.assign(perfil, { nombre: cuenta.full_name, telefono: cuenta.phone, estado: cuenta.estado });
   rellenar();
-  const contarBio = () => { $('ayuda-biografia').textContent = `${$('biografia').value.length} / 1.000 caracteres. Cuéntale a la gente a qué te dedicas, en qué zonas trabajas y qué negocios buscas.`; };
+  const contarBio = () => { $('ayuda-biografia').textContent = `${$('biografia').value.length} / 1.000 caracteres. Cuéntale a la gente a qué te dedicas, ${IND_ ? 'qué productos o servicios ofreces y a qué industrias atiendes' : 'en qué zonas trabajas y qué negocios buscas'}.`; };
   $('biografia').addEventListener('input', contarBio);
   contarBio();
-  if (!perfil.usuario) DP.mensaje($('msg'), 'Elige un @usuario para completar tu perfil.', 'ok');
+  if (!cuenta.usuario) DP.mensaje($('msg'), 'Elige un @usuario para completar tu perfil.', 'ok');
+  else if (IND_ && !perfil.existe) DP.mensaje($('msg'), 'Aún no has guardado tu perfil de Industrial. Revisa los datos y pulsa «Guardar cambios».', 'ok');
 
   // ---------- ¿Qué tan completo está el perfil? ----------
   function pintarCompleto() {
     const pasos = [
-      [perfil.avatar_url, 'una foto'], [perfil.full_name, 'tu nombre'], [perfil.usuario, 'un @usuario'],
+      [perfil.avatar_url, IND_ ? 'un logo o foto' : 'una foto'], [perfil.nombre, 'tu nombre'], [cuenta.usuario, 'un @usuario'],
       [perfil.tipo_perfil, 'el tipo de perfil'], [perfil.estado, 'tu estado'],
-      [perfil.biography, 'unas líneas «Sobre mí»'], [perfil.phone || perfil.instagram || perfil.sitio_web, 'un contacto']
+      [perfil.biografia, 'unas líneas «Sobre mí»'], [perfil.telefono || perfil.instagram || perfil.sitio_web, 'un contacto'],
+      [perfil.empresa || perfil.cargo || (perfil.especialidades || []).length, 'información profesional']
     ];
     const hechos = pasos.filter(p => p[0]).length, pct = Math.round(hechos / pasos.length * 100);
     const falta = pasos.filter(p => !p[0]).map(p => p[1]);
@@ -56,7 +103,7 @@
     const limpio = el.value.toLowerCase().replace(/^@/, '').replace(/[^a-z0-9_]/g, '');
     if (limpio !== el.value) el.value = limpio;
     clearTimeout(temporizador);
-    if (limpio === perfil.usuario) { libre = true; ayuda.textContent = textoAyuda; ayuda.className = 'ayuda'; return; }
+    if (limpio === cuenta.usuario) { libre = true; ayuda.textContent = textoAyuda; ayuda.className = 'ayuda'; return; }
     libre = null;
     if (limpio.length < 3) { ayuda.textContent = textoAyuda; ayuda.className = 'ayuda'; return; }
     temporizador = setTimeout(async () => {
@@ -74,52 +121,74 @@
   });
 
   // ---------- Guardar ----------
+  const comoHttps = u => { u = (u || '').trim(); if (u && !/^https?:\/\//i.test(u)) u = 'https://' + u; return u.replace(/^http:\/\//i, 'https://'); };
   $('form-perfil').addEventListener('submit', async e => {
     e.preventDefault();
     const msg = $('msg');
     const v = id => $(id).value.trim().replace(/\s+/g, ' ');
     const nombre = v('nombre'), usuario = v('usuario'), telefono = v('telefono');
-    let web = v('sitio-web');
-    if (web && !/^https?:\/\//i.test(web)) web = 'https://' + web;
-    web = web.replace(/^http:\/\//i, 'https://');
+    const web = comoHttps(v('sitio-web')), linkedin = comoHttps(v('linkedin'));
+    const anios = $('anios').value === '' ? null : Number($('anios').value);
+    const especialidades = [...new Set(v('especialidades').split(',').map(x => x.trim().slice(0, 40)).filter(Boolean))].slice(0, 12);
+    const biografia = $('biografia').value.trim() || null;
     if (nombre.length < 2) return DP.mensaje(msg, 'Escribe tu nombre.');
     if (!/^[a-z0-9_]{3,20}$/.test(usuario)) return DP.mensaje(msg, 'El @usuario debe tener de 3 a 20 letras minúsculas, números o _.');
     if (libre === false) return DP.mensaje(msg, `@${usuario} no está disponible.`);
     if (telefono && telefono.replace(/\D/g, '').length < 10) return DP.mensaje(msg, 'Revisa el número de WhatsApp.');
     if (web && !/^https:\/\/[^\s<>"]+\.[^\s<>"]+$/.test(web)) return DP.mensaje(msg, 'Revisa la dirección de tu página web.');
+    if (linkedin && !/^https:\/\/[^\s<>"]+\.[^\s<>"]+$/.test(linkedin)) return DP.mensaje(msg, 'Revisa el enlace de LinkedIn.');
+    if (anios != null && !(anios >= 0 && anios <= 80)) return DP.mensaje(msg, 'Revisa los años de experiencia.');
     if ($('mostrar-telefono').checked && !telefono) return DP.mensaje(msg, 'Escribe tu WhatsApp o desmarca «Mostrar mi WhatsApp».');
 
-    const cambios = {
-      full_name: nombre, usuario, phone: telefono || null,
-      tipo_perfil: $('tipo-perfil').value || null, empresa: v('empresa') || null,
-      estado: $('estado').value || null, ciudad: v('ciudad') || null,
-      instagram: v('instagram') || null, sitio_web: web || null,
-      mostrar_telefono: $('mostrar-telefono').checked,
-      biography: $('biografia').value.trim() || null
+    const datos = {
+      tipo_perfil: $('tipo-perfil').value || null, empresa: v('empresa') || null, cargo: v('cargo') || null,
+      rif: v('rif').toUpperCase() || null, estado: $('estado').value || null, ciudad: v('ciudad') || null,
+      direccion: v('direccion') || null, registro: v('registro') || null, anios_experiencia: anios,
+      especialidades: especialidades.length ? especialidades : null, horario: v('horario') || null,
+      instagram: v('instagram') || null, sitio_web: web || null, linkedin: linkedin || null,
+      mostrar_telefono: $('mostrar-telefono').checked
     };
     $('btn').disabled = true;
-    const { error } = await DP.sb.from('profiles').update(cambios).eq('id', session.user.id);
+    let error;
+    if (IND_) {
+      // El @usuario vive en la cuenta; el resto, en el perfil de Industrial.
+      if (usuario !== cuenta.usuario) ({ error } = await DP.sb.from('profiles').update({ usuario }).eq('id', session.user.id));
+      if (!error) ({ error } = await DP.sb.from('perfiles_industrial').upsert({
+        user_id: session.user.id, ...datos, nombre, telefono: telefono || null, biografia
+      }));
+    } else {
+      ({ error } = await DP.sb.from('profiles').update({
+        ...datos, full_name: nombre, usuario, phone: telefono || null, biography: biografia
+      }).eq('id', session.user.id));
+    }
     $('btn').disabled = false;
     if (error) {
       const m = error.message || '';
       return DP.mensaje(msg, /profiles_usuario_unico|duplicate/.test(m) ? `@${usuario} ya está en uso.`
         : /instagram/.test(m) ? 'Revisa tu usuario de Instagram.'
-        : /sitio_web/.test(m) ? 'Revisa la dirección de tu página web.' : DP.errorCuenta(error));
+        : /sitio_web/.test(m) ? 'Revisa la dirección de tu página web.'
+        : /linkedin/.test(m) ? 'Revisa el enlace de LinkedIn.' : DP.errorCuenta(error));
     }
-    Object.assign(perfil, cambios);
-    DP._perfil = perfil;
+    Object.assign(perfil, datos, { nombre, telefono, biografia, existe: true });
+    cuenta.usuario = usuario;
+    if (!IND_) Object.assign(cuenta, datos, { full_name: nombre, phone: telefono || null, biography: biografia });
+    DP._perfil = cuenta;
     rellenar(); pintarCompleto();
     DP.cabecera();
     DP.mensaje(msg, 'Perfil guardado.', 'ok');
     pintarEnlacePublico();
   });
 
-  // ---------- Avatar: foto cuadrada de 256 px en WebP (~15 KB) ----------
+  // ---------- Avatar (o logo): foto cuadrada de 256 px en WebP (~15 KB) ----------
   function pintarAvatar() {
-    $('avatar-actual').innerHTML = DP.avatar({ nombre: perfil.full_name || perfil.usuario, avatar_url: perfil.avatar_url }, 112);
+    $('avatar-actual').innerHTML = DP.avatar({ nombre: perfil.nombre || cuenta.usuario, avatar_url: perfil.avatar_url }, 112);
     $('quitar-avatar').hidden = !perfil.avatar_url;
   }
   pintarAvatar();
+  function guardarAvatar(ruta) {
+    if (IND_) return DP.sb.from('perfiles_industrial').upsert({ user_id: session.user.id, avatar_url: ruta });
+    return DP.sb.from('profiles').update({ avatar_url: ruta }).eq('id', session.user.id);
+  }
   async function recortar(file) {
     const bmp = await createImageBitmap(file).catch(() => null);
     if (!bmp) throw new Error('No se pudo leer esa imagen. Usa una foto JPG, PNG o WebP.');
@@ -140,36 +209,37 @@
       DP.mensaje(m, 'Subiendo foto…', 'ok');
       const blob = await recortar(f);
       const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
-      const ruta = `${session.user.id}/avatar-${Date.now()}.${ext}`;
+      const ruta = `${session.user.id}/${IND_ ? 'industrial' : 'avatar'}-${Date.now()}.${ext}`;
       const { error } = await DP.sb.storage.from('avatares').upload(ruta, blob, { contentType: blob.type, cacheControl: '31536000' });
       if (error) throw error;
       const anterior = perfil.avatar_url;
-      const { error: e2 } = await DP.sb.from('profiles').update({ avatar_url: ruta }).eq('id', session.user.id);
+      const { error: e2 } = await guardarAvatar(ruta);
       if (e2) throw e2;
       if (anterior) DP.sb.storage.from('avatares').remove([anterior]);
-      perfil.avatar_url = ruta; DP._perfil = perfil;
+      perfil.avatar_url = ruta; perfil.existe = true; if (!IND_) { cuenta.avatar_url = ruta; DP._perfil = cuenta; }
       pintarAvatar(); pintarCompleto(); DP.cabecera(); DP.mensaje(m, '¡Foto actualizada!', 'ok');
     } catch (err) { console.error(err); DP.mensaje(m, err.message && !/row-level|policy/i.test(err.message) ? err.message : 'No se pudo subir la foto.'); }
   });
   $('quitar-avatar').addEventListener('click', async () => {
     if (!perfil.avatar_url || !confirm('¿Quitar tu foto?')) return;
     const anterior = perfil.avatar_url;
-    await DP.sb.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+    await guardarAvatar(null);
     DP.sb.storage.from('avatares').remove([anterior]);
-    perfil.avatar_url = null; DP._perfil = perfil; pintarAvatar(); pintarCompleto(); DP.cabecera();
+    perfil.avatar_url = null; if (!IND_) { cuenta.avatar_url = null; DP._perfil = cuenta; } pintarAvatar(); pintarCompleto(); DP.cabecera();
   });
 
   // ---------- Mi puntuación acumulada ----------
   DP.resumenEstrellas(session.user.id, $('resumen-estrellas'), {
-    pie: perfil.usuario
-      ? `Te valoran las personas con las que has conversado por el chat. <a href="/creador.html?u=${encodeURIComponent(perfil.usuario)}#valoraciones">Ver los comentarios que te dejaron</a>.`
+    pie: cuenta.usuario
+      ? `Te valoran las personas con las que has conversado por el chat. <a href="/creador.html?u=${encodeURIComponent(cuenta.usuario)}#valoraciones">Ver los comentarios que te dejaron</a>.`
       : 'Te valoran las personas con las que has conversado por el chat.'
   });
 
   // ---------- Perfil público (portafolio) ----------
   function pintarEnlacePublico() {
-    if (!perfil.usuario) return;
-    $('enlace-publico').innerHTML = `Tu página pública: <a href="/creador.html?u=${encodeURIComponent(perfil.usuario)}">vivinati.com/@${DP.esc(perfil.usuario)}</a>`;
+    if (!cuenta.usuario) return;
+    const url = `/creador.html?u=${encodeURIComponent(cuenta.usuario)}${IND_ ? '&m=industrial' : ''}`;
+    $('enlace-publico').innerHTML = `Tu página pública en ${IND_ ? 'Industrial' : 'Real Estate'}: <a href="${url}">vivinati.com/@${DP.esc(cuenta.usuario)}${IND_ ? ' (Industrial)' : ''}</a>`;
     $('enlace-publico').hidden = false;
   }
   pintarEnlacePublico();
@@ -201,12 +271,12 @@
   cargarAlertas();
 
   // ---------- Avisos por correo de mensajes nuevos del chat ----------
-  $('avisos-chat').checked = perfil.avisos_chat !== false;
+  $('avisos-chat').checked = cuenta.avisos_chat !== false;
   $('avisos-chat').addEventListener('change', async e => {
     const activo = e.target.checked;
     const { error } = await DP.sb.from('profiles').update({ avisos_chat: activo }).eq('id', session.user.id);
     if (error) { e.target.checked = !activo; return DP.mensaje($('msg-avisos'), 'No se pudo guardar. Inténtalo de nuevo.'); }
-    perfil.avisos_chat = activo; DP._perfil = perfil;
+    cuenta.avisos_chat = activo; DP._perfil = cuenta;
     DP.mensaje($('msg-avisos'), activo ? 'Te avisaremos por correo de los mensajes nuevos.' : 'Ya no te enviaremos avisos de mensajes.', 'ok');
   });
 

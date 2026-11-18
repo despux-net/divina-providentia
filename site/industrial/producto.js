@@ -60,16 +60,17 @@
     const nombre = v.empresa || v.nombre || '@' + v.usuario;
     const desde = v.miembro_desde ? new Date(v.miembro_desde).toLocaleDateString('es-VE', { month: 'long', year: 'numeric' }) : '';
     $('vendedor').innerHTML = `
-      <a class="anfitrion-cab" href="/creador.html?u=${encodeURIComponent(v.usuario)}">${DP.avatar({ nombre, avatar_url: v.avatar_url }, 56)}
+      <a class="anfitrion-cab" href="/creador.html?u=${encodeURIComponent(v.usuario)}&m=industrial">${DP.avatar({ nombre, avatar_url: v.avatar_url }, 56)}
         <span><strong>${DP.esc(nombre)}</strong>${v.empresa && v.nombre ? `<small>${DP.esc(v.nombre)}</small>` : ''}
-        <small>${DP.esc([DP.TIPOS_PERFIL[v.tipo_perfil], [v.ciudad, v.estado].filter(Boolean).join(', ')].filter(Boolean).join(' · '))}</small></span></a>
+        ${v.cargo ? `<small>${DP.esc(v.cargo)}</small>` : ''}<small>${DP.esc([DP.TIPOS_PERFIL_IND[v.tipo_perfil], [v.ciudad, v.estado].filter(Boolean).join(', ')].filter(Boolean).join(' · '))}</small></span></a>
       <p>${DP.estrellas(v.estrellas, v.valoraciones)}</p>
+      ${v.horario ? `<p class="ayuda">Horario: ${DP.esc(v.horario)}</p>` : ''}
       <p class="ayuda">${v.publicaciones} ${v.publicaciones === 1 ? 'publicación' : 'publicaciones'} en Industrial${desde ? ` · en Vivinati desde ${DP.esc(desde)}` : ''}</p>
       <div class="anfitrion-botones">
         ${mio ? `<a class="boton" href="/industrial/publicar.html?id=${p.id}">Editar publicación</a> <a class="boton sec" href="/industrial/mis-publicaciones.html">Mis publicaciones</a>`
           : `<a class="boton" href="/chat.html?con=${encodeURIComponent(v.id)}&producto=${encodeURIComponent(p.id)}">Escribir por el chat</a>
              ${wa ? `<a class="boton sec wa-sec" href="https://wa.me/${wa}?text=${mensajeWa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}`}
-        <a class="boton sec" href="/creador.html?u=${encodeURIComponent(v.usuario)}">Ver perfil</a>
+        <a class="boton sec" href="/creador.html?u=${encodeURIComponent(v.usuario)}&m=industrial">Ver perfil</a>
       </div>`;
   }
 

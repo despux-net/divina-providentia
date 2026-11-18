@@ -25,9 +25,12 @@
   const perfil = await DP.miPerfil();
   if (!perfil || !perfil.usuario) { location.href = '/perfil.html'; return; }
   $('form').hidden = false;
-  if (perfil.phone) $('whatsapp').value = perfil.phone;
-  if (perfil.estado && DP.ESTADOS[perfil.estado]) $('estado').value = perfil.estado;
-  if (perfil.ciudad) $('ciudad').value = perfil.ciudad;
+  // Valores por defecto: del perfil de Industrial; si aún no existe, de la cuenta.
+  const { data: pi } = await DP.sb.from('perfiles_industrial').select('telefono, estado, ciudad').eq('user_id', usuario.id).maybeSingle();
+  const tel = (pi && pi.telefono) || perfil.phone, est = (pi && pi.estado) || perfil.estado, ciu = (pi && pi.ciudad) || perfil.ciudad;
+  if (tel) $('whatsapp').value = tel;
+  if (est && DP.ESTADOS[est]) $('estado').value = est;
+  if (ciu) $('ciudad').value = ciu;
 
   // ---------- Venta / alquiler / servicio ----------
   const operacion = () => document.querySelector('[name=operacion]:checked').value;

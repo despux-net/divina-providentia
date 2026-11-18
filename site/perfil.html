@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="/estilos.css?v=49">
+  <link rel="stylesheet" href="/estilos.css?v=50">
 </head>
 <body>
   <header class="cabecera">
@@ -41,6 +41,11 @@
 
       <section id="datos" class="perfil-seccion">
         <h1 class="perfil-titulo">Mi perfil</h1>
+        <nav class="pestanas-mercado" aria-label="Perfil de cada mercado">
+          <a href="/perfil.html" id="tab-realestate">Real Estate</a>
+          <a href="/perfil.html?m=industrial" id="tab-industrial">Industrial</a>
+        </nav>
+        <p class="ayuda centrado" id="nota-mercado"></p>
         <div class="avatar-grande">
           <span id="avatar-actual"></span>
           <label class="avatar-editar" for="archivo-avatar">
@@ -69,12 +74,32 @@
               <small class="ayuda" id="ayuda-usuario">De 3 a 20 letras minúsculas, números o _</small></div>
             <div class="campo"><label for="tipo-perfil">Tipo de perfil</label>
               <select id="tipo-perfil"></select></div>
-            <div class="campo"><label for="empresa">Empresa o inmobiliaria <small>(opcional)</small></label>
+            <div class="campo"><label for="empresa" id="label-empresa">Empresa o inmobiliaria <small>(opcional)</small></label>
               <input type="text" id="empresa" maxlength="80" autocomplete="organization" placeholder="Ej.: Inmobiliaria Los Andes"></div>
             <div class="campo"><label for="estado">Estado donde trabajas</label>
               <select id="estado"></select></div>
             <div class="campo"><label for="ciudad">Ciudad o zona <small>(opcional)</small></label>
               <input type="text" id="ciudad" maxlength="60" placeholder="Ej.: Chacao, Altamira"></div>
+          </div>
+        </section>
+
+        <section class="perfil-seccion" id="profesional">
+          <h2 class="perfil-sub">Información profesional <small>(opcional)</small></h2>
+          <div class="rejilla-campos">
+            <div class="campo"><label for="cargo">Cargo</label>
+              <input type="text" id="cargo" maxlength="80" autocomplete="organization-title" placeholder="Ej.: Gerente comercial"></div>
+            <div class="campo"><label for="rif">RIF</label>
+              <input type="text" id="rif" maxlength="20" autocapitalize="characters" placeholder="Ej.: J-12345678-9"></div>
+            <div class="campo ancho"><label for="direccion">Dirección de la oficina o local</label>
+              <input type="text" id="direccion" maxlength="160" autocomplete="street-address" placeholder="Ej.: Av. Francisco de Miranda, Torre X, piso 3, Chacao"></div>
+            <div class="campo"><label for="registro" id="label-registro">Registro o colegiatura</label>
+              <input type="text" id="registro" maxlength="80" placeholder="Ej.: Cámara Inmobiliaria de Venezuela"></div>
+            <div class="campo"><label for="anios">Años de experiencia</label>
+              <input type="number" id="anios" min="0" max="80" inputmode="numeric"></div>
+            <div class="campo ancho"><label for="especialidades" id="label-especialidades">Especialidades <small>(separadas por comas)</small></label>
+              <input type="text" id="especialidades" maxlength="400" placeholder="Ej.: apartamentos, locales comerciales, avalúos"></div>
+            <div class="campo ancho"><label for="horario">Horario de atención</label>
+              <input type="text" id="horario" maxlength="120" placeholder="Ej.: Lunes a viernes de 8:00 a 5:00, sábados de 9:00 a 1:00"></div>
           </div>
         </section>
 
@@ -85,8 +110,10 @@
               <input type="tel" id="telefono" autocomplete="tel" placeholder="Ej.: 0414 123 4567"></div>
             <div class="campo"><label for="instagram">Instagram <small>(opcional)</small></label>
               <div class="arroba"><span>@</span><input type="text" id="instagram" maxlength="30" autocapitalize="none" spellcheck="false" placeholder="tu_cuenta"></div></div>
-            <div class="campo ancho"><label for="sitio-web">Página web <small>(opcional)</small></label>
+            <div class="campo"><label for="sitio-web">Página web <small>(opcional)</small></label>
               <input type="url" id="sitio-web" maxlength="200" placeholder="https://"></div>
+            <div class="campo"><label for="linkedin">LinkedIn <small>(opcional)</small></label>
+              <input type="url" id="linkedin" maxlength="200" placeholder="https://www.linkedin.com/in/…"></div>
           </div>
           <label class="check"><input type="checkbox" id="mostrar-telefono"> Mostrar mi WhatsApp en mi perfil público</label>
           <small class="ayuda">Si no lo marcas, tu número solo se usa para rellenar tus anuncios. Tu correo nunca se muestra.</small>
@@ -156,7 +183,7 @@
   <footer class="pie">© Vivinati</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="/comun.js?v=32"></script>
-  <script src="/perfil.js?v=7"></script>
+  <script src="/comun.js?v=33"></script>
+  <script src="/perfil.js?v=8"></script>
 </body>
 </html>

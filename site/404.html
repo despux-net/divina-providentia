@@ -5,7 +5,7 @@
     // vivinati.com/@usuario → página pública del creador
     (function () {
       var m = location.pathname.match(/^\/@([a-z0-9_]{3,20})\/?$/i);
-      if (m) location.replace('/creador.html?u=' + m[1].toLowerCase());
+      if (m) location.replace('/creador.html?u=' + m[1].toLowerCase() + (location.search ? '&' + location.search.slice(1) : ''));
       // vivinati.com/a/<id>/ de un anuncio nuevo (su página se crea en la próxima publicación)
       var a = location.pathname.match(/^\/a\/([0-9a-f-]{36})\/?$/i);
       if (a) location.replace('/realestate/anuncio.html?id=' + a[1]);
@@ -26,7 +26,7 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="/estilos.css?v=49">
+  <link rel="stylesheet" href="/estilos.css?v=50">
 </head>
 <body>
   <header class="cabecera">
@@ -60,7 +60,7 @@
 
   <footer class="pie"></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="/comun.js?v=32"></script>
+  <script src="/comun.js?v=33"></script>
   <script>DP.cabecera();</script>
 </body>
 </html>
