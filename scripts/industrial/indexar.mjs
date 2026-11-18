@@ -181,14 +181,10 @@ for (const f of FUENTES) {
     const ahora = new Date().toISOString();
     const vistos = [], lote = [];
     let n = 0, completa = true;
-    // Una misma imagen en 3 o más productos es un «sin foto» genérico de la tienda, no una foto real.
-    const usoFoto = new Map(), genericas = new Set();
-    const esGenerica = u => {
-      const k = (usoFoto.get(u) || 0) + 1;
-      usoFoto.set(u, k);
-      if (k >= 3) genericas.add(u);
-      return k >= 3;
-    };
+    // Imágenes «sin foto» por su nombre. Las que la tienda repite en casi todo su
+    // catálogo se limpian al final con limpiar_fotos_genericas (una foto compartida
+    // por una familia de productos —todas las correas Rexon— sí es una foto real).
+    const esGenerica = u => /placeholder|no[-_]?image|sin[-_]?(foto|imagen)|default[-_]?(product|image)|woocommerce-placeholder/i.test(u);
     const guardar = async () => {
       if (!lote.length) return;
       await api('/productos?on_conflict=url_original', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(lote.splice(0)) });
@@ -218,11 +214,9 @@ for (const f of FUENTES) {
     }
     if (PRUEBA) continue;
     await guardar();
-    // Las dos primeras fichas guardadas con la imagen genérica también se limpian
-    for (const u of genericas) {
-      await api(`/productos?fuente=eq.${encodeURIComponent(f.nombre)}&fotos=cs.${encodeURIComponent(`{"${u.replace(/"/g, '')}"}`)}`, {
-        method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ fotos: [] }) });
-    }
+    // Imagen genérica de la tienda: la que aparece en más del 40 % de sus productos
+    const limpias = await api('/rpc/limpiar_fotos_genericas', { method: 'POST', body: JSON.stringify({ p_fuente: f.nombre }) });
+    if (limpias) console.log(`  Productos con la imagen genérica de la tienda (se muestran sin foto): ${limpias}`);
     const soloVistas = vistos.filter(u => f.yaVistos.has(u));
     for (let i = 0; i < soloVistas.length; i += 150) {
       await api(`/productos?url_original=in.(${soloVistas.slice(i, i + 150).map(u => `"${u.replace(/"/g, '')}"`).join(',')})`, {

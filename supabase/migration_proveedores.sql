@@ -58,3 +58,24 @@ language sql stable set search_path to '' as $$
   limit 300
 $$;
 grant execute on function public.buscar_proveedores(text, text, text) to anon, authenticated;
+
+-- Imagen «sin foto» de una tienda: la misma primera foto en más del 40 % de sus
+-- productos (y al menos 20). Se quita de esos productos; una foto compartida por
+-- una familia (todas las correas de una marca) no llega a ese umbral y se queda.
+create or replace function public.limpiar_fotos_genericas(p_fuente text)
+returns integer language plpgsql security definer set search_path to '' as $$
+declare total integer; n integer := 0; f record;
+begin
+  select count(*) into total from public.productos where fuente = p_fuente and activo;
+  for f in
+    select fotos[1] as foto, count(*) as veces from public.productos
+    where fuente = p_fuente and activo and cardinality(fotos) > 0 group by 1
+    having count(*) >= 20 and count(*) > total * 0.4
+  loop
+    update public.productos set fotos = array_remove(fotos, f.foto) where fuente = p_fuente and f.foto = any (fotos);
+    n := n + f.veces;
+  end loop;
+  return n;
+end $$;
+revoke all on function public.limpiar_fotos_genericas(text) from public, anon, authenticated;
+grant execute on function public.limpiar_fotos_genericas(text) to service_role;
