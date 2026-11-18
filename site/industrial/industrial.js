@@ -7,6 +7,8 @@ const IND = {
       '<path d="M3 17h11v-5H8l-2-4H3z"/><path d="M14 12l4-6 3 2-3 5"/><circle cx="6" cy="18" r="2"/><circle cx="12" cy="18" r="2"/>'],
     'maquinaria-industrial': ['Maquinaria industrial', 'Tornos, fresadoras, CNC, prensas, inyectoras, empacadoras',
       '<rect x="3" y="8" width="18" height="10" rx="1"/><path d="M7 8V5h10v3M7 13h4M15 12v3"/>'],
+    automatizacion: ['Automatización y neumática', 'Cilindros, válvulas, electroválvulas, racores, PLC, sensores, variadores',
+      '<rect x="3" y="9" width="12" height="6" rx="1"/><path d="M15 12h6M18 9v6M6 9V6h6v3"/>'],
     herramientas: ['Herramientas y equipos', 'Eléctricas, neumáticas, de soldadura, de medición, compresores',
       '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>'],
     materiales: ['Materiales de construcción', 'Cemento, cabillas, bloques, perfiles de acero, madera, tuberías',
@@ -57,6 +59,7 @@ const IND = {
           <div class="titulo-t">${DP.esc(p.titulo)}</div>
           <div class="lugar"><span class="lugar-tipo">${DP.esc(IND.nombreCategoria(p.categoria))} · </span><span class="lugar-sitio">${DP.esc(IND.lugar(p))}</span></div>
           ${chips ? `<div class="chips-datos">${chips}</div>` : ''}
+          <div class="origen">${p.origen === 'externo' && p.fuente ? `Publicación de ${DP.esc(p.fuente)}` : 'Publicado en Vivinati'}</div>
         </div>
       </a>
     </article>`;

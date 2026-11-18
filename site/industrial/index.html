@@ -73,7 +73,7 @@
   <footer class="pie"></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="/comun.js?v=33"></script>
-  <script src="/industrial/industrial.js?v=3"></script>
+  <script src="/industrial/industrial.js?v=4"></script>
   <script>
   (async () => {
     DP.cabecera();
@@ -91,7 +91,8 @@
         <span><strong>${DP.esc(nombre)}</strong><small>${DP.esc(ejemplos)}</small>${n[k] ? `<em>${n[k]} ${n[k] === 1 ? 'publicación' : 'publicaciones'}</em>` : ''}</span>
       </a>`).join('');
 
-    const { data, error } = await DP.sb.rpc('buscar_productos', { p_limite: 8 });
+    // Variada: como mucho 2 por proveedor, y primero lo publicado en Vivinati.
+    const { data, error } = await DP.sb.rpc('portada_productos', { p_limite: 8, p_por_fuente: 2 });
     const cont = document.getElementById('recientes');
     if (error) { cont.innerHTML = '<p class="vacio">No se pudieron cargar las publicaciones.</p>'; return; }
     cont.innerHTML = data.length ? data.map(IND.tarjeta).join('')

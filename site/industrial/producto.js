@@ -72,6 +72,17 @@
              ${wa ? `<a class="boton sec wa-sec" href="https://wa.me/${wa}?text=${mensajeWa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}`}
         <a class="boton sec" href="/creador.html?u=${encodeURIComponent(v.usuario)}&m=industrial">Ver perfil</a>
       </div>`;
+  } else if (p.origen === 'externo' && p.url_original) {
+    // Producto que el proveedor publica en su propia web: se contacta allí.
+    const web = DP.urlSegura(p.url_original);
+    $('vendedor').innerHTML = `
+      <div class="anfitrion-cab">${DP.avatar({ nombre: p.fuente }, 56)}
+        <span><strong>${DP.esc(p.fuente)}</strong><small>Proveedor en ${DP.esc(IND.lugar(p))}</small></span></div>
+      <p class="ayuda">Este producto lo publica ${DP.esc(p.fuente)} en su propia web. Vivinati lo muestra para que lo encuentres; el precio, la disponibilidad y la compra se consultan con el proveedor.</p>
+      <div class="anfitrion-botones">
+        ${web ? `<a class="boton" href="${DP.esc(web)}" target="_blank" rel="noopener nofollow">Ver en la web de ${DP.esc(p.fuente)} ↗</a>` : ''}
+        <a class="boton sec" href="/industrial/buscar.html?q=${encodeURIComponent(p.fuente)}">Más de ${DP.esc(p.fuente)}</a>
+      </div>`;
   }
 
   // ---------- Compartir ----------
