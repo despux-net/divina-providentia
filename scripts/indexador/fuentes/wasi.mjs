@@ -120,6 +120,13 @@ export const WASI = [
   wasi('RE/MAX Habitat', 'https://remaxhabitat.com'),
   wasi('RE/MAX VIP Las Mercedes', 'https://remaxviplasmercedes.com'),
   wasi('RE/MAX Atlas', 'https://remax-atlas.com', 20),
-  wasi('Noguera Inmuebles', 'https://noguerainmuebles.com', 15)
+  wasi('Noguera Inmuebles', 'https://noguerainmuebles.com', 15),
+  // Añadidas el 2026-11-18 (robots.txt abierto, sitemap con fichas propias, sin repetir otras fuentes)
+  wasi('Venebrokers', 'https://venebrokers.com'),
+  wasi('Megabusiness', 'https://megabusiness.com.ve'),
+  wasi('Grupo Glam Inmobiliaria', 'https://grupoinmueblesglam.com', 50),
+  wasi('Di Geronimo Real Estate', 'https://digeronimore.com', 30),
+  wasi('Inverpropiedad', 'https://inverpropiedad.com', 10),
+  wasi('IMNOVA Real Estate', 'https://imnovare.com', 10)
 ];
 export const [riv, bolsaCaracas] = WASI;
