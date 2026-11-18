@@ -382,14 +382,58 @@ const paginasPrecios = [];
   }
 }
 
+// 3b) Directorio de constructoras: lista ya pintada en constructoras.html y
+// una página por estado (solo estados con al menos una constructora, para no
+// publicar páginas vacías).
+const paginasConstructoras = [];
+{
+  const todas = await rpc('directorio_constructoras', {});
+  fs.rmSync(path.join(SITIO, 'constructoras'), { recursive: true, force: true });
+  const porEstado = {};
+  for (const c of todas) if (c.estado) (porEstado[c.estado] ||= []).push(c);
+  const estados = Object.entries(porEstado).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+  const enlacesEstados = estados.length
+    ? `<h2>Constructoras por estado</h2><p>${estados.map(([e, l]) => `<a href="constructoras/${slug(e)}/">${esc(lugarTxt(e))} (${l.length})</a>`).join(' ')}</p>`
+    : '';
+  const dirRuta = path.join(SITIO, 'constructoras.html');
+  const base = fs.readFileSync(dirRuta, 'utf8');
+  fs.writeFileSync(dirRuta, base
+    .replace(/<!--CONSTRUCTORAS-->[\s\S]*?<!--\/CONSTRUCTORAS-->/, `<!--CONSTRUCTORAS-->${todas.map(DP.tarjetaConstructora).join('')}<!--/CONSTRUCTORAS-->`)
+    .replace(/<!--ESTADOS-->[\s\S]*?<!--\/ESTADOS-->/, `<!--ESTADOS-->${enlacesEstados}<!--/ESTADOS-->`));
+
+  for (const [estado, lista] of estados) {
+    const url = `/constructoras/${slug(estado)}/`;
+    const lugar = lugarTxt(estado);
+    const html = base
+      .replace(/<title>[^<]*<\/title>/, `<title>Constructoras en ${esc(lugar)} — Vivinati</title>`)
+      .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(`Constructoras y promotoras en ${lugar}: ${lista.length} ${lista.length === 1 ? 'empresa' : 'empresas'} con sus proyectos, valoraciones y contacto. Directorio gratuito de Vivinati.`)}">`)
+      .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${DOMINIO}${url}">`)
+      .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="Constructoras en ${esc(lugar)}">`)
+      .replace('<meta charset="utf-8">', '<meta charset="utf-8">\n  <base href="/">')
+      .replace(/<h1 id="h1">[^<]*<\/h1>/, `<nav class="migas" aria-label="Estás en"><a href="index.html">Inicio</a> › <a href="constructoras.html">Constructoras</a> › <span>${esc(lugar)}</span></nav>\n    <h1 id="h1">Constructoras en ${esc(lugar)}</h1>`)
+      .replace(/<!--CONSTRUCTORAS-->[\s\S]*?<!--\/CONSTRUCTORAS-->/, `<!--CONSTRUCTORAS-->${lista.map(DP.tarjetaConstructora).join('')}<!--/CONSTRUCTORAS-->`)
+      .replace(/<!--ESTADOS-->[\s\S]*?<!--\/ESTADOS-->/, `<!--ESTADOS-->${enlacesEstados}<!--/ESTADOS-->`)
+      // La página del estado arranca con su filtro puesto
+      .replace("if (DP.ESTADOS[params.get('estado')])", `params.set('estado', ${JSON.stringify(estado)});\n    if (DP.ESTADOS[params.get('estado')])`)
+      .replace("history.replaceState(null, '', e ? '?estado=' + encodeURIComponent(e) : location.pathname);",
+        "if (e !== " + JSON.stringify(estado) + ") { location.href = 'constructoras.html' + (e ? '?estado=' + encodeURIComponent(e) : ''); return; }");
+    const archivo = path.join(SITIO, url, 'index.html');
+    fs.mkdirSync(path.dirname(archivo), { recursive: true });
+    fs.writeFileSync(archivo, html);
+    paginasConstructoras.push(url);
+  }
+  console.log(`Constructoras: ${todas.length} en el directorio, ${paginasConstructoras.length} páginas por estado.`);
+}
+
 // 4) sitemap.xml: páginas públicas + búsquedas + anuncios publicados en Vivinati.
 const propios = await tabla('inmuebles?select=id,actualizado&origen=eq.usuario&activo=eq.true&order=actualizado.desc&limit=5000');
 const urls = [
   ['/', 'daily', '1.0'], ['/buscar.html', 'daily', '0.9'], ['/conceptos.html', 'daily', '0.8'],
   ['/publicar.html', 'monthly', '0.6'], ['/bot.html', 'yearly', '0.3'], ['/condiciones.html', 'yearly', '0.3'],
-  ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/busco.html', 'daily', '0.6'], ['/privacidad.html', 'yearly', '0.3'],
+  ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/busco.html', 'daily', '0.6'], ['/privacidad.html', 'yearly', '0.3'], ['/constructoras.html', 'weekly', '0.6'],
   ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7']),
-  ...paginasPrecios.map(u => [u, 'weekly', '0.6'])
+  ...paginasPrecios.map(u => [u, 'weekly', '0.6']),
+  ...paginasConstructoras.map(u => [u, 'weekly', '0.5'])
 ].map(([u, f, pr]) => `<url><loc>${DOMINIO}${u}</loc><lastmod>${HOY}</lastmod><changefreq>${f}</changefreq><priority>${pr}</priority></url>`)
   .concat(propios.map(i => `<url><loc>${DOMINIO}/anuncio.html?id=${i.id}</loc><lastmod>${String(i.actualizado).slice(0, 10)}</lastmod><priority>0.5</priority></url>`));
 fs.writeFileSync(path.join(SITIO, 'sitemap.xml'),

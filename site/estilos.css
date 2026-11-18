@@ -1259,3 +1259,20 @@ a.eleccion:hover { text-decoration: none; }
 .tabla-importar td small { color: var(--muted); }
 .texto-error { color: var(--danger); }
 .texto-ok { color: #1f6b33; }
+
+/* Directorio de constructoras */
+.directorio { max-width: 1100px; }
+.directorio h2 { font-weight: 400; font-size: 1.25rem; margin: 36px 0 8px; }
+.filtro-estado { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.filtro-estado label { margin: 0; }
+.filtro-estado select { width: auto; min-width: 220px; margin: 0; }
+.lista-constructoras { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin: 18px 0; }
+.constructora { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.constructora-cab { display: flex; gap: 12px; align-items: center; color: inherit; text-decoration: none; }
+.constructora-cab strong { display: block; font-weight: 500; font-size: 1.05rem; color: var(--texto, #1d2733); }
+.constructora-cab small { display: block; color: var(--muted); }
+.constructora-datos { font-size: .9rem; color: var(--muted); }
+.constructora p { margin: 0; font-size: .92rem; }
+.constructora-botones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+.enlaces-estados { margin-top: 28px; font-size: .92rem; }
+.enlaces-estados a { margin-right: 14px; display: inline-block; }

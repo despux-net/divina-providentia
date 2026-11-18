@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Constructoras en Venezuela: directorio gratuito — Vivinati</title>
+  <meta name="description" content="Directorio de constructoras y promotoras de Venezuela: encuentra empresas para construir, remodelar o invertir en obra nueva, con sus proyectos, valoraciones y contacto.">
+  <link rel="canonical" href="https://vivinati.com/constructoras.html">
+  <meta property="og:site_name" content="Vivinati">
+  <meta property="og:title" content="Constructoras en Venezuela">
+  <meta property="og:image" content="https://vivinati.com/img/og-vivinati.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="estilos.css?v=47">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav"><a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a><a href="busco.html">Busco inmueble</a><a href="sobre.html">Quiénes somos</a><a class="boton peq" href="publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor directorio">
+    <h1 id="h1">Constructoras en Venezuela</h1>
+    <p class="sub">Empresas que construyen, remodelan y promueven obra nueva en el país. Mira sus proyectos y valoraciones y escríbeles directamente. Si buscas quién haga realidad una idea, revisa también los <a href="conceptos.html">Conceptos 3D</a>.</p>
+
+    <p class="filtro-estado"><label for="estado">Estado</label> <select id="estado"></select> <span id="cuenta" class="aviso"></span></p>
+
+    <div class="lista-constructoras" id="lista"><!--CONSTRUCTORAS--><!--/CONSTRUCTORAS--></div>
+    <p id="vacio" hidden></p>
+
+    <h2>¿Eres una constructora o promotora?</h2>
+    <p>Aparecer aquí es gratis. Crea tu cuenta, elige «Constructora o promotora» como tipo de perfil y completa tu ciudad, tu descripción y tus enlaces. Después publica tus inmuebles en venta, tus preventas o tus proyectos; si tienes muchos, <a href="importar.html">súbelos con Excel</a>.</p>
+    <p><a class="boton" href="registro.html?next=perfil.html">Crear cuenta gratis</a> <a class="boton sec" href="perfil.html">Ya tengo cuenta: editar mi perfil</a></p>
+    <p class="aviso">Vivinati no verifica a las empresas del directorio ni interviene en sus contratos. Antes de pagar un anticipo, revisa el <a href="seguridad.html">centro de seguridad</a>.</p>
+
+    <nav class="enlaces-estados" id="por-estado"><!--ESTADOS--><!--/ESTADOS--></nav>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="comun.js?v=30"></script>
+  <script>
+  (async () => {
+    DP.cabecera();
+    const $ = id => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    DP.opcionesEstados($('estado'), 'Toda Venezuela');
+    if (DP.ESTADOS[params.get('estado')]) $('estado').value = params.get('estado');
+    let todas = [];
+    try {
+      const { data, error } = await DP.sb.rpc('directorio_constructoras', {});
+      if (error) throw error;
+      todas = data || [];
+    } catch (e) { console.error(e); return; }   // se queda lo que dejó el generador
+    function pintar() {
+      const e = $('estado').value;
+      const lista = e ? todas.filter(c => c.estado === e) : todas;
+      $('h1').textContent = e ? `Constructoras en ${e}` : 'Constructoras en Venezuela';
+      $('lista').innerHTML = lista.map(DP.tarjetaConstructora).join('');
+      $('cuenta').textContent = lista.length ? `${lista.length} ${lista.length === 1 ? 'empresa' : 'empresas'}` : '';
+      $('vacio').hidden = !!lista.length;
+      $('vacio').textContent = todas.length
+        ? `Todavía no hay constructoras registradas en ${e}. Prueba con otro estado o con toda Venezuela.`
+        : 'El directorio acaba de abrir y todavía no hay constructoras registradas. Si tienes una, sé la primera en aparecer.';
+    }
+    $('estado').addEventListener('change', () => {
+      const e = $('estado').value;
+      history.replaceState(null, '', e ? '?estado=' + encodeURIComponent(e) : location.pathname);
+      pintar();
+    });
+    pintar();
+  })();
+  </script>
+</body>
+</html>

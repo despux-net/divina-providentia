@@ -103,6 +103,25 @@ const DP = {
     if (web) l.push(`<a class="boton sec peq" href="${DP.esc(web)}" target="_blank" rel="noopener nofollow ugc">Página web ↗</a>`);
     return l.join('');
   },
+  // Directorio de constructoras: la usa constructoras.html y también el
+  // generador de páginas por estado (scripts/seo/generar.mjs).
+  slugEstado: e => String(e || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+  tarjetaConstructora(c) {
+    const nombre = c.empresa || c.nombre || '@' + c.usuario;
+    const perfil = `creador.html?u=${encodeURIComponent(c.usuario)}`;
+    const lugar = [c.ciudad, c.estado].filter(Boolean).join(', ');
+    const bio = c.biografia ? (c.biografia.length > 220 ? c.biografia.slice(0, 220).replace(/\s+\S*$/, '') + '…' : c.biografia) : '';
+    const cifras = [c.anuncios ? `${c.anuncios} ${c.anuncios === 1 ? 'inmueble' : 'inmuebles'}` : '',
+      c.proyectos ? `${c.proyectos} ${c.proyectos === 1 ? 'proyecto' : 'proyectos'}` : ''].filter(Boolean).join(' · ');
+    return `<article class="constructora">
+      <a class="constructora-cab" href="${perfil}">${DP.avatar(c, 56)}
+        <span><strong>${DP.esc(nombre)}</strong>${c.empresa && c.nombre ? `<small>${DP.esc(c.nombre)}</small>` : ''}
+        ${lugar ? `<small>${DP.esc(lugar)}</small>` : ''}</span></a>
+      <div class="constructora-datos">${DP.estrellas(c.estrellas, c.valoraciones, true)}${cifras ? ` · <span>${cifras}</span>` : ''}</div>
+      ${bio ? `<p>${DP.esc(bio)}</p>` : ''}
+      <div class="constructora-botones"><a class="boton peq" href="${perfil}">Ver perfil</a>${DP.contactosPerfil(c)}</div>
+    </article>`;
+  },
 
   // Estado → capital aproximada, para centrar el mapa.
   ESTADOS: {
@@ -547,6 +566,7 @@ DP.pie = () => {
           <li><a href="buscar.html?tipo=casa">Casas</a></li>
           <li><a href="buscar.html?vista=mapa">Ver en el mapa</a></li>
           <li><a href="busco.html">Personas que buscan inmueble</a></li>
+          <li><a href="constructoras.html">Constructoras</a></li>
           <li><a href="precios/">Precio del m² por zona</a></li>
         </ul>
       </div>
