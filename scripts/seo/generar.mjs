@@ -425,16 +425,19 @@ const paginasConstructoras = [];
 }
 
 // 4) sitemap.xml: páginas públicas + búsquedas + anuncios publicados en Vivinati.
+const productos = await tabla('productos?select=id,actualizado&activo=eq.true&order=actualizado.desc&limit=5000').catch(() => []);
 const propios = await tabla('inmuebles?select=id,actualizado&origen=eq.usuario&activo=eq.true&order=actualizado.desc&limit=5000');
 const urls = [
   ['/', 'weekly', '1.0'], ['/realestate/', 'daily', '1.0'], ['/realestate/buscar.html', 'daily', '0.9'], ['/realestate/conceptos.html', 'daily', '0.8'],
   ['/realestate/publicar.html', 'monthly', '0.6'], ['/realestate/bot.html', 'yearly', '0.3'], ['/condiciones.html', 'yearly', '0.3'],
   ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/realestate/busco.html', 'daily', '0.6'], ['/privacidad.html', 'yearly', '0.3'], ['/realestate/constructoras.html', 'weekly', '0.6'],
+  ['/industrial/', 'daily', '0.9'], ['/industrial/buscar.html', 'daily', '0.8'], ['/industrial/publicar.html', 'monthly', '0.6'],
   ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7']),
   ...paginasPrecios.map(u => [u, 'weekly', '0.6']),
   ...paginasConstructoras.map(u => [u, 'weekly', '0.5'])
 ].map(([u, f, pr]) => `<url><loc>${DOMINIO}${u}</loc><lastmod>${HOY}</lastmod><changefreq>${f}</changefreq><priority>${pr}</priority></url>`)
-  .concat(propios.map(i => `<url><loc>${DOMINIO}/realestate/anuncio.html?id=${i.id}</loc><lastmod>${String(i.actualizado).slice(0, 10)}</lastmod><priority>0.5</priority></url>`));
+  .concat(propios.map(i => `<url><loc>${DOMINIO}/realestate/anuncio.html?id=${i.id}</loc><lastmod>${String(i.actualizado).slice(0, 10)}</lastmod><priority>0.5</priority></url>`))
+  .concat(productos.map(p => `<url><loc>${DOMINIO}/industrial/producto.html?id=${p.id}</loc><lastmod>${String(p.actualizado).slice(0, 10)}</lastmod><priority>0.5</priority></url>`));
 fs.writeFileSync(path.join(SITIO, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`);
 
@@ -460,6 +463,7 @@ Disallow: /restablecer.html
 Disallow: /perfil.html
 Disallow: /realestate/mis-anuncios.html
 Disallow: /realestate/importar.html
+Disallow: /industrial/mis-publicaciones.html
 Disallow: /baja.html
 
 Sitemap: ${DOMINIO}/sitemap.xml

@@ -1296,3 +1296,39 @@ body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display:
 .nodriza-pie a { color: #5f6b77; text-decoration: none; }
 .nodriza-pie a:hover { text-decoration: underline; }
 @media (max-width: 560px) { .nodriza-mercados a { min-width: 0; width: 100%; } .nodriza-mercados { width: 100%; max-width: 340px; } }
+
+/* ---------- Vivinati Industrial ---------- */
+.marca-ind { gap: 8px; }
+.marca-sub { font-size: .78rem; font-weight: 400; letter-spacing: .28em; text-transform: lowercase; color: #6b7785; line-height: 1; padding-top: 3px; }
+@media (max-width: 560px) { .marca-sub { color: rgba(255, 255, 255, .85); } }
+.hero-ind { background: linear-gradient(180deg, #f3f7fb, #fff); border-bottom: 1px solid var(--line); }
+.hero-ind-int { max-width: 1100px; margin: 0 auto; padding: 44px 16px 36px; }
+.hero-ind h1 { font-weight: 300; font-size: clamp(1.6rem, 4vw, 2.3rem); margin: 0 0 8px; color: #1d2733; }
+.hero-ind .sub { max-width: 720px; }
+.busca-ind { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+.busca-ind input[type=search] { flex: 2 1 280px; }
+.busca-ind select { flex: 1 1 180px; }
+.busca-ind input, .busca-ind select { margin: 0; border-radius: 999px; padding: 10px 16px; }
+.cuadricula-ind { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.cat-ind { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: #fff; border: 1px solid var(--line); border-radius: 16px; color: inherit; text-decoration: none; transition: border-color .15s, box-shadow .15s; }
+.cat-ind:hover { border-color: #b9c9da; box-shadow: 0 2px 10px rgba(25, 118, 210, .08); text-decoration: none; }
+.cat-ind-icono { color: #005CA7; flex: none; padding-top: 2px; }
+.cat-ind strong { display: block; font-weight: 500; }
+.cat-ind small { display: block; color: var(--muted); font-size: .82rem; line-height: 1.4; }
+.cat-ind em { display: block; font-style: normal; color: #1976d2; font-size: .8rem; margin-top: 4px; }
+.vacio-ind { grid-column: 1 / -1; padding: 28px 4px; color: #3c4650; }
+.dos-ind { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+.sello-servicio { background: #6a4fb3; }
+.industrial .sinfoto { display: grid; place-items: center; color: #9fb3c8; background: #f1f5f9; }
+.sinfoto-ficha { aspect-ratio: 4 / 3; border-radius: 16px; }
+.datos-ind { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px 18px; margin: 0 0 20px; }
+.datos-ind div { border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.datos-ind dt { font-size: .8rem; color: var(--muted); }
+.datos-ind dd { margin: 0; font-weight: 500; }
+.anfitrion-cab { display: flex; gap: 12px; align-items: center; color: inherit; text-decoration: none; margin-bottom: 8px; }
+.anfitrion-cab strong { display: block; font-weight: 500; font-size: 1.05rem; }
+.anfitrion-cab small { display: block; color: var(--muted); }
+.anfitrion-botones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.opciones-op { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 10px; }
+.opciones-op label { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; margin: 0; }
+.fila-precio-ind { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0 14px; }

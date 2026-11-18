@@ -18,7 +18,7 @@ const DP = {
   // Conceptos 3D (proyectos conceptuales: renders, bocetos, tesis…)
   ETAPAS: { conceptual: 'Proyecto conceptual', tesis: 'Tesis', anteproyecto: 'Anteproyecto', infraestructura: 'Infraestructura' },
   ROLES: { estudiante: 'Estudiante', arquitecto: 'Arquitecto/a', emprendedor: 'Emprendedor/a', estudio: 'Estudio' },
-  TIPOS_PERFIL: { particular: 'Particular', agente: 'Agente inmobiliario', inmobiliaria: 'Inmobiliaria', constructora: 'Constructora o promotora', arquitecto: 'Arquitecto/a o estudio', estudiante: 'Estudiante de arquitectura o diseño', otro: 'Otro' },
+  TIPOS_PERFIL: { particular: 'Particular', agente: 'Agente inmobiliario', inmobiliaria: 'Inmobiliaria', constructora: 'Constructora o promotora', arquitecto: 'Arquitecto/a o estudio', estudiante: 'Estudiante de arquitectura o diseño', proveedor: 'Empresa industrial o proveedor', otro: 'Otro' },
   CATEGORIAS: { residencial: 'Residencial', urbano: 'Urbano', infraestructura: 'Infraestructura', comercial: 'Comercial' },
   esConcepto(i) { return i && i.operacion === 'concepto'; },
 
@@ -404,7 +404,8 @@ const DP = {
         <div class="menu-desplegable" role="menu">
           <a href="/chat.html" role="menuitem" data-mensajes>Mensajes</a>
           <a href="/perfil.html" role="menuitem">Mi perfil</a>
-          <a href="/realestate/mis-anuncios.html" role="menuitem">Mis anuncios</a>
+          <a href="/realestate/mis-anuncios.html" role="menuitem">Mis anuncios (inmuebles)</a>
+          <a href="/industrial/mis-publicaciones.html" role="menuitem">Mis publicaciones (industrial)</a>
           <a href="#" role="menuitem" data-salir>Salir</a>
         </div></div>`;
       const menu = nav.querySelector('.menu-usuario'), boton = menu.querySelector('.nav-perfil');
@@ -557,6 +558,55 @@ DP.pie = () => {
   if (!pie) return;
   const anio = new Date().getFullYear();
   const estados = ['Distrito Capital', 'Miranda', 'Carabobo', 'Zulia', 'Lara', 'Anzoátegui'];
+  // En Industrial, las columnas de búsqueda son las suyas.
+  if (location.pathname.startsWith('/industrial/') && window.IND) {
+    pie.innerHTML = `<div class="pie-int">
+    <div class="pie-columnas">
+      <div>
+        <h4>Vivinati Industrial</h4>
+        <p style="margin:0">Maquinaria, herramientas, materiales, insumos, repuestos y servicios para la industria venezolana, en un solo lugar.</p>
+      </div>
+      <div>
+        <h4>Categorías</h4>
+        <ul>${Object.entries(IND.CATEGORIAS).slice(0, 6).map(([k, [n]]) => `<li><a href="/industrial/buscar.html?categoria=${k}">${DP.esc(n)}</a></li>`).join('')}</ul>
+      </div>
+      <div>
+        <h4>Más categorías</h4>
+        <ul>${Object.entries(IND.CATEGORIAS).slice(6).map(([k, [n]]) => `<li><a href="/industrial/buscar.html?categoria=${k}">${DP.esc(n)}</a></li>`).join('')}</ul>
+      </div>
+      <div>
+        <h4>Publicar y ayuda</h4>
+        <ul>
+          <li><a href="/industrial/publicar.html">Publicar gratis</a></li>
+          <li><a href="/industrial/mis-publicaciones.html">Mis publicaciones</a></li>
+          <li><a href="/registro.html">Crear cuenta</a></li>
+          <li><a href="/seguridad.html">Centro de seguridad: evita estafas</a></li>
+          <li><a href="/realestate/">Vivinati Real Estate (inmuebles)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Vivinati</h4>
+        <ul>
+          <li><a href="/">vivinati corp</a></li>
+          <li><a href="/sobre.html">Quiénes somos</a></li>
+          <li><a href="/contacto.html">Contacto</a></li>
+          <li><a href="/privacidad.html">Política de privacidad</a></li>
+          <li><a href="/condiciones.html">Condiciones de uso y aviso de responsabilidad</a></li>
+        </ul>
+        <div class="redes" data-redes hidden></div>
+      </div>
+    </div>
+    <a class="emblema" href="/" aria-label="Vivinati — inicio">
+      <img src="/img/sello-vivinati.png" alt="Vivinati" width="150" height="25" loading="lazy" decoding="async">
+    </a>
+    <div class="legal">
+      <span>© ${anio} Vivinati</span>
+      <span>Las publicaciones son responsabilidad de quien las publica; Vivinati no intermedia en los pagos ni se hace responsable de estafas o engaños. <a href="/condiciones.html">Condiciones de uso</a> · <a href="/privacidad.html">Privacidad</a></span>
+    </div>
+  </div>`;
+    DP.ajustes().then(x => { const h = DP.iconosRedes(x), c = pie.querySelector('[data-redes]'); if (h && c) { c.innerHTML = h; c.hidden = false; } });
+    return;
+  }
   pie.innerHTML = `<div class="pie-int">
     <div class="pie-columnas">
       <div>
@@ -648,10 +698,17 @@ DP.iconosRedes = a => Object.entries(DP.REDES)
 // (el CSS la oculta en pantallas anchas).
 DP.barraMovil = () => {
   if (document.querySelector('.barra-movil')) return;
-  const pagina = (location.pathname.split('/').pop() || '/').toLowerCase();
+  const pagina = location.pathname.toLowerCase();   // ruta completa: /realestate/buscar.html
   const fav = new URLSearchParams(location.search).get('fav') === '1';
   const icono = d => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-  const pestañas = [
+  const ind = location.pathname.startsWith('/industrial/');
+  const pestañas = ind ? [
+    ['/industrial/', 'Inicio', ['/industrial/', '/industrial/index.html'].includes(pagina), '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>'],
+    ['/industrial/buscar.html', 'Buscar', pagina === '/industrial/buscar.html', '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
+    ['/industrial/publicar.html', 'Publicar', pagina === '/industrial/publicar.html', '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'],
+    ['/chat.html', 'Mensajes', pagina === '/chat.html', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>'],
+    ['/perfil.html', 'Perfil', pagina === '/perfil.html', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
+  ] : [
     ['/realestate/buscar.html', 'Buscar', pagina === '/realestate/buscar.html' && !fav, '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
     ['/realestate/buscar.html?fav=1', 'Favoritos', pagina === '/realestate/buscar.html' && fav, '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>'],
     ['/realestate/publicar.html', 'Publicar', pagina === '/realestate/publicar.html', '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'],

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Publicar en Vivinati Industrial — gratis</title>
+  <meta name="description" content="Publica gratis tu maquinaria, herramientas, materiales, insumos o servicios industriales y llega a empresas de toda Venezuela.">
+  <link rel="canonical" href="https://vivinati.com/industrial/publicar.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="/estilos.css?v=49">
+</head>
+<body class="industrial">
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca marca-ind" href="/industrial/" aria-label="Vivinati Industrial — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture><span class="marca-sub">industrial</span></a>
+      <nav class="nav"><a href="/industrial/buscar.html">Buscar</a><a href="/industrial/buscar.html?operacion=alquiler">Alquiler de maquinaria</a><a href="/industrial/buscar.html?operacion=servicio">Servicios</a><a href="/realestate/">Inmuebles</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <div class="form">
+      <h1 id="h1">Publica gratis en Vivinati Industrial</h1>
+
+      <section id="entrar" hidden>
+        <p>Para publicar necesitas una cuenta gratuita de Vivinati (la misma sirve para Real Estate). Así cada publicación tiene un responsable y puedes editarla o retirarla cuando quieras.</p>
+        <p><a class="boton" id="ir-registro" href="/registro.html">Crear cuenta</a> <a class="boton sec" id="ir-entrar" href="/entrar.html">Ya tengo cuenta</a></p>
+      </section>
+
+      <form id="form" hidden novalidate>
+        <fieldset>
+          <legend>¿Qué quieres hacer?</legend>
+          <div class="opciones-op" role="radiogroup">
+            <label><input type="radio" name="operacion" value="venta" checked> Vender</label>
+            <label><input type="radio" name="operacion" value="alquiler"> Alquilar (maquinaria o equipos)</label>
+            <label><input type="radio" name="operacion" value="servicio"> Ofrecer un servicio</label>
+          </div>
+          <label>Categoría<select id="categoria" required></select></label>
+          <label>Título <small>(qué es, marca y modelo; entre 5 y 120 letras)</small>
+            <input type="text" id="titulo" maxlength="120" required placeholder="Ej.: Generador Caterpillar 150 kVA diésel"></label>
+          <label>Descripción <small>(estado, horas de uso, capacidad, qué incluye, condiciones)</small>
+            <textarea id="descripcion" maxlength="5000" rows="6"></textarea></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Precio</legend>
+          <div class="fila-precio-ind">
+            <label>Precio <small>(vacío = a consultar)</small><input type="number" id="precio" min="0" step="0.01" inputmode="decimal"></label>
+            <label>Moneda<select id="moneda"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs.)</option></select></label>
+            <label>Por<select id="unidad"></select></label>
+          </div>
+        </fieldset>
+
+        <fieldset id="bloque-equipo">
+          <legend>Detalles</legend>
+          <div class="fila-precio-ind">
+            <label>Condición<select id="condicion"><option value="">Sin indicar</option><option value="nuevo">Nuevo</option><option value="usado">Usado</option><option value="reacondicionado">Reacondicionado</option></select></label>
+            <label>Marca<input type="text" id="marca" maxlength="60"></label>
+            <label>Modelo<input type="text" id="modelo" maxlength="60"></label>
+          </div>
+          <div class="fila-precio-ind">
+            <label>Año<input type="number" id="anio" min="1950" max="2100" inputmode="numeric"></label>
+            <label id="campo-cantidad">Cantidad disponible<input type="number" id="cantidad" min="0" inputmode="numeric"></label>
+            <label>Referencia interna <small>(opcional)</small><input type="text" id="referencia" maxlength="40"></label>
+          </div>
+          <label class="casilla"><input type="checkbox" id="envios"> Hago envíos a otras ciudades</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Ubicación y contacto</legend>
+          <div class="fila-precio-ind">
+            <label>Estado<select id="estado" required></select></label>
+            <label>Ciudad<input type="text" id="ciudad" maxlength="60"></label>
+            <label>WhatsApp <small>(se mostrará)</small><input type="tel" id="whatsapp" inputmode="tel" placeholder="0414 123 4567"></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Fotos</legend>
+          <p class="ayuda">Hasta 12 fotos. Las reducimos en tu teléfono antes de subirlas.</p>
+          <input type="file" id="fotos" accept="image/*" multiple>
+          <p class="aviso" id="fotos-ahorro" hidden></p>
+          <div class="fotos-prev" id="fotos-prev"></div>
+        </fieldset>
+
+        <div id="msg"></div>
+        <p><button class="boton" type="submit" id="guardar">Publicar</button></p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/comun.js?v=32"></script>
+  <script src="/industrial/industrial.js?v=2"></script>
+  <script src="/industrial/publicar.js?v=1"></script>
+</body>
+</html>

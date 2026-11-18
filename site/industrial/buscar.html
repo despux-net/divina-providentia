@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buscar maquinaria, herramientas, materiales y servicios — Vivinati Industrial</title>
+  <meta name="description" content="Busca maquinaria pesada e industrial, herramientas, materiales de construcción, insumos, repuestos y servicios industriales en venta y alquiler en Venezuela.">
+  <link rel="canonical" href="https://vivinati.com/industrial/buscar.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="/estilos.css?v=49">
+</head>
+<body class="industrial">
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca marca-ind" href="/industrial/" aria-label="Vivinati Industrial — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture><span class="marca-sub">industrial</span></a>
+      <nav class="nav"><a href="/industrial/buscar.html">Buscar</a><a href="/industrial/buscar.html?operacion=alquiler">Alquiler de maquinaria</a><a href="/industrial/buscar.html?operacion=servicio">Servicios</a><a href="/realestate/">Inmuebles</a><a class="boton peq" href="/industrial/publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <div class="barra-filtros">
+    <form class="barra-filtros-int" id="form" role="search">
+      <input type="search" id="q" placeholder="Qué buscas: marca, modelo, producto" aria-label="Qué buscas" class="campo-q">
+      <select id="categoria" class="pildora" aria-label="Categoría"></select>
+      <select id="operacion" class="pildora" aria-label="Venta, alquiler o servicio">
+        <option value="">Operación</option><option value="venta">En venta</option><option value="alquiler">En alquiler</option><option value="servicio">Servicios</option>
+      </select>
+      <select id="condicion" class="pildora" aria-label="Condición">
+        <option value="">Condición</option><option value="nuevo">Nuevo</option><option value="usado">Usado</option><option value="reacondicionado">Reacondicionado</option>
+      </select>
+      <select id="estado" class="pildora" aria-label="Estado"></select>
+      <details class="pildora desplegable" id="d-mas">
+        <summary>Más filtros</summary>
+        <div class="desplegable-panel panel-mas">
+          <div class="dos-columnas">
+            <label>Precio desde ($)<input type="number" id="pmin" min="0" inputmode="numeric"></label>
+            <label>Precio hasta ($)<input type="number" id="pmax" min="0" inputmode="numeric"></label>
+          </div>
+          <label class="casilla"><input type="checkbox" id="fotos"> Solo con fotos</label>
+          <label class="casilla"><input type="checkbox" id="envios"> Hace envíos</label>
+          <button type="button" class="boton peq" data-cerrar>Aplicar</button>
+        </div>
+      </details>
+      <span class="barra-fin">
+        <button type="button" class="redondo sec" id="limpiar" title="Quitar filtros" aria-label="Quitar filtros"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <button type="submit" class="redondo" title="Buscar" aria-label="Buscar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      </span>
+    </form>
+  </div>
+
+  <main class="contenedor">
+    <h1 id="titulo">Industrial en Venezuela</h1>
+    <div class="barra-orden">
+      <p class="resumen-linea" id="resumen" aria-live="polite">Buscando…</p>
+      <select id="orden" class="orden" aria-label="Ordenar">
+        <option value="recientes">Más recientes</option>
+        <option value="relevancia">Más relevantes</option>
+        <option value="precio_asc">Precio: menor a mayor</option>
+        <option value="precio_desc">Precio: mayor a menor</option>
+      </select>
+    </div>
+    <div id="resultados" class="rejilla resultados-cuatro"></div>
+    <p class="mas"><button type="button" class="boton sec" id="mas" hidden>Cargar más</button></p>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/comun.js?v=32"></script>
+  <script src="/industrial/industrial.js?v=2"></script>
+  <script src="/industrial/buscar.js?v=1"></script>
+</body>
+</html>

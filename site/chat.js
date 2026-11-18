@@ -66,9 +66,9 @@
     $('lista').innerHTML = convs.length ? convs.map(c => `<li><button type="button" data-c="${c.id}" aria-current="${actual && actual.id === c.id}">
         ${DP.avatar({ nombre: c.otro_nombre || c.otro_usuario, avatar_url: c.otro_avatar }, 44)}
         <span class="info"><strong>${DP.esc(c.otro_nombre || '@' + c.otro_usuario)}</strong>
-          <span>${DP.esc(c.inmueble_titulo || '@' + c.otro_usuario)}</span><span>${hora(c.ultimo)}</span></span>
+          <span>${DP.esc(c.inmueble_titulo || c.producto_titulo || '@' + c.otro_usuario)}</span><span>${hora(c.ultimo)}</span></span>
         ${c.no_leidos ? `<span class="contador">${c.no_leidos}</span>` : ''}</button></li>`).join('')
-      : '<li class="chat-vacio-lista">Aún no tienes conversaciones. Escribe a alguien desde un anuncio publicado en Vivinati.</li>';
+      : '<li class="chat-vacio-lista">Aún no tienes conversaciones. Escribe a alguien desde un anuncio o una publicación de Vivinati.</li>';
   }
   $('lista').addEventListener('click', e => {
     const b = e.target.closest('[data-c]'); if (!b) return;
@@ -90,7 +90,7 @@
       const aviso = document.createElement('div');
       aviso.className = 'aviso-estafa';
       aviso.setAttribute('role', 'note');
-      aviso.innerHTML = '<strong>Cuidado con los pagos por adelantado</strong>No envíes dinero, reservas ni depósitos sin haber visitado el inmueble y comprobado quién es el propietario. Vivinati nunca te pedirá pagos. <a href="/seguridad.html" target="_blank" rel="noopener">Cómo evitar estafas</a>';
+      aviso.innerHTML = '<strong>Cuidado con los pagos por adelantado</strong>No envíes dinero, reservas ni depósitos sin haber visto el inmueble o el equipo en persona y comprobado quién es el dueño. Vivinati nunca te pedirá pagos. <a href="/seguridad.html" target="_blank" rel="noopener">Cómo evitar estafas</a>';
       $('mensajes').appendChild(aviso);
     }
   }
@@ -105,8 +105,9 @@
     $('conv-avatar').innerHTML = DP.avatar({ nombre: c.otro_nombre || c.otro_usuario, avatar_url: c.otro_avatar }, 40);
     $('conv-nombre').innerHTML = `<a href="/creador.html?u=${encodeURIComponent(c.otro_usuario)}">${DP.esc(c.otro_nombre || '@' + c.otro_usuario)}</a>`;
     const a = $('conv-anuncio');
-    a.hidden = !c.inmueble_id;
+    a.hidden = !c.inmueble_id && !c.producto_id;
     if (c.inmueble_id) { a.href = '/realestate/anuncio.html?id=' + c.inmueble_id; a.textContent = c.inmueble_titulo || 'Ver anuncio'; }
+    else if (c.producto_id) { a.href = '/industrial/producto.html?id=' + c.producto_id; a.textContent = c.producto_titulo || 'Ver publicación'; }
     document.querySelectorAll('#lista [data-c]').forEach(b => b.setAttribute('aria-current', b.dataset.c === c.id));
 
     $('mensajes').innerHTML = '<p class="chat-seguridad">Descifrando…</p>';
@@ -173,7 +174,7 @@
   await cargarLista();
   escuchar();
   if (params.get('con')) {
-    const { data: cid, error } = await DP.sb.rpc('abrir_conversacion', { p_otro: params.get('con'), p_inmueble: params.get('anuncio') || null });
+    const { data: cid, error } = await DP.sb.rpc('abrir_conversacion', { p_otro: params.get('con'), p_inmueble: params.get('anuncio') || null, p_producto: params.get('producto') || null });
     if (error) { alert(error.message); return; }
     await cargarLista();
     abrir(convs.find(c => c.id === cid));

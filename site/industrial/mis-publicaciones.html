@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis publicaciones — Vivinati Industrial</title>
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="/estilos.css?v=49">
+</head>
+<body class="industrial">
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca marca-ind" href="/industrial/" aria-label="Vivinati Industrial — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture><span class="marca-sub">industrial</span></a>
+      <nav class="nav"><a href="/industrial/buscar.html">Buscar</a><a href="/industrial/buscar.html?operacion=alquiler">Alquiler de maquinaria</a><a href="/industrial/buscar.html?operacion=servicio">Servicios</a><a href="/realestate/">Inmuebles</a><a class="boton peq" href="/industrial/publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1>Mis publicaciones</h1>
+    <p class="sub">Tus productos, equipos y servicios en Vivinati Industrial. Tus inmuebles están en <a href="/realestate/mis-anuncios.html">Mis anuncios</a>.</p>
+    <div id="msg"></div>
+    <div class="lista-mia" id="lista">Cargando…</div>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/comun.js?v=32"></script>
+  <script src="/industrial/industrial.js?v=2"></script>
+  <script>
+  // Lista de las publicaciones de quien tiene la sesión: editar, pausar, borrar.
+  (async () => {
+    const $ = id => document.getElementById(id);
+    const session = await DP.cabecera();
+    if (!session) { location.href = '/entrar.html?next=/industrial/mis-publicaciones.html'; return; }
+    const uid = session.user.id;
+    let mios = {};
+    async function cargar() {
+      const { data, error } = await DP.sb.from('productos').select('*').eq('user_id', uid).order('creado', { ascending: false });
+      if (error) { $('lista').textContent = 'No se pudieron cargar tus publicaciones.'; console.error(error); return; }
+      mios = Object.fromEntries(data.map(p => [p.id, p]));
+      $('lista').innerHTML = data.length ? data.map(p => {
+        const foto = DP.fotoUrl(p.fotos && p.fotos[0]);
+        return `<div class="item-mio" data-id="${DP.esc(p.id)}">
+          ${foto ? `<img src="${DP.esc(foto)}" alt="">` : `<div class="sinfoto">${IND.icono(p.categoria, 28)}</div>`}
+          <div class="info">
+            <a href="/industrial/producto.html?id=${encodeURIComponent(p.id)}"><strong>${DP.esc(p.titulo)}</strong></a>
+            <div class="lugar">${DP.esc(IND.precio(p))} · ${DP.esc(IND.nombreCategoria(p.categoria))} · ${DP.esc(IND.lugar(p))}</div>
+            <span class="etiqueta ${p.activo ? '' : 'gris'}">${p.activo ? 'Publicado' : 'Pausado'}</span>
+          </div>
+          <div class="acciones">
+            <a class="boton sec peq" href="/industrial/publicar.html?id=${encodeURIComponent(p.id)}">Editar</a>
+            <button class="boton sec peq" data-accion="pausar">${p.activo ? 'Pausar' : 'Reactivar'}</button>
+            <button class="boton peligro peq" data-accion="borrar">Borrar</button>
+          </div></div>`;
+      }).join('') : `<div class="vacio"><strong>Aún no has publicado nada en Industrial</strong>
+          <p><a class="boton" href="/industrial/publicar.html">Publicar gratis</a></p></div>`;
+    }
+    $('lista').addEventListener('click', async e => {
+      const b = e.target.closest('button[data-accion]'); if (!b) return;
+      const id = b.closest('[data-id]').dataset.id, p = mios[id];
+      DP.mensaje($('msg'), '');
+      b.disabled = true;
+      if (b.dataset.accion === 'pausar') {
+        const { error } = await DP.sb.from('productos').update({ activo: !p.activo }).eq('id', id);
+        if (error) DP.mensaje($('msg'), error.message);
+      } else {
+        if (!confirm('¿Borrar esta publicación para siempre? Se borrarán también sus fotos. No se puede deshacer.')) { b.disabled = false; return; }
+        const fotos = (p.fotos || []).filter(r => r.startsWith(uid + '/'));
+        const { error } = await DP.sb.from('productos').delete().eq('id', id);
+        if (error) DP.mensaje($('msg'), error.message);
+        else if (fotos.length) await DP.sb.storage.from('inmuebles').remove(fotos);
+      }
+      cargar();
+    });
+    cargar();
+  })();
+  </script>
+</body>
+</html>

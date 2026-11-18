@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vivinati Industrial — Maquinaria, herramientas, materiales y servicios en Venezuela</title>
+  <meta name="description" content="Compra, vende y alquila maquinaria, herramientas, materiales de construcción, insumos, repuestos y servicios industriales en Venezuela. Publica gratis y habla directo con el vendedor.">
+  <link rel="canonical" href="https://vivinati.com/industrial/">
+  <meta property="og:site_name" content="Vivinati">
+  <meta property="og:title" content="Vivinati Industrial">
+  <meta property="og:description" content="Todo lo que necesita una fábrica en Venezuela: maquinaria, herramientas, materiales, insumos y servicios.">
+  <meta property="og:url" content="https://vivinati.com/industrial/">
+  <meta property="og:image" content="https://vivinati.com/img/og-vivinati.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="/estilos.css?v=49">
+</head>
+<body class="industrial">
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca marca-ind" href="/industrial/" aria-label="Vivinati Industrial — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture><span class="marca-sub">industrial</span></a>
+      <nav class="nav"><a href="/industrial/buscar.html">Buscar</a><a href="/industrial/buscar.html?operacion=alquiler">Alquiler de maquinaria</a><a href="/industrial/buscar.html?operacion=servicio">Servicios</a><a href="/realestate/">Inmuebles</a><a class="boton peq" href="/industrial/publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <section class="hero-ind">
+    <div class="hero-ind-int">
+      <h1>Todo lo que tu empresa necesita para producir</h1>
+      <p class="sub">Maquinaria, herramientas, materiales, insumos, repuestos y servicios industriales en toda Venezuela. Compra, vende o alquila, y habla directo con quien lo ofrece.</p>
+      <form class="busca-ind" action="/industrial/buscar.html" method="get" role="search">
+        <input type="search" name="q" placeholder="Qué buscas: generador, montacargas, cabillas…" aria-label="Qué buscas">
+        <select name="categoria" id="h-categoria" aria-label="Categoría"></select>
+        <select name="estado" id="h-estado" aria-label="Estado"></select>
+        <button class="boton" type="submit">Buscar</button>
+      </form>
+      <p class="sugerencias">Prueba: <a href="/industrial/buscar.html?q=generador">generador</a> · <a href="/industrial/buscar.html?q=montacargas">montacargas</a> · <a href="/industrial/buscar.html?q=soldadora">soldadora</a> · <a href="/industrial/buscar.html?q=compresor">compresor</a> · <a href="/industrial/buscar.html?q=cabillas">cabillas</a></p>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="seccion-int">
+      <h2>Categorías</h2>
+      <div class="cuadricula-ind" id="categorias"></div>
+    </div>
+  </section>
+
+  <main class="contenedor">
+    <div class="cabecera-resultados">
+      <h2>Publicaciones recientes</h2>
+      <a class="boton sec peq" href="/industrial/buscar.html">Ver todo</a>
+    </div>
+    <div id="recientes" class="rejilla resultados-cuatro"></div>
+  </main>
+
+  <section class="seccion">
+    <div class="seccion-int dos-ind">
+      <div>
+        <h2>¿Vendes, alquilas o prestas servicios?</h2>
+        <p>Publicar es gratis. Sube fotos, precio, condición y ubicación; los compradores te escriben por el chat de Vivinati o por WhatsApp. Las empresas y proveedores pueden tener hasta 300 publicaciones activas.</p>
+        <p><a class="boton" href="/industrial/publicar.html">Publicar gratis</a> <a class="boton sec" href="/industrial/mis-publicaciones.html">Mis publicaciones</a></p>
+      </div>
+      <div>
+        <h2>Compra con cuidado</h2>
+        <p>Antes de pagar, revisa el equipo en persona o por videollamada, pide factura o documento de propiedad y desconfía de precios demasiado bajos. Vivinati no cobra comisiones ni intermedia en los pagos.</p>
+        <p><a class="boton sec" href="/seguridad.html">Centro de seguridad</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/comun.js?v=32"></script>
+  <script src="/industrial/industrial.js?v=2"></script>
+  <script>
+  (async () => {
+    DP.cabecera();
+    IND.opcionesCategorias(document.getElementById('h-categoria'), 'Todas las categorías');
+    DP.opcionesEstados(document.getElementById('h-estado'), 'Toda Venezuela');
+    const quitarVacios = f => f.addEventListener('submit', () => f.querySelectorAll('input, select').forEach(c => { if (!c.value) c.disabled = true; }));
+    quitarVacios(document.querySelector('.busca-ind'));
+    window.addEventListener('pageshow', () => document.querySelectorAll('.busca-ind [disabled]').forEach(c => { c.disabled = false; }));
+
+    const { data: conteo } = await DP.sb.rpc('conteo_productos');
+    const n = Object.fromEntries((conteo || []).map(c => [c.categoria, c.total]));
+    document.getElementById('categorias').innerHTML = Object.entries(IND.CATEGORIAS).map(([k, [nombre, ejemplos]]) =>
+      `<a class="cat-ind" href="/industrial/buscar.html?categoria=${k}">
+        <span class="cat-ind-icono">${IND.icono(k, 26)}</span>
+        <span><strong>${DP.esc(nombre)}</strong><small>${DP.esc(ejemplos)}</small>${n[k] ? `<em>${n[k]} ${n[k] === 1 ? 'publicación' : 'publicaciones'}</em>` : ''}</span>
+      </a>`).join('');
+
+    const { data, error } = await DP.sb.rpc('buscar_productos', { p_limite: 8 });
+    const cont = document.getElementById('recientes');
+    if (error) { cont.innerHTML = '<p class="vacio">No se pudieron cargar las publicaciones.</p>'; return; }
+    cont.innerHTML = data.length ? data.map(IND.tarjeta).join('')
+      : `<div class="vacio-ind">
+           <p><b>Vivinati Industrial acaba de abrir.</b> Todavía no hay publicaciones: sé de los primeros en ofrecer tu maquinaria, tus materiales o tus servicios a toda Venezuela.</p>
+           <p><a class="boton" href="/industrial/publicar.html">Publicar gratis</a></p>
+         </div>`;
+  })();
+  </script>
+</body>
+</html>
