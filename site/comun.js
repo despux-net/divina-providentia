@@ -584,6 +584,7 @@ DP.pie = () => {
         <ul>
           <li><a href="/industrial/publicar.html">Publicar gratis</a></li>
           <li><a href="/industrial/mis-publicaciones.html">Mis publicaciones</a></li>
+          <li><a href="/industrial/proveedores.html">Directorio de proveedores</a></li>
           <li><a href="/registro.html">Crear cuenta</a></li>
           <li><a href="/seguridad.html">Centro de seguridad: evita estafas</a></li>
           <li><a href="/realestate/">Vivinati Real Estate (inmuebles)</a></li>

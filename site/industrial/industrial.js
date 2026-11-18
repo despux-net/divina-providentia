@@ -65,6 +65,29 @@ const IND = {
     </article>`;
   },
 
+  // Directorio de proveedores: ficha con rubros, marcas, catálogos y su web.
+  tarjetaProveedor(v) {
+    const web = DP.urlSegura(v.web);
+    const lugar = [v.ciudad, v.estado].filter(Boolean).join(', ');
+    const cats = (v.categorias || []).map(c => `<a class="chip-dato" href="/industrial/proveedores.html?categoria=${encodeURIComponent(c)}">${DP.esc(IND.nombreCategoria(c))}</a>`).join('');
+    const catalogos = (Array.isArray(v.catalogos) ? v.catalogos : []).map(c => {
+      const u = DP.urlSegura(c.url);
+      return u ? `<li><a href="${DP.esc(u)}" target="_blank" rel="noopener nofollow">${DP.esc(c.titulo || 'Catálogo')}</a>${/\.pdf(\?|$)/i.test(u) ? ' <small>PDF</small>' : ''}</li>` : '';
+    }).join('');
+    return `<article class="proveedor">
+      <div class="proveedor-cab">${DP.avatar({ nombre: v.nombre }, 48)}
+        <div><h2>${DP.esc(v.nombre)}</h2>${lugar ? `<p class="ayuda">${DP.esc(lugar)}</p>` : ''}</div></div>
+      ${v.descripcion ? `<p>${DP.esc(v.descripcion)}</p>` : ''}
+      ${cats ? `<div class="chips-datos">${cats}</div>` : ''}
+      ${(v.marcas || []).length ? `<p class="proveedor-marcas"><b>Marcas:</b> ${DP.esc(v.marcas.join(', '))}</p>` : ''}
+      ${catalogos ? `<div class="proveedor-catalogos"><b>Catálogos</b><ul>${catalogos}</ul></div>` : ''}
+      <div class="proveedor-botones">
+        ${v.productos ? `<a class="boton peq" href="/industrial/buscar.html?q=${encodeURIComponent(v.fuente_productos)}">Ver sus ${Number(v.productos).toLocaleString('es-VE')} productos</a>` : ''}
+        ${web ? `<a class="boton sec peq" href="${DP.esc(web)}" target="_blank" rel="noopener nofollow">Visitar su web ↗</a>` : ''}
+      </div>
+    </article>`;
+  },
+
   opcionesCategorias(sel, vacio) {
     sel.innerHTML = (vacio ? `<option value="">${DP.esc(vacio)}</option>` : '') +
       Object.entries(IND.CATEGORIAS).map(([k, [n]]) => `<option value="${k}">${DP.esc(n)}</option>`).join('');

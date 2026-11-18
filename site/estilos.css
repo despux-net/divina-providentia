@@ -1339,3 +1339,19 @@ body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display:
 .pestanas-mercado a:hover { border-color: #b9c9da; text-decoration: none; }
 .pestanas-mercado a[aria-current="page"] { background: #005CA7; border-color: #005CA7; color: #fff; }
 .perfil-publico .pestanas-mercado { justify-content: flex-start; }
+
+/* Directorio de proveedores (Industrial) */
+.lista-proveedores { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; margin: 16px 0 32px; }
+.proveedor { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.proveedor-cab { display: flex; gap: 12px; align-items: center; }
+.proveedor-cab h2 { font-size: 1.05rem; font-weight: 500; margin: 0; }
+.proveedor-cab .ayuda { margin: 0; }
+.proveedor p { margin: 0; font-size: .92rem; }
+.proveedor .chips-datos a { text-decoration: none; }
+.proveedor-marcas { color: #3c4650; }
+.proveedor-catalogos { font-size: .9rem; }
+.proveedor-catalogos ul { margin: 4px 0 0; padding-left: 18px; }
+.proveedor-catalogos small { color: var(--muted); }
+.proveedor-botones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+.seccion-proveedor-alta { border-top: 1px solid var(--line); padding-top: 18px; margin-bottom: 30px; }
+.seccion-proveedor-alta h2 { font-weight: 400; font-size: 1.2rem; }

@@ -82,6 +82,7 @@
       <div class="anfitrion-botones">
         ${web ? `<a class="boton" href="${DP.esc(web)}" target="_blank" rel="noopener nofollow">Ver en la web de ${DP.esc(p.fuente)} ↗</a>` : ''}
         <a class="boton sec" href="/industrial/buscar.html?q=${encodeURIComponent(p.fuente)}">Más de ${DP.esc(p.fuente)}</a>
+        <a class="boton sec" href="/industrial/proveedores.html?q=${encodeURIComponent(p.fuente)}">Ficha y catálogos del proveedor</a>
       </div>`;
   }
 

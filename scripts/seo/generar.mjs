@@ -431,7 +431,7 @@ const urls = [
   ['/', 'weekly', '1.0'], ['/realestate/', 'daily', '1.0'], ['/realestate/buscar.html', 'daily', '0.9'], ['/realestate/conceptos.html', 'daily', '0.8'],
   ['/realestate/publicar.html', 'monthly', '0.6'], ['/realestate/bot.html', 'yearly', '0.3'], ['/condiciones.html', 'yearly', '0.3'],
   ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/realestate/busco.html', 'daily', '0.6'], ['/privacidad.html', 'yearly', '0.3'], ['/realestate/constructoras.html', 'weekly', '0.6'],
-  ['/industrial/', 'daily', '0.9'], ['/industrial/buscar.html', 'daily', '0.8'], ['/industrial/publicar.html', 'monthly', '0.6'],
+  ['/industrial/', 'daily', '0.9'], ['/industrial/buscar.html', 'daily', '0.8'], ['/industrial/proveedores.html', 'weekly', '0.8'], ['/industrial/publicar.html', 'monthly', '0.6'],
   ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7']),
   ...paginasPrecios.map(u => [u, 'weekly', '0.6']),
   ...paginasConstructoras.map(u => [u, 'weekly', '0.5'])

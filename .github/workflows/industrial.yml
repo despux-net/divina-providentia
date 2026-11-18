@@ -1,6 +1,10 @@
-# Indexador de Vivinati Industrial (scripts/industrial/indexar.mjs): productos
-# que proveedores venezolanos publican en su propia web (Camozzi Venezuela,
-# FRASAM…). Una vez al día, con calma. Gratis.
+# Vivinati Industrial: directorio de proveedores, sus catálogos y sus productos.
+# - directorio: sube scripts/industrial/proveedores.json y busca catálogos PDF
+#   en la web de cada proveedor (catalogos.mjs).
+# - indexar: un trabajo por fuente de fuentes.json, en paralelo y cada uno
+#   despacio con su web (la primera vez las fuentes grandes tardan horas;
+#   después solo se leen las fichas nuevas y se revisan las demás cada 14 días).
+# Una vez al día. Gratis (repositorio público).
 name: Indexador Industrial
 
 on:
@@ -16,16 +20,45 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  indexar:
+  directorio:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 40
+    outputs:
+      fuentes: ${{ steps.fuentes.outputs.lista }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Indexar proveedores
+      - name: Lista de fuentes
+        id: fuentes
+        run: echo "lista=$(node scripts/industrial/fuentes-activas.mjs)" >> "$GITHUB_OUTPUT"
+      - name: Directorio de proveedores
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          MAX_MINUTOS: '50'
-        run: node scripts/industrial/indexar.mjs
+        run: node scripts/industrial/cargar-proveedores.mjs
+      - name: Catálogos PDF
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/industrial/catalogos.mjs
+
+  indexar:
+    needs: directorio
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        fuente: ${{ fromJSON(needs.directorio.outputs.fuentes) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Indexar ${{ matrix.fuente }}
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MAX_MINUTOS: '310'
+          FUENTE: ${{ matrix.fuente }}
+        run: node scripts/industrial/indexar.mjs "$FUENTE"

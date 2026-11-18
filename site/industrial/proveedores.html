@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proveedores industriales de Venezuela: directorio y catálogos — Vivinati Industrial</title>
+  <meta name="description" content="Directorio de proveedores industriales de Venezuela: materiales de construcción, acero, maquinaria, neumática, automatización, electricidad, químicos, rodamientos y más. Con sus marcas, ubicación y catálogos PDF.">
+  <link rel="canonical" href="https://vivinati.com/industrial/proveedores.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="/estilos.css?v=51">
+</head>
+<body class="industrial">
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca marca-ind" href="/industrial/" aria-label="Vivinati Industrial — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture><span class="marca-sub">industrial</span></a>
+      <nav class="nav"><a href="/industrial/buscar.html">Buscar</a><a href="/industrial/proveedores.html">Proveedores</a><a href="/industrial/buscar.html?operacion=servicio">Servicios</a><a href="/realestate/">Inmuebles</a><a class="boton peq" href="/industrial/publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1 id="titulo">Proveedores industriales de Venezuela</h1>
+    <p class="sub">Empresas venezolanas que venden materiales, equipos, componentes y servicios para la industria y la construcción, con sus marcas, su ubicación, sus catálogos y el enlace a su web. Los productos que publican en su web también aparecen en el <a href="/industrial/buscar.html">buscador</a>.</p>
+
+    <form class="busca-ind" id="form" role="search">
+      <input type="search" id="q" placeholder="Empresa, marca o producto: Siemens, cabillas, rodamientos…" aria-label="Buscar proveedor">
+      <select id="categoria" aria-label="Categoría"></select>
+      <select id="estado" aria-label="Estado"></select>
+      <button class="boton" type="submit">Buscar</button>
+    </form>
+    <p class="resumen-linea" id="resumen" aria-live="polite">Cargando…</p>
+    <div class="lista-proveedores" id="lista"></div>
+
+    <section class="seccion-proveedor-alta">
+      <h2>¿Tu empresa no aparece o algún dato está mal?</h2>
+      <p>Aparecer es gratis. <a href="/contacto.html?motivo=proveedor">Escríbenos</a> con el nombre de la empresa, la web y tus catálogos, o crea tu cuenta y publica tus productos directamente en <a href="/industrial/publicar.html">Vivinati Industrial</a>. Si eres el titular de una web y no quieres aparecer, también nos puedes escribir y la retiramos.</p>
+    </section>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/comun.js?v=35"></script>
+  <script src="/industrial/industrial.js?v=5"></script>
+  <script>
+  (async () => {
+    const $ = id => document.getElementById(id);
+    DP.cabecera();
+    IND.opcionesCategorias($('categoria'), 'Todas las categorías');
+    DP.opcionesEstados($('estado'), 'Toda Venezuela');
+    const params = new URLSearchParams(location.search);
+    ['q', 'categoria', 'estado'].forEach(c => { if (params.get(c)) $(c).value = params.get(c); });
+
+    async function buscar() {
+      const q = $('q').value.trim(), cat = $('categoria').value, est = $('estado').value;
+      const p = new URLSearchParams(); if (q) p.set('q', q); if (cat) p.set('categoria', cat); if (est) p.set('estado', est);
+      history.replaceState(null, '', p.toString() ? '?' + p : location.pathname);
+      $('titulo').textContent = (cat ? `Proveedores de ${IND.nombreCategoria(cat).toLowerCase()}` : 'Proveedores industriales') + ` en ${est || 'Venezuela'}`;
+      $('resumen').textContent = 'Buscando…';
+      const { data, error } = await DP.sb.rpc('buscar_proveedores', { q: q || null, p_categoria: cat || null, p_estado: est || null });
+      if (error) { $('resumen').textContent = 'No se pudo cargar el directorio.'; return; }
+      $('resumen').textContent = data.length ? `${data.length} ${data.length === 1 ? 'proveedor' : 'proveedores'}` : 'Ningún proveedor coincide. Prueba con otra palabra o sin filtros.';
+      $('lista').innerHTML = data.map(IND.tarjetaProveedor).join('');
+    }
+    $('form').addEventListener('submit', e => { e.preventDefault(); buscar(); });
+    ['categoria', 'estado'].forEach(c => $(c).addEventListener('change', buscar));
+    buscar();
+  })();
+  </script>
+</body>
+</html>
