@@ -94,8 +94,11 @@ const FUENTES = [
         if (!prod || !prod.name) continue;
         const of = Array.isArray(prod.offers) ? prod.offers[0] : (prod.offers || {});
         const precio = Number(of.price);
-        const img = (Array.isArray(prod.image) ? prod.image[0] : prod.image) ||
-          (r.texto.match(/<meta property="og:image" content="([^"]+)"/) || [])[1];
+        // Solo fotos reales del producto. Su og:image es una tarjeta con el nombre
+        // (no una foto): sin foto, la web muestra el icono de la categoría.
+        const imagen = typeof prod.image === 'object' && prod.image && !Array.isArray(prod.image) ? prod.image.url : prod.image;
+        const img = [].concat(imagen || [])[0];
+        const fotoReal = img && !/opengraph-image/.test(img) ? img : null;
         const marca = typeof prod.brand === 'string' ? prod.brand : prod.brand && prod.brand.name;
         yield {
           url_original: url, titulo: recortar(prod.name, 120),
@@ -104,7 +107,7 @@ const FUENTES = [
           condicion: /UsedCondition/.test(of.itemCondition || '') ? 'usado' : 'nuevo',
           marca: marca ? String(marca).slice(0, 60) : null, modelo: prod.sku ? String(prod.sku).slice(0, 60) : null,
           categoria: 'repuestos', estado: 'Bolívar', ciudad: 'Ciudad Guayana', envios: true,
-          fotos: img && /^https:\/\//.test(img) ? [img] : []
+          fotos: fotoReal && /^https:\/\//.test(fotoReal) ? [fotoReal] : []
         };
       }
     }
