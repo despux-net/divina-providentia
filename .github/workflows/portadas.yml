@@ -1,0 +1,33 @@
+# Portadas con cara: marca como «relegado» (al final de la portada y del
+# orden «recientes») los anuncios externos cuya primera foto muestra a una
+# persona (cartel de un agente). Siguen existiendo y apareciendo en las
+# búsquedas. Cada día, después del indexador. Gratis (OpenCV en GitHub).
+name: Portadas con cara
+
+on:
+  schedule:
+    - cron: '20 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portadas
+  cancel-in-progress: false
+
+jobs:
+  portadas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar OpenCV
+        run: pip install --quiet opencv-python-headless==4.10.0.84 numpy
+      - name: Revisar portadas
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python scripts/portadas/revisar.py

@@ -22,6 +22,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          for f in indexador.yml alertas.yml contacto.yml deploy.yml cercanias.yml mantener-activo.yml; do
+          for f in indexador.yml alertas.yml contacto.yml deploy.yml cercanias.yml portadas.yml mantener-activo.yml; do
             gh api -X PUT "repos/$REPO/actions/workflows/$f/enable" && echo "Activa: $f" || echo "No se pudo activar: $f"
           done

@@ -47,8 +47,12 @@
 
   DP.cabecera();
 
-  // Anuncios recientes (8).
-  DP.sb.rpc('buscar_inmuebles', { p_limite: 8 }).then(({ data, error }) => {
+  // Anuncios recientes (8), variados: uno por inmobiliaria o web (Vivinati
+  // cuenta como una), con foto y sin los relegados (portada con la cara de un
+  // agente). Las fuentes de NO_EN_PORTADA siguen en el buscador, solo no abren
+  // la portada.
+  const NO_EN_PORTADA = ['Venebrokers'];
+  DP.sb.rpc('portada_inmuebles', { p_limite: 8, p_por_fuente: 1, p_excluir: NO_EN_PORTADA }).then(({ data, error }) => {
     const cont = $('recientes');
     if (error || !data) { cont.innerHTML = '<div class="vacio" style="grid-column:1/-1">No se pudieron cargar los anuncios.</div>'; return; }
     cont.innerHTML = data.map(DP.tarjeta).join('');
