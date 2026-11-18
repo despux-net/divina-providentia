@@ -198,7 +198,9 @@ for (const f of FUENTES) {
       if (!p.url_original || !/^https:\/\//.test(p.url_original) || !robots.permitido(p.url_original)) continue;
       vistos.push(p.url_original);
       if (p.soloVisto) continue;
-      const titulo = recortar(sinContacto(p.titulo), 120);
+      // «Láminas de acero - Maploca» → «Láminas de acero» (el nombre de la tienda ya va aparte)
+      const sinTienda = String(p.titulo || '').replace(new RegExp(`\\s*[|–-]\\s*${f.nombre.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'i'), '');
+      const titulo = recortar(sinContacto(sinTienda), 120);
       if (!titulo || titulo.length < 5) continue;
       const fila = {
         url_original: p.url_original, titulo,

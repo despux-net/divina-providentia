@@ -1,93 +1,733 @@
 [
-  {"slug":"camozzi-venezuela","nombre":"Camozzi Venezuela","web":"https://camozzi.shop","categorias":["automatizacion"],"marcas":["Camozzi"],"estado":"Zulia","ciudad":"Maracaibo","fuente":"Camozzi Venezuela",
-   "descripcion":"Filial venezolana del fabricante italiano de neumática y automatización: cilindros, válvulas, electroválvulas, racores, tubería y tratamiento de aire."},
-  {"slug":"frasam","nombre":"FRASAM","web":"https://frasam.net","categorias":["repuestos"],"marcas":["SKF","NSK","NTN","Timken","FAG","ISB"],"estado":"Bolívar","ciudad":"Ciudad Guayana","fuente":"FRASAM",
-   "descripcion":"Rodamientos y componentes industriales con despacho a todo el país."},
-  {"slug":"automatroni","nombre":"Automatroni","web":"https://automatroni.com","categorias":["automatizacion","energia"],"marcas":["Schneider Electric","Siemens","Autonics","Legrand","Delta"],"estado":"Aragua","ciudad":"Maracay","fuente":"Automatroni",
-   "descripcion":"Automatización y control industrial, material eléctrico y neumática.",
-   "catalogos":[["Catálogo general","https://automatroni.com/img/catalogo_automatroni.pdf"],["Autonics","https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20AUTONICS.pdf"],["Schneider Electric","https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Schneider.pdf"],["Neumática","https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Neumatica-1.pdf"],["Borneras","https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Borneras.pdf"],["Exceline","https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Exceline.pdf"],["Gqele","https://automatroni.com/archivos_descargas/Catalogo%20de%20Ventas%20Automatroni%20Gqele.pdf"],["Iluminación IKATALED","https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20IKATALED.pdf"]]},
-  {"slug":"electricaracas","nombre":"ElectriCaracas","web":"https://electricaracas.com","categorias":["energia"],"marcas":["ABB","LS Electric"],"estado":"Distrito Capital","ciudad":"Caracas","fuente":"ElectriCaracas",
-   "descripcion":"Materiales eléctricos e iluminación para obras residenciales, comerciales e industriales."},
-  {"slug":"sparmap","nombre":"Sparmap Materiales Eléctricos","web":"https://sparmap.agroo.net.ve","categorias":["energia","automatizacion"],"marcas":["Schneider Electric","3M"],"estado":"Portuguesa","ciudad":"Acarigua","fuente":"Sparmap Materiales Eléctricos",
-   "descripcion":"Materiales eléctricos de baja, media y alta tensión, variadores y diseño de tableros, con servicio a todo el país."},
-  {"slug":"distrimeca","nombre":"Distrimeca","web":"https://distrimeca.com.ve","categorias":["herramientas","seguridad","materiales","repuestos"],"estado":"Zulia","ciudad":"Maracaibo","fuente":"Distrimeca",
-   "descripcion":"Distribuidora industrial: herramientas, seguridad industrial, plomería, suministros y materiales de construcción."},
-  {"slug":"aruca-maquinarias","nombre":"ARUCA Maquinarias","web":"https://arucamaquinarias.com","categorias":["maquinaria-industrial","herramientas"],"marcas":["Milescraft"],"estado":"Distrito Capital","ciudad":"Caracas","fuente":"ARUCA Maquinarias",
-   "descripcion":"Maquinaria, herramientas y compresores, con especialidad en la industria de la madera."},
-  {"slug":"impexpar","nombre":"IMPEXPAR","web":"https://impexpar.com","categorias":["maquinaria-pesada","energia"],"marcas":["CompAir","Escorts","Simex"],"estado":"Distrito Capital","ciudad":"Caracas","fuente":"IMPEXPAR",
-   "descripcion":"Importadora de maquinaria pesada y vial, plantas eléctricas desde 100 kVA y compresores."},
-  {"slug":"grimuca","nombre":"Grimuca","web":"https://grimuca.com","categorias":["materiales","repuestos"],"marcas":["Pedrollo","Grival"],"estado":"Carabobo","ciudad":"Valencia","fuente":"Grimuca",
-   "descripcion":"Plomería, grifería, filtros, bombas de agua e hidroneumáticos, con envíos a todo el país."},
-  {"slug":"ferre-digital","nombre":"Ferre Digital","web":"https://ferre.digital","categorias":["herramientas","materiales"],"estado":"Miranda","ciudad":"San Antonio de los Altos","fuente":"Ferre Digital",
-   "descripcion":"Ferretería en línea: herramientas, plomería y materiales de construcción con envíos."},
-  {"slug":"ecotools","nombre":"EcoTools","web":"https://ecotoolsjjla.com","categorias":["herramientas","materiales"],"estado":"Distrito Capital","ciudad":"Caracas","fuente":"EcoTools",
-   "descripcion":"Herramientas, paneles y materiales de acabado, con envíos en Caracas y al resto del país."},
-  {"slug":"sipheca","nombre":"Sipheca","web":"https://sipheca.com","categorias":["seguridad"],"estado":"Carabobo","ciudad":"Valencia","fuente":"Sipheca",
-   "descripcion":"Equipos de protección personal e higiene ocupacional: botas, guantes, cascos y más."},
-
-  {"slug":"motasa","nombre":"Motasa","web":"https://www.motasa.com.ve","categorias":["materiales"],"estado":"Distrito Capital","ciudad":"Caracas",
-   "descripcion":"Hierro, acero y plomería: cabillas, láminas, vigas, tubos estructurales y PVC. Sedes en Caracas, Valencia, Guacara y Guarenas.",
-   "catalogos":[["Catálogo Motasa","https://www.motasa.com.ve/s/CATALOGO_MOTASA_2.pdf"],["Catálogo Motasa (otra edición)","https://www.motasa.com.ve/s/CATALOGO_MOTASA-kfx5.pdf"]]},
-  {"slug":"vemacero","nombre":"Grupo Vemacero","web":"https://vemacero.com","categorias":["materiales"],
-   "descripcion":"Tuberías de acero con y sin costura y conexiones para soldar.",
-   "catalogos":[["Tabla de tubería","https://vemacero.com/wp-content/uploads/2024/06/web-2-Pagina-nueva-Tabla-tuberia-1.pdf"],["Tubería API","https://vemacero.com/wp-content/uploads/2024/06/Tuberia-API.pdf"]]},
-  {"slug":"metales-hk","nombre":"Metales HK","web":"https://metaleshk.com.ve","categorias":["materiales","materias-primas"],"estado":"Carabobo","ciudad":"Valencia",
-   "descripcion":"Acero inoxidable: tubería, láminas, barras y perfiles."},
-  {"slug":"ferresoldar","nombre":"Ferresoldar Industrial","web":"https://www.ferresoldar.com","categorias":["herramientas","seguridad"],"marcas":["Lincoln Electric","Miller","Handell"],"estado":"Carabobo","ciudad":"Valencia",
-   "descripcion":"Soldadura, herramientas eléctricas y neumáticas, equipos de protección y ferretería industrial, con envíos a todo el país.",
-   "catalogos":[["Electrodos y varillas 2026","https://www.ferresoldar.com/catalogos/ferresoldar-electrodos-varillas-2026.pdf"],["Handell: equipos de soldadura y corte","https://www.ferresoldar.com/catalogos/handell-equipos-soldadura-corte.pdf"]]},
-  {"slug":"tres-fases","nombre":"Tres Fases","web":"https://www.tresfases.com","categorias":["energia"],"estado":"Distrito Capital","ciudad":"Caracas",
-   "descripcion":"Materiales y equipos eléctricos para hogares e industrias: breakers, tableros, cables, contactores y arrancadores."},
-  {"slug":"capital-electric","nombre":"Capital Electric","web":"https://www.capitalelectric-ve.com","categorias":["energia"],"estado":"Distrito Capital","ciudad":"Caracas",
-   "descripcion":"Iluminación LED, breakers, cables y tableros eléctricos."},
-  {"slug":"indaca","nombre":"Indaca","web":"https://www.indaca.com.ve","categorias":["energia","automatizacion"],"estado":"Zulia","ciudad":"Maracaibo",
-   "descripcion":"Cables, breakers, tableros, iluminación y control industrial desde 1986."},
-  {"slug":"siapca","nombre":"SIAPCA","web":"https://siapca.com","categorias":["automatizacion","energia"],"marcas":["Schneider Electric"],
-   "descripcion":"Automatización y control para plantas industriales: PLC, variadores y contactores."},
-  {"slug":"sd-solutions","nombre":"SD Solutions","web":"https://sdsolutionsca.com","categorias":["automatizacion","servicios"],"marcas":["Yokogawa","Allen-Bradley","Rockwell Automation"],
-   "descripcion":"Automatización industrial y reparación de PLC, DCS y SCADA."},
-  {"slug":"controlven","nombre":"Controlven","web":"https://controlven.com","categorias":["automatizacion","energia"],
-   "descripcion":"Variadores de frecuencia, protección y maniobra eléctrica para la industria."},
-  {"slug":"atslam","nombre":"ATSLAM","web":"https://atslam.com","categorias":["automatizacion"],"marcas":["XCPC"],"estado":"Cojedes","ciudad":"Tinaquillo",
-   "descripcion":"Neumática XCPC: cilindros, electroválvulas, racores, mangueras y unidades FRL, con stock permanente.",
-   "catalogos":[["Catálogo en línea XCPC","https://atslam.com/catalogo"]]},
-  {"slug":"neumatica-rotonda","nombre":"Neumática Rotonda","web":"https://www.neumaticarotonda.com","categorias":["automatizacion"],"estado":"Carabobo","ciudad":"Valencia",
-   "descripcion":"Válvulas neumáticas, cilindros ISO, racores y tratamiento de aire, con entrega inmediata."},
-  {"slug":"venezdem","nombre":"Venezdem","web":"https://www.venezdem.com.ve","categorias":["maquinaria-pesada","logistica"],"estado":"Distrito Capital","ciudad":"Caracas",
-   "descripcion":"Venta y alquiler de montacargas y baterías industriales en Caracas y Valencia."},
-  {"slug":"intersupply","nombre":"Intersupply Venezuela","web":"https://intersupply-venezuela.com","categorias":["maquinaria-pesada","energia"],
-   "descripcion":"Equipos importados: montacargas, generadores y compresores de aire."},
-  {"slug":"special-truck","nombre":"Special Truck","web":"https://specialtruckcranes.com","categorias":["maquinaria-pesada","logistica"],
-   "descripcion":"Grúas, camiones y equipos de manejo de materiales, nuevos y usados."},
-  {"slug":"arfesa","nombre":"ARFESA (Aragua Ferretera)","web":"https://www.arfesa.com","categorias":["herramientas","materiales"],"estado":"Aragua",
-   "descripcion":"Ferretería industrial y tornillería para la industria de Aragua y Carabobo."},
-  {"slug":"tumayorferretero","nombre":"TuMayorFerretero","web":"https://tumayorferretero.net","categorias":["materiales","herramientas"],"estado":"Distrito Capital","ciudad":"Caracas",
-   "descripcion":"Ferretería mayorista: materiales de construcción, pinturas, plomería y herramientas, con envío nacional."},
-  {"slug":"ferremoreno","nombre":"FerreMoreno","web":"https://ferremoreno.com","categorias":["materiales","herramientas"],
-   "descripcion":"Ferretería industrial y materiales de construcción al mayor, con portal para empresas."},
-  {"slug":"ferreteria-arci","nombre":"Ferretería Arci","web":"https://www.arci.com.ve","categorias":["materiales","herramientas"],"estado":"Zulia","ciudad":"Maracaibo",
-   "descripcion":"Productos ferreteros y materiales de construcción, con tiendas en Maracaibo y Colón."},
-  {"slug":"induchem","nombre":"Induchem","web":"https://induchem.com.ve","categorias":["materias-primas"],"estado":"Carabobo","ciudad":"Guacara",
-   "descripcion":"Químicos y materias primas para la industria: solventes dieléctricos, ácidos, alcoholes y más."},
-  {"slug":"dalca","nombre":"DALCA","web":"https://dal-ca.com","categorias":["materias-primas"],"estado":"Carabobo","ciudad":"Valencia",
-   "descripcion":"Química industrial y solventes: varsol, thinner y solventes industriales."},
-  {"slug":"t-quim","nombre":"T-QUIM","web":"https://tquim.com","categorias":["materias-primas"],"estado":"Distrito Capital","ciudad":"Caracas",
-   "descripcion":"Productos para mantenimiento industrial, tratamiento de aguas, solventes dieléctricos y lubricantes."},
-  {"slug":"global-quim-plus","nombre":"Global Quim Plus","web":"https://globalquimplus.com.ve","categorias":["materias-primas"],"estado":"Aragua",
-   "descripcion":"Solventes industriales y productos químicos de mantenimiento.",
-   "catalogos":[["Lista de productos químicos","https://globalquimplus.com.ve/lista-de-nuestros-productos-quimicos/"]]},
-  {"slug":"ssp-slon","nombre":"SSP SLON de Venezuela","web":"https://sspslon.com","categorias":["materias-primas","servicios"],
-   "descripcion":"Productos químicos y servicios para la industria del petróleo y el gas."},
-  {"slug":"teknomaq-centro","nombre":"Teknomaq Centro","web":"https://teknomaqcentro.com","categorias":["repuestos"],"marcas":["Ruhrpumpen"],"estado":"Carabobo","ciudad":"Valencia",
-   "descripcion":"Bombas centrífugas industriales, válvulas y accesorios."},
-  {"slug":"mivalca","nombre":"MIVALCA","web":"https://mivalca.com","categorias":["repuestos","energia"],"marcas":["WEG","Baldor"],"estado":"Carabobo","ciudad":"Valencia",
-   "descripcion":"Motores eléctricos, motorreductores, variadores, arrancadores suaves y rebobinado de motores."},
-  {"slug":"fh-transmisiones","nombre":"F.H. Transmisiones","web":"https://fhtransmisiones.net","categorias":["repuestos"],
-   "descripcion":"Transmisión de potencia: cajas reductoras, motores, motorreductores y acoples."},
-  {"slug":"acoservices","nombre":"Acoservices","web":"https://acoservices.com.ve","categorias":["repuestos"],"marcas":["WEG Cestari"],"estado":"Carabobo","ciudad":"Valencia",
-   "descripcion":"Motorreductores, reductores, acoples, motores y servicio técnico."},
-  {"slug":"casa-roda","nombre":"Casa Roda","web":"https://www.casaroda.com","categorias":["repuestos"],
-   "descripcion":"Repuestos industriales."},
-  {"slug":"gsi-bearing","nombre":"GSI Genuine Spare Import","web":"https://gsi-bearing.com","categorias":["repuestos"],"estado":"Carabobo",
-   "descripcion":"Rodamientos, correas y suministro industrial."}
+ {
+  "slug": "camozzi-venezuela",
+  "nombre": "Camozzi Venezuela",
+  "web": "https://camozzi.shop",
+  "categorias": [
+   "automatizacion"
+  ],
+  "marcas": [
+   "Camozzi"
+  ],
+  "estado": "Zulia",
+  "ciudad": "Maracaibo",
+  "fuente": "Camozzi Venezuela",
+  "descripcion": "Filial venezolana del fabricante italiano de neumática y automatización: cilindros, válvulas, electroválvulas, racores, tubería y tratamiento de aire."
+ },
+ {
+  "slug": "frasam",
+  "nombre": "FRASAM",
+  "web": "https://frasam.net",
+  "categorias": [
+   "repuestos"
+  ],
+  "marcas": [
+   "SKF",
+   "NSK",
+   "NTN",
+   "Timken",
+   "FAG",
+   "ISB"
+  ],
+  "estado": "Bolívar",
+  "ciudad": "Ciudad Guayana",
+  "fuente": "FRASAM",
+  "descripcion": "Rodamientos y componentes industriales con despacho a todo el país."
+ },
+ {
+  "slug": "automatroni",
+  "nombre": "Automatroni",
+  "web": "https://automatroni.com",
+  "categorias": [
+   "automatizacion",
+   "energia"
+  ],
+  "marcas": [
+   "Schneider Electric",
+   "Siemens",
+   "Autonics",
+   "Legrand",
+   "Delta"
+  ],
+  "estado": "Aragua",
+  "ciudad": "Maracay",
+  "fuente": "Automatroni",
+  "descripcion": "Automatización y control industrial, material eléctrico y neumática.",
+  "catalogos": [
+   [
+    "Catálogo general",
+    "https://automatroni.com/img/catalogo_automatroni.pdf"
+   ],
+   [
+    "Autonics",
+    "https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20AUTONICS.pdf"
+   ],
+   [
+    "Schneider Electric",
+    "https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Schneider.pdf"
+   ],
+   [
+    "Neumática",
+    "https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Neumatica-1.pdf"
+   ],
+   [
+    "Borneras",
+    "https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Borneras.pdf"
+   ],
+   [
+    "Exceline",
+    "https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20Exceline.pdf"
+   ],
+   [
+    "Gqele",
+    "https://automatroni.com/archivos_descargas/Catalogo%20de%20Ventas%20Automatroni%20Gqele.pdf"
+   ],
+   [
+    "Iluminación IKATALED",
+    "https://automatroni.com/archivos_descargas/Catalogo%20de%20ventas%20Automatroni%20IKATALED.pdf"
+   ]
+  ]
+ },
+ {
+  "slug": "electricaracas",
+  "nombre": "ElectriCaracas",
+  "web": "https://electricaracas.com",
+  "categorias": [
+   "energia"
+  ],
+  "marcas": [
+   "ABB",
+   "LS Electric"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "fuente": "ElectriCaracas",
+  "descripcion": "Materiales eléctricos e iluminación para obras residenciales, comerciales e industriales."
+ },
+ {
+  "slug": "sparmap",
+  "nombre": "Sparmap Materiales Eléctricos",
+  "web": "https://sparmap.agroo.net.ve",
+  "categorias": [
+   "energia",
+   "automatizacion"
+  ],
+  "marcas": [
+   "Schneider Electric",
+   "3M"
+  ],
+  "estado": "Portuguesa",
+  "ciudad": "Acarigua",
+  "fuente": "Sparmap Materiales Eléctricos",
+  "descripcion": "Materiales eléctricos de baja, media y alta tensión, variadores y diseño de tableros, con servicio a todo el país."
+ },
+ {
+  "slug": "distrimeca",
+  "nombre": "Distrimeca",
+  "web": "https://distrimeca.com.ve",
+  "categorias": [
+   "herramientas",
+   "seguridad",
+   "materiales",
+   "repuestos"
+  ],
+  "estado": "Zulia",
+  "ciudad": "Maracaibo",
+  "fuente": "Distrimeca",
+  "descripcion": "Distribuidora industrial: herramientas, seguridad industrial, plomería, suministros y materiales de construcción."
+ },
+ {
+  "slug": "aruca-maquinarias",
+  "nombre": "ARUCA Maquinarias",
+  "web": "https://arucamaquinarias.com",
+  "categorias": [
+   "maquinaria-industrial",
+   "herramientas"
+  ],
+  "marcas": [
+   "Milescraft"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "fuente": "ARUCA Maquinarias",
+  "descripcion": "Maquinaria, herramientas y compresores, con especialidad en la industria de la madera."
+ },
+ {
+  "slug": "impexpar",
+  "nombre": "IMPEXPAR",
+  "web": "https://impexpar.com",
+  "categorias": [
+   "maquinaria-pesada",
+   "energia"
+  ],
+  "marcas": [
+   "CompAir",
+   "Escorts",
+   "Simex"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "fuente": "IMPEXPAR",
+  "descripcion": "Importadora de maquinaria pesada y vial, plantas eléctricas desde 100 kVA y compresores."
+ },
+ {
+  "slug": "grimuca",
+  "nombre": "Grimuca",
+  "web": "https://grimuca.com",
+  "categorias": [
+   "materiales",
+   "repuestos"
+  ],
+  "marcas": [
+   "Pedrollo",
+   "Grival"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "fuente": "Grimuca",
+  "descripcion": "Plomería, grifería, filtros, bombas de agua e hidroneumáticos, con envíos a todo el país."
+ },
+ {
+  "slug": "ferre-digital",
+  "nombre": "Ferre Digital",
+  "web": "https://ferre.digital",
+  "categorias": [
+   "herramientas",
+   "materiales"
+  ],
+  "estado": "Miranda",
+  "ciudad": "San Antonio de los Altos",
+  "fuente": "Ferre Digital",
+  "descripcion": "Ferretería en línea: herramientas, plomería y materiales de construcción con envíos."
+ },
+ {
+  "slug": "ecotools",
+  "nombre": "EcoTools",
+  "web": "https://ecotoolsjjla.com",
+  "categorias": [
+   "herramientas",
+   "materiales"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "fuente": "EcoTools",
+  "descripcion": "Herramientas, paneles y materiales de acabado, con envíos en Caracas y al resto del país."
+ },
+ {
+  "slug": "sipheca",
+  "nombre": "Sipheca",
+  "web": "https://sipheca.com",
+  "categorias": [
+   "seguridad"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "fuente": "Sipheca",
+  "descripcion": "Equipos de protección personal e higiene ocupacional: botas, guantes, cascos y más."
+ },
+ {
+  "slug": "motasa",
+  "nombre": "Motasa",
+  "web": "https://www.motasa.com.ve",
+  "categorias": [
+   "materiales"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Hierro, acero y plomería: cabillas, láminas, vigas, tubos estructurales y PVC. Sedes en Caracas, Valencia, Guacara y Guarenas.",
+  "catalogos": [
+   [
+    "Catálogo Motasa",
+    "https://www.motasa.com.ve/s/CATALOGO_MOTASA_2.pdf"
+   ],
+   [
+    "Catálogo Motasa (otra edición)",
+    "https://www.motasa.com.ve/s/CATALOGO_MOTASA-kfx5.pdf"
+   ]
+  ]
+ },
+ {
+  "slug": "vemacero",
+  "nombre": "Grupo Vemacero",
+  "web": "https://vemacero.com",
+  "categorias": [
+   "materiales"
+  ],
+  "descripcion": "Tuberías de acero con y sin costura y conexiones para soldar.",
+  "catalogos": [
+   [
+    "Tabla de tubería",
+    "https://vemacero.com/wp-content/uploads/2024/06/web-2-Pagina-nueva-Tabla-tuberia-1.pdf"
+   ],
+   [
+    "Tubería API",
+    "https://vemacero.com/wp-content/uploads/2024/06/Tuberia-API.pdf"
+   ]
+  ]
+ },
+ {
+  "slug": "metales-hk",
+  "nombre": "Metales HK",
+  "web": "https://metaleshk.com.ve",
+  "categorias": [
+   "materiales",
+   "materias-primas"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Acero inoxidable AISI 304: tubería, láminas, barras, malla y accesorios. Sedes en Valencia y Caracas, con envíos a todo el país."
+ },
+ {
+  "slug": "ferresoldar",
+  "nombre": "Ferresoldar Industrial",
+  "web": "https://www.ferresoldar.com",
+  "categorias": [
+   "herramientas",
+   "seguridad"
+  ],
+  "marcas": [
+   "Lincoln Electric",
+   "Miller",
+   "Handell"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Soldadura, herramientas eléctricas y neumáticas, equipos de protección y ferretería industrial, con envíos a todo el país.",
+  "catalogos": [
+   [
+    "Electrodos y varillas 2026",
+    "https://www.ferresoldar.com/catalogos/ferresoldar-electrodos-varillas-2026.pdf"
+   ],
+   [
+    "Handell: equipos de soldadura y corte",
+    "https://www.ferresoldar.com/catalogos/handell-equipos-soldadura-corte.pdf"
+   ]
+  ]
+ },
+ {
+  "slug": "tres-fases",
+  "nombre": "Tres Fases",
+  "web": "https://www.tresfases.com",
+  "categorias": [
+   "energia"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Materiales y equipos eléctricos para hogares e industrias: breakers, tableros, cables, contactores y arrancadores."
+ },
+ {
+  "slug": "capital-electric",
+  "nombre": "Capital Electric",
+  "web": "https://www.capitalelectric-ve.com",
+  "categorias": [
+   "energia"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Iluminación LED, breakers, cables y tableros eléctricos."
+ },
+ {
+  "slug": "indaca",
+  "nombre": "Indaca",
+  "web": "https://www.indaca.com.ve",
+  "categorias": [
+   "energia",
+   "automatizacion"
+  ],
+  "estado": "Zulia",
+  "ciudad": "Maracaibo",
+  "descripcion": "Cables, breakers, tableros, iluminación y control industrial desde 1986."
+ },
+ {
+  "slug": "siapca",
+  "nombre": "SIAPCA",
+  "web": "https://siapca.com",
+  "categorias": [
+   "automatizacion",
+   "energia"
+  ],
+  "marcas": [
+   "Schneider Electric"
+  ],
+  "descripcion": "Automatización y control para plantas industriales: PLC, variadores y contactores."
+ },
+ {
+  "slug": "sd-solutions",
+  "nombre": "SD Solutions",
+  "web": "https://sdsolutionsca.com",
+  "categorias": [
+   "automatizacion",
+   "servicios"
+  ],
+  "marcas": [
+   "Yokogawa",
+   "Allen-Bradley",
+   "Rockwell Automation"
+  ],
+  "descripcion": "Automatización industrial y reparación de PLC, DCS y SCADA."
+ },
+ {
+  "slug": "controlven",
+  "nombre": "Controlven",
+  "web": "https://controlven.com",
+  "categorias": [
+   "automatizacion",
+   "energia"
+  ],
+  "descripcion": "Variadores de frecuencia, protección y maniobra eléctrica para la industria."
+ },
+ {
+  "slug": "atslam",
+  "nombre": "ATSLAM",
+  "web": "https://atslam.com",
+  "categorias": [
+   "automatizacion"
+  ],
+  "marcas": [
+   "XCPC"
+  ],
+  "estado": "Cojedes",
+  "ciudad": "Tinaquillo",
+  "descripcion": "Neumática XCPC: cilindros, electroválvulas, racores, mangueras y unidades FRL, con stock permanente.",
+  "catalogos": [
+   [
+    "Catálogo en línea XCPC",
+    "https://atslam.com/catalogo"
+   ]
+  ]
+ },
+ {
+  "slug": "neumatica-rotonda",
+  "nombre": "Neumática Rotonda",
+  "web": "https://www.neumaticarotonda.com",
+  "categorias": [
+   "automatizacion"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Válvulas neumáticas, cilindros ISO, racores y tratamiento de aire, con entrega inmediata."
+ },
+ {
+  "slug": "venezdem",
+  "nombre": "Venezdem",
+  "web": "https://www.venezdem.com.ve",
+  "categorias": [
+   "maquinaria-pesada",
+   "logistica"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Venta y alquiler de montacargas y baterías industriales en Caracas y Valencia."
+ },
+ {
+  "slug": "intersupply",
+  "nombre": "Intersupply Venezuela",
+  "web": "https://intersupply-venezuela.com",
+  "categorias": [
+   "maquinaria-pesada",
+   "energia"
+  ],
+  "descripcion": "Equipos importados: montacargas, generadores y compresores de aire."
+ },
+ {
+  "slug": "special-truck",
+  "nombre": "Special Truck",
+  "web": "https://specialtruckcranes.com",
+  "categorias": [
+   "maquinaria-pesada",
+   "logistica"
+  ],
+  "descripcion": "Grúas, camiones y equipos de manejo de materiales, nuevos y usados."
+ },
+ {
+  "slug": "arfesa",
+  "nombre": "ARFESA (Aragua Ferretera)",
+  "web": "https://www.arfesa.com",
+  "categorias": [
+   "herramientas",
+   "materiales"
+  ],
+  "estado": "Aragua",
+  "descripcion": "Ferretería industrial y tornillería para la industria de Aragua y Carabobo."
+ },
+ {
+  "slug": "tumayorferretero",
+  "nombre": "TuMayorFerretero",
+  "web": "https://tumayorferretero.net",
+  "categorias": [
+   "materiales",
+   "herramientas"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Ferretería mayorista: materiales de construcción, pinturas, plomería y herramientas, con envío nacional."
+ },
+ {
+  "slug": "ferremoreno",
+  "nombre": "FerreMoreno",
+  "web": "https://ferremoreno.com",
+  "categorias": [
+   "materiales",
+   "herramientas"
+  ],
+  "descripcion": "Ferretería industrial y materiales de construcción al mayor, con portal para empresas."
+ },
+ {
+  "slug": "ferreteria-arci",
+  "nombre": "Ferretería Arci",
+  "web": "https://www.arci.com.ve",
+  "categorias": [
+   "materiales",
+   "herramientas"
+  ],
+  "estado": "Zulia",
+  "ciudad": "Maracaibo",
+  "descripcion": "Productos ferreteros y materiales de construcción, con tiendas en Maracaibo y Colón."
+ },
+ {
+  "slug": "induchem",
+  "nombre": "Induchem",
+  "web": "https://induchem.com.ve",
+  "categorias": [
+   "materias-primas"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Guacara",
+  "descripcion": "Químicos y materias primas para la industria: solventes dieléctricos, ácidos, alcoholes y más."
+ },
+ {
+  "slug": "dalca",
+  "nombre": "DALCA",
+  "web": "https://dal-ca.com",
+  "categorias": [
+   "materias-primas"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Química industrial y solventes: varsol, thinner y solventes industriales."
+ },
+ {
+  "slug": "t-quim",
+  "nombre": "T-QUIM",
+  "web": "https://tquim.com",
+  "categorias": [
+   "materias-primas"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Productos para mantenimiento industrial, tratamiento de aguas, solventes dieléctricos y lubricantes."
+ },
+ {
+  "slug": "global-quim-plus",
+  "nombre": "Global Quim Plus",
+  "web": "https://globalquimplus.com.ve",
+  "categorias": [
+   "materias-primas"
+  ],
+  "estado": "Aragua",
+  "descripcion": "Solventes industriales y productos químicos de mantenimiento.",
+  "catalogos": [
+   [
+    "Lista de productos químicos",
+    "https://globalquimplus.com.ve/lista-de-nuestros-productos-quimicos/"
+   ]
+  ]
+ },
+ {
+  "slug": "ssp-slon",
+  "nombre": "SSP SLON de Venezuela",
+  "web": "https://sspslon.com",
+  "categorias": [
+   "materias-primas",
+   "servicios"
+  ],
+  "descripcion": "Productos químicos y servicios para la industria del petróleo y el gas."
+ },
+ {
+  "slug": "teknomaq-centro",
+  "nombre": "Teknomaq Centro",
+  "web": "https://teknomaqcentro.com",
+  "categorias": [
+   "repuestos"
+  ],
+  "marcas": [
+   "Ruhrpumpen"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Bombas centrífugas industriales, válvulas y accesorios."
+ },
+ {
+  "slug": "mivalca",
+  "nombre": "MIVALCA",
+  "web": "https://mivalca.com",
+  "categorias": [
+   "repuestos",
+   "energia"
+  ],
+  "marcas": [
+   "WEG",
+   "Baldor"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Motores eléctricos, motorreductores, variadores, arrancadores suaves y rebobinado de motores."
+ },
+ {
+  "slug": "fh-transmisiones",
+  "nombre": "F.H. Transmisiones",
+  "web": "https://fhtransmisiones.net",
+  "categorias": [
+   "repuestos"
+  ],
+  "descripcion": "Transmisión de potencia: cajas reductoras, motores, motorreductores y acoples."
+ },
+ {
+  "slug": "acoservices",
+  "nombre": "Acoservices",
+  "web": "https://acoservices.com.ve",
+  "categorias": [
+   "repuestos"
+  ],
+  "marcas": [
+   "WEG Cestari"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Motorreductores, reductores, acoples, motores y servicio técnico."
+ },
+ {
+  "slug": "casa-roda",
+  "nombre": "Casa Roda",
+  "web": "https://www.casaroda.com",
+  "categorias": [
+   "repuestos"
+  ],
+  "descripcion": "Repuestos industriales."
+ },
+ {
+  "slug": "gsi-bearing",
+  "nombre": "GSI Genuine Spare Import",
+  "web": "https://gsi-bearing.com",
+  "categorias": [
+   "repuestos"
+  ],
+  "estado": "Carabobo",
+  "descripcion": "Rodamientos, correas y suministro industrial."
+ },
+ {
+  "slug": "maploca",
+  "nombre": "Maploca",
+  "web": "https://maploca.com",
+  "categorias": [
+   "materiales"
+  ],
+  "estado": "Zulia",
+  "ciudad": "Maracaibo",
+  "fuente": "Maploca",
+  "descripcion": "Fabricación y distribución de acero: perfiles y tubos estructurales, láminas galvanizadas, pulidas, estriadas y de hierro negro, planchones, techos y losas de acero. Sedes en Maracaibo, Caracas, Guarenas y Valencia."
+ },
+ {
+  "slug": "hierrobeco",
+  "nombre": "Hierrobeco",
+  "web": "https://hierrobeco.com",
+  "categorias": [
+   "materiales"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Materiales siderúrgicos: vigas, cabillas, láminas y tuberías estructurales, con servicio de corte y transporte. Sedes en Caracas, San Joaquín y Puerto Ordaz.",
+  "catalogos": [
+   [
+    "Catálogo Hierrobeco",
+    "https://hierrobeco.com/images/Catalogo_Hierrobeco.pdf"
+   ]
+  ]
+ },
+ {
+  "slug": "industrias-unicon",
+  "nombre": "Industrias Unicon (Conduven)",
+  "web": "https://www.unicon.com.ve",
+  "categorias": [
+   "materiales"
+  ],
+  "marcas": [
+   "Conduven"
+  ],
+  "descripcion": "Fabricante venezolano de tubos de acero con costura: tubos estructurales Conduven redondos, cuadrados y rectangulares (ASTM A-500) y tubería para fluidos."
+ },
+ {
+  "slug": "metallca",
+  "nombre": "Metallca",
+  "web": "https://metallca.com.ve",
+  "categorias": [
+   "materiales"
+  ],
+  "marcas": [
+   "Conduven"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "Valencia",
+  "descripcion": "Proveedor de acero: tubos y perfiles para uso estructural, con tablas de medidas y propiedades.",
+  "catalogos": [
+   [
+    "Tablas de tubos y perfiles estructurales",
+    "https://metallca.com.ve/tubos-perfiles-acero-uso-estructural/"
+   ]
+  ]
+ },
+ {
+  "slug": "inox-total-services",
+  "nombre": "Inox Total Services",
+  "web": "https://inoxtotalven.com",
+  "categorias": [
+   "materiales",
+   "materias-primas"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Importadores directos de acero inoxidable: láminas, tubos, barras, pletinas y ángulos. Sedes en Caracas, Valencia y Barquisimeto.",
+  "catalogos": [
+   [
+    "Catálogo de acero inoxidable",
+    "https://inoxtotalven.com/wp-content/uploads/2023/11/Acero-Inoxidable-Inox-Total-Services.pdf"
+   ]
+  ]
+ },
+ {
+  "slug": "inversiones-marea-xxi",
+  "nombre": "Inversiones Marea XXI",
+  "web": "https://inversionesmareaxxi.com",
+  "categorias": [
+   "materiales",
+   "materias-primas"
+  ],
+  "estado": "Distrito Capital",
+  "ciudad": "Caracas",
+  "descripcion": "Acero inoxidable AISI 304/304L certificado: láminas, bobinas, barras, ángulos, pletinas y tuberías, con despacho a todo el país.",
+  "catalogos": [
+   [
+    "Productos en acero inoxidable",
+    "https://inversionesmareaxxi.com/productos/"
+   ]
+  ]
+ },
+ {
+  "slug": "latinoxss",
+  "nombre": "Latinoxss",
+  "web": "https://latinoxss.com",
+  "categorias": [
+   "materiales",
+   "materias-primas"
+  ],
+  "estado": "Carabobo",
+  "ciudad": "San Diego",
+  "descripcion": "Acero inoxidable 304 y 316: láminas, tubos, barras y perfiles, con despachos nacionales.",
+  "catalogos": [
+   [
+    "Barras de acero inoxidable",
+    "https://latinoxss.com/barras-de-acero-inoxidable/"
+   ]
+  ]
+ }
 ]
