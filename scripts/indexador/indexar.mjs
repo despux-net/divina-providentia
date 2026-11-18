@@ -43,6 +43,7 @@ const SOLO = opcion('--solo');
 const FUENTES = SOLO ? TODAS.filter(f => f.nombre === SOLO) : TODAS;
 const MAX_FICHAS = PRUEBA || Number(process.env.MAX_FICHAS || Infinity);
 const FIN = Date.now() + Number(process.env.MAX_MINUTOS || 320) * 60_000;
+const NO_FICHA = /\/(blog|noticias?|articulos?|news|posts?|guias?|consejos)\//i;
 
 // Quita teléfonos, correos y enlaces de WhatsApp de los textos de otras webs:
 // para contactar se va al anuncio original (ver privacidad.html).
@@ -138,7 +139,9 @@ async function indexar(f) {
     if (!robots.permitido(sm)) continue;
     const r = await pedir(sm);
     if (r.estado !== 200) throw new Error(`Sitemap ${sm} respondió ${r.estado}`);
-    entradas.push(...leerSitemap(r.texto).filter(e => robots.permitido(e.url) && (!f.filtroFichas || f.filtroFichas.test(e.url))));
+    // Páginas de blog o noticias no son inmuebles: ni se descargan.
+    // (La base de datos además desactiva como «spam» lo que no sea un inmueble.)
+    entradas.push(...leerSitemap(r.texto).filter(e => robots.permitido(e.url) && !NO_FICHA.test(e.url) && (!f.filtroFichas || f.filtroFichas.test(e.url))));
   }
   if (entradas.length < (f.minimoSitemap ?? 100) && !PRUEBA) throw new Error(`Sitemaps sospechosamente cortos (${entradas.length}); no se toca nada.`);
   log(`${entradas.length} fichas permitidas en ${sitemaps.length} sitemap(s). Pausa: ${pausa / 1000}s`);

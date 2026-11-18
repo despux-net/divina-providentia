@@ -1,4 +1,7 @@
-"""Portadas con cara: marca como «relegado» los anuncios externos cuya primera
+"""Robot diario de calidad de los anuncios externos.
+
+1) Antispam: retira lo que no es un inmueble (lo decide la base de datos).
+2) Portadas con cara: marca como «relegado» los anuncios externos cuya primera
 foto muestra a una persona (cartel de un agente, foto de perfil…). Siguen
 existiendo y saliendo en las búsquedas, pero van al final del orden
 «recientes» (portada y buscador).
@@ -74,6 +77,11 @@ def revisar(url):
     except Exception:
         return 'error'
 
+
+# 0) Antispam: retira lo que no es un inmueble (blog, servicios, preguntas
+#    sin datos). La regla vive en la base de datos: public.es_spam_inmueble.
+if SERVICIO:
+    print(f'Retirados como spam: {api("/rpc/limpiar_spam", "POST", {})}')
 
 # 1) Anuncios externos activos
 filas = []

@@ -1,8 +1,8 @@
-# Portadas con cara: marca como «relegado» (al final de la portada y del
-# orden «recientes») los anuncios externos cuya primera foto muestra a una
-# persona (cartel de un agente). Siguen existiendo y apareciendo en las
-# búsquedas. Cada día, después del indexador. Gratis (OpenCV en GitHub).
-name: Portadas con cara
+# Calidad de los anuncios externos, cada día después del indexador. Gratis.
+# 1) Antispam: retira lo que no es un inmueble (blog, servicios, preguntas).
+# 2) Portadas con cara: los anuncios cuya primera foto es el cartel de un
+#    agente van al final de la portada y del orden «recientes» (OpenCV YuNet).
+name: Calidad de anuncios
 
 on:
   schedule:
