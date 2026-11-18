@@ -124,8 +124,8 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="theme-color" content="#005CA7">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="favicon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
   <link rel="stylesheet" href="estilos.css?v=${(fs.readFileSync(path.join(SITIO, 'index.html'), 'utf8').match(/estilos\.css\?v=(\d+)/) || [])[1] || 1}">
   <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>
 </head>
@@ -290,7 +290,6 @@ function paginaPrecios({ titulo, h1, desc, url, migas, intro, tabla: t, enlaces 
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="theme-color" content="#005CA7">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="estilos.css?v=${versionDe('estilos.css')}">
   <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>
 </head>
