@@ -290,7 +290,7 @@
 
   function traducirError(error) {
     const m = error.message || '';
-    if (/máximo de 30/.test(m)) return m;
+    if (/máximo de \d+/.test(m)) return m;
     if (/check constraint/.test(m)) return 'Algún dato no es válido. Revisa el título, los números, los enlaces y el WhatsApp.';
     return 'No se pudo guardar el anuncio: ' + m;
   }

@@ -1247,3 +1247,15 @@ a.eleccion:hover { text-decoration: none; }
 .fila-busqueda .boton { padding: 9px 34px; border-radius: 999px; }
 .anfitrion-botones .boton, .tarjeta-anfitrion > .boton { padding: 9px 16px; border-radius: 999px; }
 .boton { border: 1px solid transparent; }
+
+/* Carga masiva por Excel (importar.html) */
+.importar { max-width: 1000px; }
+.importar h2 { font-weight: 400; font-size: 1.2rem; margin: 28px 0 8px; }
+.importar h2 small { color: var(--muted); font-weight: 300; }
+.tabla-desliza { overflow-x: auto; }
+.tabla-importar { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.tabla-importar th { text-align: left; font-weight: 500; color: var(--muted); border-bottom: 1px solid #ddd; padding: 6px 8px; white-space: nowrap; }
+.tabla-importar td { border-bottom: 1px solid #eee; padding: 7px 8px; vertical-align: top; }
+.tabla-importar td small { color: var(--muted); }
+.texto-error { color: var(--danger); }
+.texto-ok { color: #1f6b33; }

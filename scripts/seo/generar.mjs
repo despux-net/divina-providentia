@@ -403,6 +403,7 @@ Disallow: /registro.html
 Disallow: /restablecer.html
 Disallow: /perfil.html
 Disallow: /mis-anuncios.html
+Disallow: /importar.html
 Disallow: /baja.html
 
 Sitemap: ${DOMINIO}/sitemap.xml
