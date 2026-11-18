@@ -10,7 +10,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nzwtafacdpdgulzcwntx.s
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const MAX_ZONAS = Number(process.env.MAX_ZONAS || 300);
 const RENOVAR_DIAS = 90;
-const UA = 'VivinatiBot/1.0 (+https://vivinati.com/bot.html)';
+const UA = 'VivinatiBot/1.0 (+https://vivinati.com/realestate/bot.html)';
 const SERVIDORES = ['https://overpass-api.de/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter', 'https://overpass.private.coffee/api/interpreter'];
 if (!KEY) { console.error('::error::Falta SUPABASE_SERVICE_ROLE_KEY'); process.exit(1); }

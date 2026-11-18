@@ -6,7 +6,7 @@
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const destino = DP.siguiente();
-  $('link-registro').href = 'registro.html' + (params.get('next') ? '?next=' + encodeURIComponent(destino) : '');
+  $('link-registro').href = '/registro.html' + (params.get('next') ? '?next=' + encodeURIComponent(destino) : '');
 
   // El enlace del correo trae la sesión en la URL; supabase-js la recoge solo.
   const { data: { session } } = await DP.sb.auth.getSession();
@@ -14,13 +14,13 @@
   if (params.get('activada') && session) {
     $('activada').hidden = false;
     $('bloque-entrar').hidden = true;
-    setTimeout(() => { location.href = 'perfil.html?bienvenida=1'; }, 1800);
+    setTimeout(() => { location.href = '/perfil.html?bienvenida=1'; }, 1800);
     return;
   }
   // Vuelta de Google: las cuentas nuevas aún no tienen @usuario → a elegirlo.
   if (params.get('oauth') && session) {
     const p = await DP.miPerfil();
-    location.href = p && p.usuario ? destino : 'perfil.html?bienvenida=1';
+    location.href = p && p.usuario ? destino : '/perfil.html?bienvenida=1';
     return;
   }
   if (session) { location.href = destino; return; }

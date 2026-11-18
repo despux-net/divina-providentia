@@ -59,7 +59,7 @@ def api(ruta, metodo='GET', cuerpo=None):
 def revisar(url):
     """'cara', 'limpia' o 'error'."""
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'VivinatiBot/1.0 (+https://vivinati.com/bot.html)'})
+        req = urllib.request.Request(url, headers={'User-Agent': 'VivinatiBot/1.0 (+https://vivinati.com/realestate/bot.html)'})
         with urllib.request.urlopen(req, timeout=20) as r:
             datos = r.read(15_000_000)
         img = cv2.imdecode(np.frombuffer(datos, np.uint8), cv2.IMREAD_COLOR)

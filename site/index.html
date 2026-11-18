@@ -3,217 +3,55 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vivinati — Inmuebles en venta y alquiler en Venezuela: apartamentos, casas y proyectos</title>
-  <meta name="description" content="El buscador de inmuebles de Venezuela: apartamentos, casas, anexos, locales y terrenos en venta y alquiler de inmobiliarias y particulares, con mapa y precios en dólares. Publica gratis y explora proyectos conceptuales 3D.">
+  <title>Vivinati</title>
+  <meta name="description" content="Vivinati conecta a Venezuela: Real Estate para comprar, vender y alquilar inmuebles, e Industrial para maquinaria, herramientas, materiales y servicios para la industria.">
   <link rel="canonical" href="https://vivinati.com/">
   <meta property="og:site_name" content="Vivinati">
-  <meta property="og:title" content="Vivinati — Buscador de inmuebles en Venezuela">
-  <meta property="og:description" content="Busca apartamentos, casas, anexos, locales y terrenos en venta y alquiler en toda Venezuela. Publica tu inmueble gratis.">
+  <meta property="og:title" content="Vivinati">
+  <meta property="og:description" content="Real Estate e Industrial: los mercados de Vivinati para Venezuela.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vivinati.com/">
   <meta property="og:image" content="https://vivinati.com/img/og-vivinati.png">
   <meta property="og:locale" content="es_VE">
-  <meta name="twitter:card" content="summary_large_image">
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebSite","name":"Vivinati","alternateName":"Vivinati — Buscador de inmuebles en Venezuela","url":"https://vivinati.com/","inLanguage":"es-VE","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://vivinati.com/buscar.html?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org","@type":"Organization","name":"Vivinati","url":"https://vivinati.com/","logo":"https://vivinati.com/img/emblema-vivinati.png","description":"Buscador de inmuebles de Venezuela: apartamentos, casas, anexos, locales y terrenos en venta y alquiler, y portafolio de proyectos conceptuales 3D.","areaServed":{"@type":"Country","name":"Venezuela"}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebSite","name":"Vivinati","url":"https://vivinati.com/","inLanguage":"es-VE"},{"@context":"https://schema.org","@type":"Organization","name":"Vivinati","url":"https://vivinati.com/","logo":"https://vivinati.com/img/emblema-vivinati.png","description":"Mercados digitales de Venezuela: Vivinati Real Estate (inmuebles) y Vivinati Industrial (maquinaria, herramientas, materiales y servicios para la industria).","areaServed":{"@type":"Country","name":"Venezuela"}}]</script>
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#005CA7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="estilos.css?v=47">
+  <link rel="stylesheet" href="/estilos.css?v=48">
 </head>
-<body>
-  <header class="cabecera">
-    <div class="cabecera-int">
-      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
-      <nav class="nav">
-        <a href="buscar.html">Buscar</a>
-        <a href="conceptos.html">Conceptos 3D</a>
-        <a href="busco.html">Busco inmueble</a>
-        <a href="sobre.html">Quiénes somos</a>
-        <span data-nav-sesion></span>
-        <a class="boton peq" href="publicar.html">Publicar gratis</a>
-      </nav>
-    </div>
-  </header>
+<body class="nodriza" data-sin-barra>
+  <header class="nodriza-arriba"><span data-nav-sesion></span></header>
 
-  <!-- Portada: ilustración con el buscador encima -->
-  <section class="hero-foto" id="hero">
-    <div class="hero-int">
-      <form class="panel-hero" id="form-busqueda" role="search" action="buscar.html" method="get">
-        <h1 id="titulo-buscador">Más de <span data-cifra="anuncios">1.900</span> inmuebles en toda Venezuela</h1>
-        <!-- Tres intenciones: Comprar, Alquilar y Conceptos 3D -->
-        <div class="intenciones" role="tablist" aria-label="¿Qué buscas?">
-          <button type="button" role="tab" class="intencion" data-intencion="venta" aria-selected="true">Comprar</button>
-          <button type="button" role="tab" class="intencion" data-intencion="alquiler" aria-selected="false">Alquilar</button>
-          <button type="button" role="tab" class="intencion" data-intencion="concepto" aria-selected="false">Conceptos 3D</button>
-        </div>
-        <input type="hidden" id="f-operacion" name="operacion" value="venta">
-        <div class="fila-busqueda">
-          <input type="search" id="q" name="q" placeholder="Ciudad, zona o palabra clave" aria-label="Qué buscas">
-          <select id="f-tipo" name="tipo" aria-label="Tipo de inmueble"></select>
-          <select id="f-hab" name="hab" aria-label="Habitaciones">
-            <option value="">Habitaciones</option>
-            <option value="1">1+ hab.</option><option value="2">2+ hab.</option>
-            <option value="3">3+ hab.</option><option value="4">4+ hab.</option>
-          </select>
-          <select id="f-categoria" name="categoria" aria-label="Categoría del proyecto" hidden disabled></select>
-          <select id="f-rol" name="rol" aria-label="Perfil del autor" hidden disabled></select>
-          <button class="boton" type="submit">Buscar</button>
-        </div>
-        <p class="sugerencias" id="sugerencias">Prueba: <a href="buscar.html?q=Chacao">Chacao</a> · <a href="buscar.html?q=Valencia">Valencia</a> · <a href="buscar.html?q=Lecheria">Lechería</a> · <a href="buscar.html?q=Maracaibo">Maracaibo</a> · <a href="buscar.html?q=Barquisimeto">Barquisimeto</a></p>
-      </form>
-    </div>
-  </section>
+  <main class="nodriza-centro">
+    <h1 class="nodriza-marca">
+      <img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="532" height="60">
+      <span>corp</span>
+    </h1>
 
-  <!-- Categorías -->
-  <section class="seccion">
-    <div class="seccion-int">
-      <h2 id="titulo-categorias">Apartamentos, casas y anexos en venta y alquiler</h2>
-      <p class="bajada" id="subtitulo-categorias">Inmuebles en Venezuela: en pocos minutos a tu nuevo hogar. Compra o alquila entre los anuncios de las principales inmobiliarias y de particulares, todos en un solo lugar, o explora el portafolio de proyectos conceptuales y 3D del talento emergente.</p>
-      <div class="cuadricula cuatro">
-        <a class="caja categoria" href="buscar.html?tipo=apartamento">
-          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3"/></svg></span>Apartamentos</span>
-          <p>Encuentra el apartamento ideal en tu ciudad, con fotos, precio y ubicación.</p>
-          <span class="mas-enlace">Ver apartamentos</span>
-        </a>
-        <a class="caja categoria" href="buscar.html?tipo=casa">
-          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>Casas y quintas</span>
-          <p>Casas, quintas y townhouses para tu familia, en venta y en alquiler.</p>
-          <span class="mas-enlace">Ver casas</span>
-        </a>
-        <a class="caja categoria" href="buscar.html?tipo=anexo">
-          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v16M14 4l6 2v14M14 20H4V8l10-4"/><circle cx="11" cy="13" r=".6" fill="currentColor"/></svg></span>Anexos y habitaciones</span>
-          <p>Opciones económicas para estudiantes, solos y parejas.</p>
-          <span class="mas-enlace">Ver anexos</span>
-        </a>
-        <a class="caja categoria" href="buscar.html?tipo=local">
-          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l2-5h14l2 5"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8M10 21v-5h4v5"/></svg></span>Locales y oficinas</span>
-          <p>Espacios para tu negocio: locales, oficinas, galpones y terrenos.</p>
-          <span class="mas-enlace">Ver locales</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Anuncios recientes -->
-  <main class="contenedor" id="resultados-sec">
-    <div class="cabecera-resultados">
-      <h2>Anuncios recientes</h2>
-      <a class="boton sec peq" href="buscar.html">Ver todos los anuncios</a>
-    </div>
-    <div id="recientes" class="rejilla resultados-cuatro"></div>
-    <div class="mas"><a class="boton" href="buscar.html">Ver todos los anuncios</a> <a class="boton sec" href="buscar.html?vista=mapa">Ver en el mapa</a></div>
+    <nav class="nodriza-mercados" aria-label="Mercados de Vivinati">
+      <a href="/realestate/">
+        <strong>Real Estate</strong>
+        <span>Inmuebles en venta y alquiler</span>
+      </a>
+      <a href="/industrial/">
+        <strong>Industrial</strong>
+        <span>Maquinaria, herramientas y materiales</span>
+      </a>
+    </nav>
   </main>
 
-  <!-- Empieza ahora -->
-  <section class="seccion azul" id="como-funciona">
-    <div class="seccion-int">
-      <h2>Empieza ahora: encuentra tu hogar, publica tu inmueble o muestra tu proyecto</h2>
-      <p class="bajada">Tanto si buscas, vendes o alquilas como si diseñas: gratis y en pocos minutos.</p>
-      <div class="cuadricula dos">
-        <div class="caja">
-          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg></span>Publica tu inmueble</span>
-          <p>Llega a miles de personas que buscan casa en tu ciudad, sin pagar comisiones por publicar.</p>
-          <ul class="lista-check">
-            <li>Publicar es gratis</li>
-            <li>Contacto directo por WhatsApp</li>
-            <li>¿Ya lo tienes en Facebook? Pega el texto y se rellena solo</li>
-            <li>Edita, pausa o retira tu anuncio cuando quieras</li>
-          </ul>
-          <a class="boton" href="publicar.html">Publicar gratis</a>
-        </div>
-        <div class="caja">
-          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>Busca en toda Venezuela</span>
-          <p>Reunimos en un solo buscador los anuncios de inmobiliarias y particulares de todo el país.</p>
-          <ul class="lista-check">
-            <li>Anuncios de <span data-cifra="fuentes">varias</span> webs inmobiliarias a la vez</li>
-            <li>Filtra por estado, precio en dólares y habitaciones</li>
-            <li>Mira los inmuebles en el mapa</li>
-            <li>Siempre con enlace al anuncio original</li>
-          </ul>
-          <a class="boton sec" href="buscar.html">Empezar a buscar</a>
-        </div>
-        <div class="caja caja-concepto">
-          <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></span>Conceptos 3D: portafolio emergente</span>
-          <p>Un espacio para estudiantes, arquitectos, estudios y emprendedores que diseñan el país que viene.</p>
-          <ul class="lista-check">
-            <li>Publica renders, bocetos, tesis o propuestas de infraestructura</li>
-            <li>Muestra tu universidad o estudio y las herramientas que usas</li>
-            <li>Enlaza tu modelo 3D (Sketchfab, Behance…)</li>
-            <li>Recibe contactos para colaborar por WhatsApp</li>
-          </ul>
-          <a class="boton concepto" href="publicar.html?tipo=concepto">Publicar mi proyecto</a>
-          <a class="boton sec" href="conceptos.html">Ver la galería</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Búsquedas populares: las rellena scripts/seo/generar.mjs al publicar -->
-  <section class="seccion populares">
-    <div class="seccion-int">
-      <h2>Búsquedas populares</h2>
-      <ul class="lista-populares"><!--POPULARES--><!--/POPULARES--></ul>
-    </div>
-  </section>
-
-  <!-- Ventajas -->
-  <section class="seccion">
-    <div class="seccion-int">
-      <h2>Más fácil buscar y publicar</h2>
-      <p class="bajada">Herramientas pensadas para el mercado inmobiliario venezolano.</p>
-      <div class="cuadricula">
-        <div class="caja centrada">
-          <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
-          <h3>Todo en un solo lugar</h3>
-          <p>Deja de saltar de página en página: buscamos por ti en los principales portales y lo actualizamos cada 6 horas.</p>
-        </div>
-        <div class="caja centrada">
-          <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
-          <h3>Ubicación en el mapa</h3>
-          <p>Ve qué hay cerca de donde quieres vivir o trabajar, con la vista de mapa.</p>
-        </div>
-        <div class="caja centrada">
-          <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.3-4.4A9 9 0 1 1 21 12z"/></svg></span>
-          <h3>Contacto directo</h3>
-          <p>Escribe al anunciante por WhatsApp con un mensaje ya preparado, sin intermediarios.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sobre nosotros, cifras y consejos -->
-  <section class="seccion azul" id="consejos">
-    <div class="seccion-int">
-      <h2>El buscador de inmuebles de Venezuela</h2>
-      <p class="bajada">Vivinati reúne en un solo lugar la oferta inmobiliaria del país para que encontrar casa sea más fácil, rápido y seguro.</p>
-      <div class="cifras">
-        <div class="cifra"><b data-cifra="anuncios">—</b><span>anuncios activos</span></div>
-        <div class="cifra"><b data-cifra="fuentes">—</b><span>webs inmobiliarias</span></div>
-        <div class="cifra"><b data-cifra="estados">—</b><span>estados con anuncios</span></div>
-        <div class="cifra"><b data-cifra="con_mapa">—</b><span>con ubicación en el mapa</span></div>
-      </div>
-      <div class="caja" style="margin-top:28px">
-        <span class="cat-titulo"><span class="icono-linea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>Consejos para alquilar o comprar con seguridad</span>
-        <ul class="lista-check consejos">
-          <li>Visita siempre el inmueble antes de pagar nada.</li>
-          <li>No envíes dinero por adelantado para «apartar» un inmueble que no has visto.</li>
-          <li>Pide el documento de propiedad y comprueba que quien vende es el dueño o un agente autorizado.</li>
-          <li>Desconfía de precios muy por debajo de la zona.</li>
-          <li>Haz los pagos con comprobante y firma un contrato.</li>
-          <li>Si algo no te cuadra, consulta con una inmobiliaria o un abogado.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <footer class="pie"></footer>
+  <footer class="nodriza-pie">
+    <a href="/sobre.html">Quiénes somos</a>
+    <a href="/contacto.html">Contacto</a>
+    <a href="/seguridad.html">Seguridad</a>
+    <a href="/privacidad.html">Privacidad</a>
+    <a href="/condiciones.html">Condiciones</a>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="comun.js?v=30"></script>
-    <script src="portada.js?v=9"></script>
+  <script src="/comun.js?v=31"></script>
+  <script>DP.cabecera();</script>
 </body>
 </html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis anuncios — Vivinati</title>
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="/estilos.css?v=48">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="/realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav">
+        <a href="/realestate/buscar.html">Buscar</a><a href="/realestate/conceptos.html">Conceptos 3D</a>
+        <a href="/realestate/busco.html">Busco inmueble</a>
+        <a href="/sobre.html">Quiénes somos</a>
+        <a class="boton peq" href="/realestate/publicar.html">Publicar gratis</a>
+        <span data-nav-sesion></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1>Mis anuncios</h1>
+    <p class="sub">¿Tienes muchos inmuebles? <a href="/realestate/importar.html">Súbelos todos de una vez con Excel</a>.</p>
+    <div id="msg"></div>
+    <div class="lista-mia" id="lista">Cargando…</div>
+  </main>
+
+  <footer class="pie">© Vivinati</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/comun.js?v=31"></script>
+  <script src="/realestate/mis-anuncios.js?v=3"></script>
+</body>
+</html>

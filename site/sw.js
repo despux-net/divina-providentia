@@ -5,8 +5,8 @@
 //  - Estilos, scripts, imágenes y fuentes de vivinati.com: primero la copia
 //    guardada y se actualiza en segundo plano.
 //  - Nada de Supabase ni de otras webs se guarda (datos siempre frescos).
-const VERSION = 'vivinati-v2';
-const BASICOS = ['/', '/buscar.html', '/estilos.css', '/img/logo-vivinati-v2.png', '/img/logo-vivinati-blanco-v2.png', '/img/icono-192.png'];
+const VERSION = 'vivinati-v3';
+const BASICOS = ['/', '/realestate/buscar.html', '/estilos.css', '/img/logo-vivinati-v2.png', '/img/logo-vivinati-blanco-v2.png', '/img/icono-192.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(BASICOS)).catch(() => {}).then(() => self.skipWaiting()));

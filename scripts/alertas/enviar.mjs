@@ -42,7 +42,7 @@ const foto = p => !p ? null : /^https:\/\//.test(p) ? p : `${SUPABASE_URL}/stora
 const URL_FILTROS = { q: 'q', p_operacion: 'operacion', p_tipo: 'tipo', p_estado: 'estado', p_precio_min: 'min', p_precio_max: 'max',
   p_habitaciones: 'hab', p_metros_min: 'm2min', p_metros_max: 'm2max', p_banos: 'banos', p_dias: 'dias',
   p_estacionamiento: 'estac', p_con_fotos: 'fotos', p_solo_vivinati: 'vivinati', p_bajo_precio: 'bajadas', p_incluir_conceptos: 'conceptos' };
-const urlBusqueda = f => `${WEB}/buscar.html?` + new URLSearchParams(Object.entries(f).filter(([k, v]) => URL_FILTROS[k] && v != null && v !== false)
+const urlBusqueda = f => `${WEB}/realestate/buscar.html?` + new URLSearchParams(Object.entries(f).filter(([k, v]) => URL_FILTROS[k] && v != null && v !== false)
   .map(([k, v]) => [URL_FILTROS[k], v === true ? '1' : String(v)])).toString();
 // Solo se aceptan los filtros conocidos (la columna la escribe la persona).
 const PERMITIDOS = new Set(Object.keys(URL_FILTROS));
@@ -50,7 +50,7 @@ const PERMITIDOS = new Set(Object.keys(URL_FILTROS));
 function tarjetaCorreo(i) {
   const f = foto(i.fotos && i.fotos[0]);
   const lugar = [i.zona, i.ciudad, i.estado].filter(Boolean).join(', ');
-  const url = `${WEB}/anuncio.html?id=${i.id}`;
+  const url = `${WEB}/realestate/anuncio.html?id=${i.id}`;
   return `<tr><td style="padding:10px 0;border-bottom:1px solid #e3edf7">
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
       <td width="120" valign="top">${f ? `<a href="${url}"><img src="${esc(f)}" width="110" height="80" alt="" style="display:block;width:110px;height:80px;object-fit:cover;border-radius:8px;border:0"></a>` : ''}</td>
@@ -81,7 +81,7 @@ function correo(nombre, bloques) {
       Recibes este correo porque creaste alertas en vivinati.com. Gestiónalas en <a href="${WEB}/perfil.html#alertas" style="color:#6b7785">tu perfil</a>.
     </td></tr>
   </table></td></tr></table></body></html>`;
-  const texto = bloques.map(b => `${b.alerta.nombre}\n` + b.nuevos.map(i => `- ${precio(i)} · ${i.titulo}\n  ${WEB}/anuncio.html?id=${i.id}`).join('\n') +
+  const texto = bloques.map(b => `${b.alerta.nombre}\n` + b.nuevos.map(i => `- ${precio(i)} · ${i.titulo}\n  ${WEB}/realestate/anuncio.html?id=${i.id}`).join('\n') +
     `\nDejar de recibir: ${WEB}/baja.html?t=${b.alerta.token}`).join('\n\n');
   return { html, texto, total };
 }

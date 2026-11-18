@@ -2,41 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VivinatiBot — Vivinati</title>
-  <meta name="description" content="Cómo encuentra Vivinati los anuncios de inmuebles de Venezuela: VivinatiBot respeta robots.txt y siempre enlaza al anuncio original.">
-  <link rel="canonical" href="https://vivinati.com/bot.html">
-  <meta property="og:image" content="https://vivinati.com/img/og-vivinati.png">
-  <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#005CA7">
-  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-  <link rel="icon" href="/favicon.ico" sizes="48x48">
-  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="estilos.css?v=47">
+  <title>Vivinati Real Estate</title>
+  <!-- Dirección antigua: el buscador de inmuebles se mudó a /realestate/ (18-nov-2026). -->
+  <link rel="canonical" href="https://vivinati.com/realestate/bot.html">
+  <meta name="robots" content="noindex">
+  <script>location.replace('/realestate/bot.html' + location.search + location.hash);</script>
+  <meta http-equiv="refresh" content="0; url=/realestate/bot.html">
 </head>
-<body>
-  <header class="cabecera">
-    <div class="cabecera-int">
-      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
-      <nav class="nav"><a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a><a href="busco.html">Busco inmueble</a><a href="sobre.html">Quiénes somos</a></nav>
-    </div>
-  </header>
-  <main class="contenedor" style="max-width:760px">
-    <h1>VivinatiBot</h1>
-    <p>Vivinati es un buscador de inmuebles en Venezuela. Igual que otros buscadores, nuestro bot lee anuncios públicos de portales inmobiliarios para que la gente los encuentre en un solo lugar, y <strong>siempre enlaza al anuncio original</strong>.</p>
-    <h2>Cómo se comporta</h2>
-    <ul>
-      <li>Se identifica como <code>Mozilla/5.0 (compatible; VivinatiBot/1.0; +https://vivinati.com/bot.html)</code>.</li>
-      <li>Lee y obedece <code>robots.txt</code>, incluido <code>Crawl-delay</code>. Nunca hace más de una petición a la vez por web y espera al menos 5 segundos entre peticiones (más si la web lo pide). Si una web le responde que no (403) o que vaya más despacio (429), la deja en paz hasta la siguiente pasada.</li>
-      <li>Usa los sitemaps y los datos estructurados (schema.org) que la propia web publica para los buscadores.</li>
-      <li>Solo muestra un resumen corto, una foto, el precio y la ubicación general. El texto completo, el resto de fotos y el contacto quedan en la web de origen.</li>
-      <li>Cuando un anuncio desaparece de la web de origen, lo retira de nuestros resultados.</li>
-    </ul>
-    <h2>Si no quieres que leamos tu web</h2>
-    <p>Añade esto a tu <code>robots.txt</code> y dejaremos de leerla en la siguiente pasada:</p>
-    <pre style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto">User-agent: VivinatiBot
-Disallow: /</pre>
-  </main>
-  <footer class="pie">© Vivinati</footer>
-</body>
+<body><p>Esta página se mudó a <a href="/realestate/bot.html">vivinati.com/realestate/bot.html</a>.</p></body>
 </html>

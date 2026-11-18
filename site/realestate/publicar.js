@@ -1,4 +1,4 @@
-// Publicar o editar un anuncio (publicar.html?id=<uuid> para editar).
+// Publicar o editar un anuncio (/realestate/publicar.html?id=<uuid> para editar).
 // La base de datos asigna el dueño (user_id) y comprueba los permisos;
 // aquí solo se recoge y se valida lo que escribe la persona.
 (async () => {
@@ -64,18 +64,18 @@
 
   // ---------- Sesión ----------
   // Para publicar hace falta una cuenta activada con @usuario.
-  const aqui = 'publicar.html' + location.search;
+  const aqui = '/realestate/publicar.html' + location.search;
   const { data: { session } } = await DP.sb.auth.getSession();
   DP.cabecera();
   if (!session) {
     $('entrar').hidden = false;
-    $('ir-entrar').href = 'entrar.html?next=' + encodeURIComponent(aqui);
-    $('ir-registro').href = 'registro.html?next=' + encodeURIComponent(aqui);
+    $('ir-entrar').href = '/entrar.html?next=' + encodeURIComponent(aqui);
+    $('ir-registro').href = '/registro.html?next=' + encodeURIComponent(aqui);
     return;
   }
   usuario = session.user;
   const perfil = await DP.miPerfil();
-  if (!perfil || !perfil.usuario) { location.href = 'perfil.html'; return; }
+  if (!perfil || !perfil.usuario) { location.href = '/perfil.html'; return; }
   if (!editarId && perfil.phone) $('whatsapp').value = perfil.phone;
   if (editarId) $('form-anuncio').hidden = false;
   else if (modo) ponerModo(modo);
@@ -279,7 +279,7 @@
       const quitadas = fotosOriginales.filter(r => !rutas.includes(r) && r.startsWith(usuario.id + '/'));
       if (quitadas.length) await DP.sb.storage.from('inmuebles').remove(quitadas);
 
-      location.href = `anuncio.html?id=${encodeURIComponent(data.id)}`;
+      location.href = `/realestate/anuncio.html?id=${encodeURIComponent(data.id)}`;
     } catch (err) {
       console.error(err);
       mensaje('msg-form', err.message, 'error');

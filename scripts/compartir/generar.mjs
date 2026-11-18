@@ -48,7 +48,7 @@ for (const i of filas) {
     i.metros != null && `${Number(i.metros).toLocaleString('es-VE')} m²`].filter(Boolean).join(' · ');
   const descripcion = [`${TIPOS[i.tipo] || 'Inmueble'} ${op}`.trim(), lugar, datos].filter(Boolean).join(' — ');
   const img = foto(Array.isArray(i.fotos) ? i.fotos[0] : null) || `${BASE}/img/icono-512.png`;
-  const destino = `/anuncio.html?id=${i.id}`;
+  const destino = `/realestate/anuncio.html?id=${i.id}`;
   const html = `<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

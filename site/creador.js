@@ -44,7 +44,7 @@
 
   // ---------- Valoraciones ----------
   const { data: { session } } = await DP.sb.auth.getSession();
-  if (session && session.user.id !== p.id) { $('escribir').href = `chat.html?con=${p.id}`; $('escribir').hidden = false; }
+  if (session && session.user.id !== p.id) { $('escribir').href = `/chat.html?con=${p.id}`; $('escribir').hidden = false; }
   async function cargarResenas() {
     const { data: rs } = await DP.sb.rpc('resenas_de', { p_usuario: p.id, p_limite: 30 });
     $('titulo-resenas').textContent = rs && rs.length ? `Valoraciones (${rs.length})` : 'Valoraciones';

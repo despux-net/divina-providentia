@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carga masiva por Excel — Vivinati</title>
+  <meta name="description" content="Publica muchos inmuebles a la vez en Vivinati con una hoja de Excel o CSV. Gratis para agentes e inmobiliarias.">
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="/estilos.css?v=48">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="/realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav"><a href="/realestate/buscar.html">Buscar</a><a href="/realestate/conceptos.html">Conceptos 3D</a><a href="/realestate/busco.html">Busco inmueble</a><a href="/sobre.html">Quiénes somos</a><a class="boton peq" href="/realestate/publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor importar">
+    <h1>Carga masiva por Excel</h1>
+    <p class="sub">Publica todos tus inmuebles de una vez. Rellena una hoja de Excel (o exporta la de tu sistema), súbela, revisa y publica. Si más adelante cambias precios o datos, vuelve a subir el mismo archivo: actualizamos cada anuncio por su referencia.</p>
+
+    <section id="entrar" hidden>
+      <p>Para publicar necesitas una cuenta gratuita.</p>
+      <p><a class="boton" id="ir-registro" href="/registro.html">Crear cuenta</a> <a class="boton sec" id="ir-entrar" href="/entrar.html">Ya tengo cuenta</a></p>
+    </section>
+
+    <div id="zona-carga" hidden>
+      <h2>1. Descarga la plantilla</h2>
+      <p>Una fila por inmueble. Las columnas obligatorias son <b>referencia</b>, <b>operacion</b>, <b>tipo</b>, <b>titulo</b> y <b>estado</b>. La hoja «Instrucciones» explica cada columna.</p>
+      <p><button type="button" class="boton sec" id="btn-plantilla">Descargar plantilla Excel</button></p>
+      <p class="aviso" id="limite-texto"></p>
+
+      <h2>2. Sube tu archivo</h2>
+      <p>Excel (.xlsx, .xls) o CSV. Hasta 300 filas por archivo.</p>
+      <p><input type="file" id="archivo" accept=".xlsx,.xls,.csv,.ods"></p>
+
+      <h2>3. Fotos <small>(opcional)</small></h2>
+      <p>Dos formas, puedes combinarlas:</p>
+      <ul>
+        <li>En la columna <b>fotos</b>, pega enlaces <b>https://</b> a tus fotos, separados por espacios o comas.</li>
+        <li>O selecciona aquí las fotos de tu ordenador nombradas con la referencia del inmueble: <b>APT-001.jpg</b>, <b>APT-001-2.jpg</b>, <b>APT-001_3.jpg</b>… Las reducimos antes de subirlas.</li>
+      </ul>
+      <p><input type="file" id="fotos" accept="image/*" multiple> <span class="aviso" id="fotos-texto"></span></p>
+    </div>
+
+    <section id="revision" hidden>
+      <h2>4. Revisa y publica</h2>
+      <p id="resumen"></p>
+      <div class="tabla-desliza">
+        <table class="tabla-importar">
+          <thead><tr><th>Fila</th><th>Referencia</th><th>Anuncio</th><th>Precio</th><th>Fotos</th><th>Estado</th></tr></thead>
+          <tbody id="filas"></tbody>
+        </table>
+      </div>
+      <p><button type="button" class="boton" id="btn-publicar" disabled>Publicar</button> <span id="progreso" class="aviso"></span></p>
+      <div id="msg"></div>
+    </section>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="/comun.js?v=31"></script>
+  <script src="/realestate/importar.js?v=1"></script>
+</body>
+</html>

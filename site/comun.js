@@ -46,7 +46,7 @@ const DP = {
   },
   tarjetaSolicitud(s, yo) {
     const nombre = s.nombre || (s.usuario ? '@' + s.usuario : 'Usuario');
-    const perfil = s.usuario ? `creador.html?u=${encodeURIComponent(s.usuario)}` : null;
+    const perfil = s.usuario ? `/creador.html?u=${encodeURIComponent(s.usuario)}` : null;
     const datos = DP.datosBusqueda(s);
     return `<article class="solicitud">
       <div class="sol-cab"><strong>${DP.esc(DP.queBusca(s))}</strong>
@@ -58,7 +58,7 @@ const DP = {
           ${perfil ? `<a href="${perfil}">${DP.esc(nombre)}</a>` : DP.esc(nombre)}
           ${s.valoraciones ? DP.estrellas(s.estrellas, s.valoraciones, true) : ''}
           <span class="insignia-gris">· ${DP.haceCuanto(s.creado)}</span></span>
-        ${s.user_id === yo ? '' : `<a class="boton peq" href="chat.html?con=${encodeURIComponent(s.user_id)}">Escribirle</a>`}
+        ${s.user_id === yo ? '' : `<a class="boton peq" href="/chat.html?con=${encodeURIComponent(s.user_id)}">Escribirle</a>`}
       </div></article>`;
   },
 
@@ -74,7 +74,7 @@ const DP = {
         ${datos ? `<span class="globo-demanda-datos">${DP.esc(datos)}</span>` : ''}
         <p>${DP.esc(s.descripcion || '')}</p>
         <span class="globo-demanda-autor">${DP.esc(nombre)} · ${DP.haceCuanto(s.creado)}</span>
-        ${s.user_id === yo ? '' : `<a class="boton peq" href="chat.html?con=${encodeURIComponent(s.user_id)}">Escribirle</a>`}
+        ${s.user_id === yo ? '' : `<a class="boton peq" href="/chat.html?con=${encodeURIComponent(s.user_id)}">Escribirle</a>`}
       </div>`, { maxWidth: 260, className: 'popup-demanda' });
     punto.on('mouseover', () => punto.setStyle({ radius: 11 }));
     punto.on('mouseout', () => punto.setStyle({ radius: 9 }));
@@ -108,7 +108,7 @@ const DP = {
   slugEstado: e => String(e || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   tarjetaConstructora(c) {
     const nombre = c.empresa || c.nombre || '@' + c.usuario;
-    const perfil = `creador.html?u=${encodeURIComponent(c.usuario)}`;
+    const perfil = `/creador.html?u=${encodeURIComponent(c.usuario)}`;
     const lugar = [c.ciudad, c.estado].filter(Boolean).join(', ');
     const bio = c.biografia ? (c.biografia.length > 220 ? c.biografia.slice(0, 220).replace(/\s+\S*$/, '') + '…' : c.biografia) : '';
     const cifras = [c.anuncios ? `${c.anuncios} ${c.anuncios === 1 ? 'inmueble' : 'inmuebles'}` : '',
@@ -263,7 +263,7 @@ const DP = {
       i.habitaciones != null ? `${i.habitaciones} hab.` : null
     ]).filter(Boolean).map(DP.esc).join(' <span class="sep">|</span> ');
     return `<article class="tarjeta-env">
-      <a class="tarjeta" href="anuncio.html?id=${encodeURIComponent(i.id)}">
+      <a class="tarjeta" href="/realestate/anuncio.html?id=${encodeURIComponent(i.id)}">
         <div class="tarjeta-foto">${img}<span class="sello sello-${DP.esc(i.operacion)}">${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span>${bajo ? `<span class="cinta-bajada">↓ ${DP.esc(bajo)}</span>` : ''}</div>
         <div class="cuerpo">
           <div class="tipo-movil op-${DP.esc(i.operacion)}">${DP.esc(tipoMovil)}</div>
@@ -402,9 +402,9 @@ const DP = {
       nav.innerHTML = `<div class="menu-usuario">
         <button type="button" class="nav-perfil" aria-haspopup="true" aria-expanded="false" data-mensajes>${p && p.avatar_url ? DP.avatar({ nombre: quien, avatar_url: p.avatar_url }, 24) : ''}<span class="nav-quien">${DP.esc(quien)}</span><svg class="nav-flecha" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg></button>
         <div class="menu-desplegable" role="menu">
-          <a href="chat.html" role="menuitem" data-mensajes>Mensajes</a>
-          <a href="perfil.html" role="menuitem">Mi perfil</a>
-          <a href="mis-anuncios.html" role="menuitem">Mis anuncios</a>
+          <a href="/chat.html" role="menuitem" data-mensajes>Mensajes</a>
+          <a href="/perfil.html" role="menuitem">Mi perfil</a>
+          <a href="/realestate/mis-anuncios.html" role="menuitem">Mis anuncios</a>
           <a href="#" role="menuitem" data-salir>Salir</a>
         </div></div>`;
       const menu = nav.querySelector('.menu-usuario'), boton = menu.querySelector('.nav-perfil');
@@ -415,11 +415,11 @@ const DP = {
       nav.querySelector('[data-salir]').addEventListener('click', async e => {
         e.preventDefault();
         try { indexedDB.deleteDatabase('vivinati-chat'); } catch { /* nada */ }
-        await sb.auth.signOut(); location.href = 'index.html';
+        await sb.auth.signOut(); location.href = '/';
       });
       DP.contarMensajes();
     } else {
-      nav.innerHTML = `<a href="entrar.html">Entrar</a><a href="registro.html">Crear cuenta</a>`;
+      nav.innerHTML = `<a href="/entrar.html">Entrar</a><a href="/registro.html">Crear cuenta</a>`;
     }
     return session;
   },
@@ -521,7 +521,7 @@ const DP = {
     const g = '<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
     const boton = `<button type="button" class="boton-social" data-google>${g}<span>Continuar con Google</span></button>
       <div data-msg-social></div>
-      <p class="legal-social">Al continuar con Google aceptas las <a href="condiciones.html" target="_blank" rel="noopener">condiciones de uso y el aviso de responsabilidad</a>.</p>`;
+      <p class="legal-social">Al continuar con Google aceptas las <a href="/condiciones.html" target="_blank" rel="noopener">condiciones de uso y el aviso de responsabilidad</a>.</p>`;
     el.innerHTML = arriba
       ? boton + '<div class="separador-o"><span>o regístrate con tu correo</span></div>'
       : '<div class="separador-o"><span>o</span></div>' + boton;
@@ -529,7 +529,7 @@ const DP = {
       e.currentTarget.disabled = true;
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${location.origin}/entrar.html?oauth=1&next=${encodeURIComponent(destino || 'mis-anuncios.html')}` }
+        options: { redirectTo: `${location.origin}/entrar.html?oauth=1&next=${encodeURIComponent(destino || '/realestate/mis-anuncios.html')}` }
       });
       if (error) {
         e.target.closest('button').disabled = false;
@@ -539,9 +539,15 @@ const DP = {
     });
   },
 
-  siguiente(porDefecto = 'mis-anuncios.html') {
+  siguiente(porDefecto = '/realestate/mis-anuncios.html') {
     const n = new URLSearchParams(location.search).get('next') || '';
-    return /^[a-z0-9-]+\.html(\?[\w=&%-]*)?$/i.test(n) ? n : porDefecto;
+    // Solo rutas de esta web: /pagina.html o /realestate/… /industrial/…
+    // (nunca otro dominio). Las antiguas sin barra («publicar.html») siguen valiendo.
+    const REAL = ['buscar', 'anuncio', 'publicar', 'importar', 'mis-anuncios', 'busco', 'conceptos', 'constructoras', 'bot'];
+    const m = n.match(/^\/?((?:realestate|industrial)\/)?([a-z0-9-]+)\.html(\?[\w=&%.-]*)?(#[\w-]*)?$/i);
+    if (!m) return /^\/(realestate|industrial)\/$/.test(n) ? n : porDefecto;
+    const carpeta = m[1] || (REAL.includes(m[2]) ? 'realestate/' : '');
+    return `/${carpeta}${m[2]}.html${m[3] || ''}${m[4] || ''}`;
   }
 };
 
@@ -560,47 +566,47 @@ DP.pie = () => {
       <div>
         <h4>Buscar</h4>
         <ul>
-          <li><a href="buscar.html?operacion=venta">Inmuebles en venta</a></li>
-          <li><a href="buscar.html?operacion=alquiler">Inmuebles en alquiler</a></li>
-          <li><a href="buscar.html?tipo=apartamento">Apartamentos</a></li>
-          <li><a href="buscar.html?tipo=casa">Casas</a></li>
-          <li><a href="buscar.html?vista=mapa">Ver en el mapa</a></li>
-          <li><a href="busco.html">Personas que buscan inmueble</a></li>
-          <li><a href="constructoras.html">Constructoras</a></li>
-          <li><a href="precios/">Precio del m² por zona</a></li>
+          <li><a href="/realestate/buscar.html?operacion=venta">Inmuebles en venta</a></li>
+          <li><a href="/realestate/buscar.html?operacion=alquiler">Inmuebles en alquiler</a></li>
+          <li><a href="/realestate/buscar.html?tipo=apartamento">Apartamentos</a></li>
+          <li><a href="/realestate/buscar.html?tipo=casa">Casas</a></li>
+          <li><a href="/realestate/buscar.html?vista=mapa">Ver en el mapa</a></li>
+          <li><a href="/realestate/busco.html">Personas que buscan inmueble</a></li>
+          <li><a href="/realestate/constructoras.html">Constructoras</a></li>
+          <li><a href="/realestate/precios/">Precio del m² por zona</a></li>
         </ul>
       </div>
       <div>
         <h4>Por estado</h4>
-        <ul>${estados.map(e => `<li><a href="buscar.html?estado=${encodeURIComponent(e)}">${DP.esc(e)}</a></li>`).join('')}</ul>
+        <ul>${estados.map(e => `<li><a href="/realestate/buscar.html?estado=${encodeURIComponent(e)}">${DP.esc(e)}</a></li>`).join('')}</ul>
       </div>
       <div>
         <h4>Publicar y ayuda</h4>
         <ul>
-          <li><a href="publicar.html">Publicar gratis</a></li>
-          <li><a href="registro.html">Crear cuenta</a></li>
-          <li><a href="mis-anuncios.html">Mis anuncios</a></li>
-          <li><a href="seguridad.html">Centro de seguridad: evita estafas</a></li>
-          <li><a href="bot.html">Cómo encontramos anuncios</a></li>
+          <li><a href="/realestate/publicar.html">Publicar gratis</a></li>
+          <li><a href="/registro.html">Crear cuenta</a></li>
+          <li><a href="/realestate/mis-anuncios.html">Mis anuncios</a></li>
+          <li><a href="/seguridad.html">Centro de seguridad: evita estafas</a></li>
+          <li><a href="/realestate/bot.html">Cómo encontramos anuncios</a></li>
         </ul>
       </div>
       <div>
         <h4>Vivinati</h4>
         <ul>
-          <li><a href="sobre.html">Quiénes somos</a></li>
-          <li><a href="contacto.html">Contacto</a></li>
-          <li><a href="privacidad.html">Política de privacidad</a></li>
-          <li><a href="condiciones.html">Condiciones de uso y aviso de responsabilidad</a></li>
+          <li><a href="/sobre.html">Quiénes somos</a></li>
+          <li><a href="/contacto.html">Contacto</a></li>
+          <li><a href="/privacidad.html">Política de privacidad</a></li>
+          <li><a href="/condiciones.html">Condiciones de uso y aviso de responsabilidad</a></li>
         </ul>
         <div class="redes" data-redes hidden></div>
       </div>
     </div>
-    <a class="emblema" href="index.html" aria-label="Vivinati — inicio">
-      <img src="img/sello-vivinati.png" alt="Vivinati" width="150" height="25" loading="lazy" decoding="async">
+    <a class="emblema" href="/" aria-label="Vivinati — inicio">
+      <img src="/img/sello-vivinati.png" alt="Vivinati" width="150" height="25" loading="lazy" decoding="async">
     </a>
     <div class="legal">
       <span>© ${anio} Vivinati</span>
-      <span>Los anuncios son responsabilidad de quien los publica; Vivinati no se hace responsable de estafas ni engaños. <a href="condiciones.html">Condiciones de uso</a> · <a href="privacidad.html">Privacidad</a></span>
+      <span>Los anuncios son responsabilidad de quien los publica; Vivinati no se hace responsable de estafas ni engaños. <a href="/condiciones.html">Condiciones de uso</a> · <a href="/privacidad.html">Privacidad</a></span>
     </div>
   </div>`;
   DP.ajustes().then(a => {
@@ -642,21 +648,21 @@ DP.iconosRedes = a => Object.entries(DP.REDES)
 // (el CSS la oculta en pantallas anchas).
 DP.barraMovil = () => {
   if (document.querySelector('.barra-movil')) return;
-  const pagina = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  const pagina = (location.pathname.split('/').pop() || '/').toLowerCase();
   const fav = new URLSearchParams(location.search).get('fav') === '1';
   const icono = d => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
   const pestañas = [
-    ['buscar.html', 'Buscar', pagina === 'buscar.html' && !fav, '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
-    ['buscar.html?fav=1', 'Favoritos', pagina === 'buscar.html' && fav, '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>'],
-    ['publicar.html', 'Publicar', pagina === 'publicar.html', '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'],
-    ['chat.html', 'Mensajes', pagina === 'chat.html', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>'],
-    ['perfil.html', 'Perfil', ['perfil.html', 'entrar.html', 'registro.html', 'restablecer.html'].includes(pagina), '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
+    ['/realestate/buscar.html', 'Buscar', pagina === '/realestate/buscar.html' && !fav, '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'],
+    ['/realestate/buscar.html?fav=1', 'Favoritos', pagina === '/realestate/buscar.html' && fav, '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>'],
+    ['/realestate/publicar.html', 'Publicar', pagina === '/realestate/publicar.html', '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'],
+    ['/chat.html', 'Mensajes', pagina === '/chat.html', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>'],
+    ['/perfil.html', 'Perfil', ['/perfil.html', '/entrar.html', '/registro.html', '/restablecer.html'].includes(pagina), '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
   ];
   const nav = document.createElement('nav');
   nav.className = 'barra-movil';
   nav.setAttribute('aria-label', 'Menú principal');
   nav.innerHTML = pestañas.map(([href, txt, activa, d]) =>
-    `<a href="${href}"${activa ? ' class="activa" aria-current="page"' : ''}${href === 'chat.html' ? ' data-mensajes' : ''}>${icono(d)}<span>${txt}</span></a>`).join('');
+    `<a href="${href}"${activa ? ' class="activa" aria-current="page"' : ''}${href === '/chat.html' ? ' data-mensajes' : ''}>${icono(d)}<span>${txt}</span></a>`).join('');
   document.body.appendChild(nav);
   document.body.classList.add('con-barra-movil');
 };
@@ -712,7 +718,8 @@ DP.app = () => {
 window.DP = DP;
 DP.ojos();
 DP.pie();
-DP.barraMovil();
+// La portada nodriza (vivinati corp) es una página limpia: sin barra de pestañas.
+if (!document.body.hasAttribute('data-sin-barra')) DP.barraMovil();
 DP.activarCorazones();
 DP.sincronizarFavoritos();
 DP.app();

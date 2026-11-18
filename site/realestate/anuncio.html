@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inmueble — Vivinati</title>
+  <meta name="description" content="Inmueble en Venezuela en Vivinati, el buscador de inmuebles de Venezuela.">
+  <meta property="og:site_name" content="Vivinati">
+  <meta property="og:title" content="Inmueble en Vivinati">
+  <meta property="og:description" content="Apartamentos, casas y locales en venta y alquiler en toda Venezuela.">
+  <meta property="og:type" content="website">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/estilos.css?v=48">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="/realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav">
+        <a href="/realestate/buscar.html">Buscar</a><a href="/realestate/conceptos.html">Conceptos 3D</a>
+        <a href="/realestate/busco.html">Busco inmueble</a>
+        <a href="/sobre.html">Quiénes somos</a>
+        <a class="boton peq" href="/realestate/publicar.html">Publicar gratis</a>
+        <span data-nav-sesion></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor ficha2-pagina">
+    <div id="cargando" class="cargando-ficha">Cargando…</div>
+    <div class="vacio" id="no-existe" hidden><strong>Este anuncio no existe o ya no está disponible</strong>
+      <p><a class="boton" href="/realestate/">Ver otros inmuebles</a></p></div>
+
+    <article id="ficha" hidden>
+      <nav class="migas" id="migas" aria-label="Estás en"></nav>
+
+      <div class="ficha2">
+        <!-- Columna principal -->
+        <div class="ficha2-principal">
+          <div class="galeria2">
+            <div class="visor2" id="visor">
+              <img class="principal" id="foto-principal" alt="" referrerpolicy="no-referrer">
+              <span class="insignia-foto" id="insignia-foto" hidden></span>
+              <div class="acciones-foto">
+                <button type="button" class="redondo-blanco" id="btn-compartir" aria-label="Compartir">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+                </button>
+                <button type="button" class="corazon corazon-ficha" id="btn-fav" aria-pressed="false" aria-label="Guardar en favoritos">
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.3 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>
+                </button>
+              </div>
+              <button type="button" class="flecha izq" id="foto-ant" aria-label="Foto anterior" hidden>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+              <button type="button" class="flecha der" id="foto-sig" aria-label="Foto siguiente" hidden>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+              <a class="pastilla-mapa" id="ir-mapa" href="#bloque-mapa" hidden>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="#e53935" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+                Ver en el mapa</a>
+              <span class="contador-fotos" id="contador-fotos" hidden></span>
+            </div>
+            <div class="miniaturas2" id="miniaturas"></div>
+            <p class="mas-fotos" id="mas-fotos" hidden></p>
+          </div>
+
+          <h1 class="ficha2-titulo" id="titulo"></h1>
+          <p class="ficha2-sub" id="subtitulo"></p>
+          <div class="ficha2-precio" id="precio"></div>
+          <ul class="ficha2-datos" id="datos"></ul>
+
+          <div class="caja-info" id="ref-precio" hidden></div>
+          <div class="caja-info" id="caja-consejo">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <div><strong id="consejo-titulo">Antes de pagar, visita y verifica</strong>
+              <p id="aviso-consejo">Nunca envíes dinero ni pagues reservas sin haber visto el inmueble y comprobado quién es el propietario. <a href="/seguridad.html">Cómo evitar estafas</a></p></div>
+          </div>
+
+          <section class="ficha2-bloque">
+            <h2>Descripción</h2>
+            <p class="descripcion" id="descripcion"></p>
+          </section>
+
+          <section class="ficha2-bloque" id="bloque-mapa" hidden>
+            <h2>Ubicación</h2>
+            <p class="lugar" id="lugar"></p>
+            <div id="mapa-ficha"></div>
+            <p class="aviso">La ubicación puede ser aproximada.</p>
+            <div id="cerca" class="cerca" hidden>
+              <h3>Cerca de este inmueble</h3>
+              <div id="cerca-lista"><p class="ayuda">Buscando colegios, farmacias, transporte y más…</p></div>
+              <p class="aviso">Distancias en línea recta desde la ubicación del anuncio. Datos de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.</p>
+            </div>
+          </section>
+
+          <p class="aviso" id="fecha"></p>
+          <p class="reportar"><button type="button" class="enlace" id="btn-reportar">Reportar este anuncio</button></p>
+          <form class="form-reporte" id="form-reporte" hidden novalidate>
+            <label for="motivo">¿Qué pasa con este anuncio?</label>
+            <select id="motivo" required>
+              <option value="">Elige un motivo</option>
+              <option value="estafa">Parece una estafa</option>
+              <option value="vendido">Ya se vendió o alquiló</option>
+              <option value="datos_falsos">Datos o fotos falsos</option>
+              <option value="duplicado">Está repetido</option>
+              <option value="otro">Otro motivo</option>
+            </select>
+            <label for="detalle">Cuéntanos más <small>(opcional)</small></label>
+            <textarea id="detalle" maxlength="500" rows="3"></textarea>
+            <div id="msg-reporte"></div>
+            <p><button class="boton peq" type="submit" id="enviar-reporte">Enviar reporte</button>
+              <button class="boton sec peq" type="button" id="cancelar-reporte">Cancelar</button></p>
+            <p class="aviso">Si varias personas lo reportan, el anuncio se pausa hasta que lo revisemos.</p>
+          </form>
+        </div>
+
+        <!-- Columna lateral: quién publica y chat -->
+        <aside class="ficha2-lateral">
+          <section class="tarjeta-anfitrion" id="anfitrion"></section>
+
+          <section class="tarjeta-chat" id="tarjeta-chat" hidden>
+            <header class="tarjeta-chat-cab" id="chat-cab"></header>
+            <div class="tarjeta-chat-cuerpo" id="chat-cuerpo">
+              <div class="burbuja-sistema">
+                <strong>Escríbele directamente</strong>
+                <span>Tus mensajes van cifrados de extremo a extremo: solo tú y esta persona pueden leerlos.</span>
+              </div>
+            </div>
+            <div class="preguntas-rapidas" id="preguntas">
+              <button type="button">¿Sigue disponible?</button>
+              <button type="button">¿Puedo visitarlo?</button>
+              <button type="button">¿El precio es negociable?</button>
+              <button type="button">¿Qué incluye el precio?</button>
+            </div>
+            <form class="chat-entrada" id="form-chat">
+              <textarea id="texto-chat" rows="1" maxlength="2000" placeholder="Escribe tu mensaje…" aria-label="Mensaje"></textarea>
+              <button type="submit" class="enviar-chat" aria-label="Enviar">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              </button>
+            </form>
+            <p class="nota-cifrado">🔒 Cifrado de extremo a extremo</p>
+          </section>
+
+          <div class="compartir" id="compartir">
+            <span>Compartir:</span>
+            <a class="boton sec peq" id="comp-wa" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="boton sec peq" id="comp-fb" target="_blank" rel="noopener">Facebook</a>
+            <button class="boton sec peq" type="button" id="comp-copiar">Copiar enlace</button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Parecidos -->
+      <section class="similares" id="similares" hidden>
+        <h2 id="similares-titulo">Inmuebles parecidos</h2>
+        <div class="rejilla resultados-cuatro" id="lista-similares"></div>
+      </section>
+    </article>
+
+    <!-- Todas las fotos en grande -->
+    <dialog class="visor-completo" id="visor-completo">
+      <button type="button" class="cerrar-visor" id="cerrar-visor" aria-label="Cerrar">×</button>
+      <div class="rejilla-fotos" id="rejilla-fotos"></div>
+    </dialog>
+  </main>
+
+  <footer class="pie"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/comun.js?v=31"></script>
+  <script src="/cifrado.js?v=2"></script>
+  <script src="/realestate/anuncio.js?v=14"></script>
+</body>
+</html>

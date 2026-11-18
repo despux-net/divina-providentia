@@ -4,7 +4,7 @@
 (async () => {
   const $ = id => document.getElementById(id);
   const session = await DP.cabecera();
-  if (!session) { location.href = 'entrar.html?next=perfil.html'; return; }
+  if (!session) { location.href = '/entrar.html?next=/perfil.html'; return; }
   if (new URLSearchParams(location.search).get('bienvenida')) $('bienvenida').hidden = false;
 
   const perfil = await DP.miPerfil();
@@ -162,14 +162,14 @@
   // ---------- Mi puntuación acumulada ----------
   DP.resumenEstrellas(session.user.id, $('resumen-estrellas'), {
     pie: perfil.usuario
-      ? `Te valoran las personas con las que has conversado por el chat. <a href="creador.html?u=${encodeURIComponent(perfil.usuario)}#valoraciones">Ver los comentarios que te dejaron</a>.`
+      ? `Te valoran las personas con las que has conversado por el chat. <a href="/creador.html?u=${encodeURIComponent(perfil.usuario)}#valoraciones">Ver los comentarios que te dejaron</a>.`
       : 'Te valoran las personas con las que has conversado por el chat.'
   });
 
   // ---------- Perfil público (portafolio) ----------
   function pintarEnlacePublico() {
     if (!perfil.usuario) return;
-    $('enlace-publico').innerHTML = `Tu página pública: <a href="creador.html?u=${encodeURIComponent(perfil.usuario)}">vivinati.com/@${DP.esc(perfil.usuario)}</a>`;
+    $('enlace-publico').innerHTML = `Tu página pública: <a href="/creador.html?u=${encodeURIComponent(perfil.usuario)}">vivinati.com/@${DP.esc(perfil.usuario)}</a>`;
     $('enlace-publico').hidden = false;
   }
   pintarEnlacePublico();
@@ -181,7 +181,7 @@
     if (error) { ul.innerHTML = '<li class="ayuda">No se pudieron cargar tus alertas.</li>'; return; }
     if (!data.length) { ul.innerHTML = '<li class="ayuda">Aún no tienes alertas.</li>'; return; }
     ul.innerHTML = data.map(a => `<li class="${a.activa ? '' : 'pausada'}">
-      <a href="buscar.html?${DP.urlDeFiltros(a.filtros)}">${DP.esc(a.nombre)}</a>
+      <a href="/realestate/buscar.html?${DP.urlDeFiltros(a.filtros)}">${DP.esc(a.nombre)}</a>
       <span class="estado-alerta">${a.activa ? 'Activa' : 'Pausada'}</span>
       <span class="acciones-alerta">
         <button type="button" class="enlace" data-alternar="${a.id}" data-activa="${a.activa}">${a.activa ? 'Pausar' : 'Reanudar'}</button>
@@ -245,7 +245,7 @@
       if (error) throw error;
       try { indexedDB.deleteDatabase('vivinati-chat'); localStorage.removeItem('dp_favoritos'); } catch { /* nada */ }
       await DP.sb.auth.signOut().catch(() => {});
-      location.href = 'index.html';
+      location.href = '/';
     } catch (err) {
       console.error(err);
       $('btn-eliminar').disabled = false;

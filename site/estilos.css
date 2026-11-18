@@ -1276,3 +1276,23 @@ a.eleccion:hover { text-decoration: none; }
 .constructora-botones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
 .enlaces-estados { margin-top: 28px; font-size: .92rem; }
 .enlaces-estados a { margin-right: 14px; display: inline-block; }
+
+/* Portada nodriza (vivinati.com): blanca y serena, el logo en el centro */
+body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+.nodriza-arriba { display: flex; justify-content: flex-end; padding: 14px 20px; font-size: .92rem; }
+.nodriza-arriba [data-nav-sesion] { display: flex; gap: 18px; align-items: center; }
+.nodriza-arriba a { color: #3c4650; text-decoration: none; }
+.nodriza-arriba a:hover { text-decoration: underline; }
+.nodriza-centro { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px 12vh; }
+.nodriza-marca { margin: 0 0 44px; display: flex; flex-direction: column; align-items: center; font: inherit; }
+.nodriza-marca img { width: min(400px, 78vw); height: auto; }
+.nodriza-marca span { margin-top: 10px; font-weight: 300; font-size: 1.05rem; letter-spacing: .55em; padding-left: .55em; color: #6b7785; text-transform: lowercase; }
+.nodriza-mercados { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.nodriza-mercados a { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 230px; padding: 14px 26px; border: 1px solid #dfe3e8; border-radius: 999px; color: #1d2733; text-decoration: none; transition: border-color .15s, box-shadow .15s; }
+.nodriza-mercados a:hover, .nodriza-mercados a:focus-visible { border-color: #b9c4cf; box-shadow: 0 1px 6px rgba(32, 33, 36, .12); }
+.nodriza-mercados strong { font-weight: 500; font-size: 1.02rem; color: #005CA7; }
+.nodriza-mercados span { font-size: .85rem; color: #6b7785; }
+.nodriza-pie { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; padding: 16px; border-top: 1px solid #eef0f2; background: #fafbfc; font-size: .85rem; }
+.nodriza-pie a { color: #5f6b77; text-decoration: none; }
+.nodriza-pie a:hover { text-decoration: underline; }
+@media (max-width: 560px) { .nodriza-mercados a { min-width: 0; width: 100%; } .nodriza-mercados { width: 100%; max-width: 340px; } }

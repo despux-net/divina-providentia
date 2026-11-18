@@ -8,7 +8,11 @@
       if (m) location.replace('/creador.html?u=' + m[1].toLowerCase());
       // vivinati.com/a/<id>/ de un anuncio nuevo (su página se crea en la próxima publicación)
       var a = location.pathname.match(/^\/a\/([0-9a-f-]{36})\/?$/i);
-      if (a) location.replace('/anuncio.html?id=' + a[1]);
+      if (a) location.replace('/realestate/anuncio.html?id=' + a[1]);
+      // Direcciones de antes de la mudanza (18-nov-2026): el buscador de
+      // inmuebles vive ahora en /realestate/
+      var v = location.pathname.match(/^\/((?:inmuebles|precios|constructoras)\/.*|(?:buscar|anuncio|publicar|importar|mis-anuncios|busco|conceptos|constructoras|bot)\.html)$/);
+      if (v && !a && !m) location.replace('/realestate/' + v[1] + location.search + location.hash);
     })();
   </script>
   <meta charset="utf-8">
@@ -22,41 +26,41 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="/estilos.css?v=47">
+  <link rel="stylesheet" href="/estilos.css?v=48">
 </head>
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
-      <nav class="nav"><a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a><a href="busco.html">Busco inmueble</a><a href="sobre.html">Quiénes somos</a><a class="boton peq" href="publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+      <a class="marca" href="/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav"><a href="/realestate/">Inmuebles</a><a href="/industrial/">Industrial</a><a href="/sobre.html">Quiénes somos</a><span data-nav-sesion></span></nav>
     </div>
   </header>
 
   <main class="contenedor pagina-404">
-    <img class="logo-404" src="img/logo-vivinati-v2.png" alt="Vivinati" width="320" height="36">
+    <img class="logo-404" src="/img/logo-vivinati-v2.png" alt="Vivinati" width="320" height="36">
     <p class="codigo-404">Error 404</p>
     <h1>No encontramos esta página</h1>
     <p class="sub">Puede que el enlace esté mal escrito o que el anuncio ya no esté publicado. Busca lo que necesitas desde aquí:</p>
 
-    <form class="buscar-404" action="buscar.html" method="get" role="search">
+    <form class="buscar-404" action="/realestate/buscar.html" method="get" role="search">
       <input type="search" name="q" placeholder="Ciudad, zona o palabra clave" aria-label="Ciudad, zona o palabra clave">
       <button class="boton" type="submit">Buscar inmuebles</button>
     </form>
 
     <ul class="atajos-404">
-      <li><a href="buscar.html?operacion=venta">Inmuebles en venta</a></li>
-      <li><a href="buscar.html?operacion=alquiler">Inmuebles en alquiler</a></li>
-      <li><a href="buscar.html?vista=mapa">Buscar en el mapa</a></li>
-      <li><a href="conceptos.html">Conceptos 3D</a></li>
-      <li><a href="publicar.html">Publicar gratis</a></li>
-      <li><a href="index.html">Ir al inicio</a></li>
+      <li><a href="/realestate/buscar.html?operacion=venta">Inmuebles en venta</a></li>
+      <li><a href="/realestate/buscar.html?operacion=alquiler">Inmuebles en alquiler</a></li>
+      <li><a href="/realestate/buscar.html?vista=mapa">Buscar en el mapa</a></li>
+      <li><a href="/realestate/conceptos.html">Conceptos 3D</a></li>
+      <li><a href="/realestate/publicar.html">Publicar gratis</a></li>
+      <li><a href="/">Ir al inicio</a></li>
     </ul>
-    <p class="aviso">¿Llegaste aquí desde un enlace de Vivinati? <a href="contacto.html">Avísanos</a> y lo arreglamos.</p>
+    <p class="aviso">¿Llegaste aquí desde un enlace de Vivinati? <a href="/contacto.html">Avísanos</a> y lo arreglamos.</p>
   </main>
 
   <footer class="pie"></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="/comun.js?v=30"></script>
+  <script src="/comun.js?v=31"></script>
   <script>DP.cabecera();</script>
 </body>
 </html>

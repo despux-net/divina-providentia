@@ -10,19 +10,13 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="estilos.css?v=47">
+  <link rel="stylesheet" href="/estilos.css?v=48">
 </head>
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
-      <nav class="nav">
-        <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
-        <a href="busco.html">Busco inmueble</a>
-        <a href="sobre.html">Quiénes somos</a>
-        <a class="boton peq" href="publicar.html">Publicar gratis</a>
-        <span data-nav-sesion></span>
-      </nav>
+      <a class="marca" href="/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav"><a href="/realestate/">Inmuebles</a><a href="/industrial/">Industrial</a><a href="/sobre.html">Quiénes somos</a><span data-nav-sesion></span></nav>
     </div>
   </header>
 
@@ -31,19 +25,19 @@
       <a href="#datos" data-seccion="datos">Mi perfil</a>
       <a href="#sobre-mi" data-seccion="sobre-mi">Sobre mí</a>
       <a href="#mis-estrellas" data-seccion="mis-estrellas">Mi puntuación</a>
-      <a href="mis-anuncios.html">Mis anuncios</a>
-      <a href="buscar.html?fav=1">Favoritos</a>
-      <a href="chat.html">Mensajes</a>
+      <a href="/realestate/mis-anuncios.html">Mis anuncios</a>
+      <a href="/realestate/buscar.html?fav=1">Favoritos</a>
+      <a href="/chat.html">Mensajes</a>
       <a href="#alertas" data-seccion="alertas">Alertas por correo</a>
       <a href="#avisos" data-seccion="avisos">Avisos de mensajes</a>
       <a href="#acceso" data-seccion="acceso">Datos de acceso</a>
-      <a href="condiciones.html">Condiciones y privacidad</a>
+      <a href="/condiciones.html">Condiciones y privacidad</a>
       <a href="#eliminar" data-seccion="eliminar" class="peligro">Eliminar cuenta</a>
     </aside>
 
     <div class="perfil-contenido">
       <div id="bienvenida" hidden class="mensaje ok"><strong>¡Bienvenido!</strong> Tu cuenta está activa.
-        <a href="publicar.html">Publica tu primer inmueble</a>.</div>
+        <a href="/realestate/publicar.html">Publica tu primer inmueble</a>.</div>
 
       <section id="datos" class="perfil-seccion">
         <h1 class="perfil-titulo">Mi perfil</h1>
@@ -117,7 +111,7 @@
       <section class="perfil-seccion" id="alertas">
         <h2 class="perfil-sub">Mis alertas por correo</h2>
         <p class="ayuda">Te escribimos una vez al día si aparecen anuncios nuevos que encajan. Crea una desde
-          <a href="buscar.html">la búsqueda</a> con el botón «Avísame de anuncios nuevos» (máximo 5).</p>
+          <a href="/realestate/buscar.html">la búsqueda</a> con el botón «Avísame de anuncios nuevos» (máximo 5).</p>
         <ul class="lista-alertas" id="lista-alertas"><li class="ayuda">Cargando…</li></ul>
       </section>
 
@@ -136,7 +130,7 @@
           <button class="boton sec" type="submit" id="btn-correo">Cambiar correo</button>
         </form>
         <div id="msg-correo"></div>
-        <p><a class="boton sec" href="restablecer.html">Cambiar contraseña</a></p>
+        <p><a class="boton sec" href="/restablecer.html">Cambiar contraseña</a></p>
       </section>
 
       <section class="perfil-seccion instalar-app" id="bloque-instalar" hidden>
@@ -162,7 +156,7 @@
   <footer class="pie">© Vivinati</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=30"></script>
-  <script src="perfil.js?v=7"></script>
+  <script src="/comun.js?v=31"></script>
+  <script src="/perfil.js?v=7"></script>
 </body>
 </html>

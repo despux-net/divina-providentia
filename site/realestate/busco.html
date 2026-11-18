@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Busco inmueble: personas que buscan casa o apartamento en Venezuela — Vivinati</title>
+  <meta name="description" content="Personas que buscan apartamentos, casas, locales o terrenos en Venezuela. Si tienes lo que necesitan, escríbeles. Si buscas tú, publica gratis lo que necesitas.">
+  <link rel="canonical" href="https://vivinati.com/realestate/busco.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#005CA7">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/estilos.css?v=48">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-int">
+      <a class="marca" href="/realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="/img/logo-vivinati-blanco-v2.png"><img src="/img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <nav class="nav"><a href="/realestate/buscar.html">Buscar</a><a href="/realestate/conceptos.html">Conceptos 3D</a><a href="/realestate/busco.html">Busco inmueble</a><a href="/sobre.html">Quiénes somos</a><a class="boton peq" href="/realestate/publicar.html">Publicar gratis</a><span data-nav-sesion></span></nav>
+    </div>
+  </header>
+
+  <main class="contenedor pagina-busco">
+    <div class="busco-cab">
+      <div>
+        <h1>Busco inmueble</h1>
+        <p class="sub">Personas que buscan dónde vivir o trabajar. Si tienes lo que necesitan, escríbeles por el chat de Vivinati. Si buscas tú, publica gratis lo que necesitas y deja que los anunciantes te encuentren.</p>
+      </div>
+      <button type="button" class="boton" id="abrir-form">Publicar lo que busco</button>
+    </div>
+
+    <form id="form-solicitud" class="form tarjeta-form" novalidate hidden>
+      <h2>¿Qué buscas?</h2>
+      <div class="rejilla-campos">
+        <div class="campo"><label for="s-operacion">Para</label>
+          <select id="s-operacion"><option value="alquiler">Alquilar</option><option value="venta">Comprar</option></select></div>
+        <div class="campo"><label for="s-tipo">Tipo de inmueble</label><select id="s-tipo"></select></div>
+        <div class="campo"><label for="s-estado">Estado</label><select id="s-estado"></select></div>
+        <div class="campo"><label for="s-zona">Ciudad o zonas <small>(opcional)</small></label>
+          <input type="text" id="s-zona" maxlength="80" placeholder="Ej.: Valencia norte, Naguanagua"></div>
+        <div class="campo ancho"><label>Marca en el mapa la zona donde buscas</label>
+          <div id="s-mapa" class="mapa-pin"></div>
+          <small class="ayuda" id="s-ayuda-pin">Toca el mapa para poner tu pin rojo. Puedes arrastrarlo. No hace falta que sea exacto: es la zona que te interesa.</small></div>
+        <div class="campo"><label for="s-presupuesto" id="l-presupuesto">Presupuesto máximo en $ <small>(opcional)</small></label>
+          <input type="number" id="s-presupuesto" min="1" step="1" inputmode="numeric" placeholder="Ej.: 400"></div>
+        <div class="campo"><label for="s-hab">Habitaciones mínimas <small>(opcional)</small></label>
+          <select id="s-hab"><option value="">Indiferente</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="campo ancho"><label for="s-descripcion">Cuéntalo con tus palabras</label>
+          <textarea id="s-descripcion" rows="4" maxlength="800" placeholder="Ej.: Pareja sin mascotas, buscamos apartamento tranquilo cerca de la autopista, con puesto de estacionamiento. Podemos mudarnos en enero."></textarea>
+          <small class="ayuda" id="s-cuenta">0 / 800 · mínimo 20 caracteres</small></div>
+      </div>
+      <p class="ayuda">Se publica con tu nombre y tu @usuario. Los anunciantes te escribirán por el chat cifrado; tu teléfono y tu correo no se muestran. Caduca a los 60 días.</p>
+      <div id="s-msg"></div>
+      <button class="boton" type="submit" id="s-btn">Publicar mi búsqueda</button>
+      <button class="boton sec" type="button" id="s-cancelar">Cancelar</button>
+    </form>
+
+    <div class="filtros-busco">
+      <select id="f-operacion" class="pildora" aria-label="Operación"><option value="">Comprar o alquilar</option><option value="alquiler">Alquilar</option><option value="venta">Comprar</option></select>
+      <select id="f-tipo" class="pildora" aria-label="Tipo"></select>
+      <select id="f-estado" class="pildora" aria-label="Estado"></select>
+    </div>
+    <div id="mapa-demanda" class="mapa-demanda" hidden></div>
+    <p class="leyenda-mapa" id="leyenda-demanda" hidden><span class="punto-rojo"></span> Zonas donde la gente busca inmueble</p>
+    <p class="sub" id="resumen-busco"></p>
+    <div class="lista-solicitudes" id="lista"></div>
+    <p><button type="button" class="boton sec" id="mas" hidden>Ver más</button></p>
+
+    <section id="mis-solicitudes" hidden>
+      <h2>Tus búsquedas</h2>
+      <div class="lista-solicitudes" id="lista-mias"></div>
+    </section>
+    <p class="aviso">Antes de cerrar un trato, revisa el <a href="/seguridad.html">Centro de seguridad</a>. Vivinati no interviene en los acuerdos entre usuarios.</p>
+  </main>
+
+  <footer class="pie"></footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/comun.js?v=31"></script>
+  <script src="/realestate/busco.js?v=3"></script>
+</body>
+</html>

@@ -39,10 +39,10 @@
   $('ficha').hidden = false;
 
   // ---------- Migas: Inicio › Estado › Tipo ----------
-  const buscarCon = o => 'buscar.html?' + new URLSearchParams(Object.entries(o).filter(([, v]) => v)).toString();
+  const buscarCon = o => '/realestate/buscar.html?' + new URLSearchParams(Object.entries(o).filter(([, v]) => v)).toString();
   $('migas').innerHTML = concepto
-    ? `<a href="index.html">Inicio</a> › <a href="conceptos.html">Conceptos 3D</a> › <span>${DP.esc(i.titulo)}</span>`
-    : `<a href="index.html">Inicio</a> › <a href="${buscarCon({ operacion: i.operacion, estado: i.estado })}">${DP.esc(i.estado)}</a> ›
+    ? `<a href="/realestate/">Inicio</a> › <a href="/realestate/conceptos.html">Conceptos 3D</a> › <span>${DP.esc(i.titulo)}</span>`
+    : `<a href="/realestate/">Inicio</a> › <a href="${buscarCon({ operacion: i.operacion, estado: i.estado })}">${DP.esc(i.estado)}</a> ›
        <a href="${buscarCon({ operacion: i.operacion, estado: i.estado, tipo: i.tipo })}">${DP.esc(DP.TIPOS[i.tipo] || 'Inmuebles')}</a> ›
        <span>${DP.esc(i.zona || i.ciudad || i.titulo)}</span>`;
 
@@ -174,7 +174,7 @@
     // Publicado en Vivinati: avatar, estrellas, verificado y chat
     const pintar = p => {
       const nombre = (p && (p.nombre || (p.usuario && '@' + p.usuario))) || 'Anunciante';
-      const perfilUrl = p && p.usuario ? `creador.html?u=${encodeURIComponent(p.usuario)}` : null;
+      const perfilUrl = p && p.usuario ? `/creador.html?u=${encodeURIComponent(p.usuario)}` : null;
       const desde = p && p.miembro_desde ? new Date(p.miembro_desde + 'T12:00:00').toLocaleDateString('es-VE', { month: 'long', year: 'numeric' }) : null;
       $('anfitrion').innerHTML = `
         <div class="anfitrion-cab">
@@ -194,7 +194,7 @@
           ${i.institucion ? `<p class="autor-dato"><span>Universidad o estudio</span>${DP.esc(i.institucion)}</p>` : ''}
           ${Array.isArray(i.herramientas) && i.herramientas.length ? `<div class="autor-dato"><span>Herramientas</span><div class="chips-datos">${i.herramientas.map(h => `<span class="chip-dato">${DP.esc(h)}</span>`).join('')}</div></div>` : ''}` : ''}
         <div class="anfitrion-botones">
-          ${esMio ? btn('sec', `publicar.html?id=${encodeURIComponent(i.id)}`, concepto ? 'Editar mi proyecto' : 'Editar mi anuncio')
+          ${esMio ? btn('sec', `/realestate/publicar.html?id=${encodeURIComponent(i.id)}`, concepto ? 'Editar mi proyecto' : 'Editar mi anuncio')
             : `<button type="button" class="boton ${concepto ? 'concepto' : ''}" id="btn-mensaje">${concepto ? 'Contactar al creador / Colaborar' : 'Enviar mensaje'}</button>`}
           ${wa && !esMio ? btn('sec wa-sec', wa, 'Escribir por WhatsApp', true) : ''}
           ${modelo && modelo.startsWith('https://') ? btn('sec', modelo, 'Ver modelo 3D externo ↗', true) : ''}
@@ -226,12 +226,12 @@
     const texto = $('texto-chat').value.trim();
     if (!texto) return;
     if (!session) {
-      burbuja(`Para escribir necesitas una cuenta gratuita. <a href="entrar.html?next=${encodeURIComponent('anuncio.html?id=' + i.id)}">Entra</a> o <a href="registro.html">crea tu cuenta</a>.`, 'sistema');
+      burbuja(`Para escribir necesitas una cuenta gratuita. <a href="/entrar.html?next=${encodeURIComponent('/realestate/anuncio.html?id=' + i.id)}">Entra</a> o <a href="/registro.html">crea tu cuenta</a>.`, 'sistema');
       return;
     }
     const estado = await DP.e2e.estado();
     if (estado !== 'lista') {
-      burbuja(`Antes de escribir, activa tu chat cifrado: <a href="chat.html?con=${encodeURIComponent(i.user_id)}&anuncio=${encodeURIComponent(i.id)}">ábrelo aquí</a>.`, 'sistema');
+      burbuja(`Antes de escribir, activa tu chat cifrado: <a href="/chat.html?con=${encodeURIComponent(i.user_id)}&anuncio=${encodeURIComponent(i.id)}">ábrelo aquí</a>.`, 'sistema');
       return;
     }
     const enviar = $('form-chat').querySelector('button');
@@ -239,7 +239,7 @@
     try {
       const conv = await DP.e2e.enviar(i.user_id, i.id, texto);
       burbuja(DP.esc(texto), 'mia');
-      burbuja(`Enviado. <a href="chat.html?c=${conv}">Ver la conversación</a>`, 'sistema');
+      burbuja(`Enviado. <a href="/chat.html?c=${conv}">Ver la conversación</a>`, 'sistema');
       $('texto-chat').value = '';
     } catch (err) {
       burbuja(DP.esc(err.message === 'sin-clave-otro'

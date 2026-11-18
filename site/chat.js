@@ -1,4 +1,4 @@
-// Mensajes entre usuarios (chat.html), cifrados de extremo a extremo.
+// Mensajes entre usuarios (/chat.html), cifrados de extremo a extremo.
 //   chat.html               → lista de conversaciones
 //   chat.html?c=<id>        → abre una conversación
 //   chat.html?con=<usuario>&anuncio=<id> → abre (o crea) la conversación con esa persona
@@ -8,7 +8,7 @@
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const { data: { session } } = await DP.sb.auth.getSession();
-  if (!session) { location.href = 'entrar.html?next=' + encodeURIComponent('chat.html' + location.search); return; }
+  if (!session) { location.href = '/entrar.html?next=' + encodeURIComponent('/chat.html' + location.search); return; }
   DP.cabecera();
   const yo = session.user.id;
   let convs = [], actual = null, canal = null;
@@ -42,7 +42,7 @@
       $('volver-a-entrar').hidden = false;
       $('btn-reentrar').addEventListener('click', async () => {
         await DP.sb.auth.signOut();
-        location.href = 'entrar.html?next=' + encodeURIComponent('chat.html' + location.search);
+        location.href = '/entrar.html?next=' + encodeURIComponent('/chat.html' + location.search);
       });
     }
     return new Promise(listo => {
@@ -74,7 +74,7 @@
     const b = e.target.closest('[data-c]'); if (!b) return;
     abrir(convs.find(c => c.id === b.dataset.c));
   });
-  $('volver').addEventListener('click', () => { $('app').classList.remove('viendo'); history.replaceState(null, '', 'chat.html'); });
+  $('volver').addEventListener('click', () => { $('app').classList.remove('viendo'); history.replaceState(null, '', '/chat.html'); });
 
   // ---------- 3) Una conversación ----------
   function pintarMensaje(m, texto) {
@@ -90,23 +90,23 @@
       const aviso = document.createElement('div');
       aviso.className = 'aviso-estafa';
       aviso.setAttribute('role', 'note');
-      aviso.innerHTML = '<strong>Cuidado con los pagos por adelantado</strong>No envíes dinero, reservas ni depósitos sin haber visitado el inmueble y comprobado quién es el propietario. Vivinati nunca te pedirá pagos. <a href="seguridad.html" target="_blank" rel="noopener">Cómo evitar estafas</a>';
+      aviso.innerHTML = '<strong>Cuidado con los pagos por adelantado</strong>No envíes dinero, reservas ni depósitos sin haber visitado el inmueble y comprobado quién es el propietario. Vivinati nunca te pedirá pagos. <a href="/seguridad.html" target="_blank" rel="noopener">Cómo evitar estafas</a>';
       $('mensajes').appendChild(aviso);
     }
   }
   async function abrir(c) {
     if (!c) return;
     actual = c;
-    history.replaceState(null, '', 'chat.html?c=' + c.id);
+    history.replaceState(null, '', '/chat.html?c=' + c.id);
     $('app').classList.add('viendo');
     $('sin-conversacion').hidden = true;
     $('vista-conv').hidden = false;
     $('vista-conv').style.display = 'contents';
     $('conv-avatar').innerHTML = DP.avatar({ nombre: c.otro_nombre || c.otro_usuario, avatar_url: c.otro_avatar }, 40);
-    $('conv-nombre').innerHTML = `<a href="creador.html?u=${encodeURIComponent(c.otro_usuario)}">${DP.esc(c.otro_nombre || '@' + c.otro_usuario)}</a>`;
+    $('conv-nombre').innerHTML = `<a href="/creador.html?u=${encodeURIComponent(c.otro_usuario)}">${DP.esc(c.otro_nombre || '@' + c.otro_usuario)}</a>`;
     const a = $('conv-anuncio');
     a.hidden = !c.inmueble_id;
-    if (c.inmueble_id) { a.href = 'anuncio.html?id=' + c.inmueble_id; a.textContent = c.inmueble_titulo || 'Ver anuncio'; }
+    if (c.inmueble_id) { a.href = '/realestate/anuncio.html?id=' + c.inmueble_id; a.textContent = c.inmueble_titulo || 'Ver anuncio'; }
     document.querySelectorAll('#lista [data-c]').forEach(b => b.setAttribute('aria-current', b.dataset.c === c.id));
 
     $('mensajes').innerHTML = '<p class="chat-seguridad">Descifrando…</p>';
@@ -130,7 +130,7 @@
     DP.sb.rpc('puede_valorar', { p_usuario: c.otro_id }).then(({ data: puede }) => {
       const v = $('conv-valorar');
       v.hidden = !puede;
-      v.href = `creador.html?u=${encodeURIComponent(c.otro_usuario)}#valorar`;
+      v.href = `/creador.html?u=${encodeURIComponent(c.otro_usuario)}#valorar`;
     });
     $('texto').focus();
   }

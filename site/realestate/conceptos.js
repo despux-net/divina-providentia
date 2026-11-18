@@ -1,4 +1,4 @@
-// Galería «Conceptos 3D» (conceptos.html): solo proyectos con operacion =
+// Galería «Conceptos 3D» (/realestate/conceptos.html): solo proyectos con operacion =
 // 'concepto'. Filtros de portafolio (categoría, etapa, perfil del autor y
 // estado) que viven en la URL para poder compartir la búsqueda.
 (() => {
@@ -61,7 +61,7 @@
       if (!filas.length) {
         cont.innerHTML = `<div class="vacio" style="grid-column:1/-1"><strong>${f.q || f.p_categoria || f.p_etapa || f.p_rol || f.p_estado
           ? 'Ningún proyecto con estos filtros' : 'Aún no hay proyectos publicados'}</strong>
-          ¿Tienes un render, una tesis o una idea de infraestructura? <a href="publicar.html?tipo=concepto">Publícalo gratis</a> y sé de los primeros.</div>`;
+          ¿Tienes un render, una tesis o una idea de infraestructura? <a href="/realestate/publicar.html?tipo=concepto">Publícalo gratis</a> y sé de los primeros.</div>`;
       }
     }
     $('mas').hidden = !hayMas;

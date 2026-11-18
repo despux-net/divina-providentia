@@ -72,7 +72,7 @@ const esc = DP.esc;
 const fmt = n => Number(n).toLocaleString('es-VE');
 
 function ruta(op, tipo, estado) {
-  return '/inmuebles/' + [OPS[op].ruta, tipo && TIPO_SLUG[tipo], estado && slug(estado)].filter(Boolean).join('/') + '/';
+  return '/realestate/inmuebles/' + [OPS[op].ruta, tipo && TIPO_SLUG[tipo], estado && slug(estado)].filter(Boolean).join('/') + '/';
 }
 function titular(op, tipo, estado) {
   return `${tipo ? PLURAL[tipo] : 'Inmuebles'} ${OPS[op].en} en ${lugarTxt(estado)}`;
@@ -85,9 +85,9 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
   const que = tipo ? PLURAL[tipo].toLowerCase() : 'apartamentos, casas, anexos, locales y terrenos';
   const desc = `${fmt(total)} ${que} ${OPS[op].en} en ${lugarTxt(estado)}. Anuncios de inmobiliarias y particulares en un solo buscador, con fotos, precios en dólares y mapa. Actualizado cada día.`;
   const url = DOMINIO + ruta(op, tipo, estado);
-  const buscar = '/buscar.html?' + new URLSearchParams(Object.entries({ operacion: op, tipo, estado }).filter(([, v]) => v)).toString();
+  const buscar = '/realestate/buscar.html?' + new URLSearchParams(Object.entries({ operacion: op, tipo, estado }).filter(([, v]) => v)).toString();
   const migas = [
-    ['Inicio', '/'],
+    ['Inicio', '/realestate/'],
     [`Inmuebles ${OPS[op].en}`, ruta(op)],
     ...(tipo ? [[`${PLURAL[tipo]} ${OPS[op].en}`, ruta(op, tipo)]] : []),
     ...(estado ? [[lugarTxt(estado), ruta(op, tipo, estado)]] : [])
@@ -99,7 +99,7 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
     },
     {
       '@context': 'https://schema.org', '@type': 'ItemList', name: h1, numberOfItems: filas.length,
-      itemListElement: filas.map((i, k) => ({ '@type': 'ListItem', position: k + 1, url: `${DOMINIO}/anuncio.html?id=${i.id}`, name: i.titulo }))
+      itemListElement: filas.map((i, k) => ({ '@type': 'ListItem', position: k + 1, url: `${DOMINIO}/realestate/anuncio.html?id=${i.id}`, name: i.titulo }))
     }
   ];
   const enlaces = (titulo2, lista) => lista.length ? `<section class="seo-enlaces"><h2>${esc(titulo2)}</h2><ul>${lista.map(([t, u, n]) =>
@@ -126,19 +126,19 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/img/favicon-192.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="estilos.css?v=${(fs.readFileSync(path.join(SITIO, 'index.html'), 'utf8').match(/estilos\.css\?v=(\d+)/) || [])[1] || 1}">
+  <link rel="stylesheet" href="estilos.css?v=${(fs.readFileSync(path.join(SITIO, 'realestate', 'index.html'), 'utf8').match(/estilos\.css\?v=(\d+)/) || [])[1] || 1}">
   <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>
 </head>
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <a class="marca" href="realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
       <nav class="nav">
-        <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
-        <a href="busco.html">Busco inmueble</a>
+        <a href="realestate/buscar.html">Buscar</a><a href="realestate/conceptos.html">Conceptos 3D</a>
+        <a href="realestate/busco.html">Busco inmueble</a>
         <a href="sobre.html">Quiénes somos</a>
         <span data-nav-sesion></span>
-        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+        <a class="boton peq" href="realestate/publicar.html">Publicar gratis</a>
       </nav>
     </div>
   </header>
@@ -154,7 +154,7 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
   </main>
   <footer class="pie"></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="comun.js?v=${(fs.readFileSync(path.join(SITIO, 'index.html'), 'utf8').match(/comun\.js\?v=(\d+)/) || [])[1] || 1}"></script>
+  <script src="comun.js?v=${(fs.readFileSync(path.join(SITIO, 'realestate', 'index.html'), 'utf8').match(/comun\.js\?v=(\d+)/) || [])[1] || 1}"></script>
   <script>DP.cabecera();</script>
 </body>
 </html>
@@ -168,7 +168,7 @@ async function enParalelo(tareas, n = 6) {
   return res;
 }
 
-const destino = path.join(SITIO, 'inmuebles');
+const destino = path.join(SITIO, 'realestate', 'inmuebles');
 fs.rmSync(destino, { recursive: true, force: true });
 
 // 1) Conteos para decidir qué páginas tienen contenido de verdad.
@@ -208,8 +208,8 @@ await enParalelo(paginas.map(p => async () => {
     otras: [
       existe.has(ruta(otraOp, p.tipo, p.estado)) && [titular(otraOp, p.tipo, p.estado), ruta(otraOp, p.tipo, p.estado).slice(1)],
       p.estado && [titular(p.op, p.tipo, null), ruta(p.op, p.tipo, null).slice(1)],
-      ['Precio del m² por zona', 'precios/'],
-      ['Conceptos 3D: proyectos y renders del talento emergente', 'conceptos.html']
+      ['Precio del m² por zona', 'realestate/precios/'],
+      ['Conceptos 3D: proyectos y renders del talento emergente', 'realestate/conceptos.html']
     ].filter(Boolean)
   };
   const archivo = path.join(SITIO, ruta(p.op, p.tipo, p.estado), 'index.html');
@@ -220,9 +220,9 @@ await enParalelo(paginas.map(p => async () => {
 // 3) Bloque «Búsquedas populares» en la portada (enlaces internos).
 const populares = paginas.filter(p => p.estado && !p.tipo).sort((a, b) => b.total - a.total).slice(0, 12)
   .concat(paginas.filter(p => p.tipo && !p.estado).sort((a, b) => b.total - a.total).slice(0, 8));
-const indexRuta = path.join(SITIO, 'index.html');
+const indexRuta = path.join(SITIO, 'realestate', 'index.html');
 const index = fs.readFileSync(indexRuta, 'utf8');
-const bloque = populares.map(p => `<li><a href="${ruta(p.op, p.tipo, p.estado).slice(1)}">${esc(titular(p.op, p.tipo, p.estado))}</a></li>`).join('');
+const bloque = populares.map(p => `<li><a href="${ruta(p.op, p.tipo, p.estado)}">${esc(titular(p.op, p.tipo, p.estado))}</a></li>`).join('');
 fs.writeFileSync(indexRuta, index.replace(/<!--POPULARES-->[\s\S]*?<!--\/POPULARES-->/, `<!--POPULARES-->${bloque}<!--/POPULARES-->`));
 
 // 3b) Páginas de precios por zona: /precios/, /precios/<estado>/, /precios/<estado>/<ciudad>/
@@ -230,7 +230,7 @@ fs.writeFileSync(indexRuta, index.replace(/<!--POPULARES-->[\s\S]*?<!--\/POPULAR
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 const ahora = new Date();
 const periodo = `${MESES[ahora.getUTCMonth()]} ${ahora.getUTCFullYear()}`;
-const versionDe = nombre => (fs.readFileSync(path.join(SITIO, 'index.html'), 'utf8').match(new RegExp(nombre.replace('.', '\\.') + '\\?v=(\\d+)')) || [])[1] || 1;
+const versionDe = nombre => (fs.readFileSync(path.join(SITIO, 'realestate', 'index.html'), 'utf8').match(new RegExp(nombre.replace('.', '\\.') + '\\?v=(\\d+)')) || [])[1] || 1;
 
 // Todos los anuncios activos con precio en USD (sin repetir: una copia por huella).
 const muestras = [];
@@ -296,13 +296,13 @@ function paginaPrecios({ titulo, h1, desc, url, migas, intro, tabla: t, enlaces 
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="index.html" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <a class="marca" href="realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
       <nav class="nav">
-        <a href="buscar.html">Buscar</a><a href="conceptos.html">Conceptos 3D</a>
-        <a href="busco.html">Busco inmueble</a>
+        <a href="realestate/buscar.html">Buscar</a><a href="realestate/conceptos.html">Conceptos 3D</a>
+        <a href="realestate/busco.html">Busco inmueble</a>
         <a href="sobre.html">Quiénes somos</a>
         <span data-nav-sesion></span>
-        <a class="boton peq" href="publicar.html">Publicar gratis</a>
+        <a class="boton peq" href="realestate/publicar.html">Publicar gratis</a>
       </nav>
     </div>
   </header>
@@ -331,20 +331,20 @@ const paginasPrecios = [];
     fs.writeFileSync(archivo, html);
     paginasPrecios.push(url);
   };
-  fs.rmSync(path.join(SITIO, 'precios'), { recursive: true, force: true });
+  fs.rmSync(path.join(SITIO, 'realestate', 'precios'), { recursive: true, force: true });
   const porEstado = {};
   for (const i of muestras) (porEstado[i.estado] ||= []).push(i);
   const estadosOrden = Object.entries(porEstado).filter(([, v]) => v.length >= 5).sort((a, b) => b[1].length - a[1].length);
   const listaEnlaces = (t, l) => l.length ? `<section class="seo-enlaces"><h2>${esc(t)}</h2><ul>${l.map(([n, u, c]) =>
     `<li><a href="${u.slice(1)}">${esc(n)}</a>${c ? ` <span>${fmt(c)}</span>` : ''}</li>`).join('')}</ul></section>` : '';
-  const estadosEnlaces = estadosOrden.map(([e, v]) => [`Precios en ${lugarTxt(e)}`, `/precios/${slug(e)}/`, v.length]);
+  const estadosEnlaces = estadosOrden.map(([e, v]) => [`Precios en ${lugarTxt(e)}`, `/realestate/precios/${slug(e)}/`, v.length]);
 
   // Venezuela
-  escribir('/precios/', paginaPrecios({
+  escribir('/realestate/precios/', paginaPrecios({
     titulo: `Precio del m² en Venezuela por estado · ${periodo} — Vivinati`,
     h1: `Precio del metro cuadrado en Venezuela · ${periodo}`,
     desc: `¿Cuánto cuesta el m² en Venezuela? Precio por m² y precio típico de apartamentos, casas, locales y terrenos en venta y alquiler, por estado. Datos de ${fmt(muestras.length)} anuncios, actualizados cada día.`,
-    url: '/precios/', migas: [['Inicio', '/'], ['Precios por zona', '/precios/']],
+    url: '/realestate/precios/', migas: [['Inicio', '/realestate/'], ['Precios por zona', '/realestate/precios/']],
     intro: `Referencias de precio calculadas con <b>${fmt(muestras.length)}</b> anuncios activos de inmobiliarias y particulares de todo el país. Elige un estado para ver el detalle por ciudad.`,
     tabla: tablaPrecios(muestras),
     enlaces: listaEnlaces('Precios por estado', estadosEnlaces)
@@ -354,25 +354,25 @@ const paginasPrecios = [];
     const porCiudad = {};
     for (const i of lista) if (i.ciudad) (porCiudad[i.ciudad] ||= []).push(i);
     const ciudades = Object.entries(porCiudad).filter(([, v]) => v.length >= 10).sort((a, b) => b[1].length - a[1].length);
-    const ciudadesEnlaces = ciudades.map(([c, v]) => [`Precios en ${c}`, `/precios/${slug(estado)}/${slug(c)}/`, v.length]);
+    const ciudadesEnlaces = ciudades.map(([c, v]) => [`Precios en ${c}`, `/realestate/precios/${slug(estado)}/${slug(c)}/`, v.length]);
     const buscarEn = Object.keys(OPS).filter(op => existe.has(ruta(op, null, estado))).map(op => [titular(op, null, estado), ruta(op, null, estado)]);
-    escribir(`/precios/${slug(estado)}/`, paginaPrecios({
+    escribir(`/realestate/precios/${slug(estado)}/`, paginaPrecios({
       titulo: `Precio del m² en ${lugarTxt(estado)} · ${periodo} — Vivinati`,
       h1: `Precio del metro cuadrado en ${lugarTxt(estado)} · ${periodo}`,
       desc: `Precio por m² y precio típico de apartamentos, casas y locales en venta y alquiler en ${lugarTxt(estado)}. Calculado con ${fmt(lista.length)} anuncios, actualizado cada día.`,
-      url: `/precios/${slug(estado)}/`, migas: [['Inicio', '/'], ['Precios por zona', '/precios/'], [lugarTxt(estado), `/precios/${slug(estado)}/`]],
+      url: `/realestate/precios/${slug(estado)}/`, migas: [['Inicio', '/realestate/'], ['Precios por zona', '/realestate/precios/'], [lugarTxt(estado), `/realestate/precios/${slug(estado)}/`]],
       intro: `Referencias de precio en ${esc(lugarTxt(estado))} calculadas con <b>${fmt(lista.length)}</b> anuncios activos.`,
       tabla: tablaPrecios(lista),
       enlaces: listaEnlaces('Por ciudad o municipio', ciudadesEnlaces) + listaEnlaces('Ver los anuncios', buscarEn) +
-        listaEnlaces('Otros estados', estadosEnlaces.filter(([, u]) => u !== `/precios/${slug(estado)}/`))
+        listaEnlaces('Otros estados', estadosEnlaces.filter(([, u]) => u !== `/realestate/precios/${slug(estado)}/`))
     }));
     for (const [ciudad, lc] of ciudades) {
-      const url = `/precios/${slug(estado)}/${slug(ciudad)}/`;
+      const url = `/realestate/precios/${slug(estado)}/${slug(ciudad)}/`;
       escribir(url, paginaPrecios({
         titulo: `Precio del m² en ${ciudad}, ${estado} · ${periodo} — Vivinati`,
         h1: `Precio del metro cuadrado en ${ciudad} · ${periodo}`,
         desc: `¿Cuánto cuesta el m² en ${ciudad} (${estado})? Precio por m² y precio típico de inmuebles en venta y alquiler, con ${fmt(lc.length)} anuncios. Actualizado cada día.`,
-        url, migas: [['Inicio', '/'], ['Precios por zona', '/precios/'], [lugarTxt(estado), `/precios/${slug(estado)}/`], [ciudad, url]],
+        url, migas: [['Inicio', '/realestate/'], ['Precios por zona', '/realestate/precios/'], [lugarTxt(estado), `/realestate/precios/${slug(estado)}/`], [ciudad, url]],
         intro: `Referencias de precio en ${esc(ciudad)} (${esc(estado)}) calculadas con <b>${fmt(lc.length)}</b> anuncios activos.`,
         tabla: tablaPrecios(lc),
         enlaces: listaEnlaces(`Otras ciudades de ${lugarTxt(estado)}`, ciudadesEnlaces.filter(([, u]) => u !== url)) + listaEnlaces('Ver los anuncios', buscarEn)
@@ -387,21 +387,21 @@ const paginasPrecios = [];
 const paginasConstructoras = [];
 {
   const todas = await rpc('directorio_constructoras', {});
-  fs.rmSync(path.join(SITIO, 'constructoras'), { recursive: true, force: true });
+  fs.rmSync(path.join(SITIO, 'realestate', 'constructoras'), { recursive: true, force: true });
   const porEstado = {};
   for (const c of todas) if (c.estado) (porEstado[c.estado] ||= []).push(c);
   const estados = Object.entries(porEstado).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
   const enlacesEstados = estados.length
-    ? `<h2>Constructoras por estado</h2><p>${estados.map(([e, l]) => `<a href="constructoras/${slug(e)}/">${esc(lugarTxt(e))} (${l.length})</a>`).join(' ')}</p>`
+    ? `<h2>Constructoras por estado</h2><p>${estados.map(([e, l]) => `<a href="/realestate/constructoras/${slug(e)}/">${esc(lugarTxt(e))} (${l.length})</a>`).join(' ')}</p>`
     : '';
-  const dirRuta = path.join(SITIO, 'constructoras.html');
+  const dirRuta = path.join(SITIO, 'realestate', 'constructoras.html');
   const base = fs.readFileSync(dirRuta, 'utf8');
   fs.writeFileSync(dirRuta, base
     .replace(/<!--CONSTRUCTORAS-->[\s\S]*?<!--\/CONSTRUCTORAS-->/, `<!--CONSTRUCTORAS-->${todas.map(DP.tarjetaConstructora).join('')}<!--/CONSTRUCTORAS-->`)
     .replace(/<!--ESTADOS-->[\s\S]*?<!--\/ESTADOS-->/, `<!--ESTADOS-->${enlacesEstados}<!--/ESTADOS-->`));
 
   for (const [estado, lista] of estados) {
-    const url = `/constructoras/${slug(estado)}/`;
+    const url = `/realestate/constructoras/${slug(estado)}/`;
     const lugar = lugarTxt(estado);
     const html = base
       .replace(/<title>[^<]*<\/title>/, `<title>Constructoras en ${esc(lugar)} — Vivinati</title>`)
@@ -409,13 +409,13 @@ const paginasConstructoras = [];
       .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${DOMINIO}${url}">`)
       .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="Constructoras en ${esc(lugar)}">`)
       .replace('<meta charset="utf-8">', '<meta charset="utf-8">\n  <base href="/">')
-      .replace(/<h1 id="h1">[^<]*<\/h1>/, `<nav class="migas" aria-label="Estás en"><a href="index.html">Inicio</a> › <a href="constructoras.html">Constructoras</a> › <span>${esc(lugar)}</span></nav>\n    <h1 id="h1">Constructoras en ${esc(lugar)}</h1>`)
+      .replace(/<h1 id="h1">[^<]*<\/h1>/, `<nav class="migas" aria-label="Estás en"><a href="/realestate/">Inicio</a> › <a href="/realestate/constructoras.html">Constructoras</a> › <span>${esc(lugar)}</span></nav>\n    <h1 id="h1">Constructoras en ${esc(lugar)}</h1>`)
       .replace(/<!--CONSTRUCTORAS-->[\s\S]*?<!--\/CONSTRUCTORAS-->/, `<!--CONSTRUCTORAS-->${lista.map(DP.tarjetaConstructora).join('')}<!--/CONSTRUCTORAS-->`)
       .replace(/<!--ESTADOS-->[\s\S]*?<!--\/ESTADOS-->/, `<!--ESTADOS-->${enlacesEstados}<!--/ESTADOS-->`)
       // La página del estado arranca con su filtro puesto
       .replace("if (DP.ESTADOS[params.get('estado')])", `params.set('estado', ${JSON.stringify(estado)});\n    if (DP.ESTADOS[params.get('estado')])`)
       .replace("history.replaceState(null, '', e ? '?estado=' + encodeURIComponent(e) : location.pathname);",
-        "if (e !== " + JSON.stringify(estado) + ") { location.href = 'constructoras.html' + (e ? '?estado=' + encodeURIComponent(e) : ''); return; }");
+        "if (e !== " + JSON.stringify(estado) + ") { location.href = '/realestate/constructoras.html' + (e ? '?estado=' + encodeURIComponent(e) : ''); return; }");
     const archivo = path.join(SITIO, url, 'index.html');
     fs.mkdirSync(path.dirname(archivo), { recursive: true });
     fs.writeFileSync(archivo, html);
@@ -427,16 +427,29 @@ const paginasConstructoras = [];
 // 4) sitemap.xml: páginas públicas + búsquedas + anuncios publicados en Vivinati.
 const propios = await tabla('inmuebles?select=id,actualizado&origen=eq.usuario&activo=eq.true&order=actualizado.desc&limit=5000');
 const urls = [
-  ['/', 'daily', '1.0'], ['/buscar.html', 'daily', '0.9'], ['/conceptos.html', 'daily', '0.8'],
-  ['/publicar.html', 'monthly', '0.6'], ['/bot.html', 'yearly', '0.3'], ['/condiciones.html', 'yearly', '0.3'],
-  ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/busco.html', 'daily', '0.6'], ['/privacidad.html', 'yearly', '0.3'], ['/constructoras.html', 'weekly', '0.6'],
+  ['/', 'weekly', '1.0'], ['/realestate/', 'daily', '1.0'], ['/realestate/buscar.html', 'daily', '0.9'], ['/realestate/conceptos.html', 'daily', '0.8'],
+  ['/realestate/publicar.html', 'monthly', '0.6'], ['/realestate/bot.html', 'yearly', '0.3'], ['/condiciones.html', 'yearly', '0.3'],
+  ['/sobre.html', 'yearly', '0.4'], ['/contacto.html', 'yearly', '0.4'], ['/seguridad.html', 'monthly', '0.5'], ['/realestate/busco.html', 'daily', '0.6'], ['/privacidad.html', 'yearly', '0.3'], ['/realestate/constructoras.html', 'weekly', '0.6'],
   ...paginas.map(p => [ruta(p.op, p.tipo, p.estado), 'daily', p.estado && p.tipo ? '0.6' : '0.7']),
   ...paginasPrecios.map(u => [u, 'weekly', '0.6']),
   ...paginasConstructoras.map(u => [u, 'weekly', '0.5'])
 ].map(([u, f, pr]) => `<url><loc>${DOMINIO}${u}</loc><lastmod>${HOY}</lastmod><changefreq>${f}</changefreq><priority>${pr}</priority></url>`)
-  .concat(propios.map(i => `<url><loc>${DOMINIO}/anuncio.html?id=${i.id}</loc><lastmod>${String(i.actualizado).slice(0, 10)}</lastmod><priority>0.5</priority></url>`));
+  .concat(propios.map(i => `<url><loc>${DOMINIO}/realestate/anuncio.html?id=${i.id}</loc><lastmod>${String(i.actualizado).slice(0, 10)}</lastmod><priority>0.5</priority></url>`));
 fs.writeFileSync(path.join(SITIO, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`);
+
+// 4b) Direcciones de antes de la mudanza a /realestate/ (18-nov-2026): una
+// página mínima en la ruta vieja que lleva a la nueva (Google sigue el canonical).
+for (const u of [...paginas.map(p => ruta(p.op, p.tipo, p.estado)), ...paginasPrecios, ...paginasConstructoras]) {
+  const vieja = u.replace(/^\/realestate/, '');
+  const archivo = path.join(SITIO, vieja, 'index.html');
+  fs.mkdirSync(path.dirname(archivo), { recursive: true });
+  fs.writeFileSync(archivo, `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Vivinati Real Estate</title>
+<link rel="canonical" href="${DOMINIO}${u}"><meta name="robots" content="noindex">
+<script>location.replace('${u}' + location.search + location.hash);</script><meta http-equiv="refresh" content="0; url=${u}"></head>
+<body><p>Esta página se mudó a <a href="${u}">${DOMINIO}${u}</a>.</p></body></html>
+`);
+}
 
 // 5) robots.txt
 fs.writeFileSync(path.join(SITIO, 'robots.txt'), `User-agent: *
@@ -445,8 +458,8 @@ Disallow: /entrar.html
 Disallow: /registro.html
 Disallow: /restablecer.html
 Disallow: /perfil.html
-Disallow: /mis-anuncios.html
-Disallow: /importar.html
+Disallow: /realestate/mis-anuncios.html
+Disallow: /realestate/importar.html
 Disallow: /baja.html
 
 Sitemap: ${DOMINIO}/sitemap.xml

@@ -1,4 +1,4 @@
-// Carga masiva de anuncios desde Excel o CSV (importar.html).
+// Carga masiva de anuncios desde Excel o CSV (/realestate/importar.html).
 // Todo se lee y se valida en el navegador; la base de datos vuelve a
 // comprobar permisos, límites y formatos al guardar. Cada fila lleva una
 // «referencia» propia del anunciante: si ya existe un anuncio suyo con esa
@@ -12,13 +12,13 @@
   DP.cabecera();
   if (!session) {
     $('entrar').hidden = false;
-    $('ir-entrar').href = 'entrar.html?next=importar.html';
-    $('ir-registro').href = 'registro.html?next=importar.html';
+    $('ir-entrar').href = '/entrar.html?next=/realestate/importar.html';
+    $('ir-registro').href = '/registro.html?next=/realestate/importar.html';
     return;
   }
   const usuario = session.user;
   const perfil = await DP.miPerfil();
-  if (!perfil || !perfil.usuario) { location.href = 'perfil.html'; return; }
+  if (!perfil || !perfil.usuario) { location.href = '/perfil.html'; return; }
   $('zona-carga').hidden = false;
 
   const { data: limiteRpc } = await DP.sb.rpc('limite_anuncios', { p_user: usuario.id });
@@ -403,7 +403,7 @@
     DP.mensaje($('msg'), mal
       ? `Listo: ${bien} guardados y ${mal} con problemas (marcados en rojo en la tabla).`
       : `Listo: ${bien} anuncios guardados.`, mal ? 'error' : 'ok');
-    $('msg').insertAdjacentHTML('beforeend', '<p><a class="boton" href="mis-anuncios.html">Ver mis anuncios</a></p>');
+    $('msg').insertAdjacentHTML('beforeend', '<p><a class="boton" href="/realestate/mis-anuncios.html">Ver mis anuncios</a></p>');
     btn.disabled = true;
   });
 })();

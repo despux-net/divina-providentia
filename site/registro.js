@@ -5,9 +5,9 @@
 (async () => {
   const $ = id => document.getElementById(id);
   const session = await DP.cabecera();
-  if (session) { location.href = 'perfil.html'; return; }
+  if (session) { location.href = '/perfil.html'; return; }
 
-  DP.botonesSociales($('sociales'), DP.siguiente('perfil.html'), { arriba: true });
+  DP.botonesSociales($('sociales'), DP.siguiente('/perfil.html'), { arriba: true });
   const robot = DP.antirrobot($('antirrobot'));
   const ayudaUsuario = $('ayuda-usuario');
   const textoAyuda = ayudaUsuario.textContent;
@@ -49,13 +49,13 @@
     ventana.showModal();
     if (cargadas) return;
     try {
-      const html = await fetch('condiciones.html', { cache: 'no-cache' }).then(r => r.text());
+      const html = await fetch('/condiciones.html', { cache: 'no-cache' }).then(r => r.text());
       const art = new DOMParser().parseFromString(html, 'text/html').getElementById('condiciones');
       art.querySelector('h1').remove();
       $('texto-condiciones').replaceChildren(...art.childNodes);
       cargadas = true;
     } catch {
-      $('texto-condiciones').innerHTML = '<p>No se pudieron cargar. <a href="condiciones.html" target="_blank" rel="noopener">Ábrelas aquí</a>.</p>';
+      $('texto-condiciones').innerHTML = '<p>No se pudieron cargar. <a href="/condiciones.html" target="_blank" rel="noopener">Ábrelas aquí</a>.</p>';
     }
   });
   $('cerrar-condiciones').addEventListener('click', () => ventana.close());
@@ -110,10 +110,10 @@
       // El correo pasa a «Entrar» por sessionStorage, no por la URL (quedaría en el historial).
       try { sessionStorage.setItem('dp_email', email); } catch { /* sin almacenamiento */ }
       msg.innerHTML = `<div class="mensaje error">Si ese correo ya tiene cuenta, entra con tu contraseña o
-        <a href="entrar.html?olvido=1">recupérala aquí</a>.</div>`;
+        <a href="/entrar.html?olvido=1">recupérala aquí</a>.</div>`;
       return;
     }
-    if (data.session) { location.href = 'perfil.html'; return; } // verificación desactivada en Supabase
+    if (data.session) { location.href = '/perfil.html'; return; } // verificación desactivada en Supabase
     $('form-registro').hidden = true;
     $('hecho-email').textContent = email;
     $('hecho').hidden = false;

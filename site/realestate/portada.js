@@ -11,9 +11,9 @@
   // vivienda; Conceptos 3D envía a la galería conceptos.html con filtros de
   // portafolio (categoría y perfil del autor).
   const INTENCIONES = {
-    venta: { accion: 'buscar.html', texto: 'Ciudad, zona o palabra clave', vivienda: true },
-    alquiler: { accion: 'buscar.html', texto: '¿Dónde quieres vivir? Ciudad o zona', vivienda: true },
-    concepto: { accion: 'conceptos.html', texto: 'Idea, universidad o programa (Revit, Blender…)', vivienda: false }
+    venta: { accion: '/realestate/buscar.html', texto: 'Ciudad, zona o palabra clave', vivienda: true },
+    alquiler: { accion: '/realestate/buscar.html', texto: '¿Dónde quieres vivir? Ciudad o zona', vivienda: true },
+    concepto: { accion: '/realestate/conceptos.html', texto: 'Idea, universidad o programa (Revit, Blender…)', vivienda: false }
   };
   const form = $('form-busqueda');
   const pestañas = [...document.querySelectorAll('.intencion')];
@@ -60,7 +60,7 @@
 
   // ---------- Contenido editable desde Pages CMS (site/contenido/portada.json) ----------
   // Si el archivo no carga, la portada se queda con los textos e ilustración de fábrica.
-  const contenido = fetch('contenido/portada.json', { cache: 'no-cache' })
+  const contenido = fetch('/contenido/portada.json', { cache: 'no-cache' })
     .then(r => (r.ok ? r.json() : null)).catch(() => null).then(c => {
       if (!c) return;
       // Imagen de fondo: solo fotos subidas al CMS (/media/…) o enlaces https.
@@ -88,7 +88,7 @@
       const zonas = (Array.isArray(c.sugerencias) ? c.sugerencias : []).map(z => String(z).trim()).filter(Boolean).slice(0, 10);
       if (zonas.length) {
         $('sugerencias').innerHTML = 'Prueba: ' + zonas.map(z =>
-          `<a href="buscar.html?q=${encodeURIComponent(z)}">${DP.esc(z)}</a>`).join(' · ');
+          `<a href="/realestate/buscar.html?q=${encodeURIComponent(z)}">${DP.esc(z)}</a>`).join(' · ');
       }
     });
 

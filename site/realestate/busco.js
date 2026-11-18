@@ -21,7 +21,7 @@
   function tarjeta(s, mia) {
     if (!mia) return DP.tarjetaSolicitud(s, yo);
     const nombre = s.nombre || (s.usuario ? '@' + s.usuario : 'Usuario');
-    const perfil = s.usuario ? `creador.html?u=${encodeURIComponent(s.usuario)}` : null;
+    const perfil = s.usuario ? `/creador.html?u=${encodeURIComponent(s.usuario)}` : null;
     return `<article class="solicitud">
       <div class="sol-cab"><strong>${DP.esc(que(s))}</strong>
         <span class="sol-lugar">${DP.esc([s.zona, s.estado].filter(Boolean).join(', '))}</span></div>
@@ -57,7 +57,7 @@
   ['f-operacion', 'f-tipo', 'f-estado'].forEach(id => $(id).addEventListener('change', () => {
     const p = new URLSearchParams();
     for (const k of ['operacion', 'tipo', 'estado']) if ($('f-' + k).value) p.set(k, $('f-' + k).value);
-    history.replaceState(null, '', 'busco.html' + (p.toString() ? '?' + p : ''));
+    history.replaceState(null, '', '/realestate/busco.html' + (p.toString() ? '?' + p : ''));
     cargar(false);
   }));
   $('mas').addEventListener('click', () => cargar(true));
@@ -109,7 +109,7 @@
 
   // ---------- Publicar ----------
   const abrir = () => {
-    if (!session) { location.href = 'entrar.html?next=' + encodeURIComponent('busco.html#publicar'); return; }
+    if (!session) { location.href = '/entrar.html?next=' + encodeURIComponent('/realestate/busco.html#publicar'); return; }
     $('form-solicitud').hidden = false; $('abrir-form').hidden = true;
     prepararMapaPin();
     $('form-solicitud').scrollIntoView({ behavior: 'smooth', block: 'start' });

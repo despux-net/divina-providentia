@@ -1,4 +1,4 @@
-// Página de búsqueda (buscar.html): barra de filtros, columna lateral y resultados.
+// Página de búsqueda (/realestate/buscar.html): barra de filtros, columna lateral y resultados.
 // Los filtros viven en la URL (?q=...&tipo=...&estado=...) para poder
 // compartir una búsqueda y para que «atrás» funcione.
 (() => {
@@ -23,12 +23,12 @@
   let mapa = null, capaPuntos = null, peticion = 0;
 
   DP.opciones(campos.operacion, { venta: 'En venta', alquiler: 'En alquiler', concepto: 'Conceptos 3D' }, 'Venta y alquiler');
-  // Los proyectos conceptuales tienen su propia galería (conceptos.html).
+  // Los proyectos conceptuales tienen su propia galería (/realestate/conceptos.html).
   const irAConceptos = () => {
     const p = new URLSearchParams();
     if (campos.q.value.trim()) p.set('q', campos.q.value.trim());
     if (campos.estado.value) p.set('estado', campos.estado.value);
-    location.href = 'conceptos.html' + (p.toString() ? '?' + p : '');
+    location.href = '/realestate/conceptos.html' + (p.toString() ? '?' + p : '');
   };
   // Interruptor «Incluir proyectos conceptuales de la zona» (apagado por defecto).
   // Ya no se mezclan en la búsqueda: viven solo en conceptos.html.
@@ -197,7 +197,7 @@
         <strong>${DP.esc(DP.precio(i))}</strong>
         <span class="globo-tipo">${DP.esc(DP.TIPOS[i.tipo] || '')} · ${DP.esc(DP.OPERACIONES[i.operacion] || '')}</span>
         <span class="globo-lugar">${DP.esc(DP.lugar(i))}</span>
-        ${sinCursor ? `<a class="boton peq" href="anuncio.html?id=${encodeURIComponent(i.id)}">Ver anuncio</a>` : ''}
+        ${sinCursor ? `<a class="boton peq" href="/realestate/anuncio.html?id=${encodeURIComponent(i.id)}">Ver anuncio</a>` : ''}
       </div></div>`;
   }
 
@@ -231,7 +231,7 @@
     capaPuntos.clearLayers();
     for (const i of data) {
       const punto = L.circleMarker([i.lat, i.lng], ESTILO_PUNTO).addTo(capaPuntos);
-      const ir = () => { location.href = `anuncio.html?id=${encodeURIComponent(i.id)}`; };
+      const ir = () => { location.href = `/realestate/anuncio.html?id=${encodeURIComponent(i.id)}`; };
       if (sinCursor) {
         punto.bindPopup(globito(i), { className: 'popup-globo', closeButton: false, offset: [0, -4], maxWidth: 240 });
       } else {
@@ -292,7 +292,7 @@
     const msg = (t, tipo) => { $('msg-alerta').innerHTML = t ? `<div class="mensaje ${tipo}">${t}</div>` : ''; };
     const { data: { session } } = await DP.sb.auth.getSession();
     if (!session) {
-      msg(`Para recibir avisos por correo necesitas una cuenta gratuita. <a href="entrar.html?next=${encodeURIComponent('buscar.html' + location.search)}">Entra</a> o <a href="registro.html">crea tu cuenta</a>.`, 'error');
+      msg(`Para recibir avisos por correo necesitas una cuenta gratuita. <a href="/entrar.html?next=${encodeURIComponent('/realestate/buscar.html' + location.search)}">Entra</a> o <a href="/registro.html">crea tu cuenta</a>.`, 'error');
       return;
     }
     const f = Object.fromEntries(Object.entries(filtros()).filter(([, v]) => v !== null && v !== false && v !== ''));
@@ -301,7 +301,7 @@
     const { error } = await DP.sb.from('alertas').insert({ nombre, filtros: f });
     b.disabled = false;
     if (error) return msg(DP.esc(/máximo de 5/.test(error.message) ? error.message : 'No se pudo crear la alerta. Inténtalo de nuevo.'), 'error');
-    msg(`<strong>¡Listo!</strong> Te escribiremos a <b>${DP.esc(session.user.email)}</b> cuando aparezcan anuncios nuevos de «${DP.esc(nombre)}». Gestiona tus alertas en <a href="perfil.html#alertas">tu perfil</a>.`, 'ok');
+    msg(`<strong>¡Listo!</strong> Te escribiremos a <b>${DP.esc(session.user.email)}</b> cuando aparezcan anuncios nuevos de «${DP.esc(nombre)}». Gestiona tus alertas en <a href="/perfil.html#alertas">tu perfil</a>.`, 'ok');
   });
   campos.orden.addEventListener('change', () => buscar());
   for (const k of ['min', 'max']) campos[k].addEventListener('change', nuevaBusqueda);
