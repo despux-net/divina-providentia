@@ -1216,7 +1216,7 @@ a.eleccion:hover { text-decoration: none; }
 @media (max-width: 560px) {
   /* En el teléfono: la barra de abajo lleva Mensajes y Perfil; arriba solo queda «Salir». */
   .cabecera .nav .nav-perfil { display: none !important; }
-  .menu-desplegable { display: contents !important; }
+  .cabecera .menu-desplegable { display: contents !important; }
   .cabecera .nav .menu-desplegable a:not([data-salir]) { display: none; }
   .cabecera .nav .menu-desplegable [data-salir] { color: #fff; border: 1px solid rgba(255, 255, 255, .55); border-radius: 999px; margin: 0; padding: 3px 10px; font-size: .8rem; }
 }
@@ -1368,4 +1368,22 @@ body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display:
   .marca-sub { letter-spacing: .1em; padding-left: 7px; font-size: .74rem; }
   .cabecera-int { flex-wrap: nowrap; }
   .cabecera .nav a[href="/sobre.html"] { display: none; }   /* sigue en el pie */
+}
+
+
+/* Menú @usuario en la página principal (vivinati.com): no tiene la cabecera azul
+   ni la barra de abajo, así que el desplegable funciona igual en el teléfono. */
+.nodriza-arriba .menu-usuario { position: relative; }
+.nodriza-arriba .nav-perfil { display: inline-flex !important; align-items: center; gap: 6px; background: none; border: 1px solid transparent;
+  font: inherit; font-size: .92rem; color: #3c4650; padding: 6px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+.nodriza-arriba .nav-perfil:hover, .nodriza-arriba .menu-usuario.abierto .nav-perfil { background: #f1f4f7; border-color: #e3e8ee; }
+.nodriza-arriba .nav-perfil:focus-visible { outline: 2px solid #9cc3ea; outline-offset: 2px; }
+.nodriza-arriba .menu-desplegable { right: 0; min-width: 230px; text-align: left; }
+.nodriza-arriba .menu-desplegable a { display: block; padding: 10px 14px; border-radius: 6px; color: #2f3a45; font-size: .93rem; text-decoration: none; }
+.nodriza-arriba .menu-desplegable a:hover { background: #f1f4f7; color: #005CA7; text-decoration: none; }
+.nodriza-arriba .menu-desplegable [data-salir] { color: var(--danger); border-top: 1px solid var(--line); border-radius: 0 0 6px 6px; margin-top: 4px; }
+@media (max-width: 560px) {
+  .nodriza-arriba { padding: 10px 12px; }
+  .nodriza-arriba .menu-desplegable { min-width: 240px; max-width: calc(100vw - 24px); }
+  .nodriza-arriba .menu-desplegable a { padding: 12px 14px; }
 }
