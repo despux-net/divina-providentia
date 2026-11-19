@@ -425,7 +425,8 @@ const DP = {
       });
       DP.contarMensajes();
     } else {
-      nav.innerHTML = `<a href="/entrar.html">Entrar</a><a href="/registro.html">Crear cuenta</a>`;
+      const v = DP.volverAqui();
+      nav.innerHTML = `<a href="/entrar.html${v}">Entrar</a><a href="/registro.html${v}">Crear cuenta</a>`;
     }
     return session;
   },
@@ -535,7 +536,7 @@ const DP = {
       e.currentTarget.disabled = true;
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${location.origin}/entrar.html?oauth=1&next=${encodeURIComponent(destino || '/realestate/mis-anuncios.html')}` }
+        options: { redirectTo: `${location.origin}/entrar.html?oauth=1&next=${encodeURIComponent(destino || '/')}` }
       });
       if (error) {
         e.target.closest('button').disabled = false;
@@ -545,16 +546,30 @@ const DP = {
     });
   },
 
-  siguiente(porDefecto = '/realestate/mis-anuncios.html') {
+  // «?next=…» para volver, tras entrar o registrarse, a la página donde estaba
+  // (la principal, Inmuebles o Industrial). En las páginas de la cuenta no se añade.
+  volverAqui() {
+    // En entrar / registro / restablecer se conserva el «next» que ya traían
+    if (/^\/(entrar|registro|restablecer)\.html/.test(location.pathname)) {
+      const n = new URLSearchParams(location.search).get('next');
+      return n ? '?next=' + encodeURIComponent(n) : '';
+    }
+    const aqui = location.pathname === '/index.html' ? '/' : location.pathname + location.search;
+    return '?next=' + encodeURIComponent(aqui);
+  },
+
+  // Destino tras entrar: solo rutas de esta web (nunca otro dominio). Sin «next», la página principal.
+  siguiente(porDefecto = '/') {
     const n = new URLSearchParams(location.search).get('next') || '';
-    // Solo rutas de esta web: /pagina.html o /realestate/… /industrial/…
-    // (nunca otro dominio). Las antiguas sin barra («publicar.html») siguen valiendo.
+    if (/^\/(realestate\/|industrial\/)?$/.test(n)) return n;
+    // Las antiguas sin barra («publicar.html») siguen valiendo.
     const REAL = ['buscar', 'anuncio', 'publicar', 'importar', 'mis-anuncios', 'busco', 'conceptos', 'constructoras', 'bot'];
-    const m = n.match(/^\/?((?:realestate|industrial)\/)?([a-z0-9-]+)\.html(\?[\w=&%.-]*)?(#[\w-]*)?$/i);
-    if (!m) return /^\/(realestate|industrial)\/$/.test(n) ? n : porDefecto;
+    const m = n.match(/^\/?((?:realestate|industrial)\/)?([a-z0-9-]+)\.html(\?[^\s<>"'\#]*)?(#[\w-]*)?$/i);
+    if (!m || /^\/\//.test(n)) return porDefecto;
     const carpeta = m[1] || (REAL.includes(m[2]) ? 'realestate/' : '');
     return `/${carpeta}${m[2]}.html${m[3] || ''}${m[4] || ''}`;
   }
+
 };
 
 // Pie de página común a todas las páginas (columnas de enlaces, como los portales grandes).
@@ -585,7 +600,7 @@ DP.pie = () => {
           <li><a href="/industrial/publicar.html">Publicar gratis</a></li>
           <li><a href="/industrial/mis-publicaciones.html">Mis publicaciones</a></li>
           <li><a href="/industrial/proveedores.html">Directorio de proveedores</a></li>
-          <li><a href="/registro.html">Crear cuenta</a></li>
+          <li><a href="/registro.html${DP.volverAqui()}">Crear cuenta</a></li>
           <li><a href="/seguridad.html">Centro de seguridad: evita estafas</a></li>
           <li><a href="/realestate/">Vivinati Real Estate (inmuebles)</a></li>
         </ul>
@@ -640,7 +655,7 @@ DP.pie = () => {
         <h4>Publicar y ayuda</h4>
         <ul>
           <li><a href="/realestate/publicar.html">Publicar gratis</a></li>
-          <li><a href="/registro.html">Crear cuenta</a></li>
+          <li><a href="/registro.html${DP.volverAqui()}">Crear cuenta</a></li>
           <li><a href="/realestate/mis-anuncios.html">Mis anuncios</a></li>
           <li><a href="/seguridad.html">Centro de seguridad: evita estafas</a></li>
           <li><a href="/realestate/bot.html">Cómo encontramos anuncios</a></li>
