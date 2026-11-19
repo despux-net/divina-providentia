@@ -132,7 +132,7 @@ function pagina({ op, tipo, estado, total, filas, hermanos }) {
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <a class="marca marca-ind" href="realestate/" aria-label="Vivinati inmuebles — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture><span class="marca-sub">inmuebles</span></a>
       <nav class="nav">
         <a href="realestate/buscar.html">Buscar</a><a href="realestate/conceptos.html">Conceptos 3D</a>
         <a href="realestate/busco.html">Busco inmueble</a>
@@ -296,7 +296,7 @@ function paginaPrecios({ titulo, h1, desc, url, migas, intro, tabla: t, enlaces 
 <body>
   <header class="cabecera">
     <div class="cabecera-int">
-      <a class="marca" href="realestate/" aria-label="Vivinati — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture></a>
+      <a class="marca marca-ind" href="realestate/" aria-label="Vivinati inmuebles — inicio"><picture><source media="(max-width: 560px)" srcset="img/logo-vivinati-blanco-v2.png"><img src="img/logo-vivinati-v2.png" alt="Vivinati" width="195" height="22"></picture><span class="marca-sub">inmuebles</span></a>
       <nav class="nav">
         <a href="realestate/buscar.html">Buscar</a><a href="realestate/conceptos.html">Conceptos 3D</a>
         <a href="realestate/busco.html">Busco inmueble</a>

@@ -1355,3 +1355,14 @@ body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display:
 .proveedor-botones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
 .seccion-proveedor-alta { border-top: 1px solid var(--line); padding-top: 18px; margin-bottom: 30px; }
 .seccion-proveedor-alta h2 { font-weight: 400; font-size: 1.2rem; }
+
+/* Pantallas medianas (tabletas): cabecera en una sola línea con el «industrial» / «inmuebles» */
+@media (min-width: 561px) and (max-width: 1000px) {
+  .cabecera .nav { flex-wrap: nowrap; gap: 0; }
+  .cabecera .nav a { padding: 6px 7px; font-size: .84rem; white-space: nowrap; }
+  .cabecera .nav .boton.peq { padding: 5px 11px; }
+  .marca-ind { gap: 7px; }
+  .marca-sub { letter-spacing: .1em; padding-left: 7px; font-size: .74rem; }
+  .cabecera-int { flex-wrap: nowrap; }
+  .cabecera .nav a[href="/sobre.html"] { display: none; }   /* sigue en el pie */
+}
