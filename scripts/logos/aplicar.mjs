@@ -17,6 +17,19 @@ const ORIGINALES = {
   portada_logo: 'img/logo-portada.png'
 };
 
+// Página principal (vivinati.com): tamaño del icono y su separación del nombre,
+// elegidos en Pages CMS (site/contenido/nodriza.json). Se escriben en el HTML
+// al publicar, así el icono no «salta» al cargar la página.
+try {
+  const n = JSON.parse(fs.readFileSync(path.join(SITIO, 'contenido', 'nodriza.json'), 'utf8'));
+  const entre = (v, min, max, def) => (Number.isFinite(Number(v)) && v !== '' && v != null ? Math.min(max, Math.max(min, Math.round(Number(v)))) : def);
+  const tam = entre(n.icono_tamano, 32, 240, 88), sep = entre(n.icono_separacion, 0, 120, 22);
+  const portada = path.join(SITIO, 'index.html');
+  const html = fs.readFileSync(portada, 'utf8');
+  const nuevo = html.replace(/<h1 class="nodriza-marca"[^>]*>/, `<h1 class="nodriza-marca" style="--icono-tam: ${tam}px; --icono-sep: ${sep}px">`);
+  if (nuevo !== html) { fs.writeFileSync(portada, nuevo); console.log(`Portada principal: icono de ${tam} px, a ${sep} px del nombre.`); }
+} catch { console.log('Sin site/contenido/nodriza.json: icono de la portada con su tamaño por defecto.'); }
+
 let elegidos;
 try { elegidos = JSON.parse(fs.readFileSync(path.join(SITIO, 'contenido', 'logos.json'), 'utf8')); }
 catch { console.log('Sin site/contenido/logos.json: se dejan los logos originales.'); process.exit(0); }

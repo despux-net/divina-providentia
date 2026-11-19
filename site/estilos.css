@@ -1286,8 +1286,9 @@ body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display:
 .nodriza-centro { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px 12vh; }
 .nodriza-marca { margin: 0 0 44px; display: flex; flex-direction: column; align-items: center; font: inherit; }
 .nodriza-marca .nodriza-logo { width: min(400px, 78vw); height: auto; }
-.nodriza-marca .nodriza-icono { width: 88px; height: 88px; border-radius: 22px; margin-bottom: 22px; object-fit: cover; }
-@media (max-width: 560px) { .nodriza-marca .nodriza-icono { width: 72px; height: 72px; border-radius: 18px; margin-bottom: 18px; } }
+/* Tamaño y separación editables en Pages CMS → «Página principal» (--icono-tam, --icono-sep) */
+.nodriza-marca .nodriza-icono { --tam: var(--icono-tam, 88px); width: var(--tam); height: var(--tam); border-radius: calc(var(--tam) / 4); margin-bottom: var(--icono-sep, 22px); object-fit: cover; }
+@media (max-width: 560px) { .nodriza-marca .nodriza-icono { --tam: calc(var(--icono-tam, 88px) * .8); margin-bottom: calc(var(--icono-sep, 22px) * .8); } }
 .nodriza-marca span { margin-top: 10px; font-weight: 300; font-size: 1.05rem; letter-spacing: .55em; padding-left: .55em; color: #6b7785; text-transform: lowercase; }
 .nodriza-mercados { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 .nodriza-mercados a { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 230px; padding: 14px 26px; border: 1px solid #dfe3e8; border-radius: 999px; color: #1d2733; text-decoration: none; transition: border-color .15s, box-shadow .15s; }

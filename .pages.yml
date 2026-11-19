@@ -64,10 +64,40 @@ content:
         type: image
 
   # ---------------------------------------------------------------
+  # Página principal de vivinati.com (vivinati corp): tamaño del icono y
+  # su distancia al nombre. La lee site/index.html al cargar la página.
+  # Las imágenes del icono y del nombre se cambian en «Logos».
+  - name: nodriza
+    label: Página principal (vivinati.com)
+    type: file
+    path: site/contenido/nodriza.json
+    format: json
+    fields:
+      - name: icono_tamano
+        label: Tamaño del icono (píxeles)
+        description: >-
+          Ancho y alto del icono cuadrado que va encima de «VIVINATI». Por defecto
+          88. Entre 32 y 240. En el teléfono se muestra un poco más pequeño
+          (80 % de este tamaño).
+        type: number
+        options:
+          min: 32
+          max: 240
+      - name: icono_separacion
+        label: Separación entre el icono y el nombre (píxeles)
+        description: >-
+          Cuánto espacio queda entre el icono y «VIVINATI». Por defecto 22.
+          0 = pegado al nombre; números más altos lo alejan hacia arriba (hasta 120).
+        type: number
+        options:
+          min: 0
+          max: 120
+
+  # ---------------------------------------------------------------
   # Portada de vivinati.com: imagen de fondo del buscador y
   # textos principales. La lee site/portada.js al cargar la página.
   - name: portada
-    label: Portada
+    label: Portada de Real Estate (inmuebles)
     type: file
     path: site/contenido/portada.json
     format: json
