@@ -1298,9 +1298,9 @@ body.nodriza { background: #fff; min-height: 100vh; min-height: 100dvh; display:
 @media (max-width: 560px) { .nodriza-mercados a { min-width: 0; width: 100%; } .nodriza-mercados { width: 100%; max-width: 340px; } }
 
 /* ---------- Vivinati Industrial ---------- */
-.marca-ind { gap: 8px; }
-.marca-sub { font-size: .78rem; font-weight: 400; letter-spacing: .28em; text-transform: lowercase; color: #6b7785; line-height: 1; padding-top: 3px; }
-@media (max-width: 560px) { .marca-sub { color: rgba(255, 255, 255, .85); } }
+.marca-ind { flex-direction: row; align-items: center; gap: 10px; }
+.marca-sub { font: 400 .8rem/1 Roboto, Arial, sans-serif; letter-spacing: .22em; text-transform: lowercase; color: #6b7785; padding-left: 10px; border-left: 1px solid #d5dbe1; height: 16px; display: inline-flex; align-items: center; }
+@media (max-width: 560px) { .marca-sub { color: rgba(255, 255, 255, .85); border-left-color: rgba(255, 255, 255, .4); font-size: .72rem; letter-spacing: .16em; padding-left: 8px; } .marca-ind { gap: 8px; } }
 .hero-ind { background: linear-gradient(180deg, #f3f7fb, #fff); border-bottom: 1px solid var(--line); }
 .hero-ind-int { max-width: 1100px; margin: 0 auto; padding: 44px 16px 36px; }
 .hero-ind h1 { font-weight: 300; font-size: clamp(1.6rem, 4vw, 2.3rem); margin: 0 0 8px; color: #1d2733; }
