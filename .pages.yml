@@ -52,8 +52,8 @@ content:
         label: Icono de la portada principal (vivinati.com)
         description: >-
           El icono que va encima de «VIVINATI corp» en la página principal.
-          Imagen cuadrada (por ejemplo 512 × 512 px). Se muestra a 88 px con las
-          esquinas redondeadas.
+          Imagen cuadrada (por ejemplo 512 × 512 px). Se muestra tal cual, sin
+          recortes ni esquinas redondeadas; su tamaño se ajusta en «Página principal».
         type: image
       - name: portada_logo
         label: Logo de la portada principal (vivinati.com)
