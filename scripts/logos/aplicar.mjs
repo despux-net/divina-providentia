@@ -12,7 +12,9 @@ const ORIGINALES = {
   cabecera: 'img/logo-vivinati-v2.png',
   cabecera_movil: 'img/logo-vivinati-blanco-v2.png',
   pie: 'img/sello-vivinati.png',
-  banda: 'img/logo-vivinati-banda.png'
+  banda: 'img/logo-vivinati-banda.png',
+  portada_icono: 'img/icono-portada.png',
+  portada_logo: 'img/logo-portada.png'
 };
 
 let elegidos;

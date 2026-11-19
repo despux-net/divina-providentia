@@ -48,6 +48,20 @@ content:
           Logo grande al principio de Quiénes somos, Contacto, Centro de seguridad
           y Política de privacidad (se ve a unos 360 px de ancho).
         type: image
+      - name: portada_icono
+        label: Icono de la portada principal (vivinati.com)
+        description: >-
+          El icono que va encima de «VIVINATI corp» en la página principal.
+          Imagen cuadrada (por ejemplo 512 × 512 px). Se muestra a 88 px con las
+          esquinas redondeadas.
+        type: image
+      - name: portada_logo
+        label: Logo de la portada principal (vivinati.com)
+        description: >-
+          El nombre «VIVINATI» grande en el centro de la página principal, sobre
+          fondo blanco. Mejor un PNG con fondo transparente y alargado (por ejemplo
+          532 × 60 px). Se muestra a unos 400 px de ancho.
+        type: image
 
   # ---------------------------------------------------------------
   # Portada de vivinati.com: imagen de fondo del buscador y
